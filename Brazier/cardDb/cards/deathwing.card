@@ -1,0 +1,20 @@
+{
+    "name": "Deathwing",
+    "description": "Battlecry: Destroy all other minions and discard your hand.",
+    "class": "neutral",
+    "keywords": "dragon",
+    "rarity": "legendary",
+    "manaCost": 10,
+    "minion": {
+        "attack": 12,
+        "hp": 12,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.forOtherTargets",
+                "action": "TargetedActions.KILL_TARGET",
+                "selector": "EntitySelectors.allMinions"
+            },
+            "TargetlessActions.DISCARD_HAND"
+        ]
+    }
+}

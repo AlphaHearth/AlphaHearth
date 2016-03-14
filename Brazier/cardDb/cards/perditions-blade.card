@@ -1,0 +1,11 @@
+{
+    "name": "Perdition's Blade",
+    "class": "rouge",
+    "keywords": "battlecry",
+    "rarity": "rare",
+    "manaCost": 3,
+    "weapon": {
+        "attack": 2,
+        "durability": 2
+    }
+}

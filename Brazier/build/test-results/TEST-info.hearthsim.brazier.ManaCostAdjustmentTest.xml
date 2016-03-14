@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="info.hearthsim.brazier.ManaCostAdjustmentTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2016-03-14T18:49:56" hostname="mrdai-Laptop" time="0.005">
+  <properties/>
+  <testcase name="testDreadCorsairCost4ByDefault" classname="info.hearthsim.brazier.ManaCostAdjustmentTest" time="0.002"/>
+  <testcase name="testDreadCorsairCostIsReducedCorrectly" classname="info.hearthsim.brazier.ManaCostAdjustmentTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

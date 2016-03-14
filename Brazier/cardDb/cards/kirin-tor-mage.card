@@ -1,0 +1,19 @@
+{
+    "name": "Kirin Tor Mage",
+    "description": "Battlecry: The next Secret you play this turn costs (0).",
+    "class": "mage",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 4,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.setManaCostThisTurn",
+            "filter": {
+                "class": "AuraFilters.targetHasKeyword",
+                "keywords": "secret"
+            },
+            "manaCost": 0
+        }
+    }
+}

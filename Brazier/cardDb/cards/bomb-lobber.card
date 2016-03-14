@@ -1,0 +1,20 @@
+{
+    "name": "Bomb Lobber",
+    "description": "Battlecry: Deal 4 damage to a random enemy minion.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 4,
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.random",
+                "selector": "EntitySelectors.enemyLivingMinions"
+            }
+        }
+    }
+}

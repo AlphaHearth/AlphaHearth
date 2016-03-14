@@ -1,0 +1,19 @@
+{
+    "name": "Mana Wraith",
+    "description": "ALL minions cost (1) more.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 2,
+        "ability": {
+            "class": "ActivatableAbilities.cardAura",
+            "filter": "AuraFilters.IS_MINION_CARD",
+            "aura": {
+                "class": "Auras.increaseManaCost",
+                "amount": 1
+            }
+        }
+    }
+}

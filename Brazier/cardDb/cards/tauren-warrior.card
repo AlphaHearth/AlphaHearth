@@ -1,0 +1,20 @@
+{
+    "name": "Tauren Warrior",
+    "description": "Taunt. Enrage: +3 Attack",
+    "class": "neutral",
+    "keywords": "horde-warrior",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "taunt": true,
+        "ability": {
+            "class": "ActivatableAbilities.selfAura",
+            "filter": "AuraFilters.SELF_DAMAGED",
+            "aura": {
+                "class": "Auras.minionAttackBuff",
+                "attack": 3
+            }
+        }
+    }
+}

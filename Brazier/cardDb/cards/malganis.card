@@ -1,0 +1,27 @@
+{
+    "name": "Mal'Ganis",
+    "description": "Your other Demons have +2/+2. Your hero is Immune.",
+    "class": "warlock",
+    "keywords": "demon",
+    "rarity": "legendary",
+    "manaCost": 9,
+    "minion": {
+        "attack": 9,
+        "hp": 7,
+        "ability": [
+            {
+                "class": "MinionAbilities.sameBoardOthersAura",
+                "filter": "AuraFilters.IS_DEMON_MINION",
+                "aura": {
+                    "class": "Auras.minionBodyBuff",
+                    "attack": 2,
+                    "hp": 2
+                }
+            },
+            {
+                "class": "ActivatableAbilities.ownHeroAura",
+                "aura": "Auras.GRANT_HERO_IMMUNITY"
+            }
+        ]
+    }
+}

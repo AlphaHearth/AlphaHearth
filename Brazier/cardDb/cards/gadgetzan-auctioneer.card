@@ -1,0 +1,20 @@
+{
+    "name": "Gadgetzan Auctioneer",
+    "description": "Whenever you cast a spell, draw a card.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 6,
+    "minion": {
+        "attack": 4,
+        "hp": 4,
+        "triggers": {
+            "start-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL"
+                ],
+                "action": "TargetlessActions.DRAW_FOR_SELF"
+            }
+        }
+    }
+}

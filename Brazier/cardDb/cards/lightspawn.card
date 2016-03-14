@@ -1,0 +1,11 @@
+{
+    "name": "Lightspawn",
+    "description": "This minion's Attack is always equal to its Health.",
+    "class": "priest",
+    "manaCost": 4,
+    "minion": {
+        "attack": 0,
+        "hp": 5,
+        "attackWithHp": true
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "name": "Arcanite Reaper",
+    "class": "warrior",
+    "manaCost": 5,
+    "weapon": {
+        "attack": 5,
+        "durability": 2
+    }
+}

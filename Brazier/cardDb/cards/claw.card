@@ -1,0 +1,23 @@
+{
+    "name": "Claw",
+    "description": "Give your hero +2 Attack this turn and 2 Armor.",
+    "class": "druid",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "actions": [
+            {
+                "class": "TargetlessActions.armorUp",
+                "armor": 2
+            },
+            {
+                "class": "TargetlessActions.forTargets",
+                "selector": "EntitySelectors.friendlyHero",
+                "action": {
+                    "class": "TargetedActions.buffTargetThisTurn",
+                    "buff": "2/0"
+                }
+            }
+        ]
+    }
+}

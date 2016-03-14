@@ -1,0 +1,15 @@
+{
+    "name": "Priestess of Elune",
+    "description": "Battlecry: Restore 4 Health to your hero.",
+    "class": "neutral",
+    "manaCost": 6,
+    "minion": {
+        "attack": 5,
+        "hp": 4,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": -4,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Shiv",
+    "description": "Deal 1 damage. Draw a card.",
+    "class": "rouge",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": 1
+        },
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

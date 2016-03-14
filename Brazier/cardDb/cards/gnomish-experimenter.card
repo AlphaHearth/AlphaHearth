@@ -1,0 +1,15 @@
+{
+    "name": "Gnomish Experimenter",
+    "description": "Battlecry: Draw a card. If it's a minion, transform it into a Chicken.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 2,
+        "battleCries": {
+            "class": "TargetlessActions.experiment",
+            "replaceCard": "Chicken"
+        }
+    }
+}

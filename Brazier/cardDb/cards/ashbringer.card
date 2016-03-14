@@ -1,0 +1,11 @@
+{
+    "name": "Ashbringer",
+    "class": "paladin",
+    "rarity": "legendary",
+    "collectible": false,
+    "manaCost": 5,
+    "weapon": {
+        "attack": 5,
+        "durability": 3
+    }
+}

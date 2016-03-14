@@ -1,0 +1,20 @@
+{
+    "name": "Grommash Hellscream",
+    "description": "Charge Enrage: +6 Attack",
+    "class": "warrior",
+    "rarity": "legendary",
+    "manaCost": 8,
+    "minion": {
+        "attack": 4,
+        "hp": 9,
+        "charge": true,
+        "ability": {
+            "class": "ActivatableAbilities.selfAura",
+            "filter": "AuraFilters.SELF_DAMAGED",
+            "aura": {
+                "class": "Auras.minionAttackBuff",
+                "attack": 6
+            }
+        }
+    }
+}

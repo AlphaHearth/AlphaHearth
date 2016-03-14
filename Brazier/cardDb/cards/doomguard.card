@@ -1,0 +1,17 @@
+{
+    "name": "Doomguard",
+    "description": "Charge. Battlecry: Discard two random cards.",
+    "class": "warlock",
+    "keywords": "demon",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 7,
+        "charge": true,
+        "battleCries": [
+            "TargetlessActions.DISCARD_RANDOM_CARD",
+            "TargetlessActions.DISCARD_RANDOM_CARD"
+        ]
+    }
+}

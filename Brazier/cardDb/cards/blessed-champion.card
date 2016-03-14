@@ -1,0 +1,13 @@
+{
+    "name": "Blessed Champion",
+    "description": "Double a minion's Attack.",
+    "class": "paladin",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 5,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.buffTarget",
+        "buff": "Buffs.DOUBLE_ATTACK"
+    }
+}

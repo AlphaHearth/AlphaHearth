@@ -1,0 +1,10 @@
+{
+    "name": "Blood Fury",
+    "class": "warlock",
+    "collectible": false,
+    "manaCost": 3,
+    "weapon": {
+        "attack": 3,
+        "durability": 8
+    }
+}

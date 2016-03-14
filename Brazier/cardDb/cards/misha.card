@@ -1,0 +1,16 @@
+{
+    "name": "Misha",
+    "description": "Taunt",
+    "class": "hunter",
+    "keywords": [
+        "beast",
+        "animal-companion"
+    ],
+    "collectible": false,
+    "manaCost": 3,
+    "minion": {
+        "attack": 4,
+        "hp": 4,
+        "taunt": true
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "name": "Explosive Shot",
+    "description": "Deal 5 damage to a minion and 2 damage to adjacent ones.",
+    "class": "hunter",
+    "type": "spell",
+    "manaCost": 5,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.doAtomic",
+        "action": [
+            {
+                "class": "TargetedActions.damageTarget",
+                "damage": 5
+            },
+            {
+                "class": "TargetedActions.forTargets",
+                "selector": "TargetedEntitySelectors.targetsNeighbours",
+                "action": {
+                    "class": "TargetedActions.damageTarget",
+                    "damage": 2
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Questing Adventurer",
+    "description": "Questing Adventurer",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 2,
+        "triggers": {
+            "start-play-card": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/1"
+                }
+            }
+        }
+    }
+}

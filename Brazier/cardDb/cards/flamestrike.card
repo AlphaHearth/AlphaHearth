@@ -1,0 +1,12 @@
+{
+    "name": "Flamestrike",
+    "description": "Deal 4 damage to all enemy minions.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 7,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 4,
+        "selector": "EntitySelectors.enemyMinions"
+    }
+}

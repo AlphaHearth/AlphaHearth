@@ -1,0 +1,21 @@
+{
+    "name": "Vaporize",
+    "description": "Secret: When a minion attacks your hero, destroy it.",
+    "class": "mage",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 3,
+    "secret": {
+        "attack-initiated": {
+            "filter": [
+                "WorldEventFilters.ATTACK_TARGET_IS_OWN_HERO",
+                "WorldEventFilters.ATTACKER_IS_MINION",
+                "WorldEventFilters.ATTACKER_IS_ENEMY"
+            ],
+            "action": {
+                "class": "WorldEventActions.forAttacker",
+                "action": "TargetedActions.KILL_TARGET"
+            }
+        }
+    }
+}

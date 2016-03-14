@@ -1,0 +1,44 @@
+{
+    "name": "Nefarian",
+    "description": "Battlecry: Add 2 random spells to your hand (from your opponent's class).",
+    "class": "neutral",
+    "keywords": "dragon",
+    "rarity": "legendary",
+    "manaCost": 9,
+    "minion": {
+        "attack": 8,
+        "hp": 8,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.addSelectedCard",
+                "card": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": {
+                        "class": "EntitySelectors.opponentClassCardsWithKeywords",
+                        "fallbackCard": "Tail Swipe",
+                        "keywords": [
+                            "collectible",
+                            "spell"
+                        ]
+                    }
+                }
+            },
+            {
+                "class": "TargetlessActions.addSelectedCard",
+                "card": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": {
+                        "class": "EntitySelectors.opponentClassCardsWithKeywords",
+                        "fallbackCard": "Tail Swipe",
+                        "keywords": [
+                            "collectible",
+                            "spell"
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

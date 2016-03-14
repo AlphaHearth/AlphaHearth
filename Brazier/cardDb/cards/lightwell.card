@@ -1,0 +1,28 @@
+{
+    "name": "Lightwell",
+    "description": "At the start of your turn, restore 3 Health to a damaged friendly character.",
+    "class": "priest",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 0,
+        "hp": 5,
+        "triggers": {
+            "turn-starts": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.friendlyTargets"
+                    },
+                    "action": {
+                        "class": "TargetedActions.damageTarget",
+                        "damage": -3
+                    }
+                }
+            }
+        }
+    }
+}

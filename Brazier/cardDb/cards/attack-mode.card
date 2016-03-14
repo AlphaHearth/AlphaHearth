@@ -1,0 +1,12 @@
+{
+    "name": "Attack Mode",
+    "description": "+1 Attack.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.buffSelfMinion",
+        "buff": "1/0"
+    }
+}

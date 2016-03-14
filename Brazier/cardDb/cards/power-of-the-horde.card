@@ -1,0 +1,20 @@
+{
+    "name": "Power of the Horde",
+    "description": "Summon a random Horde Warrior.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "power-chord",
+    "collectible": false,
+    "manaCost": 4,
+    "playActions": {
+        "class": "TargetlessActions.summonSelectedMinion",
+        "minion": {
+            "class": "EntitySelectors.filtered",
+            "selector": {
+                "class": "EntitySelectors.minionsWithKeywords",
+                "keywords": "horde-warrior"
+            },
+            "filter": "EntityFilters.random"
+        }
+    }
+}

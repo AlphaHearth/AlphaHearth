@@ -1,0 +1,10 @@
+{
+    "name": "Salty Dog",
+    "class": "neutral",
+    "keywords": "pirate",
+    "manaCost": 5,
+    "minion": {
+        "attack": 7,
+        "hp": 4
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Healing Totem",
+    "description": "At the end of your turn, restore 1 Health to all friendly minions.",
+    "class": "shaman",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 2,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.damageTarget",
+                    "selector": "EntitySelectors.friendlyBuffableMinions",
+                    "damage": -1
+                }
+            }
+        }
+    }
+}

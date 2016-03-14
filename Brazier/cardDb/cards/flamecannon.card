@@ -1,0 +1,20 @@
+{
+    "name": "Flamecannon",
+    "description": "Deal 4 damage to a random enemy minion.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "requires": "PlayActionRequirements.OPPONENT_BOARD_NOT_EMPTY",
+        "class": "TargetlessActions.forTargets",
+        "action": {
+            "class": "TargetedActions.damageTarget",
+            "damage": 4
+        },
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": "EntityFilters.random",
+            "selector": "EntitySelectors.enemyLivingMinions"
+        }
+    }
+}

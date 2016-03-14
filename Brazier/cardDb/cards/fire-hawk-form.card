@@ -1,0 +1,18 @@
+{
+    "name": "Fire Hawk Form",
+    "description": "Transform into a 2/5 minion.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.withMinion",
+        "action": {
+            "class": "TargetlessActions.forSelf",
+            "action": {
+                "class": "TargetedActions.transformMinion",
+                "minion": "Druid of the Flame/Firehawk"
+            }
+        }
+    }
+}

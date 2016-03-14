@@ -1,0 +1,27 @@
+{
+    "name": "Cobalt Guardian",
+    "description": "Whenever you summon a Mech, gain Divine Shield.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 6,
+        "hp": 3,
+        "triggers": {
+            "on-summon": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    {
+                        "class": "WorldEventFilters.eventSourceHasKeyword",
+                        "keywords": "mech"
+                    }
+                ],
+                "action": {
+                    "class": "TargetlessActions.forSelf",
+                    "action": "TargetedActions.GIVE_DIVINE_SHIELD"
+                }
+            }
+        }
+    }
+}

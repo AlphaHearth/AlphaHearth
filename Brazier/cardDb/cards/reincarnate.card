@@ -1,0 +1,11 @@
+{
+    "name": "Reincarnate",
+    "description": "Destroy a minion, then return it to life with full Health.",
+    "class": "shaman",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.reincarnate"
+    }
+}

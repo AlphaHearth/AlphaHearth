@@ -1,0 +1,11 @@
+{
+    "name": "Mechanical Dragonling",
+    "class": "neutral",
+    "keywords": "mech",
+    "collectible": "false",
+    "manaCost": 1,
+    "minion": {
+        "attack": 2,
+        "hp": 1
+    }
+}

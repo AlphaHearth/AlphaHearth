@@ -1,0 +1,21 @@
+{
+    "name": "Siege Engine",
+    "description": "Whenever you gain Armor, give this minion +1 Attack.",
+    "class": "warrior",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "triggers": {
+            "armor-gained": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/0"
+                }
+            }
+        }
+    }
+}

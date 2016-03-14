@@ -1,0 +1,10 @@
+{
+    "name": "Heavy Axe",
+    "class": "warrior",
+    "collectible": false,
+    "manaCost": 1,
+    "weapon": {
+        "attack": 1,
+        "durability": 3
+    }
+}

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jtrim:jtrim-gui:1.7.3">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jtrim/jtrim-gui/1.7.3/74d3cd3261b88824738ccef3959cddc511fdbf17/jtrim-gui-1.7.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jtrim/jtrim-gui/1.7.3/b439b43c7455bfd7a3a797c495376f230d897727/jtrim-gui-1.7.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,19 @@
+{
+    "name": "Demonwrath",
+    "description": "Deal 2 damage to all non-Demon minions.",
+    "class": "warlock",
+    "type": "spell",
+    "manaCost": 3,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 2,
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": {
+                "class": "EntityFilters.not",
+                "filter": "EntityFilters.isDemon"
+            },
+            "selector": "EntitySelectors.allMinions"
+        }
+    }
+}

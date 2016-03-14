@@ -1,0 +1,14 @@
+{
+    "name": "Shield Block",
+    "description": "Gain 5 Armor. Draw a card.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 3,
+    "playActions": [
+        {
+            "class": "TargetlessActions.armorUp",
+            "armor": 5
+        },
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

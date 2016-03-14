@@ -1,0 +1,13 @@
+{
+    "name": "Time Rewinder",
+    "description": "Return a friendly minion to your hand.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "spare-part",
+    "collectible": false,
+    "manaCost": 1,
+    "playActions": {
+        "targets": "friendly-minions",
+        "class": "TargetedActions.RETURN_MINION"
+    }
+}

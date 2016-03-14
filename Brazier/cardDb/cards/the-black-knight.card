@@ -1,0 +1,18 @@
+{
+    "name": "The Black Knight",
+    "description": "Battlecry: Destroy an enemy minion with Taunt.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 6,
+    "minion": {
+        "attack": 4,
+        "hp": 5,
+        "battleCries": {
+            "targets": [
+                "enemy-minions",
+                "TargetNeeds.IS_TAUNT"
+            ],
+            "class": "TargetedActions.KILL_TARGET"
+        }
+    }
+}

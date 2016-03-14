@@ -1,0 +1,23 @@
+{
+    "name": "Cleave",
+    "description": "Deal 2 damage to two random enemy minions.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "requires": {
+            "class": "PlayActionRequirements.opponentBoardIsLarger",
+            "minionCount": 1
+        },
+        "class": "TargetlessActions.damageTarget",
+        "damage": 2,
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": {
+                "class": "EntityFilters.random",
+                "count": 2
+            },
+            "selector": "EntitySelectors.enemyLivingMinions"
+        }
+    }
+}

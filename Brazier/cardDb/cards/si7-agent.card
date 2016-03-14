@@ -1,0 +1,20 @@
+{
+    "name": "SI:7 Agent",
+    "description": "Combo: Deal 2 damage.",
+    "class": "rouge",
+    "rarity": "rare",
+    "manaCost": 3,
+    "playActions": {
+        "targets": "all",
+        "requires": "PlayActionRequirements.COMBO",
+        "class": "TargetedActions.withMinion",
+        "action": {
+            "class": "TargetedActions.damageTarget",
+            "damage": 2
+        }
+    },
+    "minion": {
+        "attack": 3,
+        "hp": 3
+    }
+}

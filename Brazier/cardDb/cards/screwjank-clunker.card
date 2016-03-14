@@ -1,0 +1,23 @@
+{
+    "name": "Screwjank Clunker",
+    "description": "Battlecry: Give a friendly Mech +2/+2.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 2,
+        "hp": 5,
+        "battleCries": {
+            "targets": [
+                "friendly-minions",
+                {
+                    "class": "TargetNeeds.hasKeyword",
+                    "keywords": "mech"
+                }
+            ],
+            "class": "TargetedActions.buffTarget",
+            "buff": "2/2"
+        }
+    }
+}

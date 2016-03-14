@@ -1,0 +1,19 @@
+{
+    "name": "Noble Sacrifice",
+    "description": "Secret: When an enemy attacks, summon a 2/1 Defender as the new target.",
+    "class": "paladin",
+    "type": "spell",
+    "manaCost": 1,
+    "secret": {
+        "attack-initiated": {
+            "filter": [
+                "WorldEventFilters.ATTACKER_IS_ENEMY",
+                "WorldEventFilters.SELF_BOARD_IS_NOT_FULL"
+            ],
+            "action": {
+                "class": "WorldEventActions.summonNewTargetForAttack",
+                "minion": "Defender"
+            }
+        }
+    }
+}

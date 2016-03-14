@@ -1,0 +1,13 @@
+{
+    "name": "Lightning Bolt",
+    "description": "Deal 3 damage. Overload: (1)",
+    "class": "shaman",
+    "type": "spell",
+    "manaCost": 1,
+    "overload": 1,
+    "playActions": {
+        "targets": "all",
+        "class": "TargetedActions.damageTarget",
+        "damage": 3
+    }
+}

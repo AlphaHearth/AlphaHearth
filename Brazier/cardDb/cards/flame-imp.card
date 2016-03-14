@@ -1,0 +1,16 @@
+{
+    "name": "Flame Imp",
+    "description": "Battlecry: Deal 3 damage to your hero.",
+    "class": "warlock",
+    "keywords": "demon",
+    "manaCost": 1,
+    "minion": {
+        "attack": 3,
+        "hp": 2,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 3,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    }
+}

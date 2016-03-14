@@ -1,0 +1,13 @@
+{
+    "name": "Doomhammer",
+    "description": "Windfury, Overload: (2)",
+    "class": "shaman",
+    "rarity": "epic",
+    "manaCost": 5,
+    "overload": 2,
+    "weapon": {
+        "attack": 2,
+        "durability": 8,
+        "maxAttackCount": 2
+    }
+}

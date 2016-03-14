@@ -1,0 +1,15 @@
+{
+    "name": "Soulfire",
+    "description": "Deal 4 damage. Discard a random card.",
+    "class": "warlock",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": 4
+        },
+        "TargetlessActions.DISCARD_RANDOM_CARD"
+    ]
+}

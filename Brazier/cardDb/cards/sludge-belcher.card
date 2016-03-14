@@ -1,0 +1,16 @@
+{
+    "name": "Sludge Belcher",
+    "description": "Taunt. Deathrattle: Summon a 1/2 Slime with Taunt.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 3,
+        "hp": 5,
+        "taunt": "true",
+        "deathRattle": {
+            "class": "TargetlessActions.summonMinionRight",
+            "minion": "Slime"
+        }
+    }
+}

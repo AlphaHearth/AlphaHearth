@@ -1,0 +1,26 @@
+{
+    "name": "Quartermaster",
+    "description": "Battlecry: Give your Silver Hand Recruits +2/+2.",
+    "class": "paladin",
+    "rarity": "epic",
+    "manaCost": 5,
+    "minion": {
+        "attack": 2,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.forTargets",
+            "action": {
+                "class": "TargetedActions.buffTarget",
+                "buff": "2/2"
+            },
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": {
+                    "class": "EntityFilters.minionNameIs",
+                    "name": "Silver Hand Recruit"
+                },
+                "selector": "EntitySelectors.friendlyMinions"
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "name": "Repentance",
+    "description": "Secret: When your opponent plays a minion, reduce its Health to 1.",
+    "class": "paladin",
+    "type": "spell",
+    "manaCost": 1,
+    "secret": {
+        "done-play-card": {
+            "filter": [
+                "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                {
+                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "keywords": "minion"
+                }
+            ],
+            "action": {
+                "class": "WorldEventActions.withEventArgMinion",
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": {
+                        "class": "Buffs.setMaxHp",
+                        "hp": 1
+                    }
+                }
+            }
+        }
+    }
+}

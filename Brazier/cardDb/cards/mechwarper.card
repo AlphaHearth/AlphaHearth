@@ -1,0 +1,22 @@
+{
+    "name": "Mechwarper",
+    "description": "Your Mechs cost (1) less.",
+    "class": "neutral",
+    "keywords": "mech",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "ability": {
+            "class": "ActivatableAbilities.cardAura",
+            "filter": [
+                "AuraFilters.IS_MINION_CARD",
+                "AuraFilters.SAME_OWNER"
+            ],
+            "aura": {
+                "class": "Auras.decreaseManaCost",
+                "amount": 1
+            }
+        }
+    }
+}

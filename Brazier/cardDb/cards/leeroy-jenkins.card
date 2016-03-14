@@ -1,0 +1,20 @@
+{
+    "name": "Leeroy Jenkins",
+    "description": "Charge. Battlecry: Summon two 1/1 Whelps for your opponent.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 5,
+    "minion": {
+        "attack": 6,
+        "hp": 2,
+        "charge": true,
+        "battleCries": {
+            "class": "TargetlessActions.actWithOpponent",
+            "action": {
+                "class": "TargetlessActions.summonMinion",
+                "minion": "Whelp",
+                "minionCount": 2
+            }
+        }
+    }
+}

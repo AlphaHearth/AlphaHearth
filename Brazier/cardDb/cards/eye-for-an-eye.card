@@ -1,0 +1,16 @@
+{
+    "name": "Eye for an Eye",
+    "description": "Secret: When your hero takes damage, deal that much damage to the enemy hero.",
+    "class": "paladin",
+    "type": "spell",
+    "manaCost": 1,
+    "secret": {
+        "hero-damaged": {
+            "filter": "WorldEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
+            "action": {
+                "class": "WorldEventActions.reflectDamage",
+                "selector": "EntitySelectors.enemyHero"
+            }
+        }
+    }
+}

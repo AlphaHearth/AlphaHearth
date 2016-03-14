@@ -1,0 +1,41 @@
+{
+    "name": "Shadowboxer",
+    "description": "Whenever a character is healed, deal 1 damage to a random enemy.",
+    "class": "priest",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "triggers": {
+            "minion-healed": {
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.enemyLivingTargets"
+                    },
+                    "action": {
+                        "class": "TargetedActions.damageTarget",
+                        "damage": 1
+                    }
+                }
+            },
+            "hero-healed": {
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.enemyLivingTargets"
+                    },
+                    "action": {
+                        "class": "TargetedActions.damageTarget",
+                        "damage": 1
+                    }
+                }
+            }
+        }
+    }
+}

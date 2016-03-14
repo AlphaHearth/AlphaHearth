@@ -1,0 +1,21 @@
+{
+    "name": "Maexxna",
+    "description": "Destroy any minion damaged by this minion.",
+    "class": "neutral",
+    "keywords": "beast",
+    "rarity": "legendary",
+    "manaCost": 6,
+    "minion": {
+        "attack": 2,
+        "hp": 8,
+        "triggers": {
+            "minion-damaged": {
+                "filter": "WorldEventFilters.DAMAGE_SOURCE_SELF",
+                "action": {
+                    "class": "WorldEventActions.forDamageTarget",
+                    "action": "TargetedActions.KILL_TARGET"
+                }
+            }
+        }
+    }
+}

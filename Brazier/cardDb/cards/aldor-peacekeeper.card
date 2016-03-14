@@ -1,0 +1,19 @@
+{
+    "name": "Aldor Peacekeeper",
+    "description": "Battlecry: Change an enemy minion's Attack to 1.",
+    "class": "paladin",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "targets": "enemy-minions",
+            "class": "TargetedActions.buffTarget",
+            "buff": {
+                "class": "Buffs.setAttack",
+                "attack": 1
+            }
+        }
+    }
+}

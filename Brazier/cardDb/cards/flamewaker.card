@@ -1,0 +1,35 @@
+{
+    "name": "Flamewaker",
+    "description": "After you cast a spell, deal 2 damage randomly split among all enemies.",
+    "class": "mage",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "triggers": {
+            "done-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL"
+                ],
+                "action": {
+                    "class": "TargetlessActions.doMultipleTimes",
+                    "action": {
+                        "class": "TargetlessActions.forTargets",
+                        "selector": {
+                            "class": "EntitySelectors.filtered",
+                            "filter": "EntityFilters.random",
+                            "selector": "EntitySelectors.enemyLivingTargets"
+                        },
+                        "action": {
+                            "class": "TargetedActions.damageTarget",
+                            "damage": 1
+                        }
+                    },
+                    "actionCount": 2
+                }
+            }
+        }
+    }
+}

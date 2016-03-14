@@ -1,0 +1,18 @@
+{
+    "name": "Majordomo Executus",
+    "description": "Deathrattle: Replace your hero with Ragnaros, the Firelord.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 9,
+    "minion": {
+        "attack": 9,
+        "hp": 7,
+        "deathRattle": {
+            "class": "TargetlessActions.replaceHero",
+            "maxHp": 8,
+            "armor": 0,
+            "heroPower": "DIE, INSECT!",
+            "heroClass": "boss-class"
+        }
+    }
+}

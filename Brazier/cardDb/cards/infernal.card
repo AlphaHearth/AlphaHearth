@@ -1,0 +1,11 @@
+{
+    "name": "Infernal",
+    "class": "warlock",
+    "keywords": "demon",
+    "collectible": false,
+    "manaCost": 6,
+    "minion": {
+        "attack": 6,
+        "hp": 6
+    }
+}

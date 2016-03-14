@@ -1,0 +1,17 @@
+{
+    "name": "Dark Wispers/Buff",
+    "displayName": "Dark Wispers",
+    "description": "+5/+5 and Taunt.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": [
+        {
+            "targets": "all-minions",
+            "class": "TargetedActions.buffTarget",
+            "buff": "5/5"
+        },
+        "TargetedActions.TAUNT"
+    ]
+}

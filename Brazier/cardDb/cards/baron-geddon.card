@@ -1,0 +1,24 @@
+{
+    "name": "Baron Geddon",
+    "description": "At the end of your turn, deal 2 damage to ALL other characters.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 7,
+    "minion": {
+        "attack": 7,
+        "hp": 5,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.damageTarget",
+                    "selector": {
+                        "class": "EntitySelectors.notSelf",
+                        "selector": "EntitySelectors.allLivingTargets"
+                    },
+                    "damage": 2
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "name": "Lost Tallstrider",
+    "class": "neutral",
+    "keywords": "beast",
+    "manaCost": 4,
+    "minion": {
+        "attack": 5,
+        "hp": 4
+    }
+}

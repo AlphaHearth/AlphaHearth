@@ -1,0 +1,17 @@
+{
+    "name": "Lightbomb",
+    "description": "Deal damage to each minion equal to its Attack.",
+    "class": "priest",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 6,
+    "playActions": {
+        "class": "TargetlessActions.forBornTargets",
+        "action": {
+            "class": "TargetlessActions.forSelf",
+            "action": "TargetedActions.DAMAGE_TARGET"
+        },
+        "atomic": false,
+        "selector": "EntitySelectors.allMinions"
+    }
+}

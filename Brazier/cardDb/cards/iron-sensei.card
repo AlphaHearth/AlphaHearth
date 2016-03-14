@@ -1,0 +1,36 @@
+{
+    "name": "Iron Sensei",
+    "description": "At the end of your turn, give another friendly Mech +2/+2.",
+    "class": "rouge",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 2,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.filtered",
+                            "filter": {
+                                "class": "EntityFilters.withKeywords",
+                                "keywords": "mech"
+                            },
+                            "selector": "EntitySelectors.friendlyBuffableMinions"
+                        }
+                    },
+                    "action": {
+                        "class": "TargetedActions.buffTarget",
+                        "buff": "2/2"
+                    }
+                }
+            }
+        }
+    }
+}

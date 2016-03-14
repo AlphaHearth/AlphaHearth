@@ -1,0 +1,19 @@
+{
+    "name": "Summoning Portal",
+    "description": "Your minions cost (2) less, but not less than (1).",
+    "class": "warlock",
+    "manaCost": 4,
+    "minion": {
+        "attack": 0,
+        "hp": 4,
+        "ability": {
+            "class": "ActivatableAbilities.cardAura",
+            "filter": "AuraFilters.IS_MINION_CARD",
+            "aura": {
+                "class": "Auras.decreaseManaCostWithLimit",
+                "amount": 2,
+                "limit": 1
+            }
+        }
+    }
+}

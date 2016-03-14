@@ -1,0 +1,19 @@
+{
+    "name": "Frothing Berserker",
+    "description": "Whenever a minion takes damage, gain +1 Attack.",
+    "class": "warrior",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "triggers": {
+            "minion-damaged": {
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/0"
+                }
+            }
+        }
+    }
+}

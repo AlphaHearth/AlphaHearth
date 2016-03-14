@@ -1,0 +1,21 @@
+{
+    "name": "Ysera Awakens",
+    "description": "Deal 5 damage to all characters except Ysera.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "emerald-dream",
+    "collectible": false,
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 5,
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": {
+                "class": "EntityFilters.withoutKeywords",
+                "keywords": "ysera"
+            },
+            "selector": "EntitySelectors.allLivingTargets"
+        }
+    }
+}

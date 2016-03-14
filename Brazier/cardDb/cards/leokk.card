@@ -1,0 +1,22 @@
+{
+    "name": "Leokk",
+    "description": "Other friendly minions have +1 Attack.",
+    "class": "hunter",
+    "keywords": [
+        "beast",
+        "animal-companion"
+    ],
+    "collectible": false,
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "ability": {
+            "class": "MinionAbilities.sameBoardOthersAura",
+            "aura": {
+                "class": "Auras.minionAttackBuff",
+                "attack": 1
+            }
+        }
+    }
+}

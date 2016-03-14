@@ -1,0 +1,12 @@
+{
+    "name": "Mountain Giant",
+    "description": "Costs (1) less for each other card in your hand.",
+    "class": "neutral",
+    "rarity": "epic",
+    "manaCost": 12,
+    "manaCostAdjusters": "ManaCostAdjusters.REDUCE_BY_HAND_SIZE",
+    "minion": {
+        "attack": 8,
+        "hp": 8
+    }
+}

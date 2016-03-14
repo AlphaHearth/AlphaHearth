@@ -1,0 +1,15 @@
+{
+    "name": "Gang Up",
+    "description": "Choose a minion. Shuffle 3 copies of it into your deck.",
+    "class": "rouge",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "targets": "all-minions",
+        "actions": [
+            "TargetedActions.SHUFFLE_MINION",
+            "TargetedActions.SHUFFLE_MINION",
+            "TargetedActions.SHUFFLE_MINION"
+        ]
+    }
+}

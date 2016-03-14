@@ -1,0 +1,14 @@
+{
+    "name": "Execute",
+    "description": "Destroy a damaged enemy minion.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "targets": [
+            "enemy-minions",
+            "TargetNeeds.TARGET_DAMAGED"
+        ],
+        "class": "TargetedActions.KILL_TARGET"
+    }
+}

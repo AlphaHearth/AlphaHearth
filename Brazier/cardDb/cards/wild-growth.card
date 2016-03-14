@@ -1,0 +1,19 @@
+{
+    "name": "Wild Growth",
+    "description": "Gain an empty Mana Crystal.",
+    "class": "druid",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.doIf",
+        "condition": "EntityFilters.isMaxManaCrystals",
+        "else": {
+            "class": "TargetlessActions.addManaCrystal",
+            "amount": 1
+        },
+        "if": {
+            "class": "TargetlessActions.addCard",
+            "card": "Excess Mana"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "name": "Tree of Life",
+    "description": "Restore all characters to full Health.",
+    "class": "druid",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 9,
+    "playActions": {
+        "class": "TargetlessActions.forTargets",
+        "action": "TargetedActions.RESTORES_TO_FULL_HEALTH",
+        "selector": "EntitySelectors.allTargets"
+    }
+}

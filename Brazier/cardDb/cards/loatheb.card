@@ -1,0 +1,20 @@
+{
+    "name": "Loatheb",
+    "description": "Battlecry: Enemy spells cost (5) more next turn.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.untilTurnStartsAura",
+            "aura": {
+                "class": "Auras.increaseManaCost",
+                "amount": 5
+            },
+            "filter": "AuraFilters.IS_SPELL_CARD",
+            "target": "AuraTargetProviders.OPPONENT_HAND_PROVIDER"
+        }
+    }
+}

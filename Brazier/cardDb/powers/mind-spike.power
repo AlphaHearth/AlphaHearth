@@ -1,0 +1,11 @@
+{
+    "name": "Mind Spike",
+    "description": "Deal 2 damage.",
+    "class": "priest",
+    "manaCost": 2,
+    "playActions": {
+        "targets": "all",
+        "class": "TargetedActions.damageTarget",
+        "damage": 2
+    }
+}

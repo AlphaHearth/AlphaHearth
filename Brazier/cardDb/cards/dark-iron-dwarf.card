@@ -1,0 +1,15 @@
+{
+    "name": "Dark Iron Dwarf",
+    "description": "Battlecry: Give a minion +2 Attack this turn.",
+    "class": "neutral",
+    "manaCost": 4,
+    "minion": {
+        "attack": 4,
+        "hp": 4,
+        "battleCries": {
+            "targets": "all-minions",
+            "class": "TargetedActions.buffTargetThisTurn",
+            "buff": "2/0"
+        }
+    }
+}

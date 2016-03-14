@@ -1,0 +1,18 @@
+{
+    "name": "Lay on Hands",
+    "description": "Restore 8 Health. Draw 3 cards.",
+    "class": "paladin",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 8,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": -8
+        },
+        "TargetlessActions.DRAW_FOR_SELF",
+        "TargetlessActions.DRAW_FOR_SELF",
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

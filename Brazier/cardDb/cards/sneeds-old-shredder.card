@@ -1,0 +1,26 @@
+{
+    "name": "Sneed's Old Shredder",
+    "description": "Deathrattle: Summon a random legendary minion.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "legendary",
+    "manaCost": 8,
+    "minion": {
+        "attack": 5,
+        "hp": 7,
+        "deathRattle": {
+            "class": "TargetlessActions.summonSelectedRight",
+            "minion": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.random",
+                "selector": {
+                    "class": "EntitySelectors.minionsWithKeywords",
+                    "keywords": [
+                        "legendary",
+                        "collectible"
+                    ]
+                }
+            }
+        }
+    }
+}

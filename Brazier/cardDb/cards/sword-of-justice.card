@@ -1,0 +1,29 @@
+{
+    "name": "Sword of Justice",
+    "description": "Whenever you summon a minion, give it +1/+1 and this loses 1 Durability.",
+    "class": "paladin",
+    "rarity": "epic",
+    "manaCost": 3,
+    "weapon": {
+        "attack": 1,
+        "durability": 5,
+        "triggers": {
+            "done-summoning": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.SOURCE_WEAPON_HAS_CHARGE"
+                ],
+                "action": [
+                    "TargetlessActions.REDUCE_WEAPON_DURABILITY",
+                    {
+                        "class": "WorldEventActions.forEventArgMinionTarget",
+                        "action": {
+                            "class": "TargetedActions.buffTarget",
+                            "buff": "1/1"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

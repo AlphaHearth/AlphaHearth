@@ -1,0 +1,22 @@
+{
+    "name": "Unstable Portal",
+    "description": "Add a random minion to your hand. It costs (3) less.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.addSelectedCard",
+        "card": {
+            "class": "EntitySelectors.filtered",
+            "filter": "EntityFilters.random",
+            "selector": {
+                "class": "EntitySelectors.cardsWithKeywords",
+                "keywords": [
+                    "minion",
+                    "collectible"
+                ]
+            }
+        },
+        "costReduction": 3
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Hobgoblin",
+    "description": "Whenever you play a 1-Attack minion, give it +2/+2.",
+    "class": "neutral",
+    "rarity": "epic",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "triggers": {
+            "start-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    {
+                        "class": "WorldEventFilters.cardMinionAttackEquals",
+                        "attack": 1
+                    }
+                ],
+                "action": {
+                    "class": "WorldEventActions.forEventArgMinionTarget",
+                    "action": {
+                        "class": "TargetedActions.buffTarget",
+                        "buff": "2/2"
+                    }
+                }
+            }
+        }
+    }
+}

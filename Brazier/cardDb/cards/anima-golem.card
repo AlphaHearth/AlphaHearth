@@ -1,0 +1,20 @@
+{
+    "name": "Anima Golem",
+    "description": "At the end of each turn, destroy this minion if it's your only one.",
+    "class": "warlock",
+    "rarity": "epic",
+    "manaCost": 6,
+    "minion": {
+        "attack": 9,
+        "hp": 9,
+        "triggers": {
+            "turn-ends": {
+                "filter": {
+                    "class": "WorldEventFilters.ownBoardSizeIsLess",
+                    "minionCount": 2
+                },
+                "action": "TargetlessActions.SELF_DESTRUCT"
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "Wailing Soul",
+    "description": "Battlecry: Silence your other minions.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 3,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.forOtherTargets",
+            "action": "TargetedActions.SILENCE",
+            "selector": "EntitySelectors.friendlyMinions"
+        }
+    }
+}

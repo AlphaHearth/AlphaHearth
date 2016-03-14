@@ -1,0 +1,27 @@
+{
+    "name": "One-eyed Cheat",
+    "description": "Whenever you summon a Pirate, gain Stealth.",
+    "class": "neutral",
+    "keywords": "pirate",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 4,
+        "hp": 1,
+        "triggers": {
+            "on-summon": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    {
+                        "class": "WorldEventFilters.eventSourceHasKeyword",
+                        "keywords": "beast"
+                    }
+                ],
+                "action": {
+                    "class": "TargetlessActions.forSelf",
+                    "action": "TargetedActions.STEALTH"
+                }
+            }
+        }
+    }
+}

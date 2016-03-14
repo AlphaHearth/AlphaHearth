@@ -1,0 +1,21 @@
+{
+    "name": "Commanding Shout",
+    "description": "Your minions can't be reduced below 1 Health this turn. Draw a card.",
+    "class": "warrior",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "class": "TargetlessActions.addThisTurnAbility",
+            "ability": {
+                "class": "ActivatableAbilities.sameBoardAura",
+                "aura": {
+                    "class": "Auras.minionMinHp",
+                    "hp": 1
+                }
+            }
+        },
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

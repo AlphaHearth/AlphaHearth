@@ -1,0 +1,28 @@
+{
+    "name": "Ice Block",
+    "description": "Secret: When your hero takes fatal damage, prevent it and become Immune this turn.",
+    "class": "mage",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 3,
+    "secret": {
+        "prepare-damage": {
+            "priority": "lowest",
+            "filter": [
+                "WorldEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
+                "WorldEventFilters.PREPARED_DAMAGE_IS_LETHAL"
+            ],
+            "action": [
+                "WorldEventActions.PREVENT_PREPARED_DAMAGE",
+                {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": "EntitySelectors.friendlyHero",
+                    "action": {
+                        "class": "TargetedActions.buffTargetThisTurn",
+                        "buff": "Buffs.IMMUNE"
+                    }
+                }
+            ]
+        }
+    }
+}

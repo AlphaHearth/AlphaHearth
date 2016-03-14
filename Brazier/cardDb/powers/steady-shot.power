@@ -1,0 +1,29 @@
+{
+    "name": "Steady Shot",
+    "description": "Deal 2 damage to the enemy hero.",
+    "class": "hunter",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "requires": {
+                "class": "PlayActionRequirements.doesntHavePlayerFlag",
+                "flag": "steady-shot-snipe"
+            },
+            "class": "TargetlessActions.forTargets",
+            "action": {
+                "class": "TargetedActions.damageTarget",
+                "damage": 2
+            },
+            "selector": "EntitySelectors.enemyHero"
+        },
+        {
+            "targets": "all",
+            "requires": {
+                "class": "PlayActionRequirements.hasPlayerFlag",
+                "flag": "steady-shot-snipe"
+            },
+            "class": "TargetedActions.damageTarget",
+            "damage": 2
+        }
+    ]
+}

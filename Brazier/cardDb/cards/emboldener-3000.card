@@ -1,0 +1,29 @@
+{
+    "name": "Emboldener 3000",
+    "description": "At the end of your turn, give a random minion +1/+1.",
+    "class": "neutral",
+    "keywords": "awesome-invention",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 4,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.allMinions"
+                    },
+                    "action": {
+                        "class": "TargetedActions.buffTarget",
+                        "buff": "1/1"
+                    }
+                }
+            }
+        }
+    }
+}

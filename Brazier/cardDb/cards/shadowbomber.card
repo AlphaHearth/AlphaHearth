@@ -1,0 +1,23 @@
+{
+    "name": "Shadowbomber",
+    "description": "Battlecry: Deal 3 damage to each hero.",
+    "class": "priest",
+    "rarity": "epic",
+    "manaCost": 1,
+    "minion": {
+        "attack": 2,
+        "hp": 1,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.damageTarget",
+                "damage": 3,
+                "selector": "EntitySelectors.friendlyHero"
+            },
+            {
+                "class": "TargetlessActions.damageTarget",
+                "damage": 3,
+                "selector": "EntitySelectors.enemyHero"
+            }
+        ]
+    }
+}

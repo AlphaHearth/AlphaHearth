@@ -1,0 +1,9 @@
+{
+    "name": "Fiery War Axe",
+    "class": "warrior",
+    "manaCost": 2,
+    "weapon": {
+        "attack": 3,
+        "durability": 2
+    }
+}

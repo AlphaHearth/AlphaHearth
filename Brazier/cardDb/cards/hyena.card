@@ -1,0 +1,11 @@
+{
+    "name": "Hyena",
+    "class": "hunter",
+    "keywords": "beast",
+    "collectible": false,
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 2
+    }
+}

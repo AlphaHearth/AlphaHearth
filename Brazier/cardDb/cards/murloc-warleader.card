@@ -1,0 +1,24 @@
+{
+    "name": "Murloc Warleader",
+    "description": "ALL other Murlocs have +2/+1.",
+    "class": "neutral",
+    "keywords": "murloc",
+    "rarity": "epic",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "ability": {
+            "class": "ActivatableAbilities.boardAura",
+            "filter": [
+                "AuraFilters.IS_MURLOC_MINION",
+                "AuraFilters.NOT_SELF"
+            ],
+            "aura": {
+                "class": "Auras.minionBodyBuff",
+                "attack": 2,
+                "hp": 1
+            }
+        }
+    }
+}

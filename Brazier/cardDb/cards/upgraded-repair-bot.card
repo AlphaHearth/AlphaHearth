@@ -1,0 +1,23 @@
+{
+    "name": "Upgraded Repair Bot",
+    "description": "Battlecry: Give a friendly Mech +4 Health.",
+    "class": "priest",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": {
+            "targets": [
+                "friendly-minions",
+                {
+                    "class": "TargetNeeds.hasKeyword",
+                    "keywords": "mech"
+                }
+            ],
+            "class": "TargetedActions.buffTarget",
+            "buff": "0/4"
+        }
+    }
+}

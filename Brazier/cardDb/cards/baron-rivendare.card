@@ -1,0 +1,15 @@
+{
+    "name": "Baron Rivendare",
+    "description": "Your minions trigger their Deathrattles twice.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 4,
+    "minion": {
+        "attack": 1,
+        "hp": 7,
+        "ability": {
+            "class": "ActivatableAbilities.ownPlayerAura",
+            "aura": "Auras.DUPLICATE_DEATH_RATTLE"
+        }
+    }
+}

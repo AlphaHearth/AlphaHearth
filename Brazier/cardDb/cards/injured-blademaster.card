@@ -1,0 +1,18 @@
+{
+    "name": "Injured Blademaster",
+    "description": "Battlecry: Deal 4 damage to HIMSELF.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 4,
+        "hp": 7,
+        "battleCries": {
+            "class": "TargetlessActions.forSelf",
+            "action": {
+                "class": "TargetedActions.damageTarget",
+                "damage": 4
+            }
+        }
+    }
+}

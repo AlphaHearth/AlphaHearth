@@ -1,0 +1,15 @@
+{
+    "name": "Druid of the Claw/Taunt",
+    "displayName": "Druid of the Claw",
+    "description": "Taunt",
+    "class": "druid",
+    "keywords": "beast",
+    "collectible": false,
+    "manaCost": 5,
+    "minion": {
+        "displayName": "Druid of the Claw",
+        "attack": 4,
+        "hp": 6,
+        "taunt": true
+    }
+}

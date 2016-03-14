@@ -1,0 +1,15 @@
+{
+    "name": "Heroic Strike",
+    "description": "Give your hero +4 Attack this turn.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.forTargets",
+        "action": {
+            "class": "TargetedActions.buffTargetThisTurn",
+            "buff": "4/0"
+        },
+        "selector": "EntitySelectors.friendlyHero"
+    }
+}

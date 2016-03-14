@@ -1,0 +1,21 @@
+{
+    "name": "Doomsayer",
+    "description": "At the start of your turn, destroy ALL minions.",
+    "class": "neutral",
+    "rarity": "epic",
+    "manaCost": 2,
+    "minion": {
+        "attack": 0,
+        "hp": 7,
+        "triggers": {
+            "turn-starts": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": "EntitySelectors.allMinions",
+                    "action": "TargetedActions.KILL_TARGET"
+                }
+            }
+        }
+    }
+}

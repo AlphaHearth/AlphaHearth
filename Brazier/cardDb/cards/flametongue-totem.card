@@ -1,0 +1,18 @@
+{
+    "name": "Flametongue Totem",
+    "description": "Adjacent minions have +2 Attack.",
+    "class": "shaman",
+    "keywords": "totem",
+    "manaCost": 2,
+    "minion": {
+        "attack": 0,
+        "hp": 3,
+        "ability": {
+            "class": "MinionAbilities.neighboursAura",
+            "aura": {
+                "class": "Auras.minionAttackBuff",
+                "attack": 2
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "Defender of Argus",
+    "description": "Battlecry: Give adjacent minions +1/+1 and Taunt.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.forTargets",
+            "action": [
+                {
+                    "class": "TargetedActions.buffTarget",
+                    "buff": "1/1"
+                },
+                "TargetedActions.TAUNT"
+            ],
+            "selector": "EntitySelectors.neighbours"
+        }
+    }
+}

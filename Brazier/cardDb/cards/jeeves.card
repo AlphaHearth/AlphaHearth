@@ -1,0 +1,20 @@
+{
+    "name": "Jeeves",
+    "description": "At the end of each player's turn, that player draws until they have 3 cards.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 1,
+        "hp": 4,
+        "triggers": {
+            "turn-ends": {
+                "action": {
+                    "class": "TargetlessActions.drawCardToFillHand",
+                    "targetHandSize": 3
+                }
+            }
+        }
+    }
+}

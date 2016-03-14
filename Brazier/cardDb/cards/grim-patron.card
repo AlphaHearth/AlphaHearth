@@ -1,0 +1,23 @@
+{
+    "name": "Grim Patron",
+    "description": "Whenever this minion survives damage, summon another Grim Patron.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "triggers": {
+            "minion-damaged": {
+                "filter": [
+                    "WorldEventFilters.TARGET_SELF",
+                    "WorldEventFilters.TARGET_SURVIVES"
+                ],
+                "action": {
+                    "class": "TargetlessActions.summonMinionRight",
+                    "minion": "Grim Patron"
+                }
+            }
+        }
+    }
+}

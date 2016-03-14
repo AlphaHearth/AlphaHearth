@@ -1,0 +1,13 @@
+{
+    "name": "Druid of the Flame/Firecat",
+    "displayName": "Druid of the Flame",
+    "class": "druid",
+    "keywords": "beast",
+    "collectible": false,
+    "manaCost": 3,
+    "minion": {
+        "displayName": "Druid of the Flame",
+        "attack": 5,
+        "hp": 2
+    }
+}

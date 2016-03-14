@@ -1,0 +1,14 @@
+{
+    "name": "Life Tap",
+    "description": "Draw a card and take 2 damage.",
+    "class": "warlock",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 2,
+            "selector": "EntitySelectors.friendlyHero"
+        },
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

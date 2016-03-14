@@ -1,0 +1,12 @@
+{
+    "name": "Gift of Cards",
+    "description": "Each player draws a card.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": [
+        "TargetlessActions.DRAW_FOR_SELF",
+        "TargetlessActions.DRAW_FOR_OPPONENT"
+    ]
+}

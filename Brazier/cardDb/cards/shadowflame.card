@@ -1,0 +1,19 @@
+{
+    "name": "Shadowflame",
+    "description": "Destroy a friendly minion and deal its Attack damage to all enemy minions.",
+    "class": "warlock",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 4,
+    "playActions": [
+        {
+            "targets": "friendly-minions",
+            "class": "TargetedActions.KILL_TARGET"
+        },
+        {
+            "targets": "friendly-minions",
+            "class": "TargetedActions.shadowFlameDamage",
+            "selector": "EntitySelectors.enemyMinions"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+{
+    "name": "Assassin's Blade",
+    "class": "rouge",
+    "manaCost": 5,
+    "weapon": {
+        "attack": 3,
+        "durability": 4
+    }
+}

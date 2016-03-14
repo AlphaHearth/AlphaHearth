@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="info.hearthsim.brazier.FreezeTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2016-03-14T18:49:56" hostname="mrdai-Laptop" time="0.111">
+  <properties/>
+  <testcase name="testFreezingOpponent" classname="info.hearthsim.brazier.FreezeTest" time="0.028"/>
+  <testcase name="testFreezingSelfWithoutAttack" classname="info.hearthsim.brazier.FreezeTest" time="0.021"/>
+  <testcase name="testFreezingSelfWithAttack" classname="info.hearthsim.brazier.FreezeTest" time="0.049"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

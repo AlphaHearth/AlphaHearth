@@ -1,0 +1,18 @@
+{
+    "name": "Blackwing Technician",
+    "description": "Battlecry: If you're holding a Dragon, gain +1/+1.",
+    "class": "neutral",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "battleCries": {
+            "requires": {
+                "class": "PlayActionRequirements.hasCardInHand",
+                "keywords": "dragon"
+            },
+            "class": "TargetlessActions.buffSelfMinion",
+            "buff": "1/1"
+        }
+    }
+}

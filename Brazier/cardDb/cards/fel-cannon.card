@@ -1,0 +1,36 @@
+{
+    "name": "Fel Cannon",
+    "description": "At the end of your turn, deal 2 damage to a non-Mech minion.",
+    "class": "warlock",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 3,
+        "hp": 5,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.filtered",
+                            "filter": {
+                                "class": "EntityFilters.withoutKeywords",
+                                "keywords": "mech"
+                            },
+                            "selector": "EntitySelectors.allLivingMinions"
+                        }
+                    },
+                    "action": {
+                        "class": "TargetedActions.damageTarget",
+                        "damage": 2
+                    }
+                }
+            }
+        }
+    }
+}

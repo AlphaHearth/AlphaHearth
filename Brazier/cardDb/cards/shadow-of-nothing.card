@@ -1,0 +1,12 @@
+{
+    "name": "Shadow of Nothing",
+    "description": "Mindgames whiffed! Your opponent had no minions!",
+    "class": "priest",
+    "rarity": "epic",
+    "collectible": false,
+    "manaCost": 0,
+    "minion": {
+        "attack": 0,
+        "hp": 1
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "name": "Ravenholdt Assassin",
+    "description": "Stealth",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 7,
+    "minion": {
+        "attack": 7,
+        "hp": 5,
+        "stealth": true
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Loot Hoarder",
+    "description": "Deathrattle: Draw a card.",
+    "class": "neutral",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 1,
+        "deathRattle": "TargetlessActions.DRAW_FOR_SELF"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "name": "Ice Lance",
+    "description": "Freeze a character. If it was already Frozen, deal 4 damage instead.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "targets": "all",
+        "actions": [
+            {
+                "class": "TargetedActions.doIf",
+                "condition": {
+                    "class": "TargetedActionConditions.forTarget",
+                    "filter": "EntityFilters.isFrozen"
+                },
+                "if": {
+                    "class": "TargetedActions.damageTarget",
+                    "damage": 4
+                }
+            },
+            "TargetedActions.FREEZE_TARGET"
+        ]
+    }
+}

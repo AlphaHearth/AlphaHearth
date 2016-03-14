@@ -1,0 +1,26 @@
+{
+    "name": "Tinkmaster Overspark",
+    "description": "Battlecry: Transform another random minion into a 5/5 Devilsaur or a 1/1 Squirrel.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.forOtherTargets",
+            "action": {
+                "class": "TargetedActions.transformMinion",
+                "minion": [
+                    "Devlisaur",
+                    "Squirrel"
+                ]
+            },
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.random",
+                "selector": "EntitySelectors.allMinions"
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "name": "Rockbiter Weapon",
+    "description": "Give a friendly character +3 Attack this turn.",
+    "class": "shaman",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "targets": "friendly",
+        "class": "TargetedActions.buffTargetThisTurn",
+        "buff": "3/0"
+    }
+}

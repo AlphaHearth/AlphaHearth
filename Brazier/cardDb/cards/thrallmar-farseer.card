@@ -1,0 +1,12 @@
+{
+    "name": "Thrallmar Farseer",
+    "description": "Windfury",
+    "class": "neutral",
+    "keywords": "horde-warrior",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "maxAttackCount": 2
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "Ancient Mage",
+    "description": "Battlecry: Give adjacent minions Spell Damage +1.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 2,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.forTargets",
+            "action": {
+                "class": "TargetedActions.addAbility",
+                "ability": {
+                    "class": "MinionAbilities.spellPower",
+                    "spellPower": 1
+                }
+            },
+            "selector": "EntitySelectors.neighbours"
+        }
+    }
+}

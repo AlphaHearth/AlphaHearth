@@ -1,0 +1,17 @@
+{
+    "name": "Ice Barrier",
+    "description": "Secret: When your hero is attacked, gain 8 Armor.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 3,
+    "secret": {
+        "attack-initiated": {
+            "priority": "low",
+            "filter": "WorldEventFilters.ATTACK_TARGET_IS_OWN_HERO",
+            "action": {
+                "class": "TargetlessActions.armorUp",
+                "armor": 8
+            }
+        }
+    }
+}

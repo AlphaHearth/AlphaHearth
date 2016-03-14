@@ -1,0 +1,16 @@
+{
+    "name": "Kidnapper",
+    "description": "Combo: Return a minion to its owner's hand.",
+    "class": "rouge",
+    "rarity": "epic",
+    "manaCost": 6,
+    "playActions": {
+        "targets": "enemy-minions",
+        "requires": "PlayActionRequirements.COMBO",
+        "class": "TargetedActions.RETURN_MINION"
+    },
+    "minion": {
+        "attack": 6,
+        "hp": 3
+    }
+}

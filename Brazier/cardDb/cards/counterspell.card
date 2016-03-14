@@ -1,0 +1,20 @@
+{
+    "name": "Counterspell",
+    "description": "Secret: When your opponent casts a spell, Counter it.",
+    "class": "mage",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 3,
+    "secret": {
+        "start-play-card": {
+            "filter": [
+                "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                {
+                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "keywords": "spell"
+                }
+            ],
+            "action": "WorldEventActions.PREVENT_CARD_PLAY"
+        }
+    }
+}

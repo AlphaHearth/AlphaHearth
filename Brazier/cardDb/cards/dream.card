@@ -1,0 +1,13 @@
+{
+    "name": "Dream",
+    "description": "Return a minion to its owner's hand.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "emerald-dream",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.RETURN_MINION"
+    }
+}

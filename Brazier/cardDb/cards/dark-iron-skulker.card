@@ -1,0 +1,20 @@
+{
+    "name": "Dark Iron Skulker",
+    "description": "Battlecry: Deal 2 damage to all undamaged enemy minions.",
+    "class": "rouge",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 4,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 2,
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.isUndamaged",
+                "selector": "EntitySelectors.enemyMinions"
+            }
+        }
+    }
+}

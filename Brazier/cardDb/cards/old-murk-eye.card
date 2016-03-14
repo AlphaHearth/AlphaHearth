@@ -1,0 +1,21 @@
+{
+    "name": "Old Murk-Eye",
+    "description": "Charge. Has +1 Attack for each other Murloc on the battlefield.",
+    "class": "neutral",
+    "keywords": "murloc",
+    "rarity": "legendary",
+    "manaCost": 4,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "charge": true,
+        "ability": {
+            "class": "ActivatableAbilities.selfAura",
+            "aura": {
+                "class": "Auras.attackForOtherMinionsBuff",
+                "attack": 1,
+                "keywords": "murloc"
+            }
+        }
+    }
+}

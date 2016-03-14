@@ -1,0 +1,25 @@
+{
+    "name": "King Mukla",
+    "description": "Battlecry: Give your opponent 2 Bananas.",
+    "class": "neutral",
+    "keywords": "beast",
+    "rarity": "legendary",
+    "manaCost": 3,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.actWithOpponent",
+            "action": [
+                {
+                    "class": "TargetlessActions.addCard",
+                    "card": "Bananas"
+                },
+                {
+                    "class": "TargetlessActions.addCard",
+                    "card": "Bananas"
+                }
+            ]
+        }
+    }
+}

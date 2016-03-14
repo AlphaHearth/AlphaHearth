@@ -1,0 +1,10 @@
+{
+    "name": "Defender",
+    "class": "paladin",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "attack": 2,
+        "hp": 1
+    }
+}

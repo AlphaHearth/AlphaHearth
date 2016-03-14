@@ -1,0 +1,39 @@
+{
+    "name": "Blingtron 3000",
+    "description": "Battlecry: Equip a random weapon for each player.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "legendary",
+    "manaCost": 5,
+    "minion": {
+        "attack": 3,
+        "hp": 4,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.equipSelectedWeapon",
+                "weapon": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": {
+                        "class": "EntitySelectors.weaponsWithKeywords",
+                        "keywords": "collectible"
+                    }
+                }
+            },
+            {
+                "class": "TargetlessActions.actWithOpponent",
+                "action": {
+                    "class": "TargetlessActions.equipSelectedWeapon",
+                    "weapon": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.weaponsWithKeywords",
+                            "keywords": "collectible"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

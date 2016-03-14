@@ -1,0 +1,19 @@
+{
+    "name": "Muster for Battle",
+    "description": "Summon three 1/1 Silver Hand Recruits. Equip a 1/4 Weapon.",
+    "class": "paladin",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 3,
+    "playActions": [
+        {
+            "class": "TargetlessActions.summonMinion",
+            "minion": "Silver Hand Recruit",
+            "minionCount": 3
+        },
+        {
+            "class": "TargetlessActions.equipWeapon",
+            "weapon": "Light's Justice"
+        }
+    ]
+}

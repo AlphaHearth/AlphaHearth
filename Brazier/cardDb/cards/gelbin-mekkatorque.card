@@ -1,0 +1,22 @@
+{
+    "name": "Gelbin Mekkatorque",
+    "description": "Battlecry: Summon an AWESOME invention.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 6,
+    "minion": {
+        "attack": 6,
+        "hp": 6,
+        "battleCries": {
+            "class": "TargetlessActions.summonSelectedMinion",
+            "minion": {
+                "class": "EntitySelectors.filtered",
+                "selector": {
+                    "class": "EntitySelectors.minionsWithKeywords",
+                    "keywords": "awesome-invention"
+                },
+                "filter": "EntityFilters.random"
+            }
+        }
+    }
+}

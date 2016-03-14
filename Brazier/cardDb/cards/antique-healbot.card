@@ -1,0 +1,16 @@
+{
+    "name": "Antique Healbot",
+    "description": "Battlecry: Restore 8 Health to your hero.",
+    "class": "neutral",
+    "keywords": "mech",
+    "manaCost": 5,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": -8,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    }
+}

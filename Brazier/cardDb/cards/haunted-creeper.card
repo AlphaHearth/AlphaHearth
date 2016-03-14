@@ -1,0 +1,24 @@
+{
+    "name": "Haunted Creeper",
+    "description": "Deathrattle: Summon two 1/1 Spectral Spiders.",
+    "class": "neutral",
+    "keywords": [
+        "beast",
+        "beast"
+    ],
+    "manaCost": 2,
+    "minion": {
+        "attack": 1,
+        "hp": 2,
+        "deathRattle": [
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Spectral Spider"
+            },
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Spectral Spider"
+            }
+        ]
+    }
+}

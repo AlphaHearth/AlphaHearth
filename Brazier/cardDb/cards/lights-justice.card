@@ -1,0 +1,9 @@
+{
+    "name": "Light's Justice",
+    "class": "paladin",
+    "manaCost": 1,
+    "weapon": {
+        "attack": 1,
+        "durability": 4
+    }
+}

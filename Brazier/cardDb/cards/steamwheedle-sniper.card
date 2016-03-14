@@ -1,0 +1,18 @@
+{
+    "name": "Steamwheedle Sniper",
+    "description": "Your Hero Power can target minions.",
+    "class": "hunter",
+    "rarity": "epic",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "ability": {
+            "class": "ActivatableAbilities.ownPlayerAura",
+            "aura": {
+                "class": "Auras.playerFlag",
+                "flag": "steady-shot-snipe"
+            }
+        }
+    }
+}

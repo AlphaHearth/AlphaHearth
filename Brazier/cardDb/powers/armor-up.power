@@ -1,0 +1,10 @@
+{
+    "name": "Armor Up!",
+    "description": "Gain 2 armor.",
+    "class": "warrior",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.armorUp",
+        "armor": 2
+    }
+}

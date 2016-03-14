@@ -1,0 +1,29 @@
+{
+    "name": "Hungry Crab",
+    "description": "Battlecry: Destroy a Murloc and gain +2/+2.",
+    "class": "neutral",
+    "keywords": "beast",
+    "rarity": "epic",
+    "manaCost": 1,
+    "minion": {
+        "attack": 1,
+        "hp": 2,
+        "battleCries": {
+            "targets": [
+                "all-minions",
+                {
+                    "class": "TargetNeeds.hasKeyword",
+                    "keywords": "murloc"
+                }
+            ],
+            "class": "TargetedActions.combine",
+            "actions": [
+                "TargetedActions.KILL_TARGET",
+                {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "2/2"
+                }
+            ]
+        }
+    }
+}

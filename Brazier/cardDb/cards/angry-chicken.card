@@ -1,0 +1,20 @@
+{
+    "name": "Angry Chicken",
+    "description": "Enrage: +5 Attack.",
+    "class": "neutral",
+    "keywords": "beast",
+    "rarity": "rare",
+    "manaCost": 1,
+    "minion": {
+        "attack": 1,
+        "hp": 1,
+        "ability": {
+            "class": "ActivatableAbilities.selfAura",
+            "filter": "AuraFilters.SELF_DAMAGED",
+            "aura": {
+                "class": "Auras.minionAttackBuff",
+                "attack": 5
+            }
+        }
+    }
+}

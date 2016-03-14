@@ -1,0 +1,21 @@
+{
+    "name": "Emperor Cobra",
+    "description": "Destroy any minion damaged by this minion.",
+    "class": "neutral",
+    "keywords": "beast",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "triggers": {
+            "minion-damaged": {
+                "filter": "WorldEventFilters.DAMAGE_SOURCE_SELF",
+                "action": {
+                    "class": "WorldEventActions.forDamageTarget",
+                    "action": "TargetedActions.KILL_TARGET"
+                }
+            }
+        }
+    }
+}

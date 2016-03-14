@@ -1,0 +1,13 @@
+{
+    "name": "Finicky Cloakfield",
+    "description": "Give a friendly minion Stealth until your next turn.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "spare-part",
+    "collectible": false,
+    "manaCost": 1,
+    "playActions": {
+        "targets": "friendly-minions",
+        "class": "TargetedActions.STEALTH_FOR_A_TURN"
+    }
+}

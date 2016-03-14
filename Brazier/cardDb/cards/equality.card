@@ -1,0 +1,19 @@
+{
+    "name": "Equality",
+    "description": "Change the Health of ALL minions to 1.",
+    "class": "paladin",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.forTargets",
+        "action": {
+            "class": "TargetedActions.buffTarget",
+            "buff": {
+                "class": "Buffs.setMaxHp",
+                "hp": 1
+            }
+        },
+        "selector": "EntitySelectors.enemyMinions"
+    }
+}

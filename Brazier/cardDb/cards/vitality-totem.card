@@ -1,0 +1,22 @@
+{
+    "name": "Vitality Totem",
+    "description": "At the end of your turn, restore 4 Health to your hero.",
+    "class": "shaman",
+    "keywords": "totem",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 0,
+        "hp": 3,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.damageTarget",
+                    "selector": "EntitySelectors.friendlyHero",
+                    "damage": -4
+                }
+            }
+        }
+    }
+}

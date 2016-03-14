@@ -1,0 +1,15 @@
+{
+    "name": "Death's Bite",
+    "description": "Deathrattle: Deal 1 damage to all minions.",
+    "class": "warrior",
+    "manaCost": 4,
+    "weapon": {
+        "attack": 4,
+        "durability": 2,
+        "deathRattle": {
+            "class": "TargetlessActions.damageTarget",
+            "selector": "EntitySelectors.allMinions",
+            "damage": 1
+        }
+    }
+}

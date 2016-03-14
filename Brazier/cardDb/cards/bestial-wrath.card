@@ -1,0 +1,22 @@
+{
+    "name": "Bestial Wrath",
+    "description": "Give a friendly Beast +2 Attack and Immune this turn.",
+    "class": "hunter",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 1,
+    "playActions": {
+        "targets": [
+            "friendly-minions",
+            {
+                "class": "TargetNeeds.hasKeyword",
+                "keywords": "beast"
+            }
+        ],
+        "class": "TargetedActions.buffTargetThisTurn",
+        "buff": [
+            "2/0",
+            "Buffs.IMMUNE"
+        ]
+    }
+}

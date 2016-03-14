@@ -1,0 +1,17 @@
+{
+    "name": "Rogues Do It...",
+    "description": "Deal 4 damage. Draw a card.",
+    "class": "neutral",
+    "type": "spell",
+    "keywords": "power-chord",
+    "collectible": false,
+    "manaCost": 4,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": 4
+        },
+        "TargetlessActions.DRAW_FOR_SELF"
+    ]
+}

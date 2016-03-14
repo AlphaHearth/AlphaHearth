@@ -1,0 +1,19 @@
+{
+    "name": "Cobra Shot",
+    "description": "Deal 3 damage to a minion and the enemy hero.",
+    "class": "hunter",
+    "type": "spell",
+    "manaCost": 5,
+    "playActions": [
+        {
+            "targets": "all-minions",
+            "class": "TargetedActions.damageTarget",
+            "damage": 3
+        },
+        {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 3,
+            "selector": "EntitySelectors.enemyHero"
+        }
+    ]
+}

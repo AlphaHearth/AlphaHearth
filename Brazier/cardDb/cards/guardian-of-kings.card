@@ -1,0 +1,15 @@
+{
+    "name": "Guardian of Kings",
+    "description": "Battlecry: Restore 6 Health to your hero.",
+    "class": "paladin",
+    "manaCost": 7,
+    "minion": {
+        "attack": 5,
+        "hp": 6,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": -6,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    }
+}

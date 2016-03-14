@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="info.hearthsim.brazier.parsing.DefaultDbTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2016-03-14T18:49:56" hostname="mrdai-Laptop" time="0.039">
+  <properties/>
+  <testcase name="testDbIsAvailable" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.0"/>
+  <testcase name="testAllMinionIsSummonable" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.02"/>
+  <testcase name="testCardTypeKeywords" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.002"/>
+  <testcase name="testBasicKeywordsInDescription" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.008"/>
+  <testcase name="testAllMinionsHaveCard" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.001"/>
+  <testcase name="testAllMinionCardsHaveMinion" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.0"/>
+  <testcase name="testAllChooseOneCardsMustExist" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.0"/>
+  <testcase name="testKnownCardClasses" classname="info.hearthsim.brazier.parsing.DefaultDbTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

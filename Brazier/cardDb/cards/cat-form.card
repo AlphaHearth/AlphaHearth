@@ -1,0 +1,18 @@
+{
+    "name": "Cat Form",
+    "description": "Charge",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.withMinion",
+        "action": {
+            "class": "TargetlessActions.forSelf",
+            "action": {
+                "class": "TargetedActions.transformMinion",
+                "minion": "Druid of the Claw/Charge"
+            }
+        }
+    }
+}

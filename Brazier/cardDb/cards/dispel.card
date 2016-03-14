@@ -1,0 +1,12 @@
+{
+    "name": "Dispel",
+    "description": "Silence a minion.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.SILENCE"
+    }
+}

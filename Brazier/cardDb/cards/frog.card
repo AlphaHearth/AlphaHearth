@@ -1,0 +1,13 @@
+{
+    "name": "Frog",
+    "description": "Taunt",
+    "class": "neutral",
+    "keywords": "beast",
+    "collectible": false,
+    "manaCost": 0,
+    "minion": {
+        "attack": 0,
+        "hp": 1,
+        "taunt": true
+    }
+}

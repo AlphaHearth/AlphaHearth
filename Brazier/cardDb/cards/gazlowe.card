@@ -1,0 +1,37 @@
+{
+    "name": "Gazlowe",
+    "description": "Whenever you cast a 1-mana spell, add a random Mech to your hand.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 6,
+    "minion": {
+        "attack": 3,
+        "hp": 6,
+        "triggers": {
+            "start-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL",
+                    {
+                        "class": "WorldEventFilters.manaCostEquals",
+                        "manaCost": 1
+                    }
+                ],
+                "action": {
+                    "class": "TargetlessActions.addSelectedCard",
+                    "card": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.cardsWithKeywords",
+                            "keywords": [
+                                "mech",
+                                "collectible"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Stoneskin Gargoyle",
+    "description": "At the start of your turn, restore this minion to full Health.",
+    "class": "neutral",
+    "manaCost": 3,
+    "minion": {
+        "attack": 1,
+        "hp": 4,
+        "triggers": {
+            "turn-starts": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forSelf",
+                    "action": "TargetedActions.RESTORES_TO_FULL_HEALTH"
+                }
+            }
+        }
+    }
+}

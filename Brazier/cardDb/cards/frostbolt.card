@@ -1,0 +1,15 @@
+{
+    "name": "Frostbolt",
+    "description": "Deal 3 damage to a character and Freeze it.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": 3
+        },
+        "TargetedActions.FREEZE_TARGET"
+    ]
+}

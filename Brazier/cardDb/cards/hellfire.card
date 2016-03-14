@@ -1,0 +1,12 @@
+{
+    "name": "Hellfire",
+    "description": "Deal 3 damage to ALL characters.",
+    "class": "warlock",
+    "type": "spell",
+    "manaCost": 4,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 3,
+        "selector": "EntitySelectors.allLivingTargets"
+    }
+}

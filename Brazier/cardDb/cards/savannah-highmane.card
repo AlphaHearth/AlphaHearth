@@ -1,0 +1,22 @@
+{
+    "name": "Savannah Highmane",
+    "description": "Deathrattle: Summon two 2/2 Hyenas.",
+    "class": "hunter",
+    "keywords": "beast",
+    "rarity": "rare",
+    "manaCost": 6,
+    "minion": {
+        "attack": 6,
+        "hp": 5,
+        "deathRattle": [
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Hyena"
+            },
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Hyena"
+            }
+        ]
+    }
+}

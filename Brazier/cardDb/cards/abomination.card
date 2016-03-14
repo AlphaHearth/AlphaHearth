@@ -1,0 +1,17 @@
+{
+    "name": "Abomination",
+    "description": "Taunt. Deathrattle: Deal 2 damage to ALL characters.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 4,
+        "hp": 4,
+        "taunt": true,
+        "deathRattle": {
+            "class": "TargetlessActions.damageTarget",
+            "selector": "EntitySelectors.allLivingTargets",
+            "damage": 2
+        }
+    }
+}

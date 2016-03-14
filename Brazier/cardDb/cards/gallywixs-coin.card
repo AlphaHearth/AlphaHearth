@@ -1,0 +1,13 @@
+{
+    "name": "Gallywix's Coin",
+    "description": "Gain 1 Mana Crystal this turn only. (Won't trigger Gallywix.)",
+    "class": "rouge",
+    "type": "spell",
+    "keywords": "gallywix-spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.gainMana",
+        "mana": 1
+    }
+}

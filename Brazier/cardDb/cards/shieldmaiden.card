@@ -1,0 +1,15 @@
+{
+    "name": "Shieldmaiden",
+    "description": "Battlecry: Gain 5 Armor.",
+    "class": "warrior",
+    "rarity": "rare",
+    "manaCost": 6,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": {
+            "class": "TargetlessActions.armorUp",
+            "armor": 5
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "name": "Truesilver Champion",
+    "description": "Whenever your hero attacks, restore 2 Health to it.",
+    "class": "paladin",
+    "manaCost": 4,
+    "weapon": {
+        "attack": 4,
+        "durability": 2,
+        "triggers": {
+            "attack-initiated": {
+                "priority": "low",
+                "filter": [
+                    "WorldEventFilters.ATTACKER_IS_OWNER",
+                    "WorldEventFilters.ATTACKER_IS_HERO"
+                ],
+                "action": {
+                    "class": "TargetlessActions.damageTarget",
+                    "selector": "EntitySelectors.friendlyHero",
+                    "damage": -2
+                }
+            }
+        }
+    }
+}

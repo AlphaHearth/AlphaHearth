@@ -1,0 +1,19 @@
+{
+    "name": "Blackwing Corruptor",
+    "description": "Battlecry: If you're holding a Dragon, deal 3 damage.",
+    "class": "neutral",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 4,
+        "battleCries": {
+            "targets": "all",
+            "requires": {
+                "class": "PlayActionRequirements.hasCardInHand",
+                "keywords": "dragon"
+            },
+            "class": "TargetedActions.damageTarget",
+            "damage": 3
+        }
+    }
+}

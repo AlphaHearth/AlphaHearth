@@ -1,0 +1,14 @@
+{
+    "name": "Treant/Taunt",
+    "displayName": "Treant",
+    "description": "Taunt",
+    "class": "druid",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "displayName": "Treant",
+        "attack": 2,
+        "hp": 2,
+        "taunt": true
+    }
+}

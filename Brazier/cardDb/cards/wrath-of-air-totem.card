@@ -1,0 +1,15 @@
+{
+    "name": "Wrath of Air Totem",
+    "description": "Spell Damage +1",
+    "class": "shaman",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 2,
+        "ability": {
+            "class": "MinionAbilities.spellPower",
+            "spellPower": 1
+        }
+    }
+}

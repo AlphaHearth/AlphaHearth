@@ -1,0 +1,20 @@
+{
+    "name": "Snowchugger",
+    "description": "Freeze any character damaged by this minion.",
+    "class": "mage",
+    "keywords": "mech",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "triggers": {
+            "minion-damaged": {
+                "filter": "WorldEventFilters.DAMAGE_SOURCE_SELF",
+                "action": {
+                    "class": "WorldEventActions.forDamageTarget",
+                    "action": "TargetedActions.FREEZE_TARGET"
+                }
+            }
+        }
+    }
+}

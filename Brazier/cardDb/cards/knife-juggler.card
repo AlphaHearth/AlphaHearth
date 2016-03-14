@@ -1,0 +1,28 @@
+{
+    "name": "Knife Juggler",
+    "description": "After you summon a minion, deal 1 damage to a random enemy.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 3,
+        "hp": 2,
+        "triggers": {
+            "done-summoning": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.enemyLivingTargets"
+                    },
+                    "action": {
+                        "class": "TargetedActions.damageTarget",
+                        "damage": 1
+                    }
+                }
+            }
+        }
+    }
+}

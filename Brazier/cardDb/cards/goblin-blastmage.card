@@ -1,0 +1,28 @@
+{
+    "name": "Goblin Blastmage",
+    "description": "Battlecry: If you have a Mech, deal 4 damage randomly split among all enemies.",
+    "class": "mage",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 5,
+        "hp": 4,
+        "battleCries": {
+            "actionCondition": {
+                "class": "PlayActionRequirements.hasOnOwnBoard",
+                "keywords": "mech"
+            },
+            "class": "TargetlessActions.doMultipleTimes",
+            "action": {
+                "class": "TargetlessActions.damageTarget",
+                "selector": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": "EntitySelectors.enemyLivingTargets"
+                },
+                "damage": 1
+            },
+            "actionCount": 4
+        }
+    }
+}

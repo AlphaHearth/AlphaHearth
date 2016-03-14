@@ -1,0 +1,13 @@
+{
+    "name": "Void Terror",
+    "description": "Battlecry: Destroy the minions on either side of this minion and gain their Attack and Health.",
+    "class": "warlock",
+    "keywords": "demon",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": "TargetlessActions.CONSUME_NEIGHBOURS"
+    }
+}

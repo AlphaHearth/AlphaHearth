@@ -1,0 +1,38 @@
+{
+    "name": "Elite Tauren Chieftain",
+    "description": "Battlecry: Give both players the power to ROCK! (with a Power Chord card)",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.addSelectedCard",
+                "card": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": {
+                        "class": "EntitySelectors.cardsWithKeywords",
+                        "keywords": "power-chord"
+                    }
+                }
+            },
+            {
+                "class": "TargetlessActions.actWithOpponent",
+                "action": {
+                    "class": "TargetlessActions.addSelectedCard",
+                    "card": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.cardsWithKeywords",
+                            "keywords": "power-chord"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

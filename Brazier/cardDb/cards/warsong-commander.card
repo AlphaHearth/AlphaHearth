@@ -1,0 +1,25 @@
+{
+    "name": "Warsong Commander",
+    "description": "Whenever you summon a minion with 3 or less Attack, give it Charge.",
+    "class": "warrior",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "triggers": {
+            "start-summoning": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    {
+                        "class": "WorldEventFilters.targetAttackIsLess",
+                        "attack": 4
+                    }
+                ],
+                "action": {
+                    "class": "WorldEventActions.forEventArgMinionTarget",
+                    "action": "TargetedActions.CHARGE"
+                }
+            }
+        }
+    }
+}

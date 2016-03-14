@@ -1,0 +1,14 @@
+{
+    "name": "Dragonling Mechanic",
+    "description": "Battlecry: Summon a 2/1 Mechanical Dragonling.",
+    "class": "neutral",
+    "manaCost": 4,
+    "minion": {
+        "attack": 2,
+        "hp": 4,
+        "battleCries": {
+            "class": "TargetlessActions.summonMinionRight",
+            "minion": "Mechanical Dragonling"
+        }
+    }
+}

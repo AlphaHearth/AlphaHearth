@@ -1,0 +1,12 @@
+{
+    "name": "The Coin",
+    "description": "Gain 1 Mana Crystal this turn only.",
+    "class": "neutral",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.gainMana",
+        "mana": 1
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Shade of Naxxramas",
+    "description": "Stealth. At the start of your turn, gain +1/+1.",
+    "class": "neutral",
+    "rarity": "epic",
+    "manaCost": 3,
+    "minion": {
+        "attack": 2,
+        "hp": 2,
+        "stealth": true,
+        "triggers": {
+            "turn-starts": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/1"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Poultryizer",
+    "description": "At the start of your turn, transform a random minion into a 1/1 Chicken.",
+    "class": "neutral",
+    "keywords": "awesome-invention",
+    "collectible": false,
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 3,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.allLivingMinions"
+                    },
+                    "action": {
+                        "class": "TargetedActions.transformMinion",
+                        "minion": "Chicken"
+                    }
+                }
+            }
+        }
+    }
+}

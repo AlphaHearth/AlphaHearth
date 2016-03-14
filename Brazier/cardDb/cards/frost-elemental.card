@@ -1,0 +1,14 @@
+{
+    "name": "Frost Elemental",
+    "description": "Battlecry: Freeze a character.",
+    "class": "neutral",
+    "manaCost": 6,
+    "minion": {
+        "attack": 5,
+        "hp": 5,
+        "battleCries": {
+            "targets": "all",
+            "class": "TargetedActions.FREEZE_TARGET"
+        }
+    }
+}

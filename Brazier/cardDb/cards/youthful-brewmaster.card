@@ -1,0 +1,14 @@
+{
+    "name": "Youthful Brewmaster",
+    "description": "Battlecry: Return a friendly minion from the battlefield to your hand.",
+    "class": "neutral",
+    "manaCost": 2,
+    "minion": {
+        "attack": 3,
+        "hp": 2,
+        "battleCries": {
+            "targets": "friendly-minions",
+            "class": "TargetedActions.RETURN_MINION"
+        }
+    }
+}

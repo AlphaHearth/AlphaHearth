@@ -1,0 +1,20 @@
+{
+    "name": "Millhouse Manastorm",
+    "description": "Battlecry: Enemy spells cost (0) next turn.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 2,
+    "minion": {
+        "attack": 4,
+        "hp": 4,
+        "battleCries": {
+            "class": "TargetlessActions.untilTurnStartsAura",
+            "aura": {
+                "class": "Auras.setManaCost",
+                "manaCost": 0
+            },
+            "filter": "AuraFilters.IS_SPELL_CARD",
+            "target": "AuraTargetProviders.OPPONENT_HAND_PROVIDER"
+        }
+    }
+}

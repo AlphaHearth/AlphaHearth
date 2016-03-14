@@ -1,0 +1,19 @@
+{
+    "name": "Cogmaster's Wrench",
+    "description": "Has +2 Attack while you have a Mech.",
+    "class": "rouge",
+    "rarity": "epic",
+    "manaCost": 3,
+    "weapon": {
+        "attack": 1,
+        "durability": 3,
+        "ability": {
+            "class": "ActivatableAbilities.ownWeaponAura",
+            "filter": "AuraFilters.OWN_BOARD_HAS_MECH",
+            "aura": {
+                "class": "Auras.weaponAttackBuff",
+                "attack": 2
+            }
+        }
+    }
+}

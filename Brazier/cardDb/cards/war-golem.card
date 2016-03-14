@@ -1,0 +1,9 @@
+{
+    "name": "War Golem",
+    "class": "neutral",
+    "manaCost": 7,
+    "minion": {
+        "attack": 7,
+        "hp": 7
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "name": "Tinkertown Technician",
+    "description": "Battlecry: If you have a Mech, gain +1/+1 and add a Spare Part to your hand.",
+    "class": "neutral",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "actionCondition": {
+                "class": "PlayActionRequirements.hasOnOwnBoard",
+                "keywords": "mech"
+            },
+            "class": "TargetedActions.combine",
+            "actions": [
+                {
+                    "class": "TargetlessActions.addSelectedCard",
+                    "card": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.cardsWithKeywords",
+                            "keywords": "spare-part"
+                        }
+                    }
+                },
+                {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/1"
+                }
+            ]
+        }
+    }
+}

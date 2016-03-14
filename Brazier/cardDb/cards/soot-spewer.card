@@ -1,0 +1,16 @@
+{
+    "name": "Soot Spewer",
+    "description": "Spell Damage +1",
+    "class": "mage",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "ability": {
+            "class": "MinionAbilities.spellPower",
+            "spellPower": 1
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Leper Gnome",
+    "description": "Deathrattle: Deal 2 damage to the enemy hero.",
+    "class": "neutral",
+    "manaCost": 1,
+    "minion": {
+        "attack": 2,
+        "hp": 1,
+        "deathRattle": {
+            "class": "TargetlessActions.damageTarget",
+            "selector": "EntitySelectors.enemyHero",
+            "damage": 2
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "name": "Snipe",
+    "description": "Secret: When your opponent plays a minion, deal 4 damage to it.",
+    "class": "hunter",
+    "type": "spell",
+    "manaCost": 2,
+    "secret": {
+        "done-play-card": {
+            "filter": [
+                "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                {
+                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "keywords": "minion"
+                }
+            ],
+            "action": {
+                "class": "WorldEventActions.forEventArgMinionTarget",
+                "action": {
+                    "class": "TargetedActions.damageTarget",
+                    "damage": 4
+                }
+            }
+        }
+    }
+}

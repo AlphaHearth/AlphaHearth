@@ -1,0 +1,27 @@
+{
+    "name": "Forked Lightning",
+    "description": "Deal 2 damage to 2 random enemy minions. Overload: (2)",
+    "class": "shaman",
+    "type": "spell",
+    "manaCost": 1,
+    "overload": 2,
+    "playActions": {
+        "requires": {
+            "class": "PlayActionRequirements.opponentBoardIsLarger",
+            "minionCount": 1
+        },
+        "class": "TargetlessActions.forBornTargets",
+        "action": {
+            "class": "TargetedActions.damageTarget",
+            "damage": 2
+        },
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": {
+                "class": "EntityFilters.random",
+                "count": 2
+            },
+            "selector": "EntitySelectors.enemyLivingMinions"
+        }
+    }
+}

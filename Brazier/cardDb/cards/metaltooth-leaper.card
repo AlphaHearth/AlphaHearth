@@ -1,0 +1,24 @@
+{
+    "name": "Metaltooth Leaper",
+    "description": "Battlecry: Give your other Mechs +2 Attack.",
+    "class": "hunter",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 3,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.forOtherTargets",
+            "action": {
+                "class": "TargetedActions.buffTarget",
+                "buff": "2/0"
+            },
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.isMech",
+                "selector": "EntitySelectors.friendlyMinions"
+            }
+        }
+    }
+}

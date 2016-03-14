@@ -1,0 +1,32 @@
+{
+    "name": "Gorehowl",
+    "description": "Attacking a minion costs 1 Attack instead of 1 Durability.",
+    "class": "warrior",
+    "rarity": "epic",
+    "manaCost": 7,
+    "weapon": {
+        "attack": 7,
+        "durability": 1,
+        "triggers": {
+            "attack-initiated": {
+                "filter": [
+                    "WorldEventFilters.ATTACKER_IS_OWNER",
+                    "WorldEventFilters.ATTACKER_IS_HERO",
+                    "WorldEventFilters.ATTACK_TARGET_IS_MINION"
+                ],
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": "EntitySelectors.friendlyWeapon",
+                    "action": {
+                        "class": "TargetedActions.buffTarget",
+                        "buff": {
+                            "class": "Buffs.buffWeapon",
+                            "attack": -1,
+                            "durability": 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

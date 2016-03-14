@@ -1,0 +1,10 @@
+{
+    "name": "Battle Axe",
+    "class": "warrior",
+    "collectible": false,
+    "manaCost": 1,
+    "weapon": {
+        "attack": 2,
+        "durability": 2
+    }
+}

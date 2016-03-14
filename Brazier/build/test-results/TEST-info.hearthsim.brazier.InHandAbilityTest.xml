@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="info.hearthsim.brazier.InHandAbilityTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2016-03-14T18:49:56" hostname="mrdai-Laptop" time="0.083">
+  <properties/>
+  <testcase name="testBolvarWithoutDeaths" classname="info.hearthsim.brazier.InHandAbilityTest" time="0.015"/>
+  <testcase name="testBolvarWithDeaths" classname="info.hearthsim.brazier.InHandAbilityTest" time="0.036"/>
+  <testcase name="testBolvarWithEnemyDeaths" classname="info.hearthsim.brazier.InHandAbilityTest" time="0.02"/>
+  <testcase name="testBolvarIsNotBuffedAfterPlay" classname="info.hearthsim.brazier.InHandAbilityTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

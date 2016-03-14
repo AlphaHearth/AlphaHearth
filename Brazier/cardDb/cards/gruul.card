@@ -1,0 +1,19 @@
+{
+    "name": "Gruul",
+    "description": "At the end of each turn, gain +1/+1 .",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 8,
+    "minion": {
+        "attack": 7,
+        "hp": 7,
+        "triggers": {
+            "turn-ends": {
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/1"
+                }
+            }
+        }
+    }
+}

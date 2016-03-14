@@ -1,0 +1,12 @@
+{
+    "name": "Whirlwind",
+    "description": "Deal 1 damage to ALL minions.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 1,
+        "selector": "EntitySelectors.allLivingMinions"
+    }
+}

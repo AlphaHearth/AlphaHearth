@@ -1,0 +1,28 @@
+{
+    "name": "Swipe",
+    "description": "Deal 4 damage to an enemy and 1 damage to all other enemies.",
+    "class": "druid",
+    "type": "spell",
+    "manaCost": 4,
+    "playActions": {
+        "targets": "enemy",
+        "class": "TargetedActions.doAtomic",
+        "action": [
+            {
+                "class": "TargetedActions.damageTarget",
+                "damage": 4
+            },
+            {
+                "class": "TargetedActions.forTargets",
+                "selector": {
+                    "class": "TargetedEntitySelectors.excludeTarget",
+                    "selector": "EntitySelectors.enemyTargets"
+                },
+                "action": {
+                    "class": "TargetedActions.damageTarget",
+                    "damage": 1
+                }
+            }
+        ]
+    }
+}

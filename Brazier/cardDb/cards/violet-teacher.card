@@ -1,0 +1,23 @@
+{
+    "name": "Violet Teacher",
+    "description": "Whenever you cast a spell, summon a 1/1 Violet Apprentice.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 4,
+    "minion": {
+        "attack": 3,
+        "hp": 5,
+        "triggers": {
+            "start-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL"
+                ],
+                "action": {
+                    "class": "TargetlessActions.summonMinionRight",
+                    "minion": "Violet Apprentice"
+                }
+            }
+        }
+    }
+}

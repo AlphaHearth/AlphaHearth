@@ -1,0 +1,17 @@
+{
+    "name": "Pit Lord",
+    "description": "Battlecry: Deal 5 damage to your hero.",
+    "class": "warlock",
+    "keywords": "demon",
+    "rarity": "epic",
+    "manaCost": 4,
+    "minion": {
+        "attack": 5,
+        "hp": 6,
+        "battleCries": {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 5,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Duplicate",
+    "description": "Secret: When a friendly minion dies, put 2 copies of it into your hand.",
+    "class": "mage",
+    "type": "spell",
+    "manaCost": 3,
+    "secret": {
+        "minion-killed": {
+            "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+            "action": {
+                "class": "WorldEventActions.forEventArgCardTarget",
+                "action": {
+                    "class": "TargetedActions.copyTargetToHand",
+                    "copyCount": 2
+                }
+            }
+        }
+    }
+}

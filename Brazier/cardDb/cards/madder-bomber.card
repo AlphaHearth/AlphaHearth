@@ -1,0 +1,24 @@
+{
+    "name": "Madder Bomber",
+    "description": "Battlecry: Deal 6 damage randomly split between all other characters.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 5,
+    "minion": {
+        "attack": 5,
+        "hp": 4,
+        "battleCries": {
+            "class": "TargetlessActions.doMultipleTimes",
+            "action": {
+                "class": "TargetlessActions.damageTarget",
+                "selector": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": "EntityFilters.random",
+                    "selector": "EntitySelectors.allLivingTargets"
+                },
+                "damage": 1
+            },
+            "actionCount": 6
+        }
+    }
+}

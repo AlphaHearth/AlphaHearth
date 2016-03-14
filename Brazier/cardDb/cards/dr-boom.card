@@ -1,0 +1,21 @@
+{
+    "name": "Dr. Boom",
+    "description": "Battlecry: Summon two 1/1 Boom Bots. WARNING: Bots may explode.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 7,
+    "minion": {
+        "attack": 7,
+        "hp": 7,
+        "battleCries": [
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Boom Bot"
+            },
+            {
+                "class": "TargetlessActions.summonMinionLeft",
+                "minion": "Boom Bot"
+            }
+        ]
+    }
+}

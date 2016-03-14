@@ -1,0 +1,11 @@
+{
+    "name": "Innervate",
+    "description": "Gain 2 Mana Crystals this turn only.",
+    "class": "druid",
+    "type": "spell",
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.gainMana",
+        "mana": 2
+    }
+}

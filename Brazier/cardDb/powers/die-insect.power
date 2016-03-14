@@ -1,0 +1,15 @@
+{
+    "name": "DIE, INSECT!",
+    "description": "Deal 8 damage to a random enemy.",
+    "class": "boss-class",
+    "manaCost": 2,
+    "playActions": {
+        "class": "TargetlessActions.damageTarget",
+        "damage": 8,
+        "selector": {
+            "class": "EntitySelectors.filtered",
+            "filter": "EntityFilters.random",
+            "selector": "EntitySelectors.enemyLivingTargets"
+        }
+    }
+}

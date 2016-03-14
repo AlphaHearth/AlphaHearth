@@ -1,0 +1,11 @@
+{
+    "name": "Stormforged Axe",
+    "description": "Overload: (1)",
+    "class": "shaman",
+    "manaCost": 2,
+    "overload": 1,
+    "weapon": {
+        "attack": 2,
+        "durability": 3
+    }
+}

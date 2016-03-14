@@ -1,0 +1,15 @@
+{
+    "name": "Humility",
+    "description": "Change a minion's Attack to 1.",
+    "class": "paladin",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "targets": "all-minions",
+        "class": "TargetedActions.buffTarget",
+        "buff": {
+            "class": "Buffs.setAttack",
+            "attack": 1
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "name": "Wicked Knife",
+    "class": "rouge",
+    "collectible": false,
+    "manaCost": 1,
+    "weapon": {
+        "attack": 1,
+        "durability": 2
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "name": "Young Priestess",
+    "description": "At the end of your turn, give another random friendly minion +1 Health.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 1,
+    "minion": {
+        "attack": 2,
+        "hp": 1,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.friendlyBuffableMinions"
+                    },
+                    "action": {
+                        "class": "TargetlessActions.buffSelfMinion",
+                        "buff": "0/1"
+                    }
+                }
+            }
+        }
+    }
+}

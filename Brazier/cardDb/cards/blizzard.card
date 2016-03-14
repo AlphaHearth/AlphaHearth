@@ -1,0 +1,21 @@
+{
+    "name": "Blizzard",
+    "description": "Deal 2 damage to all enemy minions and Freeze them.",
+    "class": "mage",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 6,
+    "playActions": [
+        {
+            "class": "TargetlessActions.damageTarget",
+            "damage": 2,
+            "selector": "EntitySelectors.enemyMinions"
+        },
+        {
+            "class": "TargetlessActions.forBornTargets",
+            "action": "TargetedActions.FREEZE_TARGET",
+            "atomic": true,
+            "selector": "EntitySelectors.enemyMinions"
+        }
+    ]
+}

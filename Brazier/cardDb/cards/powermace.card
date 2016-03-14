@@ -1,0 +1,30 @@
+{
+    "name": "Powermace",
+    "description": "Deathrattle: Give a random friendly Mech +2/+2.",
+    "class": "shaman",
+    "rarity": "rare",
+    "manaCost": 3,
+    "weapon": {
+        "attack": 3,
+        "durability": 2,
+        "deathRattle": {
+            "class": "TargetlessActions.forTargets",
+            "selector": {
+                "class": "EntitySelectors.filtered",
+                "filter": "EntityFilters.random",
+                "selector": {
+                    "class": "EntitySelectors.filtered",
+                    "filter": {
+                        "class": "EntityFilters.withKeywords",
+                        "keywords": "mech"
+                    },
+                    "selector": "EntitySelectors.friendlyBuffableMinions"
+                }
+            },
+            "action": {
+                "class": "TargetedActions.buffTarget",
+                "buff": "2/2"
+            }
+        }
+    }
+}

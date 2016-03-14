@@ -1,0 +1,25 @@
+{
+    "name": "Rend Blackhand",
+    "description": "Battlecry: If you're holding a Dragon, destroy a Legendary minion.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 7,
+    "minion": {
+        "attack": 8,
+        "hp": 4,
+        "battleCries": {
+            "targets": [
+                "all-minions",
+                {
+                    "class": "TargetNeeds.hasKeyword",
+                    "keywords": "legendary"
+                }
+            ],
+            "requires": {
+                "class": "PlayActionRequirements.hasCardInHand",
+                "keywords": "dragon"
+            },
+            "class": "TargetedActions.KILL_TARGET"
+        }
+    }
+}

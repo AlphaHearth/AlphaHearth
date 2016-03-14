@@ -1,0 +1,24 @@
+{
+    "name": "Mortal Coil",
+    "description": "Deal 1 damage to a minion. If that kills it, draw a card.",
+    "class": "warlock",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "targets": "all-minions",
+        "actions": [
+            {
+                "class": "TargetedActions.damageTarget",
+                "damage": 1
+            },
+            {
+                "class": "TargetedActions.doIf",
+                "condition": {
+                    "class": "TargetedActionConditions.forTarget",
+                    "filter": "EntityFilters.isDead"
+                },
+                "if": "TargetlessActions.DRAW_FOR_SELF"
+            }
+        ]
+    }
+}

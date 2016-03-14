@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="info.hearthsim.brazier.DivineShieldTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2016-03-14T18:49:56" hostname="mrdai-Laptop" time="0.095">
+  <properties/>
+  <testcase name="testScarletCrusaderAttacks" classname="info.hearthsim.brazier.DivineShieldTest" time="0.059"/>
+  <testcase name="testScarletCrusaderAttacked" classname="info.hearthsim.brazier.DivineShieldTest" time="0.031"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

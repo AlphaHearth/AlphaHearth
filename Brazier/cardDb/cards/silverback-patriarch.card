@@ -1,0 +1,12 @@
+{
+    "name": "Silverback Patriarch",
+    "description": "Taunt",
+    "class": "neutral",
+    "keywords": "beast",
+    "manaCost": 3,
+    "minion": {
+        "attack": 1,
+        "hp": 4,
+        "taunt": true
+    }
+}

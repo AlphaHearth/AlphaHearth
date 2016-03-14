@@ -1,0 +1,28 @@
+{
+    "name": "Revenge",
+    "description": "Deal 1 damage to all minions. If you have 12 or less Health, deal 3 damage instead.",
+    "class": "warrior",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 2,
+    "playActions": [
+        {
+            "requires": {
+                "class": "PlayActionRequirements.ownHpIsMore",
+                "hp": 12
+            },
+            "class": "TargetlessActions.damageTarget",
+            "damage": 1,
+            "selector": "EntitySelectors.allLivingMinions"
+        },
+        {
+            "requires": {
+                "class": "PlayActionRequirements.ownHpIsLess",
+                "hp": 13
+            },
+            "class": "TargetlessActions.damageTarget",
+            "damage": 3,
+            "selector": "EntitySelectors.allLivingMinions"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Crazed Alchemist",
+    "description": "Battlecry: Swap the Attack and Health of a minion.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 2,
+        "battleCries": {
+            "targets": "all-minions",
+            "class": "TargetedActions.ATTACK_HP_SWITCH"
+        }
+    }
+}

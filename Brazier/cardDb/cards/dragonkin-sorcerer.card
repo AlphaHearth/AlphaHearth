@@ -1,0 +1,24 @@
+{
+    "name": "Dragonkin Sorcerer",
+    "description": "Whenever you target this minion with a spell, gain +1/+1.",
+    "class": "neutral",
+    "keywords": "dragon",
+    "manaCost": 4,
+    "minion": {
+        "attack": 3,
+        "hp": 5,
+        "triggers": {
+            "start-play-card": {
+                "filter": [
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "WorldEventFilters.TARGET_SELF",
+                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL"
+                ],
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "1/1"
+                }
+            }
+        }
+    }
+}

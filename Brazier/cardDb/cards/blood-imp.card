@@ -1,0 +1,32 @@
+{
+    "name": "Blood Imp",
+    "description": "Stealth. At the end of your turn, give another random friendly minion +1 Health.",
+    "class": "warlock",
+    "keywords": "demon",
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 1,
+        "stealth": true,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.notSelf",
+                            "selector": "EntitySelectors.friendlyBuffableMinions"
+                        }
+                    },
+                    "action": {
+                        "class": "TargetedActions.buffTarget",
+                        "buff": "0/1"
+                    }
+                }
+            }
+        }
+    }
+}

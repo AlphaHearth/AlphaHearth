@@ -1,0 +1,28 @@
+{
+    "name": "Mech-Bear-Cat",
+    "description": "Whenever this minion takes damage, add a Spare Part card to your hand.",
+    "class": "druid",
+    "keywords": "mech",
+    "rarity": "rare",
+    "manaCost": 6,
+    "minion": {
+        "attack": 7,
+        "hp": 6,
+        "triggers": {
+            "minion-damaged": {
+                "filter": "WorldEventFilters.TARGET_SELF",
+                "action": {
+                    "class": "TargetlessActions.addSelectedCard",
+                    "card": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.cardsWithKeywords",
+                            "keywords": "spare-part"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

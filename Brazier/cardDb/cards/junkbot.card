@@ -1,0 +1,28 @@
+{
+    "name": "Junkbot",
+    "description": "Whenever a friendly Mech dies, gain +2/+2.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "epic",
+    "manaCost": 5,
+    "minion": {
+        "attack": 1,
+        "hp": 5,
+        "triggers": {
+            "minion-killed": {
+                "filter": [
+                    "WorldEventFilters.NOT_SELF",
+                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    {
+                        "class": "WorldEventFilters.targetHasKeyword",
+                        "keywords": "mech"
+                    }
+                ],
+                "action": {
+                    "class": "TargetlessActions.buffSelfMinion",
+                    "buff": "2/2"
+                }
+            }
+        }
+    }
+}

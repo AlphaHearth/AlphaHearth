@@ -1,0 +1,20 @@
+{
+    "name": "Dragon Egg",
+    "description": "Whenever this minion takes damage, summon a 2/1 Whelp.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 1,
+    "minion": {
+        "attack": 0,
+        "hp": 2,
+        "triggers": {
+            "minion-damaged": {
+                "filter": "WorldEventFilters.TARGET_SELF",
+                "action": {
+                    "class": "TargetlessActions.summonMinionRight",
+                    "minion": "Black Whelp"
+                }
+            }
+        }
+    }
+}

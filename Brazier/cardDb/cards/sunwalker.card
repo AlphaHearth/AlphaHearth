@@ -1,0 +1,13 @@
+{
+    "name": "Sunwalker",
+    "description": "Taunt. Divine Shield",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 6,
+    "minion": {
+        "attack": 4,
+        "hp": 5,
+        "taunt": true,
+        "divineShield": true
+    }
+}

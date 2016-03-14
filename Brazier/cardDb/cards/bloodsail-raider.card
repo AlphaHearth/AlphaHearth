@@ -1,0 +1,15 @@
+{
+    "name": "Bloodsail Raider",
+    "description": "Battlecry: Gain Attack equal to the Attack of your weapon.",
+    "class": "neutral",
+    "keywords": "pirate",
+    "manaCost": 2,
+    "minion": {
+        "attack": 2,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.buffSelfMinion",
+            "buff": "Buffs.WEAPON_ATTACK_BUFF"
+        }
+    }
+}

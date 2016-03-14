@@ -1,0 +1,19 @@
+{
+    "name": "Deadly Poison",
+    "description": "Destroy a damaged enemy minion.",
+    "class": "rouge",
+    "type": "spell",
+    "manaCost": 1,
+    "playActions": {
+        "requires": "PlayActionRequirements.HAS_WEAPON",
+        "class": "TargetlessActions.forTargets",
+        "action": {
+            "class": "TargetedActions.buffTarget",
+            "buff": {
+                "class": "Buffs.buffWeapon",
+                "attack": 2
+            }
+        },
+        "selector": "EntitySelectors.friendlyWeapon"
+    }
+}

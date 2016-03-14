@@ -1,0 +1,14 @@
+{
+    "name": "Arathi Weaponsmith",
+    "description": "Battlecry: Equip a 2/2 weapon.",
+    "class": "warrior",
+    "manaCost": 4,
+    "minion": {
+        "attack": 3,
+        "hp": 3,
+        "battleCries": {
+            "class": "TargetlessActions.equipWeapon",
+            "weapon": "Battle Axe"
+        }
+    }
+}

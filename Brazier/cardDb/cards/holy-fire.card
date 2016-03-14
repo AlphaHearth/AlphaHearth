@@ -1,0 +1,20 @@
+{
+    "name": "Holy Fire",
+    "description": "Deal 5 damage. Restore 5 Health to your hero.",
+    "class": "priest",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 6,
+    "playActions": [
+        {
+            "targets": "all",
+            "class": "TargetedActions.damageTarget",
+            "damage": 5
+        },
+        {
+            "class": "TargetlessActions.damageTarget",
+            "damage": -5,
+            "selector": "EntitySelectors.friendlyHero"
+        }
+    ]
+}

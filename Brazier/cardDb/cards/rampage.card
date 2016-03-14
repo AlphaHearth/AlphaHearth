@@ -1,0 +1,15 @@
+{
+    "name": "Rampage",
+    "description": "Give a damaged minion +3/+3.",
+    "class": "warrior",
+    "type": "spell",
+    "manaCost": 2,
+    "playActions": {
+        "targets": [
+            "all-minions",
+            "TargetNeeds.TARGET_DAMAGED"
+        ],
+        "class": "TargetedActions.buffTarget",
+        "buff": "3/3"
+    }
+}

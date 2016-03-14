@@ -1,0 +1,16 @@
+{
+    "name": "Mogor the Ogre",
+    "description": "All minions have a 50% chance to attack the wrong enemy.",
+    "class": "neutral",
+    "rarity": "legendary",
+    "manaCost": 6,
+    "minion": {
+        "attack": 7,
+        "hp": 6,
+        "triggers": {
+            "attack-initiated": {
+                "action": "WorldEventActions.MISS_TARGET_SOMETIMES"
+            }
+        }
+    }
+}

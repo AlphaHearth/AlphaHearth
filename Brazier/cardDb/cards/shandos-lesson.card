@@ -1,0 +1,21 @@
+{
+    "name": "Shan'do's Lesson",
+    "description": "Summon two 2/2 Treants with Taunt.",
+    "class": "druid",
+    "type": "spell",
+    "collectible": false,
+    "manaCost": 0,
+    "playActions": {
+        "class": "TargetlessActions.withMinion",
+        "action": [
+            {
+                "class": "TargetlessActions.summonMinionRight",
+                "minion": "Treant/Taunt"
+            },
+            {
+                "class": "TargetlessActions.summonMinionLeft",
+                "minion": "Treant/Taunt"
+            }
+        ]
+    }
+}

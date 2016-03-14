@@ -1,0 +1,22 @@
+{
+    "name": "Fel Reaver",
+    "description": "Whenever your opponent plays a card, discard the top 3 cards of your deck.",
+    "class": "neutral",
+    "keywords": "mech",
+    "rarity": "epic",
+    "manaCost": 5,
+    "minion": {
+        "attack": 8,
+        "hp": 8,
+        "triggers": {
+            "start-play-card": {
+                "filter": "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                "action": [
+                    "TargetlessActions.DISCARD_FROM_DECK",
+                    "TargetlessActions.DISCARD_FROM_DECK",
+                    "TargetlessActions.DISCARD_FROM_DECK"
+                ]
+            }
+        }
+    }
+}

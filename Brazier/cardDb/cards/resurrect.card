@@ -1,0 +1,9 @@
+{
+    "name": "Resurrect",
+    "description": "Summon a random friendly minion that died this game.",
+    "class": "priest",
+    "type": "spell",
+    "rarity": "rare",
+    "manaCost": 2,
+    "playActions": "TargetlessActions.SUMMON_DEAD_MINION"
+}

@@ -1,0 +1,38 @@
+{
+    "name": "Bane of Doom",
+    "description": "Deal 2 damage to a character. If that kills it, summon a random Demon.",
+    "class": "warlock",
+    "type": "spell",
+    "rarity": "epic",
+    "manaCost": 5,
+    "playActions": {
+        "targets": "all",
+        "actions": [
+            {
+                "class": "TargetedActions.damageTarget",
+                "damage": 2
+            },
+            {
+                "class": "TargetedActions.doIf",
+                "condition": {
+                    "class": "TargetedActionConditions.forTarget",
+                    "filter": "EntityFilters.isDead"
+                },
+                "if": {
+                    "class": "TargetlessActions.summonSelectedMinion",
+                    "minion": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": {
+                            "class": "EntitySelectors.minionsWithKeywords",
+                            "keywords": [
+                                "demon",
+                                "collectible"
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

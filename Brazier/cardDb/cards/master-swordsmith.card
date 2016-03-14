@@ -1,0 +1,28 @@
+{
+    "name": "Master Swordsmith",
+    "description": "At the end of your turn, give another random friendly minion +1 Attack.",
+    "class": "neutral",
+    "rarity": "rare",
+    "manaCost": 2,
+    "minion": {
+        "attack": 1,
+        "hp": 3,
+        "triggers": {
+            "turn-ends": {
+                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "action": {
+                    "class": "TargetlessActions.forTargets",
+                    "selector": {
+                        "class": "EntitySelectors.filtered",
+                        "filter": "EntityFilters.random",
+                        "selector": "EntitySelectors.friendlyLivingMinions"
+                    },
+                    "action": {
+                        "class": "TargetlessActions.buffSelfMinion",
+                        "buff": "1/0"
+                    }
+                }
+            }
+        }
+    }
+}

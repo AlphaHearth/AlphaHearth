@@ -3,13 +3,13 @@ package info.hearthsim.brazier.minions;
 import info.hearthsim.brazier.CharacterAbilities;
 import info.hearthsim.brazier.PreparedResult;
 import info.hearthsim.brazier.Silencable;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
 import info.hearthsim.brazier.events.WorldEventAction;
 import info.hearthsim.brazier.FreezeManager;
 import info.hearthsim.brazier.World;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.AttackTool;
 
@@ -98,7 +98,7 @@ public final class MinionProperties implements Silencable {
         MinionDescr baseStats = body.getBaseStats();
         result.addUndo(addAndActivateAbility(baseStats.getEventActionDefs()));
 
-        ActivatableAbility<? super Minion> ability = baseStats.tryGetAbility();
+        Ability<? super Minion> ability = baseStats.tryGetAbility();
         if (ability != null) {
             result.addUndo(addAndActivateAbility(ability));
         }
@@ -185,7 +185,7 @@ public final class MinionProperties implements Silencable {
         return body;
     }
 
-    public UndoAction addAndActivateAbility(ActivatableAbility<? super Minion> abilityRegisterTask) {
+    public UndoAction addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
         if (minion.isDestroyed()) {
             return UndoAction.DO_NOTHING;
         }

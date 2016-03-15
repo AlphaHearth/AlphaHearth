@@ -9,7 +9,7 @@
         "hp": 9,
         "charge": true,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "filter": "AuraFilters.SELF_DAMAGED",
             "aura": {
                 "class": "Auras.minionAttackBuff",

@@ -7,7 +7,7 @@
         "attack": 7,
         "hp": 6,
         "ability": {
-            "class": "ActivatableAbilities.ownCardAura",
+            "class": "Abilities.ownCardAura",
             "filter": "AuraFilters.IS_MINION_CARD",
             "aura": {
                 "class": "Auras.increaseManaCost",

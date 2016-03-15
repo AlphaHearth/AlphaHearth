@@ -1,7 +1,7 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
 
@@ -13,10 +13,10 @@ import org.jtrim.utils.ExceptionHelper;
 public final class Secret implements PlayerProperty, WorldProperty, LabeledEntity, DamageSource {
     private Player owner;
     private final CardDescr baseCard;
-    private final ActivatableAbility<? super Secret> ability;
+    private final Ability<? super Secret> ability;
     private UndoableUnregisterAction ref;
 
-    public Secret(Player owner, CardDescr baseCard, ActivatableAbility<? super Secret> ability) {
+    public Secret(Player owner, CardDescr baseCard, Ability<? super Secret> ability) {
         ExceptionHelper.checkNotNullArgument(owner, "owner");
         ExceptionHelper.checkNotNullArgument(baseCard, "baseCard");
         ExceptionHelper.checkNotNullArgument(ability, "ability");

@@ -8,7 +8,7 @@
         "attack": 3,
         "hp": 5,
         "ability": {
-            "class": "ActivatableAbilities.ownPlayerAura",
+            "class": "Abilities.ownPlayerAura",
             "aura": "Auras.DAMAGING_HEAL"
         }
     }

@@ -1217,7 +1217,7 @@ public final class TargetlessActions {
     }
 
     public static <Actor> TargetlessAction<Actor> addThisTurnAbility(
-            @NamedArg("ability") ActivatableAbility<? super Actor> ability) {
+            @NamedArg("ability") Ability<? super Actor> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
         return (world, actor) -> {
             return ActionUtils.doTemporary(world, () -> ability.activate(actor));
@@ -1284,16 +1284,16 @@ public final class TargetlessActions {
         };
     }
 
-    private static ActivatableAbility<Player> deactivateAfterPlay(
-            ActivatableAbility<Player> ability,
+    private static Ability<Player> deactivateAfterPlay(
+            Ability<Player> ability,
             AuraFilter<? super Player, ? super Card> filter) {
         return deactivateAfterCardPlay(ability, (card) -> {
             return filter.isApplicable(card.getWorld(), card.getOwner(), card);
         });
     }
 
-    private static ActivatableAbility<Player> deactivateAfterCardPlay(
-            ActivatableAbility<Player> ability,
+    private static Ability<Player> deactivateAfterCardPlay(
+            Ability<Player> ability,
             Predicate<Card> deactivateCondition) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
         ExceptionHelper.checkNotNullArgument(deactivateCondition, "deactivateCondition");
@@ -1496,7 +1496,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
         return (World world, PlayerProperty actor) -> {
-            ActivatableAbility<Player> aura = ActivatableAbilities.aura(
+            Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
                 Auras.setManaCost(manaCost));
@@ -1513,7 +1513,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
         return (World world, PlayerProperty actor) -> {
-            ActivatableAbility<Player> aura = ActivatableAbilities.aura(
+            Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
                 Auras.decreaseManaCost(amount));
@@ -1530,7 +1530,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
         return (World world, PlayerProperty actor) -> {
-            ActivatableAbility<Player> aura = ActivatableAbilities.aura(
+            Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
                 Auras.decreaseManaCost(amount));

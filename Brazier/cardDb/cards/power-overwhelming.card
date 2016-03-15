@@ -14,7 +14,7 @@
             {
                 "class": "TargetedActions.addAbility",
                 "ability": {
-                    "class": "ActivatableAbility.onEventAbility",
+                    "class": "Ability.onEventAbility",
                     "event": "turn-ends",
                     "filter": "WorldEventFilters.SELF_TURN",
                     "action": "TargetlessActions.SELF_DESTRUCT"

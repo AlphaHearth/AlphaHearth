@@ -1,12 +1,12 @@
 package info.hearthsim.brazier.minions;
 
 import info.hearthsim.brazier.Keyword;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.events.WorldEventAction;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.World;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
 import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
 import info.hearthsim.brazier.actions.PlayActionDef;
@@ -74,7 +74,7 @@ public final class MinionDescr implements HearthStoneEntity {
         this.attackRight = builder.attackRight;
     }
 
-    public ActivatableAbility<? super Minion> tryGetAbility() {
+    public Ability<? super Minion> tryGetAbility() {
         return abilities.tryGetAbility();
     }
 

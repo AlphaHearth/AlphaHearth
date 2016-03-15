@@ -3,7 +3,7 @@ package info.hearthsim.brazier.events;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -14,7 +14,7 @@ import java.util.Map;
 import org.jtrim.collections.CollectionsEx;
 import org.jtrim.utils.ExceptionHelper;
 
-public final class WorldEventActionDefs <Self extends PlayerProperty> implements ActivatableAbility<Self> {
+public final class WorldEventActionDefs <Self extends PlayerProperty> implements Ability<Self> {
     private final Map<SimpleEventType, ActionDefList<Self, ?>> simpleEventDefs;
     private final List<CompletableWorldEventBasedActionDef<Self, Minion>> onSummoningActionDefs;
 

@@ -12,7 +12,7 @@ import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.undo.UndoAction;
@@ -195,9 +195,9 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     /**
-     * Adds the given {@link ActivatableAbility} to this minion and activates it.
+     * Adds the given {@link Ability} to this minion and activates it.
      */
-    public UndoAction addAndActivateAbility(ActivatableAbility<? super Minion> abilityRegisterTask) {
+    public UndoAction addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
         return properties.addAndActivateAbility(abilityRegisterTask);
     }
 

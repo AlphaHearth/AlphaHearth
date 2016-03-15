@@ -7,7 +7,7 @@
         "attack": 1,
         "hp": 2,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "filter": "AuraFilters.OWN_BOARD_HAS_MECH",
             "aura": {
                 "class": "Auras.minionAttackBuff",

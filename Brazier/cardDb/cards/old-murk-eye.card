@@ -10,7 +10,7 @@
         "hp": 4,
         "charge": true,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "aura": {
                 "class": "Auras.attackForOtherMinionsBuff",
                 "attack": 1,

@@ -8,7 +8,7 @@
         "attack": 2,
         "hp": 3,
         "ability": {
-            "class": "ActivatableAbilities.ownPlayerAura",
+            "class": "Abilities.ownPlayerAura",
             "aura": {
                 "class": "Auras.playerFlag",
                 "flag": "steady-shot-snipe"

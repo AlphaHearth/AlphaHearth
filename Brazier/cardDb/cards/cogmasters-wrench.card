@@ -8,7 +8,7 @@
         "attack": 1,
         "durability": 3,
         "ability": {
-            "class": "ActivatableAbilities.ownWeaponAura",
+            "class": "Abilities.ownWeaponAura",
             "filter": "AuraFilters.OWN_BOARD_HAS_MECH",
             "aura": {
                 "class": "Auras.weaponAttackBuff",

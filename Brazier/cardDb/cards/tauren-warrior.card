@@ -9,7 +9,7 @@
         "hp": 3,
         "taunt": true,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "filter": "AuraFilters.SELF_DAMAGED",
             "aura": {
                 "class": "Auras.minionAttackBuff",

@@ -8,7 +8,7 @@
         "attack": 2,
         "hp": 1,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "filter": "AuraFilters.OWNER_HAS_WEAPON",
             "aura": "Auras.CHARGE"
         }

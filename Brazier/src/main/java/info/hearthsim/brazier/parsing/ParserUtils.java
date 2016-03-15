@@ -2,6 +2,7 @@ package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.cards.CardProvider;
@@ -12,13 +13,7 @@ import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionId;
 import info.hearthsim.brazier.minions.MinionProvider;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
-import info.hearthsim.brazier.abilities.Aura;
-import info.hearthsim.brazier.abilities.AuraFilter;
-import info.hearthsim.brazier.abilities.Buff;
-import info.hearthsim.brazier.abilities.Buffs;
-import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
-import info.hearthsim.brazier.abilities.PermanentBuff;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.WorldEventFilter;
@@ -105,12 +100,12 @@ public final class ParserUtils {
             }
             return mergedNeed;
         });
-        builder.setTypeMerger(ActivatableAbility.class, (activatableAbilities) -> {
+        builder.setTypeMerger(Ability.class, (activatableAbilities) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends ActivatableAbility<Object>> unsafeElements
-                = (Collection<? extends ActivatableAbility<Object>>) activatableAbilities;
-            return ActivatableAbility.merge(unsafeElements);
+            Collection<? extends Ability<Object>> unsafeElements
+                = (Collection<? extends Ability<Object>>) activatableAbilities;
+            return Ability.merge(unsafeElements);
         });
         builder.setTypeMerger(Aura.class, (auras) -> {
             // Unsafe but there is nothing to do.
@@ -516,7 +511,7 @@ public final class ParserUtils {
         return eventNotificationParser.fromJson(triggersElement);
     }
 
-    private static <Self> ActivatableAbility<? super Self> parseAbility(
+    private static <Self> Ability<? super Self> parseAbility(
             Class<Self> selfClass,
             JsonDeserializer objectParser,
             JsonTree abilityElement) throws ObjectParsingException {
@@ -526,10 +521,10 @@ public final class ParserUtils {
 
         // Unsafe but there is nothing we can do about it.
         @SuppressWarnings("unchecked")
-        ActivatableAbility<? super Self> ability = (ActivatableAbility<? super Self>)objectParser.toJavaObject(
+        Ability<? super Self> ability = (Ability<? super Self>)objectParser.toJavaObject(
                 abilityElement,
-                ActivatableAbility.class,
-                TypeCheckers.genericTypeChecker(ActivatableAbility.class, selfClass));
+                Ability.class,
+                TypeCheckers.genericTypeChecker(Ability.class, selfClass));
         return ability;
     }
 
@@ -570,7 +565,7 @@ public final class ParserUtils {
             EventNotificationParser<Self> eventNotificationParser,
             JsonTree root) throws ObjectParsingException {
 
-        ActivatableAbility<? super Self> ability = parseAbility(selfClass, objectParser, root.getChild("ability"));
+        Ability<? super Self> ability = parseAbility(selfClass, objectParser, root.getChild("ability"));
         WorldEventActionDefs<Self> eventActionDefs = parseEventActionDefs(eventNotificationParser, root.getChild("triggers"));
         WorldEventAction<? super Self, ? super Self> deathRattle = parseDeathRattle(selfClass, eventNotificationParser, root);
 

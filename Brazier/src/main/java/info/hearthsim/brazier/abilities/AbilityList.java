@@ -10,14 +10,14 @@ import java.util.List;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * {@link List} of {@link ActivatableAbility}, providing methods {@link #addAndActivateAbility(ActivatableAbility)}
- * and {@link #deactivate()} to manage a list of {@code ActivatableAbility}s.
+ * {@link List} of {@link Ability}, providing methods {@link #addAndActivateAbility(Ability)}
+ * and {@link #deactivate()} to manage a list of {@code Ability}s.
  */
-public final class ActivatableAbilityList <Self> {
+public final class AbilityList <Self> {
     private final Self self;
     private List<AbilityRef<Self>> abilities;
 
-    public ActivatableAbilityList(Self self) {
+    public AbilityList(Self self) {
         ExceptionHelper.checkNotNullArgument(self, "self");
 
         this.self = self;
@@ -25,17 +25,17 @@ public final class ActivatableAbilityList <Self> {
     }
 
     /**
-     * Creates a copy of this {@code ActivatableAbilityList} for the given object.
+     * Creates a copy of this {@code AbilityList} for the given object.
      *
      * @param other the given object.
-     * @return {@code PreparedResult} for the new copied {@code ActivatableAbilityList},
+     * @return {@code PreparedResult} for the new copied {@code AbilityList},
      *         to which all the abilities are not added until {@link PreparedResult#activate()}
      *         is called.
      */
-    public PreparedResult<ActivatableAbilityList<Self>> copyFor(Self other) {
-        ActivatableAbilityList<Self> list = new ActivatableAbilityList<>(other);
+    public PreparedResult<AbilityList<Self>> copyFor(Self other) {
+        AbilityList<Self> list = new AbilityList<>(other);
 
-        List<ActivatableAbility<? super Self>> initialAbilities = new ArrayList<>(abilities.size());
+        List<Ability<? super Self>> initialAbilities = new ArrayList<>(abilities.size());
         for (AbilityRef<Self> ability: abilities) {
             initialAbilities.add(ability.ability);
         }
@@ -46,7 +46,7 @@ public final class ActivatableAbilityList <Self> {
             }
 
             UndoAction.Builder undos = new UndoAction.Builder(initialAbilities.size());
-            for (ActivatableAbility<? super Self> ability: initialAbilities) {
+            for (Ability<? super Self> ability: initialAbilities) {
                 undos.addUndo(list.addAndActivateAbility(ability));
             }
             return undos;
@@ -54,12 +54,12 @@ public final class ActivatableAbilityList <Self> {
     }
 
     /**
-     * Adds the given ability to the {@code ActivatableAbilityList} and activates it for the underlying object
-     * by calling its {@link ActivatableAbility#activate(Object)} method.
+     * Adds the given ability to the {@code AbilityList} and activates it for the underlying object
+     * by calling its {@link Ability#activate(Object)} method.
      *
      * @param ability the given ability.
      */
-    public UndoAction addAndActivateAbility(ActivatableAbility<? super Self> ability) {
+    public UndoAction addAndActivateAbility(Ability<? super Self> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
         UndoableUnregisterAction registerRef = ability.activate(self);
@@ -94,14 +94,14 @@ public final class ActivatableAbilityList <Self> {
     }
 
     /**
-     * Reference to a activated {@link ActivatableAbility} and its respective unregister (deactivate) action.
+     * Reference to a activated {@link Ability} and its respective unregister (deactivate) action.
      */
     private static final class AbilityRef <Self> {
-        public final ActivatableAbility<? super Self> ability;
+        public final Ability<? super Self> ability;
         public final UndoableUnregisterAction unregisterAction;
 
         public AbilityRef(
-            ActivatableAbility<? super Self> ability,
+            Ability<? super Self> ability,
             UndoableUnregisterAction unregisterAction) {
             ExceptionHelper.checkNotNullArgument(ability, "ability");
             ExceptionHelper.checkNotNullArgument(unregisterAction, "unregisterAction");

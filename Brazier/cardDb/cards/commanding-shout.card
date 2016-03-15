@@ -9,7 +9,7 @@
         {
             "class": "TargetlessActions.addThisTurnAbility",
             "ability": {
-                "class": "ActivatableAbilities.sameBoardAura",
+                "class": "Abilities.sameBoardAura",
                 "aura": {
                     "class": "Auras.minionMinHp",
                     "hp": 1

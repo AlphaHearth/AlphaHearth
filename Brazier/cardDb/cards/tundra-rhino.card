@@ -8,7 +8,7 @@
         "attack": 2,
         "hp": 5,
         "ability": {
-            "class": "ActivatableAbilities.sameBoardAura",
+            "class": "Abilities.sameBoardAura",
             "filter": "AuraFilters.IS_BEAST_MINION",
             "aura": "Auras.CHARGE"
         }

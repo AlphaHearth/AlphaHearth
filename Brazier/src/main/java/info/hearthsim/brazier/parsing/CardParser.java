@@ -1,13 +1,13 @@
 package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.*;
 import info.hearthsim.brazier.cards.CardProvider;
 import info.hearthsim.brazier.cards.CardRarity;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.events.WorldEventFilters;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
@@ -220,10 +220,10 @@ public final class CardParser implements EntityParser<CardDescr> {
 
         // Unsafe but there is nothing we can do about it.
         @SuppressWarnings("unchecked")
-        ActivatableAbility<? super Card> ability = (ActivatableAbility<? super Card>)objectParser.toJavaObject(
+        Ability<? super Card> ability = (Ability<? super Card>)objectParser.toJavaObject(
                 abilityElement,
-                ActivatableAbility.class,
-                TypeCheckers.genericTypeChecker(ActivatableAbility.class, Card.class));
+                Ability.class,
+                TypeCheckers.genericTypeChecker(Ability.class, Card.class));
         abilities.setInHandAbility(ability);
     }
 

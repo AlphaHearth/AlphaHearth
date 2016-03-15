@@ -7,7 +7,7 @@
         "attack": 4,
         "hp": 6,
         "ability": {
-            "class": "ActivatableAbilities.ownWeaponAura",
+            "class": "Abilities.ownWeaponAura",
             "filter": "AuraFilters.SELF_DAMAGED",
             "aura": {
                 "class": "Auras.weaponAttackBuff",

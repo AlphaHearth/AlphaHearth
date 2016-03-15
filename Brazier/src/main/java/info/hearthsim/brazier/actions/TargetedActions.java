@@ -2,16 +2,12 @@ package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.abilities.BuffArg;
+import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.actions.undo.*;
 import info.hearthsim.brazier.events.WorldEventAction;
 import info.hearthsim.brazier.events.WorldEvents;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
-import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.abilities.Buff;
-import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.abilities.PermanentBuff;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.events.SimpleEventType;
@@ -511,10 +507,10 @@ public final class TargetedActions {
     }
 
     /**
-     * Returns a {@link TargetedAction} which adds the given {@link ActivatableAbility} to the target minion.
+     * Returns a {@link TargetedAction} which adds the given {@link Ability} to the target minion.
      */
     public static TargetedAction<Object, Minion> addAbility(
-            @NamedArg("ability") ActivatableAbility<? super Minion> ability) {
+            @NamedArg("ability") Ability<? super Minion> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
         return (World world, Object actor, Minion target) -> {
             return target.addAndActivateAbility(ability);
@@ -522,7 +518,7 @@ public final class TargetedActions {
     }
 
     /**
-     * Returns a {@link TargetedAction} which adds an {@link ActivatableAbility} to the target minion which
+     * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
      * executes the given {@link WorldEventAction} on start of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsStartOfTurnAbility(
@@ -533,7 +529,7 @@ public final class TargetedActions {
     }
 
     /**
-     * Returns a {@link TargetedAction} which adds an {@link ActivatableAbility} to the target minion which
+     * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
      * executes the given {@link WorldEventAction} on end of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsEndOfTurnAbility(
@@ -542,7 +538,7 @@ public final class TargetedActions {
     }
 
     /**
-     * Returns a {@link TargetedAction} which adds an {@link ActivatableAbility} to the target minion which
+     * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
      * executes the given {@link WorldEventAction} on the given type of event.
      */
     private static TargetedAction<PlayerProperty, Minion> addOnActorsPlayerEventAbility(
@@ -554,8 +550,8 @@ public final class TargetedActions {
         return (World world, PlayerProperty actor, Minion target) -> {
             WorldEventFilter<Minion, Player> filter
                     = (filterWorld, owner, eventSource) -> eventSource.getOwner() == actor.getOwner();
-            ActivatableAbility<Minion> ability
-                    = ActivatableAbility.onEventAbility(filter, action, eventType);
+            Ability<Minion> ability
+                    = Ability.onEventAbility(filter, action, eventType);
             return target.addAndActivateAbility(ability);
         };
     }

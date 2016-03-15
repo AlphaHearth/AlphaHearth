@@ -19,7 +19,7 @@
                 }
             },
             {
-                "class": "ActivatableAbilities.ownHeroAura",
+                "class": "Abilities.ownHeroAura",
                 "aura": "Auras.GRANT_HERO_IMMUNITY"
             }
         ]

@@ -9,12 +9,12 @@ import org.jtrim.utils.ExceptionHelper;
 
 // TODO understand this class.
 public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
-    private final ActivatableAbility<? super Self> ability;
+    private final Ability<? super Self> ability;
     private final WorldEventActionDefs<Self> eventActionDefs;
     private final WorldEventAction<? super Self, ? super Self> deathRattle;
 
     public LivingEntitiesAbilities(
-            ActivatableAbility<? super Self> ability,
+            Ability<? super Self> ability,
             WorldEventActionDefs<Self> eventActionDefs,
             WorldEventAction<? super Self, ? super Self> deathRattle) {
         ExceptionHelper.checkNotNullArgument(eventActionDefs, "eventActionDefs");
@@ -31,11 +31,11 @@ public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
             null);
     }
 
-    public ActivatableAbility<? super Self> tryGetAbility() {
+    public Ability<? super Self> tryGetAbility() {
         return ability;
     }
 
-    public ActivatableAbility<? super Self> getAbility() {
+    public Ability<? super Self> getAbility() {
         return ability != null
                 ? ability
                 : (self) -> UndoableUnregisterAction.DO_NOTHING;

@@ -8,7 +8,7 @@
         "attack": 2,
         "hp": 3,
         "ability": {
-            "class": "ActivatableAbilities.cardAura",
+            "class": "Abilities.cardAura",
             "filter": [
                 "AuraFilters.IS_MINION_CARD",
                 "AuraFilters.SAME_OWNER"

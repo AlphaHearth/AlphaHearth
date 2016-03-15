@@ -7,7 +7,7 @@ import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
 import info.hearthsim.brazier.actions.undo.UndoableRegistry;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.HpProperty;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
@@ -415,12 +415,12 @@ public final class ActionUtils {
     }
 
     /**
-     * Converts the given {@link ActivatableAbility} to a single-turn ability, which will be unregistered at
+     * Converts the given {@link Ability} to a single-turn ability, which will be unregistered at
      * end of turn.
      */
-    public static <Self> ActivatableAbility<Self> toSingleTurnAbility(
+    public static <Self> Ability<Self> toSingleTurnAbility(
         World world,
-        ActivatableAbility<Self> ability) {
+        Ability<Self> ability) {
         ExceptionHelper.checkNotNullArgument(world, "world");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
@@ -463,13 +463,13 @@ public final class ActionUtils {
     }
 
     /**
-     * Returns an {@link ActivatableAbility}, which will be unregistered at the start of a new turn of the given
+     * Returns an {@link Ability}, which will be unregistered at the start of a new turn of the given
      * {@link PlayerProperty}'s owner after it is activated.
      */
-    public static <Self> ActivatableAbility<Self> toUntilTurnStartsAbility(
+    public static <Self> Ability<Self> toUntilTurnStartsAbility(
         World world,
         PlayerProperty turnOwner,
-        ActivatableAbility<Self> ability) {
+        Ability<Self> ability) {
         ExceptionHelper.checkNotNullArgument(world, "world");
         ExceptionHelper.checkNotNullArgument(turnOwner, "turnOwner");
         ExceptionHelper.checkNotNullArgument(ability, "ability");

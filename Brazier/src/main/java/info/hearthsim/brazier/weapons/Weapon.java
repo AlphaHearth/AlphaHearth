@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.weapons;
 
-import info.hearthsim.brazier.abilities.ActivatableAbilityList;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
+import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.events.SimpleEventType;
@@ -26,7 +26,7 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
     private final Player owner;
     private final WeaponDescr baseDescr;
     private final CharacterAbilities<Weapon> abilities;
-    private final ActivatableAbility<Weapon> deathRattle;
+    private final Ability<Weapon> deathRattle;
     private final long birthDate;
 
     private final AuraAwareIntProperty attack;
@@ -51,13 +51,13 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
     }
 
     public UndoAction activatePassiveAbilities() {
-        ActivatableAbilityList<Weapon> ownedAbilities = abilities.getOwned();
+        AbilityList<Weapon> ownedAbilities = abilities.getOwned();
 
         UndoAction.Builder result = new UndoAction.Builder();
 
         result.addUndo(ownedAbilities.addAndActivateAbility(baseDescr.getEventActionDefs()));
 
-        ActivatableAbility<? super Weapon> ability = baseDescr.tryGetAbility();
+        Ability<? super Weapon> ability = baseDescr.tryGetAbility();
         if (ability != null) {
             result.addUndo(ownedAbilities.addAndActivateAbility(ability));
         }
@@ -171,7 +171,7 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
         };
     }
 
-    private static ActivatableAbility<Weapon> deathRattleToAbility(
+    private static Ability<Weapon> deathRattleToAbility(
             WorldEventAction<? super Weapon, ? super Weapon> deathRattle) {
         ExceptionHelper.checkNotNullArgument(deathRattle, "deathRattle");
 

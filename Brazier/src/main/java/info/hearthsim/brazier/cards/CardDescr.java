@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.cards;
 
 import info.hearthsim.brazier.Keyword;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.ManaCostAdjuster;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.TargetNeed;
@@ -11,7 +12,6 @@ import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.Keywords;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public final class CardDescr implements HearthStoneEntity {
 
     private final List<ManaCostAdjuster> manaCostAdjusters;
     private final List<TargetlessAction<? super Card>> onDrawActions;
-    private final ActivatableAbility<? super Card> inHandAbility;
+    private final Ability<? super Card> inHandAbility;
     private final List<PlayActionDef<Card>> onPlayActions;
     private final List<CardProvider> chooseOneActionsRef;
 
@@ -111,14 +111,14 @@ public final class CardDescr implements HearthStoneEntity {
     /**
      * Returns the in-hand ability of the card; returns {@code null} if the card has no such ability.
      */
-    public ActivatableAbility<? super Card> tryGetInHandAbility() {
+    public Ability<? super Card> tryGetInHandAbility() {
         return inHandAbility;
     }
 
     /**
      * Returns the in-hand ability of the card. This method will never return {@code null}.
      */
-    public ActivatableAbility<? super Card> getInHandAbility() {
+    public Ability<? super Card> getInHandAbility() {
         return inHandAbility != null
                 ? inHandAbility
                 : (card) -> UndoableUnregisterAction.DO_NOTHING;
@@ -240,7 +240,7 @@ public final class CardDescr implements HearthStoneEntity {
         private final List<PlayActionDef<Card>> onPlayActions;
         private final List<ManaCostAdjuster> manaCostAdjusters;
         private final List<CardProvider> chooseOneActions;
-        private ActivatableAbility<? super Card> inHandAbility;
+        private Ability<? super Card> inHandAbility;
 
         private final Set<Keyword> keywords;
 
@@ -319,7 +319,7 @@ public final class CardDescr implements HearthStoneEntity {
             this.manaCostAdjusters.add(manaCostAdjuster);
         }
 
-        public void setInHandAbility(ActivatableAbility<? super Card> inHandAbility) {
+        public void setInHandAbility(Ability<? super Card> inHandAbility) {
             this.inHandAbility = inHandAbility;
         }
 

@@ -7,7 +7,7 @@
         "attack": 1,
         "hp": 4,
         "ability": {
-            "class": "ActivatableAbilities.cardAura",
+            "class": "Abilities.cardAura",
             "filter": "AuraFilters.IS_BATTLE_CRY_CARD",
             "aura": {
                 "class": "Auras.increaseManaCost",

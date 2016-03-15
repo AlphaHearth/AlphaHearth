@@ -7,7 +7,7 @@
         "attack": 3,
         "hp": 2,
         "ability": {
-            "class": "ActivatableAbilities.ownCardAura",
+            "class": "Abilities.ownCardAura",
             "filter": "AuraFilters.IS_SPELL_CARD",
             "aura": {
                 "class": "Auras.decreaseManaCost",

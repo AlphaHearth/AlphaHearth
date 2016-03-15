@@ -1,25 +1,25 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.abilities.ActivatableAbilityList;
+import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
 public final class CharacterAbilities<Self extends WorldProperty> implements Silencable {
-    private final ActivatableAbilityList<Self> ownedAbilities;
-    private final ActivatableAbilityList<Self> externalAbilities;
+    private final AbilityList<Self> ownedAbilities;
+    private final AbilityList<Self> externalAbilities;
 
     public CharacterAbilities(Self self) {
-        this.ownedAbilities = new ActivatableAbilityList<>(self);
-        this.externalAbilities = new ActivatableAbilityList<>(self);
+        this.ownedAbilities = new AbilityList<>(self);
+        this.externalAbilities = new AbilityList<>(self);
     }
 
-    private CharacterAbilities(ActivatableAbilityList<Self> ownedAbilities, ActivatableAbilityList<Self> externalAbilities) {
+    private CharacterAbilities(AbilityList<Self> ownedAbilities, AbilityList<Self> externalAbilities) {
         this.ownedAbilities = ownedAbilities;
         this.externalAbilities = externalAbilities;
     }
 
     public PreparedResult<CharacterAbilities<Self>> copyFor(Self other) {
-        PreparedResult<ActivatableAbilityList<Self>> newOwnedAbilities = ownedAbilities.copyFor(other);
-        ActivatableAbilityList<Self> newExternalAbilities = new ActivatableAbilityList<>(other);
+        PreparedResult<AbilityList<Self>> newOwnedAbilities = ownedAbilities.copyFor(other);
+        AbilityList<Self> newExternalAbilities = new AbilityList<>(other);
         CharacterAbilities<Self> result = new CharacterAbilities<>(
                 newOwnedAbilities.getResult(),
                 newExternalAbilities);
@@ -27,11 +27,11 @@ public final class CharacterAbilities<Self extends WorldProperty> implements Sil
         return new PreparedResult<>(result, newOwnedAbilities::activate);
     }
 
-    public ActivatableAbilityList<Self> getOwned() {
+    public AbilityList<Self> getOwned() {
         return ownedAbilities;
     }
 
-    public ActivatableAbilityList<Self> getExternal() {
+    public AbilityList<Self> getExternal() {
         return externalAbilities;
     }
 

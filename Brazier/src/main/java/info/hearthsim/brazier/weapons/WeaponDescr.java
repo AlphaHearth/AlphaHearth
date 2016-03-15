@@ -2,7 +2,7 @@ package info.hearthsim.brazier.weapons;
 
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.HearthStoneEntity;
-import info.hearthsim.brazier.abilities.ActivatableAbility;
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
 import info.hearthsim.brazier.events.WorldEventAction;
 import info.hearthsim.brazier.events.WorldEventActionDefs;
@@ -87,7 +87,7 @@ public final class WeaponDescr implements HearthStoneEntity {
         return abilities.tryGetDeathRattle();
     }
 
-    public ActivatableAbility<? super Weapon> tryGetAbility() {
+    public Ability<? super Weapon> tryGetAbility() {
         return abilities.tryGetAbility();
     }
 

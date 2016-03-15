@@ -18,32 +18,32 @@ import org.jtrim.utils.ExceptionHelper;
  * satisfied and deactivates when it's not satisfied. It's different than triggering effect like Gahz'rilla
  * or Gurubashi Berserker has, which will not deactivate unless it is silenced.
  * <p>
- * For predefined {@code ActivatableAbility}s, see {@link ActivatableAbilities} and {@link MinionAbilities}.
+ * For predefined {@code Ability}s, see {@link Abilities} and {@link MinionAbilities}.
  *
- * @see ActivatableAbilities
+ * @see Abilities
  * @see MinionAbilities
  */
-public interface ActivatableAbility <Self> {
+public interface Ability <Self> {
     public UndoableUnregisterAction activate(Self self);
 
     /**
-     * Merges the given collection of {@code ActivatableAbility}s to one {@code ActivatableAbility}.
+     * Merges the given collection of {@code Ability}s to one {@code Ability}.
      *
-     * @throws NullPointerException if any of the given {@code ActivatableAbility}s is {@code null}.
+     * @throws NullPointerException if any of the given {@code Ability}s is {@code null}.
      */
-    public static <Self> ActivatableAbility<Self>
-    merge(Collection<? extends ActivatableAbility<? super Self>> abilities) {
+    public static <Self> Ability<Self>
+    merge(Collection<? extends Ability<? super Self>> abilities) {
         ExceptionHelper.checkNotNullElements(abilities, "abilities");
 
         if (abilities.isEmpty()) {
             return (self) -> UndoableUnregisterAction.DO_NOTHING;
         }
 
-        List<ActivatableAbility<? super Self>> abilitiesCopy = new ArrayList<>(abilities);
+        List<Ability<? super Self>> abilitiesCopy = new ArrayList<>(abilities);
 
         return (Self self) -> {
             UndoableUnregisterAction.Builder result = new UndoableUnregisterAction.Builder(abilitiesCopy.size());
-            for (ActivatableAbility<? super Self> ability : abilitiesCopy) {
+            for (Ability<? super Self> ability : abilitiesCopy) {
                 result.addRef(ability.activate(self));
             }
             return result;
@@ -51,15 +51,15 @@ public interface ActivatableAbility <Self> {
     }
 
     /**
-     * Creates an {@code ActivatableAbility} which does the given {@code action} on the given type of event,
+     * Creates an {@code Ability} which does the given {@code action} on the given type of event,
      * if the event instance can satisfy the given filter.
      *
      * @param filter the given filter.
      * @param action the given action.
      * @param eventType the given type of event.
-     * @return the created {@code ActivatableAbility}.
+     * @return the created {@code Ability}.
      */
-    public static <Self extends WorldProperty, EventArg> ActivatableAbility<Self> onEventAbility(
+    public static <Self extends WorldProperty, EventArg> Ability<Self> onEventAbility(
         @NamedArg("filter") WorldEventFilter<? super Self, ? super EventArg> filter,
         @NamedArg("action") WorldEventAction<? super Self, ? super EventArg> action,
         @NamedArg("event") SimpleEventType eventType) {

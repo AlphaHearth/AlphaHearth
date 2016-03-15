@@ -8,7 +8,7 @@
         "attack": 2,
         "hp": 4,
         "ability": {
-            "class": "ActivatableAbilities.selfAura",
+            "class": "Abilities.selfAura",
             "filter": {
                 "class": "AuraFilters.opponentsHandLarger",
                 "limit": 5

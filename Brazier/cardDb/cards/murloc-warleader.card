@@ -9,7 +9,7 @@
         "attack": 3,
         "hp": 3,
         "ability": {
-            "class": "ActivatableAbilities.boardAura",
+            "class": "Abilities.boardAura",
             "filter": [
                 "AuraFilters.IS_MURLOC_MINION",
                 "AuraFilters.NOT_SELF"

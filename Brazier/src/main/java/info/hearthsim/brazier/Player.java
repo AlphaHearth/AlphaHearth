@@ -211,7 +211,7 @@ public final class Player implements PlayerProperty {
         ExceptionHelper.checkNotNullArgument(card, "card");
         ExceptionHelper.checkNotNullArgument(targetRequest, "target");
 
-        TargetableCharacter originalTarget = world.findTarget(targetRequest.getTargetId());
+        Character originalTarget = world.findTarget(targetRequest.getTargetId());
         PlayArg<Card> originalCardPlayArg = new PlayArg<>(card, originalTarget);
 
         // We request the on play actions before doing anything because

@@ -3,7 +3,7 @@ package info.hearthsim.brazier.ui;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.Hero;
 import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.TargetNeed;
 
@@ -43,7 +43,7 @@ public final class PlayerTargetNeed {
         return targetNeed;
     }
 
-    public boolean isAllowedTarget(TargetableCharacter target) {
+    public boolean isAllowedTarget(Character target) {
         if (!target.isTargetable(targeterDef)) {
             return false;
         }
@@ -67,7 +67,7 @@ public final class PlayerTargetNeed {
     public static ListenerRef trackForTarget(
             TargetManager targetManager,
             JComponent component,
-            TargetableCharacter target,
+            Character target,
             Consumer<Boolean> highlightSetter) {
         ExceptionHelper.checkNotNullArgument(targetManager, "targetManager");
         ExceptionHelper.checkNotNullArgument(component, "component");

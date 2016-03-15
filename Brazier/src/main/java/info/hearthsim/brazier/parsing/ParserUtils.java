@@ -1,5 +1,7 @@
 package info.hearthsim.brazier.parsing;
 
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.cards.CardProvider;
@@ -10,12 +12,6 @@ import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionId;
 import info.hearthsim.brazier.minions.MinionProvider;
-import info.hearthsim.brazier.HearthStoneDb;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.abilities.Aura;
 import info.hearthsim.brazier.abilities.AuraFilter;
@@ -614,12 +610,12 @@ public final class ParserUtils {
                 actionElement,
                 TargetedAction.class,
                 TypeCheckers.genericTypeChecker(TargetedAction.class, actorType, targetType));
-        return (World world, Actor actor, Optional<TargetableCharacter> optTarget) -> {
+        return (World world, Actor actor, Optional<Character> optTarget) -> {
             if (!optTarget.isPresent()) {
                 return UndoAction.DO_NOTHING;
             }
 
-            TargetableCharacter target = optTarget.get();
+            Character target = optTarget.get();
             if (targetType.isInstance(target)) {
                 return result.alterWorld(world, actor, targetType.cast(target));
             }
@@ -654,7 +650,7 @@ public final class ParserUtils {
                 return parseTargetedAction(objectParser, actionElement, actorType, Hero.class);
             }
             else {
-                return parseTargetedAction(objectParser, actionElement, actorType, TargetableCharacter.class);
+                return parseTargetedAction(objectParser, actionElement, actorType, Character.class);
             }
         }
     }
@@ -733,7 +729,7 @@ public final class ParserUtils {
             return action;
         }
 
-        return (World world, Actor actor, Optional<TargetableCharacter> target) -> {
+        return (World world, Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
             if (condition.meetsRequirement(actor.getOwner())) {
                 return action.alterWorld(world, actor, target);
             }

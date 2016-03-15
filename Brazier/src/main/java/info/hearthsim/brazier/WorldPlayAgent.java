@@ -100,7 +100,7 @@ public class WorldPlayAgent {
     public UndoAction playHeroPower(PlayTargetRequest targetRequest) {
         return doWorldAction((currentWorld) -> {
             Player castingPlayer = currentWorld.getPlayer(targetRequest.getCastingPlayerId());
-            TargetableCharacter target = currentWorld.findTarget(targetRequest.getTargetId());
+            Character target = currentWorld.findTarget(targetRequest.getTargetId());
 
             HeroPower selectedPower = castingPlayer.getHero().getHeroPower();
             return selectedPower.play(currentWorld, Optional.ofNullable(target));

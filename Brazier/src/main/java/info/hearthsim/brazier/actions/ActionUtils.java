@@ -1,5 +1,6 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
@@ -43,9 +44,9 @@ public final class ActionUtils {
     }
 
     /**
-     * Adjusts the {@link HpProperty} of the given {@link TargetableCharacter} with the given {@link Function}.
+     * Adjusts the {@link HpProperty} of the given {@link Character} with the given {@link Function}.
      */
-    public static UndoAction adjustHp(TargetableCharacter character, Function<HpProperty, UndoAction> action) {
+    public static UndoAction adjustHp(Character character, Function<HpProperty, UndoAction> action) {
         HpProperty hp = tryGetHp(character);
         if (hp == null) {
             return UndoAction.DO_NOTHING;
@@ -54,10 +55,10 @@ public final class ActionUtils {
     }
 
     /**
-     * Tries to get the {@link HpProperty} of the given {@link TargetableCharacter}.
+     * Tries to get the {@link HpProperty} of the given {@link Character}.
      * Returns {@code null} if failed to get.
      */
-    public static HpProperty tryGetHp(TargetableCharacter character) {
+    public static HpProperty tryGetHp(Character character) {
         if (character instanceof Hero) {
             return ((Hero) character).getHp();
         } else if (character instanceof Minion) {
@@ -107,9 +108,9 @@ public final class ActionUtils {
      * @param player the given {@link Player}.
      * @param spell if the damage comes from a spell (should the damage be affected by spell power).
      * @param damage the amount of damage.
-     * @param target the given {@link TargetableCharacter target}.
+     * @param target the given {@link Character target}.
      */
-    public static UndoAction attackWithHero(Player player, boolean spell, int damage, TargetableCharacter target) {
+    public static UndoAction attackWithHero(Player player, boolean spell, int damage, Character target) {
         return attackWithHero(player.getHero(), spell, damage, target);
     }
 
@@ -119,9 +120,9 @@ public final class ActionUtils {
      * @param hero the given {@link Hero}.
      * @param spell if the damage comes from a spell (should the damage be affected by spell power).
      * @param damage the amount of damage.
-     * @param target the given {@link TargetableCharacter target}.
+     * @param target the given {@link Character target}.
      */
-    public static UndoAction attackWithHero(Hero hero, boolean spell, int damage, TargetableCharacter target) {
+    public static UndoAction attackWithHero(Hero hero, boolean spell, int damage, Character target) {
         if (!spell) {
             return damageCharacter(hero, damage, target);
         }
@@ -131,9 +132,9 @@ public final class ActionUtils {
     }
 
     /**
-     * Deals given amount of damage to the given {@link TargetableCharacter} with the given {@link DamageSource}.
+     * Deals given amount of damage to the given {@link Character} with the given {@link DamageSource}.
      */
-    public static UndoAction damageCharacter(DamageSource damageSource, int damage, TargetableCharacter target) {
+    public static UndoAction damageCharacter(DamageSource damageSource, int damage, Character target) {
         UndoableResult<Damage> damageRef = damageSource.createDamage(damage);
         UndoableIntResult damageUndo = target.damage(damageRef.getResult());
         return () -> {
@@ -143,10 +144,10 @@ public final class ActionUtils {
     }
 
     /**
-     * Randomly selects a {@link TargetableCharacter} from all {@code TargetableCharacter}s in the given {@link World}.
+     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link World}.
      */
-    public static TargetableCharacter rollTarget(World world) {
-        List<TargetableCharacter> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
+    public static Character rollTarget(World world) {
+        List<Character> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
         collectTargets(world.getPlayer1(), result);
         collectTargets(world.getPlayer2(), result);
 
@@ -155,11 +156,11 @@ public final class ActionUtils {
     }
 
     /**
-     * Randomly selects a {@link TargetableCharacter} from all {@code TargetableCharacter}s in the given {@link World}
+     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link World}
      * which satisfy the given {@link Predicate}.
      */
-    public static TargetableCharacter rollTarget(World world, Predicate<? super TargetableCharacter> filter) {
-        List<TargetableCharacter> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
+    public static Character rollTarget(World world, Predicate<? super Character> filter) {
+        List<Character> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
         collectTargets(world.getPlayer1(), result, filter);
         collectTargets(world.getPlayer2(), result, filter);
 
@@ -168,31 +169,31 @@ public final class ActionUtils {
     }
 
     /**
-     * Returns a randomly selected living {@link TargetableCharacter} which is on the board side
+     * Returns a randomly selected living {@link Character} which is on the board side
      * of the given {@link Player}.
      */
-    public static TargetableCharacter rollAlivePlayerTarget(World world, Player player) {
+    public static Character rollAlivePlayerTarget(World world, Player player) {
         return rollPlayerTarget(world, player, (target) -> !target.isDead());
     }
 
     /**
-     * Returns a randomly selected {@link TargetableCharacter} which is on the board side
+     * Returns a randomly selected {@link Character} which is on the board side
      * of the given {@link Player}.
      */
-    public static TargetableCharacter rollPlayerTarget(World world, Player player) {
+    public static Character rollPlayerTarget(World world, Player player) {
         return rollPlayerTarget(world, player, (target) -> true);
     }
 
     /**
-     * Returns a randomly selected {@link TargetableCharacter} which is on the board side of the given {@link Player}
+     * Returns a randomly selected {@link Character} which is on the board side of the given {@link Player}
      * and satisfies the given {@link Predicate}.
      */
-    public static TargetableCharacter rollPlayerTarget(
+    public static Character rollPlayerTarget(
         World world,
         Player player,
-        Predicate<? super TargetableCharacter> filter) {
+        Predicate<? super Character> filter) {
 
-        List<TargetableCharacter> result = new ArrayList<>(Player.MAX_BOARD_SIZE + 1);
+        List<Character> result = new ArrayList<>(Player.MAX_BOARD_SIZE + 1);
         collectTargets(player, result, filter);
 
         int roll = world.getRandomProvider().roll(result.size());
@@ -200,52 +201,52 @@ public final class ActionUtils {
     }
 
     /**
-     * Collects all living {@link TargetableCharacter}s on the board side of the given {@link Player}
+     * Collects all living {@link Character}s on the board side of the given {@link Player}
      * to the given {@link List}.
      */
-    public static void collectAliveTargets(Player player, List<TargetableCharacter> result) {
+    public static void collectAliveTargets(Player player, List<Character> result) {
         collectTargets(player, result, (target) -> !target.isDead());
     }
 
     /**
-     * Collects all {@link TargetableCharacter}s on the board side of the given {@link Player}
+     * Collects all {@link Character}s on the board side of the given {@link Player}
      * to the given {@link List}.
      */
-    public static void collectTargets(Player player, List<? super TargetableCharacter> result) {
+    public static void collectTargets(Player player, List<? super Character> result) {
         collectTargets(player, result, (target) -> true);
     }
 
     /**
-     * Collects all living {@link TargetableCharacter}s on the board side of the given {@link Player} which satisfy
+     * Collects all living {@link Character}s on the board side of the given {@link Player} which satisfy
      * the given {@link Predicate} to the given {@link List}.
      */
     public static void collectAliveTargets(
         Player player,
-        List<? super TargetableCharacter> result,
-        Predicate<? super TargetableCharacter> filter) {
+        List<? super Character> result,
+        Predicate<? super Character> filter) {
         collectTargets(player, result, (target) -> !target.isDead() && filter.test(target));
     }
 
     /**
-     * Collects all {@link TargetableCharacter}s on the board which satisfy
+     * Collects all {@link Character}s on the board which satisfy
      * the given {@link Predicate} to the given {@link List}.
      */
     public static void collectTargets(
         World world,
-        List<? super TargetableCharacter> result,
-        Predicate<? super TargetableCharacter> filter) {
+        List<? super Character> result,
+        Predicate<? super Character> filter) {
         collectTargets(world.getPlayer1(), result, filter);
         collectTargets(world.getPlayer2(), result, filter);
     }
 
     /**
-     * Collects all {@link TargetableCharacter}s on the board side of the given {@link Player} which satisfy
+     * Collects all {@link Character}s on the board side of the given {@link Player} which satisfy
      * the given {@link Predicate} to the given {@link List}.
      */
     public static void collectTargets(
         Player player,
-        List<? super TargetableCharacter> result,
-        Predicate<? super TargetableCharacter> filter) {
+        List<? super Character> result,
+        Predicate<? super Character> filter) {
         ExceptionHelper.checkNotNullArgument(player, "player");
         ExceptionHelper.checkNotNullArgument(result, "result");
         ExceptionHelper.checkNotNullArgument(filter, "filter");

@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.minions.Minion;
@@ -174,7 +175,7 @@ public final class AuraFilters {
     /**
      * {@link AuraFilter} which checks if the aura source is damaged.
      */
-    public static final AuraFilter<TargetableCharacter, Object> SELF_DAMAGED =
+    public static final AuraFilter<Character, Object> SELF_DAMAGED =
         (world, source, target) -> source.isDamaged();
 
     /**

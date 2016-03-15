@@ -8,7 +8,7 @@ import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.Weapon;
@@ -21,9 +21,9 @@ import java.util.function.Predicate;
  */
 public final class Buffs {
     /**
-     * {@link Buff} that makes the given {@link TargetableCharacter} immune.
+     * {@link Buff} that makes the given {@link Character} immune.
      */
-    public static Buff<TargetableCharacter> IMMUNE = (World world, TargetableCharacter target, BuffArg arg) -> {
+    public static Buff<Character> IMMUNE = (World world, Character target, BuffArg arg) -> {
         if (target instanceof Minion) {
             Minion minion = (Minion)target;
             return minion.getProperties().getBody().getImmuneProperty().setValueTo(arg, true);
@@ -106,8 +106,8 @@ public final class Buffs {
         };
     }
 
-    private static PermanentBuff<TargetableCharacter> adjustHp(Function<HpProperty, UndoAction> action) {
-        return (World world, TargetableCharacter target, BuffArg arg) -> {
+    private static PermanentBuff<Character> adjustHp(Function<HpProperty, UndoAction> action) {
+        return (World world, Character target, BuffArg arg) -> {
             arg.checkNormalBuff();
             return ActionUtils.adjustHp(target, action);
         };
@@ -118,7 +118,7 @@ public final class Buffs {
      * <p>
      * See minion <em>Alexstrasza</em>.
      */
-    public static PermanentBuff<TargetableCharacter> setCurrentHp(@NamedArg("hp") int hp) {
+    public static PermanentBuff<Character> setCurrentHp(@NamedArg("hp") int hp) {
         return adjustHp((hpProperty) -> {
             if (hpProperty.getMaxHp() >= hp) {
                 return hpProperty.setCurrentHp(hp);
@@ -134,7 +134,7 @@ public final class Buffs {
      * <p>
      * See spell <em>Hunter's Mark</em> and secret <em>Repentance</em>.
      */
-    public static PermanentBuff<TargetableCharacter> setMaxHp(@NamedArg("hp") int hp) {
+    public static PermanentBuff<Character> setMaxHp(@NamedArg("hp") int hp) {
         return adjustHp((hpProperty) -> {
             return hpProperty.setMaxHp(hp);
         });
@@ -156,29 +156,29 @@ public final class Buffs {
     /**
      * Returns a {@link PermanentBuff} which increases the target {@link Minion}'s health point with the given amount.
      */
-    public static PermanentBuff<TargetableCharacter> buffHp(@NamedArg("hp") int hp) {
+    public static PermanentBuff<Character> buffHp(@NamedArg("hp") int hp) {
         return buff(0, hp);
     }
 
     /**
      * Returns a {@link PermanentBuff} which increases the target {@link Minion}'s attack with the given amount.
      */
-    public static PermanentBuff<TargetableCharacter> buffAttack(@NamedArg("attack") int attack) {
+    public static PermanentBuff<Character> buffAttack(@NamedArg("attack") int attack) {
         return buff(attack, 0);
     }
 
     /**
      * Returns a {@link PermanentBuff} which increases the target {@link Minion}'s attack and hp with the given amounts.
      */
-    public static PermanentBuff<TargetableCharacter> buff(
+    public static PermanentBuff<Character> buff(
             @NamedArg("attack") int attack,
             @NamedArg("hp") int hp) {
-        return (World world, TargetableCharacter target, BuffArg arg) -> {
+        return (World world, Character target, BuffArg arg) -> {
             return buff(target, arg, attack, hp);
         };
     }
 
-    private static UndoAction buff(TargetableCharacter target, BuffArg arg, int attack, int hp) {
+    private static UndoAction buff(Character target, BuffArg arg, int attack, int hp) {
         if (target instanceof Minion) {
             return buffMinion((Minion)target, arg, attack, hp);
         }
@@ -227,7 +227,7 @@ public final class Buffs {
      * Returns a {@link Buff} which increases the target character's attack and health point with the given amounts
      * and disappears at the end of the turn.
      */
-    public static Buff<TargetableCharacter> temporaryBuff(
+    public static Buff<Character> temporaryBuff(
         @NamedArg("attack") int attack,
         @NamedArg("hp") int hp) {
 
@@ -235,7 +235,7 @@ public final class Buffs {
             throw new UnsupportedOperationException("Temporary health buffs are not yet supported.");
         }
 
-        return (World world, TargetableCharacter target, BuffArg arg) -> {
+        return (World world, Character target, BuffArg arg) -> {
             if (target instanceof Minion) {
                 return ((Minion)target).getBuffableAttack().addBuff(arg, attack);
             }

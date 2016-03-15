@@ -429,34 +429,34 @@ public final class BoardSide implements PlayerProperty {
 
     /**
      * Completes the action of summoning the given {@code Minion} with an {@code Optional} of
-     * {@link TargetableCharacter}, designating the potential target of battle-cry effect.
+     * {@link Character}, designating the potential target of battle-cry effect.
      *
      * @param minion the given {@code Minion} which is just summoned.
-     * @param battleCryTarget {@code Optional} of {@link TargetableCharacter},
+     * @param battleCryTarget {@code Optional} of {@link Character},
      *                        designating the potential target of battle-cry effect.
      *
      * @throws NullPointerException if {@code battleCryTarget} is {@code null}.
      */
     public UndoAction completeSummon(
         Minion minion,
-        Optional<TargetableCharacter> battleCryTarget) {
+        Optional<Character> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(battleCryTarget, "battleCryTarget");
         return completeSummonUnsafe(minion, battleCryTarget);
     }
 
     /**
      * Completes the action of summoning the given {@code Minion} with an {@code Optional} of
-     * {@link TargetableCharacter}, designating the potential target of battlecry effect.
+     * {@link Character}, designating the potential target of battlecry effect.
      *
      * @param minion the given {@code Minion} which is just summoned.
-     * @param battleCryTarget {@code Optional} of {@link TargetableCharacter},
+     * @param battleCryTarget {@code Optional} of {@link Character},
      *                        designating the potential target of battlecry effect.
      *                        Pass {@code null} to indicate there is no battlecry effect to be
      *                        triggered.
      */
     private UndoAction completeSummonUnsafe(
         Minion minion,
-        Optional<TargetableCharacter> battleCryTarget) {
+        Optional<Character> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         World world = getWorld();

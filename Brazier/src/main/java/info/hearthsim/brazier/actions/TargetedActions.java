@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.BuffArg;
 import info.hearthsim.brazier.actions.undo.*;
 import info.hearthsim.brazier.events.WorldEventAction;
@@ -39,7 +40,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Ancestral Healing</em>.
      */
-    public static final TargetedAction<DamageSource, TargetableCharacter> RESTORES_TO_FULL_HEALTH = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> RESTORES_TO_FULL_HEALTH = (world, actor, target) -> {
         HpProperty hp = ActionUtils.tryGetHp(target);
         if (hp == null) {
             return UndoAction.DO_NOTHING;
@@ -66,7 +67,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Assassinate</em>.
      */
-    public static final TargetedAction<Object, TargetableCharacter> KILL_TARGET = (world, actor, target) -> {
+    public static final TargetedAction<Object, Character> KILL_TARGET = (world, actor, target) -> {
         return target.kill();
     };
 
@@ -131,7 +132,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Frost Nova</em>.
      */
-    public static final TargetedAction<Object, TargetableCharacter> FREEZE_TARGET = (world, actor, target) -> {
+    public static final TargetedAction<Object, Character> FREEZE_TARGET = (world, actor, target) -> {
         return target.getAttackTool().freeze();
     };
 
@@ -194,7 +195,7 @@ public final class TargetedActions {
      * See spell <em>Savagery</em>.
      */
     // TODO The damage of Savagery will be affected by spell power. Check if it is supported by this method.
-    public static final TargetedAction<DamageSource, TargetableCharacter> SAVAGERY = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> SAVAGERY = (world, actor, target) -> {
         int damage = actor.getOwner().getHero().getAttackTool().getAttack();
         return ActionUtils.damageCharacter(actor, damage, target);
     };
@@ -205,7 +206,7 @@ public final class TargetedActions {
      * See spell <em>Shield Slam</em>.
      */
     // TODO The damage of Shield Slam will be affected by spell power. Check if it is supported by this method.
-    public static final TargetedAction<DamageSource, TargetableCharacter> SHIELD_SLAM = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> SHIELD_SLAM = (world, actor, target) -> {
         int damage = actor.getOwner().getHero().getCurrentArmor();
         return ActionUtils.damageCharacter(actor, damage, target);
     };
@@ -225,7 +226,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Holy Wrath</em>.
      */
-    public static final TargetedAction<DamageSource, TargetableCharacter> HOLY_WRATH = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> HOLY_WRATH = (world, actor, target) -> {
         Player player = actor.getOwner();
 
         UndoableResult<Card> cardRef = player.drawCardToHand();
@@ -453,7 +454,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Betrayal</em> and <em>Lightbomb</em>.
      */
-    public static TargetedAction<TargetableCharacter, TargetableCharacter> DAMAGE_TARGET = (world, actor, target) -> {
+    public static TargetedAction<Character, Character> DAMAGE_TARGET = (world, actor, target) -> {
         int attack = actor.getAttackTool().getAttack();
         return ActionUtils.damageCharacter(actor, attack, target);
     };
@@ -461,7 +462,7 @@ public final class TargetedActions {
     /**
      * Returns a {@link TargetedAction} which deals damage to the given target equal to the given amount.
      */
-    public static TargetedAction<DamageSource, TargetableCharacter> damageTarget(@NamedArg("damage") int damage) {
+    public static TargetedAction<DamageSource, Character> damageTarget(@NamedArg("damage") int damage) {
         return damageTarget(damage, damage);
     }
 
@@ -471,10 +472,10 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Crackle</em>.
      */
-    public static TargetedAction<DamageSource, TargetableCharacter> damageTarget(
+    public static TargetedAction<DamageSource, Character> damageTarget(
             @NamedArg("minDamage") int minDamage,
             @NamedArg("maxDamage") int maxDamage) {
-        return (World world, DamageSource actor, TargetableCharacter target) -> {
+        return (World world, DamageSource actor, Character target) -> {
             int damage = world.getRandomProvider().roll(minDamage, maxDamage);
             return ActionUtils.damageCharacter(actor, damage, target);
         };
@@ -657,7 +658,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Imp-losion</em>.
      */
-    public static TargetedAction<DamageSource, TargetableCharacter> implosion(
+    public static TargetedAction<DamageSource, Character> implosion(
             @NamedArg("minDamage") int minDamage,
             @NamedArg("maxDamage") int maxDamage,
             @NamedArg("minion") MinionProvider minion) {
@@ -690,9 +691,9 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Divine Spirit</em>.
      */
-    public static TargetedAction<Object, TargetableCharacter> multiplyHp(@NamedArg("mul") int mul) {
+    public static TargetedAction<Object, Character> multiplyHp(@NamedArg("mul") int mul) {
         Function<HpProperty, UndoAction> buffAction = (hp) -> hp.buffHp((mul - 1) * hp.getCurrentHp());
-        return (World world, Object actor, TargetableCharacter target) -> {
+        return (World world, Object actor, Character target) -> {
             return ActionUtils.adjustHp(target, buffAction);
         };
     }
@@ -800,10 +801,10 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Shadow Flame</em>.
      */
-    public static <Actor extends DamageSource> TargetedAction<Actor, TargetableCharacter> shadowFlameDamage(
-            @NamedArg("selector") EntitySelector<Actor, ? extends TargetableCharacter> selector) {
+    public static <Actor extends DamageSource> TargetedAction<Actor, Character> shadowFlameDamage(
+            @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
-        return (World world, Actor actor, TargetableCharacter target) -> {
+        return (World world, Actor actor, Character target) -> {
             int damage = target.getAttackTool().getAttack();
             TargetlessAction<Actor> damageAction = TargetlessActions.damageTarget(selector, damage);
             return damageAction.alterWorld(world, actor);

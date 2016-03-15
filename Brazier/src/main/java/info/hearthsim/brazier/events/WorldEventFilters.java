@@ -1,21 +1,13 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.AttackRequest;
 import info.hearthsim.brazier.actions.CardPlayRef;
 import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.BoardSide;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.TargetRef;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.weapons.Weapon;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +74,7 @@ public final class WorldEventFilters {
         return owner.getDurability() > 0;
     };
 
-    public static final WorldEventFilter<PlayerProperty, TargetableCharacter> EVENT_SOURCE_IS_NOT_DAMAGED
+    public static final WorldEventFilter<PlayerProperty, info.hearthsim.brazier.Character> EVENT_SOURCE_IS_NOT_DAMAGED
             = (world, owner, eventSource) -> !eventSource.isDamaged();
 
     public static final WorldEventFilter<Object, TargetRef> TARGET_SURVIVES = (world, owner, eventSource) -> {
@@ -106,7 +98,7 @@ public final class WorldEventFilters {
         return owner.getOwner() == eventSource.getTarget().getOwner();
     };
 
-    public static final WorldEventFilter<PlayerProperty, TargetableCharacter> EVENT_SOURCE_DAMAGED = (world, owner, eventSource) -> {
+    public static final WorldEventFilter<PlayerProperty, Character> EVENT_SOURCE_DAMAGED = (world, owner, eventSource) -> {
         return eventSource.isDamaged();
     };
 
@@ -127,25 +119,25 @@ public final class WorldEventFilters {
 
     private static boolean hasValidTarget(
             World world,
-            Predicate<? super TargetableCharacter> filter) {
+            Predicate<? super Character> filter) {
         return hasValidTarget(world.getPlayer1(), filter)
                 || hasValidTarget(world.getPlayer2(), filter);
     }
 
     private static boolean hasValidTarget(
             Player player,
-            Predicate<? super TargetableCharacter> filter) {
+            Predicate<? super Character> filter) {
         if (filter.test(player.getHero())) {
             return true;
         }
         return player.getBoard().findMinion(filter) != null;
     }
 
-    public static Predicate<TargetableCharacter> validMisdirectTarget(AttackRequest request) {
+    public static Predicate<Character> validMisdirectTarget(AttackRequest request) {
         return validMisdirectTarget(request.getAttacker(), request.getTarget());
     }
 
-    public static Predicate<TargetableCharacter> validMisdirectTarget(TargetableCharacter attacker, TargetableCharacter defender) {
+    public static Predicate<Character> validMisdirectTarget(Character attacker, Character defender) {
         return (target) -> {
              if (target == attacker || target == defender) {
                  return false;
@@ -176,8 +168,8 @@ public final class WorldEventFilters {
         };
     }
 
-    public static WorldEventFilter<Object, TargetableCharacter> targetAttackIsLess(@NamedArg("attack") int attack) {
-        return (World world, Object owner, TargetableCharacter eventSource)
+    public static WorldEventFilter<Object, Character> targetAttackIsLess(@NamedArg("attack") int attack) {
+        return (World world, Object owner, Character eventSource)
                 -> eventSource.getAttackTool().getAttack()< attack;
     }
 

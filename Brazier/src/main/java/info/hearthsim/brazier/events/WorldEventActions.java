@@ -1,16 +1,11 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.DamageSource;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.TargetRef;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.Damage;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.AttackRequest;
 import info.hearthsim.brazier.actions.CardRef;
@@ -50,12 +45,12 @@ public final class WorldEventActions {
             = missTargetSometimes(1, 2);
 
      public static final WorldEventAction<PlayerProperty, AttackRequest> MISSDIRECT = (world, self, eventSource) -> {
-         Predicate<TargetableCharacter> filter = WorldEventFilters.validMisdirectTarget(eventSource);
-         List<TargetableCharacter> targets = new ArrayList<>();
+         Predicate<Character> filter = WorldEventFilters.validMisdirectTarget(eventSource);
+         List<Character> targets = new ArrayList<>();
          ActionUtils.collectAliveTargets(world.getPlayer1(), targets, filter);
          ActionUtils.collectAliveTargets(world.getPlayer2(), targets, filter);
 
-         TargetableCharacter selected = ActionUtils.pickRandom(world, targets);
+         Character selected = ActionUtils.pickRandom(world, targets);
          if (selected == null) {
              return UndoAction.DO_NOTHING;
          }
@@ -68,7 +63,7 @@ public final class WorldEventActions {
             @NamedArg("attackCount") int attackCount) {
 
         return (World world, PlayerProperty self, AttackRequest eventSource) -> {
-            TargetableCharacter defender = eventSource.getTarget();
+            Character defender = eventSource.getTarget();
             if (defender == null) {
                 return UndoAction.DO_NOTHING;
             }
@@ -78,9 +73,9 @@ public final class WorldEventActions {
                 return UndoAction.DO_NOTHING;
             }
 
-            List<TargetableCharacter> targets = new ArrayList<>(Player.MAX_BOARD_SIZE);
+            List<Character> targets = new ArrayList<>(Player.MAX_BOARD_SIZE);
             ActionUtils.collectAliveTargets(defender.getOwner(), targets, (target) -> target != defender);
-            TargetableCharacter newTarget = ActionUtils.pickRandom(world, targets);
+            Character newTarget = ActionUtils.pickRandom(world, targets);
             if (newTarget == null) {
                 return UndoAction.DO_NOTHING;
             }
@@ -108,7 +103,7 @@ public final class WorldEventActions {
     }
 
     public static <Actor extends PlayerProperty> WorldEventAction<Actor, TargetRef> forDamageTarget(
-            @NamedArg("action") TargetedAction<? super Actor, ? super TargetableCharacter> action) {
+            @NamedArg("action") TargetedAction<? super Actor, ? super info.hearthsim.brazier.Character> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (World world, Actor self, TargetRef eventSource) -> {
             return action.alterWorld(world, self, eventSource.getTarget());
@@ -116,7 +111,7 @@ public final class WorldEventActions {
     }
 
     public static <Actor extends PlayerProperty> WorldEventAction<Actor, AttackRequest> forAttacker(
-            @NamedArg("action") TargetedAction<? super Actor, ? super TargetableCharacter> action) {
+            @NamedArg("action") TargetedAction<? super Actor, ? super Character> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (World world, Actor self, AttackRequest eventSource) -> {
             return action.alterWorld(world, self, eventSource.getAttacker());
@@ -192,7 +187,7 @@ public final class WorldEventActions {
     }
 
     public static <Actor extends DamageSource> WorldEventAction<Actor, DamageEvent> reflectDamage(
-            @NamedArg("selector") EntitySelector<? super Actor, ? extends TargetableCharacter> selector) {
+            @NamedArg("selector") EntitySelector<? super Actor, ? extends Character> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
         return (world, self, eventSource) -> {
             int damage = eventSource.getDamageDealt();

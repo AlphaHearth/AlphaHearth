@@ -16,7 +16,7 @@ import static info.hearthsim.brazier.utils.TestCards.*;
 import static org.junit.Assert.*;
 
 public final class TargetNeedsTest extends BrazierTest {
-    private static boolean canTarget(Player player, CardDescr card, TargetableCharacter target) {
+    private static boolean canTarget(Player player, CardDescr card, Character target) {
         TargetNeed cardNeed = card.getCombinedTargetNeed(player);
         boolean hero = target instanceof Hero;
         TargeterDef targeterDef = new TargeterDef(player.getPlayerId(), hero, false);

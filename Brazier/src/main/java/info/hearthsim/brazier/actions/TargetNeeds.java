@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 
@@ -13,11 +14,11 @@ import java.util.Objects;
  * Predefined {@link TargetNeed}s.
  */
 public final class TargetNeeds {
-    private static final PlayerPredicate<TargetableCharacter> CHARACTER_DAMAGED = (playerId, character) -> {
+    private static final PlayerPredicate<Character> CHARACTER_DAMAGED = (playerId, character) -> {
         return character.isDamaged();
     };
 
-    private static final PlayerPredicate<TargetableCharacter> CHARACTER_NOT_DAMAGED = (playerId, character) -> {
+    private static final PlayerPredicate<Character> CHARACTER_NOT_DAMAGED = (playerId, character) -> {
         return !character.isDamaged();
     };
 
@@ -38,9 +39,9 @@ public final class TargetNeeds {
     /** {@link TargetNeed} which is valid for any enemy {@link Hero} and {@link Minion}. */
     public static final TargetNeed ENEMY_TARGETS = new TargetNeed(TargetNeeds::allowEnemy, TargetNeeds::allowEnemy);
 
-    /** {@link TargetNeed} which is valid for any damaged {@link TargetableCharacter}. */
+    /** {@link TargetNeed} which is valid for any damaged {@link Character}. */
     public static final TargetNeed TARGET_DAMAGED = new TargetNeed(CHARACTER_DAMAGED, CHARACTER_DAMAGED);
-    /** {@link TargetNeed} which is valid for any not-damaged {@link TargetableCharacter}. */
+    /** {@link TargetNeed} which is valid for any not-damaged {@link Character}. */
     public static final TargetNeed TARGET_NOT_DAMAGED = new TargetNeed(CHARACTER_NOT_DAMAGED, CHARACTER_NOT_DAMAGED);
 
     /** {@link TargetNeed} which is valid for any <b>Taunt</b> {@link Minion}. */
@@ -49,29 +50,29 @@ public final class TargetNeeds {
     });
 
     /**
-     * Returns a {@link TargetNeed} which is valid for any {@link TargetableCharacter} with its attack less
+     * Returns a {@link TargetNeed} which is valid for any {@link Character} with its attack less
      * than the given amount.
      */
     public static TargetNeed attackIsLessThan(@NamedArg("attack") int attack) {
-        PlayerPredicate<TargetableCharacter> filter = (playerId, character) -> {
+        PlayerPredicate<Character> filter = (playerId, character) -> {
             return character.getAttackTool().getAttack() < attack;
         };
         return new TargetNeed(filter, filter);
     }
 
     /**
-     * Returns a {@link TargetNeed} which is valid for any {@link TargetableCharacter} with its attack larger
+     * Returns a {@link TargetNeed} which is valid for any {@link Character} with its attack larger
      * than the given amount.
      */
     public static TargetNeed attackIsMoreThan(@NamedArg("attack") int attack) {
-        PlayerPredicate<TargetableCharacter> filter = (playerId, character) -> {
+        PlayerPredicate<Character> filter = (playerId, character) -> {
             return character.getAttackTool().getAttack() > attack;
         };
         return new TargetNeed(filter, filter);
     }
 
     /**
-     * Returns a {@link TargetNeed} which is valid for any {@link TargetableCharacter} with all of the given
+     * Returns a {@link TargetNeed} which is valid for any {@link Character} with all of the given
      * {@link Keyword}s.
      */
     public static TargetNeed hasKeyword(@NamedArg("keywords") Keyword[] keywords) {

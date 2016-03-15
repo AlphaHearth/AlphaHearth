@@ -163,12 +163,12 @@ public final class World {
     }
 
     /**
-     * Returns the {@code TargetableCharacter} with the given {@code TargetId}.
+     * Returns the {@code Character} with the given {@code TargetId}.
      *
      * @param target the {@code TargetId} of the wanted target.
-     * @return the {@code TargetableCharacter}.
+     * @return the {@code Character}.
      */
-    public TargetableCharacter findTarget(TargetId target) {
+    public Character findTarget(TargetId target) {
         if (target == null) {
             return null;
         }
@@ -192,13 +192,13 @@ public final class World {
     }
 
     /**
-     * Returns all {@code TargetableCharacter}s in this {@code World}, including
+     * Returns all {@code Character}s in this {@code World}, including
      * both {@link Hero}s and all {@link Minion}s.
      */
-    public List<TargetableCharacter> getTargets() {
+    public List<Character> getTargets() {
         BoardSide player1Minions = player1.getBoard();
         BoardSide player2Minions = player2.getBoard();
-        List<TargetableCharacter> targets =
+        List<Character> targets =
             new ArrayList<>(player1Minions.getMinionCount() + player2Minions.getMinionCount() + 2);
         targets.add(player1.getHero());
         targets.add(player2.getHero());
@@ -209,10 +209,10 @@ public final class World {
     }
 
     /**
-     * Returns all {@code TargetableCharacter}s in this {@code World} which satisfy the given {@link Predicate},
+     * Returns all {@code Character}s in this {@code World} which satisfy the given {@link Predicate},
      * including {@link Hero}s and {@link Minion}s.
      */
-    public List<TargetableCharacter> getTargets(Predicate<? super TargetableCharacter> filter) {
+    public List<Character> getTargets(Predicate<? super Character> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
         return getTargets().stream().filter(filter).collect(Collectors.toList());
@@ -221,7 +221,7 @@ public final class World {
     /**
      * Returns if the given target is still on the board.
      */
-    private boolean isTargetExist(TargetableCharacter character) {
+    private boolean isTargetExist(Character character) {
         return findTarget(character.getTargetId()) != null;
     }
 
@@ -229,12 +229,12 @@ public final class World {
         ExceptionHelper.checkNotNullArgument(attackerId, "attackerId");
         ExceptionHelper.checkNotNullArgument(defenderId, "defenderId");
 
-        TargetableCharacter attacker = findTarget(attackerId);
+        Character attacker = findTarget(attackerId);
         if (attacker == null) {
             return UndoAction.DO_NOTHING;
         }
 
-        TargetableCharacter defender = findTarget(defenderId);
+        Character defender = findTarget(defenderId);
         if (defender == null) {
             return UndoAction.DO_NOTHING;
         }
@@ -249,7 +249,7 @@ public final class World {
             return result;
         }
 
-        TargetableCharacter newDefender = attackRequest.getTarget();
+        Character newDefender = attackRequest.getTarget();
         if (newDefender == null) {
             return result;
         }
@@ -279,8 +279,8 @@ public final class World {
             int attack,
             boolean swipeLeft,
             boolean swipeRight,
-            TargetableCharacter attacker,
-            TargetableCharacter target) {
+            Character attacker,
+            Character target) {
         if (!(target instanceof Minion)) {
             return UndoAction.DO_NOTHING;
         }
@@ -301,7 +301,7 @@ public final class World {
         return builder;
     }
 
-    private static UndoAction dealDamage(AttackTool weapon, TargetableCharacter attacker, TargetableCharacter target) {
+    private static UndoAction dealDamage(AttackTool weapon, Character attacker, Character target) {
         UndoableResult<Damage> damageRef = attacker.createDamage(weapon.getAttack());
         UndoAction damageUndo = target.damage(damageRef.getResult());
         UndoAction swingDecUndo = weapon.incAttackCount();
@@ -312,7 +312,7 @@ public final class World {
         };
     }
 
-    private UndoAction resolveAttackNonAtomic(TargetableCharacter attacker, TargetableCharacter defender) {
+    private UndoAction resolveAttackNonAtomic(Character attacker, Character defender) {
         AttackTool attackerWeapon = attacker.getAttackTool();
         if (!attackerWeapon.canAttackWith()) {
             throw new IllegalArgumentException("Attacker is not allowed to attack with its weapon.");

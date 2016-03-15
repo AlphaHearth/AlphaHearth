@@ -1,10 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.HearthStoneDb;
-import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.cards.CardDescr;
 import java.awt.GridLayout;
 import java.util.LinkedList;
@@ -114,7 +110,7 @@ public class WorldPlayPanel extends javax.swing.JPanel {
     private ListenerRef trackForTarget(
             TargetManager targetManager,
             JComponent component,
-            TargetableCharacter target,
+            info.hearthsim.brazier.Character target,
             Consumer<Boolean> highlightSetter) {
         ListenerRef ref1 = PlayerTargetNeed.trackForTarget(targetManager, component, target, highlightSetter);
         ListenerRef ref2 = AttackTargetNeed.trackForTarget(targetManager, component, target, highlightSetter);

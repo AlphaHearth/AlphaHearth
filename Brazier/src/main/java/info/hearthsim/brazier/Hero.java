@@ -26,7 +26,7 @@ import org.jtrim.utils.ExceptionHelper;
 /**
  * The hero in a game, controlled by the specific player.
  */
-public final class Hero implements TargetableCharacter {
+public final class Hero implements Character {
     private TargetId heroId;
     private final Player owner;
     private final long birthDate;
@@ -263,7 +263,7 @@ public final class Hero implements TargetableCharacter {
 
     public static UndoableIntResult doPreparedDamage(
         Damage damage,
-        TargetableCharacter target,
+        Character target,
         Function<Damage, UndoableIntResult> damageMethod) {
         ExceptionHelper.checkNotNullArgument(damage, "damage");
         ExceptionHelper.checkNotNullArgument(target, "target");

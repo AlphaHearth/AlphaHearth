@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
@@ -117,7 +118,7 @@ public final class TestAgent {
      * @throws AssertionError if there is no such minion.
      */
     public void expectMinion(String target, Consumer<? super Minion> check) {
-        TargetableCharacter foundTarget = findTarget(target);
+        Character foundTarget = findTarget(target);
         assertNotNull("Minion", foundTarget);
         assertTrue("Minion", foundTarget instanceof Minion);
 
@@ -596,7 +597,7 @@ public final class TestAgent {
         }
     }*/
 
-    public TargetableCharacter findTarget(String targetId) {
+    public Character findTarget(String targetId) {
         if (targetId.trim().isEmpty()) {
             return null;
         }
@@ -618,7 +619,7 @@ public final class TestAgent {
     }
 
     public TargetId findTargetId(String targetId) {
-        TargetableCharacter target = findTarget(targetId);
+        Character target = findTarget(targetId);
         return target != null ? target.getTargetId() : null;
     }
 
@@ -796,7 +797,7 @@ public final class TestAgent {
             this.playAgent = new WorldPlayAgent(world);
         }
 
-        public TargetableCharacter findTarget(String targetId) {
+        public Character findTarget(String targetId) {
             if (targetId.trim().isEmpty()) {
                 return null;
             }
@@ -818,7 +819,7 @@ public final class TestAgent {
         }
 
         public TargetId findTargetId(String targetId) {
-            TargetableCharacter target = findTarget(targetId);
+            Character target = findTarget(targetId);
             return target != null ? target.getTargetId() : null;
         }
 

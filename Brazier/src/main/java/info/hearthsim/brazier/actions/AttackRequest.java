@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
+
 import java.util.function.Predicate;
 
 import info.hearthsim.brazier.actions.undo.UndoAction;
@@ -8,11 +9,11 @@ import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Container class for a request of attack, which has fields {@code attacker} and {@code target},
- * represented as {@link TargetableCharacter}s.
+ * represented as {@link Character}s.
  */
 public final class AttackRequest {
-    private final TargetableCharacter attacker;
-    private TargetableCharacter target;
+    private final Character attacker;
+    private Character target;
 
     /**
      * Creates a new {@code AttackRequest} with the given {@code attacker} and {@code target}.
@@ -22,7 +23,7 @@ public final class AttackRequest {
      *
      * @throws NullPointerException if the given {@code attacker} is {@code null}.
      */
-    public AttackRequest(TargetableCharacter attacker, TargetableCharacter target) {
+    public AttackRequest(info.hearthsim.brazier.Character attacker, Character target) {
         ExceptionHelper.checkNotNullArgument(attacker, "attacker");
 
         this.attacker = attacker;
@@ -32,29 +33,29 @@ public final class AttackRequest {
     /**
      * Returns the {@code attacker}.
      */
-    public TargetableCharacter getAttacker() {
+    public Character getAttacker() {
         return attacker;
     }
 
     /**
      * Returns the {@code target}.
      */
-    public TargetableCharacter getTarget() {
+    public Character getTarget() {
         return target;
     }
 
     /**
      * Returns if the target exists and satisfies the given predicate.
      */
-    public boolean testExistingTarget(Predicate<? super TargetableCharacter> check) {
+    public boolean testExistingTarget(Predicate<? super Character> check) {
         return target != null && check.test(target);
     }
 
     /**
      * Sets the target of this {@code AttackRequest}.
      */
-    public UndoAction replaceTarget(TargetableCharacter newTarget) {
-        TargetableCharacter prevTarget = target;
+    public UndoAction replaceTarget(Character newTarget) {
+        Character prevTarget = target;
         target = newTarget;
         return () -> target = prevTarget;
     }

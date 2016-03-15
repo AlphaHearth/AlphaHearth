@@ -8,7 +8,7 @@ import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.PreparedResult;
 import info.hearthsim.brazier.Silencable;
 import info.hearthsim.brazier.TargetId;
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class Minion implements TargetableCharacter, DestroyableEntity, Silencable, CardRef {
+public final class Minion implements Character, DestroyableEntity, Silencable, CardRef {
     private TargetId minionId;
     private Player owner;
     private MinionProperties properties;

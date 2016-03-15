@@ -1,18 +1,12 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.EntityId;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.Secret;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.*;
 import info.hearthsim.brazier.cards.CardProvider;
 import info.hearthsim.brazier.cards.CardRarity;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.SecretContainer;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.ActivatableAbility;
 import info.hearthsim.brazier.events.WorldEventFilters;
 import info.hearthsim.brazier.actions.undo.UndoAction;
@@ -188,7 +182,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         if (weaponElement != null) {
             WeaponDescr weapon = weaponParser.fromJson(weaponElement, name, keywords);
             builder.setWeapon(weapon);
-            PlayAction<Card> playAction = (World world, Card actor, Optional<TargetableCharacter> target) -> {
+            PlayAction<Card> playAction = (World world, Card actor, Optional<Character> target) -> {
                 return actor.getOwner().equipWeapon(weapon);
             };
 
@@ -332,7 +326,7 @@ public final class CardParser implements EntityParser<CardDescr> {
 
     private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, WorldEventActionDefs<Secret> secretActionDef) {
         ExceptionHelper.checkNotNullArgument(secretActionDef, "secretActionDef");
-        return (World world, Card actor, Optional<TargetableCharacter> target) -> {
+        return (World world, Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
             CardDescr card = cardRef.get();
             Player player = actor.getOwner();
             Secret secret = new Secret(player, card, secretActionDef);

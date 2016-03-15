@@ -1,27 +1,10 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.RandomProvider;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.BoardSide;
-import info.hearthsim.brazier.BornEntity;
-import info.hearthsim.brazier.Damage;
-import info.hearthsim.brazier.DamageSource;
-import info.hearthsim.brazier.Deck;
-import info.hearthsim.brazier.EntityId;
-import info.hearthsim.brazier.Hand;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.ManaResource;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.Secret;
-import info.hearthsim.brazier.SecretContainer;
-import info.hearthsim.brazier.TargetableCharacter;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
@@ -241,7 +224,7 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which kills the actor.
      */
-    public static final TargetlessAction<TargetableCharacter> SELF_DESTRUCT = (world, actor) -> {
+    public static final TargetlessAction<Character> SELF_DESTRUCT = (world, actor) -> {
         return actor.kill();
     };
 
@@ -341,7 +324,7 @@ public final class TargetlessActions {
 
         UndoAction destroyUndo = player.destroyWeapon();
 
-        EntitySelector<DamageSource, TargetableCharacter> targets = EntitySelectors.enemyTargets();
+        EntitySelector<DamageSource, Character> targets = EntitySelectors.enemyTargets();
         TargetlessAction<DamageSource> damageAction = damageTarget(targets, damage);
 
         UndoAction damageUndo = damageAction.alterWorld(world, actor);
@@ -786,7 +769,7 @@ public final class TargetlessActions {
     }
 
     public static <Actor extends DamageSource> TargetlessAction<Actor> damageTarget(
-            @NamedArg("selector") EntitySelector<Actor, ? extends TargetableCharacter> selector,
+            @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector,
             @NamedArg("damage") int damage) {
         return damageTarget(selector, damage, damage);
     }
@@ -801,7 +784,7 @@ public final class TargetlessActions {
     }
 
     public static <Actor extends DamageSource> TargetlessAction<Actor> damageTarget(
-            @NamedArg("selector") EntitySelector<Actor, ? extends TargetableCharacter> selector,
+            @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector,
             @NamedArg("minDamage") int minDamage,
             @NamedArg("maxDamage") int maxDamage) {
         return forBornTargets(selector, TargetedActions.damageTarget(minDamage, maxDamage), true);
@@ -836,7 +819,7 @@ public final class TargetlessActions {
     }
 
     public static <Actor extends DamageSource> TargetlessAction<Actor> dealMissleDamage(
-            @NamedArg("selector") EntitySelector<Actor, ? extends TargetableCharacter> selector,
+            @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector,
             @NamedArg("missleCount") int missleCount) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
@@ -848,7 +831,7 @@ public final class TargetlessActions {
             result.addUndo(missleCountRef.getUndoAction());
 
             Damage damage = new Damage(actor, 1);
-            Consumer<TargetableCharacter> damageAction = (target) -> {
+            Consumer<info.hearthsim.brazier.Character> damageAction = (target) -> {
                 result.addUndo(target.damage(damage));
             };
             for (int i = 0; i < appliedMissleCount; i++) {

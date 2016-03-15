@@ -1,6 +1,7 @@
 package com.github.mrdai.alphahearth;
 
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
@@ -104,7 +105,7 @@ public class Board {
                 new PlayerTargetNeed(new TargeterDef(AI_PLAYER, true, false), card.getTargetNeed());
             if (card.isMinionCard()) {
                 if (card.getTargetNeed().hasTarget()) { // Minion card with battle cry target
-                    for (TargetableCharacter target : currentWorld.getTargets()) {
+                    for (Character target : currentWorld.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
                                 SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getTargetId());
@@ -120,7 +121,7 @@ public class Board {
                 }
             } else {
                 if (card.getTargetNeed().hasTarget()) { // Spell or Weapon card with target
-                    for (TargetableCharacter target : currentWorld.getTargets()) {
+                    for (Character target : currentWorld.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getTargetId());
                             addAndCache(selectedMove, cardPlaying, cachedBoard, availableMoves, cachedBoards);

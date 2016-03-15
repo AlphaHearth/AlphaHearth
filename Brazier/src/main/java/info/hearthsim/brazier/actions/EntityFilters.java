@@ -1,12 +1,7 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionId;
 import info.hearthsim.brazier.parsing.NamedArg;
@@ -84,93 +79,93 @@ public final class EntityFilters {
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_BEAST}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isBeast() {
+    public static <Entity extends Character> Predicate<Entity> isBeast() {
         return withKeywords(Keywords.RACE_BEAST);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_DEMON}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isDemon() {
+    public static <Entity extends Character> Predicate<Entity> isDemon() {
         return withKeywords(Keywords.RACE_DEMON);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_DRAGON}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isDragon() {
+    public static <Entity extends Character> Predicate<Entity> isDragon() {
         return withKeywords(Keywords.RACE_DRAGON);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_MECH}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isMech() {
+    public static <Entity extends Character> Predicate<Entity> isMech() {
         return withKeywords(Keywords.RACE_MECH);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_MURLOC}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isMurloc() {
+    public static <Entity extends info.hearthsim.brazier.Character> Predicate<Entity> isMurloc() {
         return withKeywords(Keywords.RACE_MURLOC);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_PIRATE}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isPirate() {
+    public static <Entity extends Character> Predicate<Entity> isPirate() {
         return withKeywords(Keywords.RACE_PIRATE);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character has
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_TOTEM}.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isTotem() {
+    public static <Entity extends Character> Predicate<Entity> isTotem() {
         return withKeywords(Keywords.RACE_TOTEM);
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character is dead.
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character is dead.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isDead() {
+    public static <Entity extends Character> Predicate<Entity> isDead() {
         return Entity::isDead;
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character is alive.
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character is alive.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isAlive() {
+    public static <Entity extends Character> Predicate<Entity> isAlive() {
         return (target) -> !target.isDead();
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character is damaged.
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character is damaged.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isDamaged() {
+    public static <Entity extends Character> Predicate<Entity> isDamaged() {
         return Entity::isDamaged;
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character is not damaged.
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character is not damaged.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isUndamaged() {
+    public static <Entity extends Character> Predicate<Entity> isUndamaged() {
         return (target) -> !target.isDamaged();
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the given character is frozen.
+     * Returns a {@link Predicate} of {@link Character} which checks if the given character is frozen.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> isFrozen() {
+    public static <Entity extends Character> Predicate<Entity> isFrozen() {
         return (target) -> target.getAttackTool().isFrozen();
     }
 
@@ -218,10 +213,10 @@ public final class EntityFilters {
     }
 
     /**
-     * Returns a {@link Predicate} of {@link TargetableCharacter} which checks if the character's attack is less
+     * Returns a {@link Predicate} of {@link Character} which checks if the character's attack is less
      * than the given amount.
      */
-    public static <Entity extends TargetableCharacter> Predicate<Entity> attackIsLess(@NamedArg("attack") int attack) {
+    public static <Entity extends Character> Predicate<Entity> attackIsLess(@NamedArg("attack") int attack) {
         return (target) -> target.getAttackTool().getAttack() < attack;
     }
 

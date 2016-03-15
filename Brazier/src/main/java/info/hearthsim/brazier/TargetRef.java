@@ -7,5 +7,5 @@ public interface TargetRef {
     /**
      * Returns the target of this event; returns {@code null} if there is no target.
      */
-    public TargetableCharacter getTarget();
+    public Character getTarget();
 }

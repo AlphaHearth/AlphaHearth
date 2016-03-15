@@ -1,14 +1,10 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.cards.CardProvider;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.parsing.NamedArg;
@@ -319,74 +315,74 @@ public final class EntitySelectors {
     /* EntitySelectors for TargetableCharactors */
 
     /**
-     * Returns a {@link EntitySelector} which returns all {@link TargetableCharacter},
+     * Returns a {@link EntitySelector} which returns all {@link Character},
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> allTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> allTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyTargets(), enemyTargets()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all buffable {@link TargetableCharacter},
+     * Returns a {@link EntitySelector} which returns all buffable {@link Character},
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> allBuffableTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> allBuffableTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyBuffableTargets(), enemyBuffableTargets()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all living {@link TargetableCharacter},
+     * Returns a {@link EntitySelector} which returns all living {@link Character},
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> allLivingTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> allLivingTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyLivingTargets(), enemyLivingTargets()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all enemy {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all enemy {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> enemyTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> enemyTargets() {
         return EntitySelector.merge(Arrays.asList(enemyMinions(), enemyHero()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all enemy buffable {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all enemy buffable {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> enemyBuffableTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> enemyBuffableTargets() {
         return EntitySelector.merge(Arrays.asList(enemyBuffableMinions(), enemyHero()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all enemy living {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all enemy living {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> enemyLivingTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> enemyLivingTargets() {
         return EntitySelector.merge(Arrays.asList(enemyLivingMinions(), enemyHero()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all friendly {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all friendly {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> friendlyTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> friendlyTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyMinions(), friendlyHero()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all friendly buffable {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all friendly buffable {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> friendlyBuffableTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> friendlyBuffableTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyBuffableMinions(), friendlyHero()));
     }
 
     /**
-     * Returns a {@link EntitySelector} which returns all friendly living {@link TargetableCharacter}s,
+     * Returns a {@link EntitySelector} which returns all friendly living {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, TargetableCharacter> friendlyLivingTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, info.hearthsim.brazier.Character> friendlyLivingTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyLivingMinions(), friendlyHero()));
     }
 

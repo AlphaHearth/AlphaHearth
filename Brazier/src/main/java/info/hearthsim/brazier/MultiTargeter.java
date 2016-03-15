@@ -18,7 +18,7 @@ public final class MultiTargeter {
         private boolean minions;
         private boolean heroes;
         private boolean atomic;
-        private Predicate<? super TargetableCharacter> customFilter;
+        private Predicate<? super Character> customFilter;
 
         public Builder() {
             this.enemy = false;
@@ -29,7 +29,7 @@ public final class MultiTargeter {
             this.customFilter = (target) -> true;
         }
 
-        public void setCustomFilter(Predicate<? super TargetableCharacter> customFilter) {
+        public void setCustomFilter(Predicate<? super Character> customFilter) {
             ExceptionHelper.checkNotNullArgument(customFilter, "customFilter");
             this.customFilter = customFilter;
         }
@@ -64,7 +64,7 @@ public final class MultiTargeter {
     private final boolean minions;
     private final boolean heroes;
     private final boolean atomic;
-    private final Predicate<? super TargetableCharacter> customFilter;
+    private final Predicate<? super Character> customFilter;
 
     private MultiTargeter(Builder builder) {
         this.enemy = builder.enemy;
@@ -91,7 +91,7 @@ public final class MultiTargeter {
 
     public UndoAction forTargets(
             Player player,
-            Function<TargetableCharacter, UndoAction> applier) {
+            Function<Character, UndoAction> applier) {
 
         if (atomic) {
             return player.getWorld().getEvents().doAtomic(() -> forTargetsNonAtomic(player, applier));
@@ -103,7 +103,7 @@ public final class MultiTargeter {
 
     private UndoAction forTargetsNonAtomic(
             Player player,
-            Function<TargetableCharacter, UndoAction> applier) {
+            Function<Character, UndoAction> applier) {
         ExceptionHelper.checkNotNullArgument(player, "player");
         ExceptionHelper.checkNotNullArgument(applier, "applier");
 

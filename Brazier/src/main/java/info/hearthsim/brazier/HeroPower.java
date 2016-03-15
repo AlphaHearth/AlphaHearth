@@ -92,7 +92,7 @@ public final class HeroPower implements PlayerProperty {
     /**
      * Plays the hero power towards the optional target.
      */
-    public UndoAction play(World world, Optional<TargetableCharacter> target) {
+    public UndoAction play(World world, Optional<Character> target) {
         PlayArg<Card> playArg = new PlayArg<>(getBaseCard(), target);
 
         Player owner = getOwner();

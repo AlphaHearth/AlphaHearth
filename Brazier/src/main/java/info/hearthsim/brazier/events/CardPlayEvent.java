@@ -9,7 +9,7 @@ import info.hearthsim.brazier.LabeledEntity;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.TargetRef;
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
 
 import java.util.Optional;
 import java.util.Set;
@@ -42,11 +42,11 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
 
     /**
      * Replaces the {@code CardPlayEvent}'s {@link PlayArg} with a new one with the given
-     * {@link TargetableCharacter} as its target.
+     * {@link Character} as its target.
      *
      * @param newTarget the new target for the new {@code PlayArg}.
      */
-    public UndoAction replaceTarget(TargetableCharacter newTarget) {
+    public UndoAction replaceTarget(Character newTarget) {
         if (newTarget == getTarget()) {
             return UndoAction.DO_NOTHING;
         }
@@ -56,11 +56,11 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
 
     /**
      * Replaces the {@code CardPlayEvent}'s {@link PlayArg} with a new one with the given
-     * {@link TargetableCharacter} as its target.
+     * {@link Character} as its target.
      *
      * @param newTarget the new target for the new {@code PlayArg}.
      */
-    public UndoAction replaceTarget(Optional<TargetableCharacter> newTarget) {
+    public UndoAction replaceTarget(Optional<Character> newTarget) {
         ExceptionHelper.checkNotNullArgument(newTarget, "newTarget");
 
         PlayArg<Card> prevArg = cardPlayArg;
@@ -73,7 +73,7 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
     }
 
     @Override
-    public TargetableCharacter getTarget() {
+    public Character getTarget() {
         return cardPlayArg.getTarget().orElse(null);
     }
 

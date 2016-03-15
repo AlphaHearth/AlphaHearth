@@ -1,14 +1,7 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.TargetId;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.HeroPower;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.TargeterDef;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.actions.TargetNeed;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
@@ -174,7 +167,7 @@ public final class PlayerUiAgent {
         });
     }
 
-    public void attack(TargetableCharacter attacker) {
+    public void attack(info.hearthsim.brazier.Character attacker) {
         ExceptionHelper.checkNotNullArgument(attacker, "attacker");
         if (!Objects.equals(attacker.getOwner().getPlayerId(), playerId)) {
             throw new IllegalArgumentException("Must attack with player: " + playerId.getName());

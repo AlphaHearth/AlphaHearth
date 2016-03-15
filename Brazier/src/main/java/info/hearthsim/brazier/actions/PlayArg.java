@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.TargetableCharacter;
+import info.hearthsim.brazier.Character;
+
 import java.util.Optional;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -10,15 +11,15 @@ import org.jtrim.utils.ExceptionHelper;
  *     <li>{@code actor}: the source of the action;</li>
  *     <li>
  *         {@code target}: the potential target of the action, represented as
- *         a {@link Optional} of {@link TargetableCharacter}.
+ *         a {@link Optional} of {@link Character}.
  *     </li>
  * </ul>
  */
 public final class PlayArg<Actor> {
     private final Actor actor;
-    private final Optional<TargetableCharacter> target;
+    private final Optional<Character> target;
 
-    public PlayArg(Actor actor, TargetableCharacter target) {
+    public PlayArg(Actor actor, info.hearthsim.brazier.Character target) {
         this(actor, Optional.ofNullable(target));
     }
 
@@ -30,7 +31,7 @@ public final class PlayArg<Actor> {
      *
      * @throws NullPointerException if any of the given parameters is {@code null}.
      */
-    public PlayArg(Actor actor, Optional<TargetableCharacter> target) {
+    public PlayArg(Actor actor, Optional<Character> target) {
         ExceptionHelper.checkNotNullArgument(actor, "actor");
         ExceptionHelper.checkNotNullArgument(target, "target");
 
@@ -48,7 +49,7 @@ public final class PlayArg<Actor> {
     /**
      * Returns the {@code target}.
      */
-    public Optional<TargetableCharacter> getTarget() {
+    public Optional<Character> getTarget() {
         return target;
     }
 }

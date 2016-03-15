@@ -1,22 +1,23 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.*;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * The request to deal a {@link Damage} to a {@link TargetableCharacter}.
+ * The request to deal a {@link Damage} to a {@link Character}.
  */
 public final class DamageRequest implements TargetRef, PlayerProperty {
     private final Damage damage;
-    private final TargetableCharacter target;
+    private final Character target;
     private boolean vetoDamage;
 
     /**
      * Creates a new {@code DamageRequest} with the given {@link Damage} and
-     * {@link TargetableCharacter} as target.
+     * {@link Character} as target.
      */
-    public DamageRequest(Damage damage, TargetableCharacter target) {
+    public DamageRequest(Damage damage, Character target) {
         ExceptionHelper.checkNotNullArgument(damage, "damage");
         ExceptionHelper.checkNotNullArgument(target, "target");
 
@@ -35,7 +36,7 @@ public final class DamageRequest implements TargetRef, PlayerProperty {
 
     /** Returns the target */
     @Override
-    public TargetableCharacter getTarget() {
+    public Character getTarget() {
         return target;
     }
 

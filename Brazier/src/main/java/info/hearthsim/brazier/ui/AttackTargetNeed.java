@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.TargetableCharacter;
-import info.hearthsim.brazier.TargeterDef;
+import info.hearthsim.brazier.*;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -27,7 +27,7 @@ public final class AttackTargetNeed {
     public static ListenerRef trackForTarget(
             TargetManager targetManager,
             JComponent component,
-            TargetableCharacter target,
+            info.hearthsim.brazier.Character target,
             Consumer<Boolean> highlightSetter) {
         ExceptionHelper.checkNotNullArgument(targetManager, "targetManager");
         ExceptionHelper.checkNotNullArgument(component, "component");

@@ -13,17 +13,27 @@ import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.parsing.NamedArg;
 import org.jtrim.utils.ExceptionHelper;
 
+// TODO Ability is now only used to add aura to characters or add spell power.
+// TODO Consider using Aura in Json files to replace this interface.
 /**
- * Activatable ability. Such effects include enrage and spell power, which activates when certain condition is
- * satisfied and deactivates when it's not satisfied. It's different than triggering effect like Gahz'rilla
- * or Gurubashi Berserker has, which will not deactivate unless it is silenced.
+ * Activatable ability for minions, which will not take effect unless its {@link #activate(Self)} method
+ * is invoked. Abilities for minions include aura-adding and <b>Spell Power</b>, which adds a certain
+ * {@link Aura} or buffs the owner's <b>Spell Power</b> when it is activated.
+ * <p>
+ * Instances of {@code Ability} must be <b>immutable</b>: no state can be stored. Using the interface as
+ * a functional interface and implementing it by using lambda expression is highly recommended.
  * <p>
  * For predefined {@code Ability}s, see {@link Abilities} and {@link MinionAbilities}.
  *
+ * @see Aura
  * @see Abilities
  * @see MinionAbilities
  */
+@FunctionalInterface
 public interface Ability <Self> {
+    /**
+     * Activates the {@code Ability} with the given object.
+     */
     public UndoableUnregisterAction activate(Self self);
 
     /**

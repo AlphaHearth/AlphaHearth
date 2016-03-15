@@ -62,7 +62,6 @@ public final class EntityFilters {
      * Returns a {@link Predicate} of {@link LabeledEntity} which checks if the given entity has
      * every given {@link Keyword}.
      */
-    // TODO combine it to ActionUtils.includedKeywordsFilter. They are the same.
     public static <Entity extends LabeledEntity> Predicate<Entity> withKeywords(
             @NamedArg("keywords") Keyword... keywords) {
         return ActionUtils.includedKeywordsFilter(keywords);
@@ -72,7 +71,6 @@ public final class EntityFilters {
      * Returns a {@link Predicate} of {@link LabeledEntity} which checks if the given entity does not have
      * any given {@link Keyword}.
      */
-    // TODO combine it to ActionUtils.excludedKeywordsFilter. They are the same.
     public static <Entity extends LabeledEntity> Predicate<Entity> withoutKeywords(
             @NamedArg("keywords") Keyword... keywords) {
         return ActionUtils.excludedKeywordsFilter(keywords);
@@ -180,7 +178,6 @@ public final class EntityFilters {
     /**
      * Returns a {@link Predicate} of {@link Minion} which checks if the given minion is buffable.
      */
-    // TODO check what `scheduledToDestroy` means
     public static Predicate<Minion> buffableMinion() {
         return (minion) -> !minion.isScheduledToDestroy();
     }

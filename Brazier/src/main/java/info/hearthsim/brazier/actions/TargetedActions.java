@@ -178,7 +178,7 @@ public final class TargetedActions {
         CardDescr baseCard = minion.getBaseDescr().getBaseCard();
 
         UndoAction removeUndo = owner.getBoard().removeFromBoard(minion.getTargetId());
-        UndoAction shuffleUndo = deck.putToRandomPosition(world.getRandomProvider(), baseCard);
+        UndoAction shuffleUndo = deck.shuffle(world.getRandomProvider(), baseCard);
         return () -> {
             shuffleUndo.undo();
             removeUndo.undo();

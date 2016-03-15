@@ -206,7 +206,7 @@ public final class Buffs {
 
     private static UndoAction buffHero(Hero hero, BuffArg arg, int attack, int hp) {
         // FIXME: Attack buff is only OK because everything buffing a hero's
-        //        attack only lasts until the end of turn.
+        // FIXME: attack only lasts until the end of turn.
 
         if (attack == 0) {
             return hero.getHp().buffHp(arg, hp);

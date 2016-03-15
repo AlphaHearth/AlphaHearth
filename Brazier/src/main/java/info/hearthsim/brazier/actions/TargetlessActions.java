@@ -779,7 +779,7 @@ public final class TargetlessActions {
 
         return (World world, PlayerProperty actor) -> {
             Deck deck = actor.getOwner().getDeck();
-            return deck.putToRandomPosition(world.getRandomProvider(), card.getCard());
+            return deck.shuffle(world.getRandomProvider(), card.getCard());
         };
     }
 

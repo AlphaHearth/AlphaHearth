@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="info.hearthsim.brazier.TmpBuffTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2016-03-15T06:01:02" hostname="mrdai-Laptop" time="0.001">
-  <properties/>
-  <testcase name="testAbusiveSergeant" classname="info.hearthsim.brazier.TmpBuffTest" time="0.0"/>
-  <testcase name="testSilencedAbusiveSergeantBuff" classname="info.hearthsim.brazier.TmpBuffTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

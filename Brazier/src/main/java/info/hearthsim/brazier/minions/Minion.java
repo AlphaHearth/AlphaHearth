@@ -385,7 +385,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         return properties.refreshEndOfTurn();
     }
 
-    public UndoAction applyAuras() {
+    public UndoAction updateAuras() {
         return properties.updateAuras();
     }
 

@@ -8,6 +8,10 @@ import java.util.List;
 
 import org.jtrim.utils.ExceptionHelper;
 
+/**
+ * Container for {@link Secret}, which can be used as the container of the active in-game secrets
+ * of a certain player.
+ */
 public final class SecretContainer implements PlayerProperty {
     public static final int MAX_SECRETS = 5;
 

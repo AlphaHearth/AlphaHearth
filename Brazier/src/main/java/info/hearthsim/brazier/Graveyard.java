@@ -31,14 +31,14 @@ public final class Graveyard {
         return true;
     }
 
-    public UndoAction refresh() {
-        if (minionsDiedThisTurn.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        List<Minion> prevMinionsDiedThisTurn = minionsDiedThisTurn;
-        minionsDiedThisTurn = new ArrayList<>();
-        return () -> minionsDiedThisTurn = prevMinionsDiedThisTurn;
+    /**
+     * Refreshes the {@code Graveyard} at end of turn by stop referring to the minions died
+     * in this turn.
+     */
+    public void refreshEndOfTurn() {
+        if (minionsDiedThisTurn.isEmpty())
+            return;
+        minionsDiedThisTurn.clear();
     }
 
     public int getNumberOfMinionsDiedThisTurn() {

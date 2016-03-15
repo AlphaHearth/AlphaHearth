@@ -171,7 +171,7 @@ public final class BoardSide implements PlayerProperty {
         UndoAction.Builder builder = new UndoAction.Builder(minionRefs.size());
 
         for (BoardMinionRef minionRef: minionRefs) {
-            builder.addUndo(minionRef.minion.applyAuras());
+            builder.addUndo(minionRef.minion.updateAuras());
         }
 
         return builder;

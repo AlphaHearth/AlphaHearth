@@ -34,9 +34,6 @@ public final class TestAgent {
     private final World world;
     private final WorldPlayAgent playAgent;
 
-    // /** The list of actions of the script */
-    // private final List<ScriptAction> script;
-
     public TestAgent() {
         this(true);
     }
@@ -53,32 +50,6 @@ public final class TestAgent {
         this.world.setUserAgent(userAgent);
         this.playAgent = new WorldPlayAgent(world);
     }
-
-    /**
-     * Runs a test script given by a {@link Consumer} of {@link TestAgent}
-     *
-     * @param scriptConfig a {@link Consumer} of {@link TestAgent}, which is used
-     *                     to be designated by lambda expression
-     */
-
-    /*public static void testScript(Consumer<TestAgent> scriptConfig) {
-        TestAgent script = new TestAgent();
-        scriptConfig.accept(script);
-        script.executeScript();
-    }*/
-
-    /**
-     * Appends an action to the script.
-     *
-     * @param scriptAction the script action to be appended
-     */
-    /*private void addScriptAction(Function<ScriptAgent, void> scriptAction) {
-        addScriptAction(false, scriptAction);
-    }
-
-    private void addScriptAction(boolean expectationCheck, Function<ScriptAgent, void> scriptAction) {
-        script.add(new ScriptAction(expectationCheck, new Exception("Script config line"), scriptAction));
-    }*/
 
     /**
      * Applies the given action to the player with the given name.
@@ -497,106 +468,6 @@ public final class TestAgent {
         playAgent.attack(attackerId, targetId);
     }
 
-    /*private void executeScript() {
-        for (boolean changePlayers : new boolean[] { false, true }) {
-            executeScript(changePlayers);
-        }
-    }
-
-    private void executeScript(boolean changePlayers) {
-        ScriptAgent scriptAgent = new ScriptAgent(changePlayers, db);
-
-        executeAllScriptActions(scriptAgent);
-
-        if (!scriptAgent.randomProvider.rolls.isEmpty()) {
-            throw new AssertionError("There were unnecessary rolls defined: " + scriptAgent.randomProvider.rolls);
-        }
-
-        if (!scriptAgent.userAgent.choices.isEmpty()) {
-            throw new AssertionError("There were unnecessary card choices defined: " + scriptAgent.userAgent.choices);
-        }
-
-        int scriptSize = script.size();
-        for (int index1 = 0; index1 < scriptSize - 1; index1++) {
-            if (script.get(index1).expectationCheck) {
-                continue;
-            }
-
-            for (int index2 = index1 + 1; index2 <= scriptSize; index2++) {
-                if (script.get(index2 - 1).expectationCheck) {
-                    continue;
-                }
-
-                try {
-                    executeScriptWithUndoTest(changePlayers, index1, index2);
-                } catch (Throwable ex) {
-                    ex.addSuppressed(new Exception("Undoing after", script.get(index1).stackTrace));
-                    ex.addSuppressed(new Exception("Undoing before", script.get(index2 - 1).stackTrace));
-                    throw ex;
-                }
-            }
-        }
-    }
-
-    private void executeScriptWithUndoTest(boolean changePlayers, int index1, int index2) {
-        ScriptAgent scriptAgent = new ScriptAgent(changePlayers, db);
-
-        List<ScriptAction> currentScript = new ArrayList<>(script);
-        int scriptLength = currentScript.size();
-
-        ExceptionHelper.checkArgumentInRange(index1, 0, index2 - 1, "index1");
-        ExceptionHelper.checkArgumentInRange(index2, index1, scriptLength, "index2");
-
-        List<UndoableResult<Throwable>> undos = new LinkedList<>();
-        for (int i = 0; i < index2; i++) {
-            ScriptAction action = currentScript.get(i);
-            void undo;
-            try {
-                undo = action.doAction(scriptAgent);
-            } catch (Throwable ex) {
-                ex.addSuppressed(action.stackTrace);
-                throw ex;
-            }
-
-            if (i >= index1) {
-                undos.add(0, new UndoableResult<>(action.stackTrace, undo));
-            }
-        }
-
-        for (UndoableResult<Throwable> undo : undos) {
-            try {
-                undo.undo();
-            } catch (Throwable ex) {
-                AssertionError undoError = new AssertionError("Undoing action failed.", ex);
-                undoError.addSuppressed(undo.getResult());
-                throw undoError;
-            }
-        }
-
-        for (int i = index1; i < scriptLength; i++) {
-            ScriptAction action = currentScript.get(i);
-            try {
-                action.doAction(scriptAgent);
-            } catch (Throwable ex) {
-                ex.addSuppressed(action.stackTrace);
-                throw ex;
-            }
-        }
-    }
-
-    private void executeAllScriptActions(ScriptAgent scriptAgent) {
-        List<ScriptAction> currentScript = new ArrayList<>(script);
-
-        for (ScriptAction action : currentScript) {
-            try {
-                action.doAction(scriptAgent);
-            } catch (Throwable ex) {
-                ex.addSuppressed(action.stackTrace);
-                throw ex;
-            }
-        }
-    }*/
-
     public Character findTarget(String targetId) {
         if (targetId.trim().isEmpty()) {
             return null;
@@ -779,78 +650,4 @@ public final class TestAgent {
             return choice.getChoice(db);
         }
     }
-/*
-    private static final class ScriptAgent {
-        private final ScriptedUserAgent userAgent;
-        private final ScriptedRandomProvider randomProvider;
-        private final WorldPlayAgent playAgent;
-        private final World world;
-
-        public ScriptAgent(boolean changePlayers, HearthStoneDb db) {
-            this.randomProvider = new ScriptedRandomProvider();
-            this.userAgent = new ScriptedUserAgent(db);
-            this.world = changePlayers
-                ? new World(db, PLAYER2_ID, PLAYER1_ID)
-                : new World(db, PLAYER1_ID, PLAYER2_ID);
-            this.world.setRandomProvider(randomProvider);
-            this.world.setUserAgent(userAgent);
-            this.playAgent = new WorldPlayAgent(world);
-        }
-
-        public Character findTarget(String targetId) {
-            if (targetId.trim().isEmpty()) {
-                return null;
-            }
-
-            String[] targetIdParts = targetId.split(":");
-            if (targetIdParts.length < 2) {
-                throw new IllegalArgumentException("Illegal target ID: " + targetId);
-            }
-
-            Player player = world.getPlayer(parsePlayerName(targetIdParts[0]));
-            String targetName = targetIdParts[1].trim();
-            if (targetName.equalsIgnoreCase("hero")) {
-                return player.getHero();
-            }
-
-            int minionIndex = Integer.parseInt(targetName);
-            Minion minion = player.getBoard().getAllMinions().get(minionIndex);
-            return minion;
-        }
-
-        public TargetId findTargetId(String targetId) {
-            Character target = findTarget(targetId);
-            return target != null ? target.getTargetId() : null;
-        }
-
-        public PlayTargetRequest toPlayTarget(PlayerId player, int minionPos, String targetId) {
-            return new PlayTargetRequest(player, minionPos, findTargetId(targetId));
-        }
-    }
-
-    *//**
-     * Action unit of a script.
-     *//*
-    private static final class ScriptAction {
-        private final Exception stackTrace;
-        private final boolean expectationCheck;
-        private final Function<ScriptAgent, void> action;
-
-        public ScriptAction(boolean expectationCheck, Exception stackTrace, Function<ScriptAgent, void> action) {
-            this.expectationCheck = expectationCheck;
-            this.stackTrace = stackTrace;
-            this.action = action;
-        }
-
-        public void doAction(ScriptAgent scriptAgent) {
-            Deque<RollDef> recordedRolls = new LinkedList<>();
-            Deque<CardChoiceDef> recodedChoices = new LinkedList<>();
-
-            scriptAgent.userAgent.startRollRecording(recodedChoices);
-            scriptAgent.randomProvider.startRollRecording(recordedRolls);
-            action.apply(scriptAgent);
-            scriptAgent.randomProvider.stopRollRecording();
-            scriptAgent.userAgent.stopRollRecording();
-        }
-    }*/
 }

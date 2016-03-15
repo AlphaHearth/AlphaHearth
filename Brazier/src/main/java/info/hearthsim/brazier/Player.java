@@ -35,11 +35,11 @@ public final class Player implements PlayerProperty {
     private final World world;
     private final PlayerId playerId;
     private Hero hero;
+    private final Hand hand;
     private final BoardSide board;
     private final Deck deck;
     private final Graveyard graveyard;
     private final SecretContainer secrets;
-    private final Hand hand;
 
     private final AuraAwareIntProperty deathRattleTriggerCount;
     private final AuraAwareIntProperty spellPower;
@@ -113,6 +113,7 @@ public final class Player implements PlayerProperty {
 
         UndoAction refreshHeroUndo = hero.refreshEndOfTurn();
         UndoAction boardRefreshUndo = board.refreshEndOfTurn();
+        graveyard.refreshEndOfTurn();
         return () -> {
             boardRefreshUndo.undo();
             refreshHeroUndo.undo();

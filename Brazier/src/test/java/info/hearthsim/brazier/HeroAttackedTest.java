@@ -1,157 +1,143 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-public final class HeroAttackedTest {
+public final class HeroAttackedTest extends BrazierTest {
     @Test
     public void testOneOffLethal() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.setHeroHp("p2", 5, 0);
+        agent.setHeroHp("p2", 5, 0);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectGameContinues();
-        });
+        agent.expectGameContinues();
     }
 
     @Test
     public void testExactLethal() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.setHeroHp("p2", 4, 0);
+        agent.setHeroHp("p2", 4, 0);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroDeath("p2");
-        });
+        agent.expectHeroDeath("p2");
     }
 
     @Test
     public void testExactLethalWithArmor() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.setHeroHp("p2", 3, 1);
+        agent.setHeroHp("p2", 3, 1);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroDeath("p2");
-        });
+        agent.expectHeroDeath("p2");
     }
 
     @Test
     public void testOverLethal() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.setHeroHp("p2", 3, 0);
+        agent.setHeroHp("p2", 3, 0);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
-            script.refreshAttacks();
+        agent.playMinionCard("p1", TestCards.YETI, 0);
+        agent.refreshAttacks();
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroDeath("p2");
-        });
+        agent.expectHeroDeath("p2");
     }
 
     @Test
     public void testAttackHero() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 4);
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.setMana("p1", 4);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
-            script.expectBoard("p2");
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p2");
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 26, 0);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 26, 0);
     }
 
     @Test
     public void testAttackHeroWithLowArmor() {
-        PlayScript.testScript((script) -> {
-            script.setHeroHp("p2", 30, 3);
+        agent.setHeroHp("p2", 30, 3);
 
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
-            script.expectBoard("p2");
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p2");
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 29, 0);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 29, 0);
     }
 
     @Test
     public void testAttackHeroWithJustEnoughArmor() {
-        PlayScript.testScript((script) -> {
-            script.setHeroHp("p2", 30, 4);
+        agent.setHeroHp("p2", 30, 4);
 
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
-            script.expectBoard("p2");
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p2");
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 30, 0);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 30, 0);
     }
 
     @Test
     public void testAttackHeroWithHighArmor() {
-        PlayScript.testScript((script) -> {
-            script.setHeroHp("p2", 30, 10);
+        agent.setHeroHp("p2", 30, 10);
 
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", TestCards.YETI, 0);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
-            script.expectBoard("p2");
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p2");
 
-            script.attack("p1:0", "p2:hero");
+        agent.attack("p1:0", "p2:hero");
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 30, 6);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 30, 6);
     }
 }

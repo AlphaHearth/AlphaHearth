@@ -179,7 +179,7 @@ public final class CardDescr implements HearthStoneEntity {
 
     /**
      * Returns if the card will do something when it's played by the given {@link Player}.
-     * Returns {@code true} if the card can summon a minion or the given {@code Player} meets the
+     * Returns {@code true} if the card can completeSummon a minion or the given {@code Player} meets the
      * requirement of the battle cry or choose-one effect of the card.
      */
     public boolean doesSomethingWhenPlayed(Player player) {

@@ -1,4 +1,4 @@
-package info.hearthsim.brazier;
+package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionId;

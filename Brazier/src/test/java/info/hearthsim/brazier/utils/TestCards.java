@@ -1,6 +1,8 @@
-package info.hearthsim.brazier;
+package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.utils.MinionExpectations;
+import info.hearthsim.brazier.utils.MinionFlags;
 
 import java.util.Arrays;
 import java.util.HashSet;

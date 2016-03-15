@@ -1,9 +1,6 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.HearthStoneEntityDatabase;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.PlayScript;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.minions.MinionDescr;
@@ -13,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import info.hearthsim.brazier.utils.TestAgent;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,14 +23,11 @@ public final class DefaultDbTest {
 
     @Test
     public void testAllMinionIsSummonable() {
+        TestAgent agent = new TestAgent();
+
         HearthStoneEntityDatabase<MinionDescr> minionDb = TestDb.getTestDb().getMinionDb();
-        for (MinionDescr minion: minionDb.getAll()) {
-            PlayScript.testScript((script) -> {
-                script.adjustPlayer("p1", (player) -> {
-                    return player.summonMinion(minion);
-                });
-            });
-        }
+        for (MinionDescr minion: minionDb.getAll())
+            agent.applyToPlayer("p1", (player) -> player.summonMinion(minion));
     }
 
     @Test

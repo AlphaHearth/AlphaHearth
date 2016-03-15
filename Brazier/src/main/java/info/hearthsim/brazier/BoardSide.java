@@ -37,29 +37,47 @@ public final class BoardSide implements PlayerProperty {
      * If the given index is less than {@code 0}, the given minion will be added to the left most of the board;
      * if the given index is larger than or equal to the number of minions on this board,
      * the given minion will be added to the right most of the board.
+     * <p>
+     * For triggering minion-summoning event and battle-cry effect, see {@link #completeSummon(Minion)}.
      *
      * @param minion the given minion.
      * @param index the given index of the board.
+     *
+     * @see #completeSummon(Minion)
      */
     public UndoAction tryAddToBoard(Minion minion, int index) {
         if (index > minionRefs.size())
             return tryAddToBoard(minion);
         if (index < 0)
             index = 0;
+        if (isFull())
+            return UndoAction.DO_NOTHING;
+        ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         BoardMinionRef minionRef = new BoardMinionRef(minion);
         minionRefs.add(index, minionRef);
+        minion.activatePassiveAbilities();
 
         return () -> minionRefs.remove(minionRef);
     }
 
     /**
-     * Tries to add the given minion to the right most of the board.
+     * Tries to add the given minion to the right most of the board. If the board is full, nothing will
+     * happened.
+     * <p>
+     * For triggering minion-summoning event and battle-cry effect, see {@link #completeSummon(Minion)}.
+     *
      * @param minion the given minion.
+     * @see #completeSummon(Minion)
      */
     public UndoAction tryAddToBoard(Minion minion) {
+        if (isFull())
+            return UndoAction.DO_NOTHING;
+        ExceptionHelper.checkNotNullArgument(minion, "minion");
+
         BoardMinionRef minionRef = new BoardMinionRef(minion);
         minionRefs.add(minionRef);
+        minion.activatePassiveAbilities();
 
         return () -> minionRefs.remove(minionRef);
     }
@@ -73,6 +91,19 @@ public final class BoardSide implements PlayerProperty {
 
         final int finalIndex = index;
         return () -> minionRefs.add(finalIndex, removedMinion);
+    }
+
+    /**
+     * Schedules to destroy the minion with the given {@link TargetId}. Method {@link World#resolveDeaths()}
+     * guarantees the minion scheduled to destroy will be destroyed soon after.
+     */
+    public void scheduleToDestroy(TargetId minionId) {
+        for (BoardMinionRef minionRef : minionRefs) {
+            if (minionRef.minion.getTargetId() == minionId) {
+                minionRef.needsSpace = false;
+                return;
+            }
+        }
     }
 
     /**
@@ -383,7 +414,7 @@ public final class BoardSide implements PlayerProperty {
         builder.addUndo(minion.refreshStartOfTurn());
         builder.addUndo(minion.exhaust());
 
-        builder.addUndo(completeSummonMinion(minion));
+        builder.addUndo(completeSummon(minion));
 
         return builder;
     }
@@ -392,8 +423,8 @@ public final class BoardSide implements PlayerProperty {
      * Completes the action of summoning the given {@code Minion} without triggering any battlecry effect.
      * @param minion the given {@code Minion} which is just summoned.
      */
-    public UndoAction completeSummonMinion(Minion minion) {
-        return completeSummonMinionUnsafe(minion, null);
+    public UndoAction completeSummon(Minion minion) {
+        return completeSummonUnsafe(minion, null);
     }
 
     /**
@@ -406,11 +437,11 @@ public final class BoardSide implements PlayerProperty {
      *
      * @throws NullPointerException if {@code battleCryTarget} is {@code null}.
      */
-    public UndoAction completeSummonMinion(
-            Minion minion,
-            Optional<TargetableCharacter> battleCryTarget) {
+    public UndoAction completeSummon(
+        Minion minion,
+        Optional<TargetableCharacter> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(battleCryTarget, "battleCryTarget");
-        return completeSummonMinionUnsafe(minion, battleCryTarget);
+        return completeSummonUnsafe(minion, battleCryTarget);
     }
 
     /**
@@ -423,9 +454,9 @@ public final class BoardSide implements PlayerProperty {
      *                        Pass {@code null} to indicate there is no battlecry effect to be
      *                        triggered.
      */
-    private UndoAction completeSummonMinionUnsafe(
-            Minion minion,
-            Optional<TargetableCharacter> battleCryTarget) {
+    private UndoAction completeSummonUnsafe(
+        Minion minion,
+        Optional<TargetableCharacter> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         World world = getWorld();

@@ -1,58 +1,52 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-public final class CardChooseTest {
+public final class CardChooseTest extends BrazierTest {
     @Test
     public void testTracking() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.deck("p1", TestCards.YETI, TestCards.CULT_MASTER, TestCards.BLACKWING_CORRUPTOR, TestCards.BLUEGILL_WARRIOR, TestCards.ABUSIVE_SERGEANT);
+        agent.setMana("p1", 10);
+        agent.deck("p1", TestCards.YETI, TestCards.CULT_MASTER, TestCards.BLACKWING_CORRUPTOR, TestCards.BLUEGILL_WARRIOR, TestCards.ABUSIVE_SERGEANT);
 
-            script.addCardChoice(1, TestCards.ABUSIVE_SERGEANT, TestCards.BLUEGILL_WARRIOR, TestCards.BLACKWING_CORRUPTOR);
-            script.playCard("p1", TestCards.TRACKING);
+        agent.addCardChoice(1, TestCards.ABUSIVE_SERGEANT, TestCards.BLUEGILL_WARRIOR, TestCards.BLACKWING_CORRUPTOR);
+        agent.playCard("p1", TestCards.TRACKING);
 
-            script.expectHand("p1", TestCards.BLUEGILL_WARRIOR);
-            script.expectDeck("p1", TestCards.YETI, TestCards.CULT_MASTER);
-        });
+        agent.expectHand("p1", TestCards.BLUEGILL_WARRIOR);
+        agent.expectDeck("p1", TestCards.YETI, TestCards.CULT_MASTER);
     }
 
     @Test
     public void testTrackingWith2Cards() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.deck("p1", TestCards.YETI, TestCards.CULT_MASTER);
+        agent.setMana("p1", 10);
+        agent.deck("p1", TestCards.YETI, TestCards.CULT_MASTER);
 
-            script.addCardChoice(0, TestCards.CULT_MASTER, TestCards.YETI);
-            script.playCard("p1", TestCards.TRACKING);
+        agent.addCardChoice(0, TestCards.CULT_MASTER, TestCards.YETI);
+        agent.playCard("p1", TestCards.TRACKING);
 
-            script.expectHand("p1", TestCards.CULT_MASTER);
-            script.expectDeck("p1");
-        });
+        agent.expectHand("p1", TestCards.CULT_MASTER);
+        agent.expectDeck("p1");
     }
 
     @Test
     public void testTrackingWith1Card() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.deck("p1", TestCards.YETI);
+        agent.setMana("p1", 10);
+        agent.deck("p1", TestCards.YETI);
 
-            script.playCard("p1", TestCards.TRACKING);
+        agent.playCard("p1", TestCards.TRACKING);
 
-            script.expectHand("p1", TestCards.YETI);
-            script.expectDeck("p1");
-        });
+        agent.expectHand("p1", TestCards.YETI);
+        agent.expectDeck("p1");
     }
 
     @Test
     public void testTrackingWithNoCards() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playCard("p1", TestCards.TRACKING);
+        agent.playCard("p1", TestCards.TRACKING);
 
-            script.expectHand("p1");
-            script.expectDeck("p1");
-        });
+        agent.expectHand("p1");
+        agent.expectDeck("p1");
     }
 }

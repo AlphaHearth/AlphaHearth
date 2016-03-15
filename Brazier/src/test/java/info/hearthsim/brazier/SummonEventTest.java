@@ -2,6 +2,7 @@ package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.minions.MinionId;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,51 +11,49 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestAgent;
 import org.jtrim.collections.CollectionsEx;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 import static org.junit.Assert.*;
 
-public final class SummonEventTest {
+public final class SummonEventTest extends BrazierTest {
     @Test
     public void testWarsongCommander() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playMinionCard("p1", WARSONG_COMMANDER, 0);
-            script.playMinionCard("p1", YETI, 1);
-            script.playMinionCard("p1", SLIME, 2);
+        agent.playMinionCard("p1", WARSONG_COMMANDER, 0);
+        agent.playMinionCard("p1", YETI, 1);
+        agent.playMinionCard("p1", SLIME, 2);
 
-            script.expectMinion("p1:1", (minion) -> {
-                assertFalse("charge", minion.isCharge());
-            });
-            script.expectMinion("p1:2", (minion) -> {
-                assertTrue("charge", minion.isCharge());
-            });
+        agent.expectMinion("p1:1", (minion) -> {
+            assertFalse("charge", minion.isCharge());
+        });
+        agent.expectMinion("p1:2", (minion) -> {
+            assertTrue("charge", minion.isCharge());
+        });
 
-            script.playMinionCard("p2", SLIME, 0);
+        agent.playMinionCard("p2", SLIME, 0);
 
-            script.expectMinion("p2:0", (minion) -> {
-                assertFalse("charge", minion.isCharge());
-            });
+        agent.expectMinion("p2:0", (minion) -> {
+            assertFalse("charge", minion.isCharge());
         });
     }
 
-    private MinionId singleMinionScript(String minionLocation, Consumer<PlayScript> scriptConfig) {
+    private MinionId singleMinionScript(String minionLocation, Consumer<TestAgent> scriptConfig) {
         List<Set<MinionId>> results = new LinkedList<>();
 
-        PlayScript.testScript((script) -> {
-            scriptConfig.accept(script);
+        scriptConfig.accept(agent);
 
-            script.expectMinion(minionLocation, (minion) -> {
-                results.add(Collections.singleton(minion.getBaseDescr().getId()));
-            });
-        });
+        agent.expectMinion(minionLocation,
+            (minion) -> results.add(Collections.singleton(minion.getBaseDescr().getId())));
 
         Set<MinionId> firstResult = results.remove(0);
-        for (Set<MinionId> result: results) {
+        for (Set<MinionId> result : results) {
             assertEquals("board result", firstResult, result);
         }
 
@@ -77,13 +76,13 @@ public final class SummonEventTest {
             script.playMinionCard("p1", ALARM_O_BOT, 0);
 
             script.expectBoard("p1",
-                    expectedMinion(ALARM_O_BOT, 0, 3),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1));
+                expectedMinion(ALARM_O_BOT, 0, 3),
+                expectedMinion(WISP, 1, 1),
+                expectedMinion(WISP, 1, 1),
+                expectedMinion(WISP, 1, 1),
+                expectedMinion(WISP, 1, 1),
+                expectedMinion(WISP, 1, 1),
+                expectedMinion(WISP, 1, 1));
 
             script.setCurrentPlayer("p1");
             script.endTurn();
@@ -96,8 +95,7 @@ public final class SummonEventTest {
                 List<String> expectedCards;
                 if (YETI.equals(minionId.getName())) {
                     expectedCards = Arrays.asList(ALARM_O_BOT, PYROBLAST, FIRE_ELEMENTAL, FIERY_WAR_AXE);
-                }
-                else {
+                } else {
                     expectedCards = Arrays.asList(YETI, PYROBLAST, ALARM_O_BOT, FIERY_WAR_AXE);
                 }
 
@@ -113,7 +111,7 @@ public final class SummonEventTest {
 
     private Set<MinionId> minionIds(String... names) {
         Set<MinionId> result = CollectionsEx.newHashSet(names.length);
-        for (String name: names) {
+        for (String name : names) {
             result.add(new MinionId(name));
         }
         return result;
@@ -121,50 +119,46 @@ public final class SummonEventTest {
 
     @Test
     public void testAlarmOBot() {
-        Set<MinionId> ids = new HashSet<>();
-        ids.add(testAlarmOBot(0));
-        ids.add(testAlarmOBot(1));
-
-        assertEquals("possibilities", minionIds(YETI, FIRE_ELEMENTAL), ids);
+        testAlarmOBot(0);
+        setUp(); // Set up again to reset TestAgent
+        testAlarmOBot(1);
     }
 
     @Test
     public void testAlarmOBotWithNoMinions() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.addToHand("p1", PYROBLAST, FIERY_WAR_AXE);
+        agent.addToHand("p1", PYROBLAST, FIERY_WAR_AXE);
 
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", ALARM_O_BOT, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", ALARM_O_BOT, 0);
 
-            script.expectBoard("p1",
-                    expectedMinion(ALARM_O_BOT, 0, 3),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1));
+        agent.expectBoard("p1",
+            expectedMinion(ALARM_O_BOT, 0, 3),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1));
 
-            script.setCurrentPlayer("p1");
-            script.endTurn();
-            script.endTurn();
+        agent.setCurrentPlayer("p1");
+        agent.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    expectedMinion(ALARM_O_BOT, 0, 3),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1),
-                    expectedMinion(WISP, 1, 1));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(ALARM_O_BOT, 0, 3),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1),
+            expectedMinion(WISP, 1, 1));
     }
 }

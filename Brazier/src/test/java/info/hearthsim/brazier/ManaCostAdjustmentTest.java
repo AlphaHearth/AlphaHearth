@@ -1,33 +1,31 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-public final class ManaCostAdjustmentTest {
+public final class ManaCostAdjustmentTest extends BrazierTest {
     @Test
     public void testDreadCorsairCost4ByDefault() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.DREAD_CORSAIR, 0);
-            script.expectedMana("p1", 6);
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.DREAD_CORSAIR, 0);
+        agent.expectMana("p1", 6);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.DREAD_CORSAIR, 3, 3));
-            script.expectBoard("p2");
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.DREAD_CORSAIR, 3, 3));
+        agent.expectBoard("p2");
     }
 
     @Test
     public void testDreadCorsairCostIsReducedCorrectly() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
-            script.expectedMana("p1", 8);
-            script.playMinionCard("p1", TestCards.DREAD_CORSAIR, 0);
-            script.expectedMana("p1", 7);
+        agent.setMana("p1", 10);
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.expectMana("p1", 8);
+        agent.playMinionCard("p1", TestCards.DREAD_CORSAIR, 0);
+        agent.expectMana("p1", 7);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.DREAD_CORSAIR, 3, 3));
-            script.expectBoard("p2");
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.DREAD_CORSAIR, 3, 3));
+        agent.expectBoard("p2");
     }
 }

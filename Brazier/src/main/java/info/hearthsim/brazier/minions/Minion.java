@@ -61,6 +61,7 @@ public final class Minion implements TargetableCharacter, DestroyableEntity, Sil
         }
 
         UndoAction deactivateUndo = getProperties().deactivateAllAbilities();
+        getOwner().getBoard().scheduleToDestroy(minionId);
         return () -> {
             deactivateUndo.undo();
             scheduledToDestroy.set(false);
@@ -89,6 +90,8 @@ public final class Minion implements TargetableCharacter, DestroyableEntity, Sil
     public UndoAction destroy() {
         UndoAction.Builder builder = new UndoAction.Builder(2);
 
+        // By now, the `scheduleToDestroy` method has already been invoked,
+        // and the `needSpace` of the dead minion has been set to `false`.
         builder.addUndo(completeKillAndDeactivate(true));
         builder.addUndo(owner.getBoard().removeFromBoard(minionId));
 
@@ -198,6 +201,9 @@ public final class Minion implements TargetableCharacter, DestroyableEntity, Sil
         return properties.addAndActivateAbility(abilityRegisterTask);
     }
 
+    /**
+     * Activates the passive abilities of this minion.
+     */
     public UndoAction activatePassiveAbilities() {
         return properties.activatePassiveAbilities();
     }
@@ -382,9 +388,6 @@ public final class Minion implements TargetableCharacter, DestroyableEntity, Sil
     public UndoAction applyAuras() {
         return properties.updateAuras();
     }
-
-
-
 
     @Override
     public String toString() {

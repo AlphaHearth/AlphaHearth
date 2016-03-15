@@ -1,135 +1,127 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-public final class ComboTest {
+public final class ComboTest extends BrazierTest {
     @Test
     public void testEviscerateNoCombo() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.YETI, 0);
-            script.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
+        agent.setCurrentPlayer("p1");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.setMana("p2", 10);
-            script.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 3));
-        });
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 3));
     }
 
     @Test
     public void testEviscerateNoComboNextTurn() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.YETI, 0);
-            script.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
+        agent.setCurrentPlayer("p1");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.setMana("p2", 10);
-            script.playNonMinionCard("p2", TestCards.MOONFIRE, "p1:hero");
+        agent.setMana("p2", 10);
+        agent.playNonMinionCard("p2", TestCards.MOONFIRE, "p1:hero");
 
-            script.endTurn();
-            script.endTurn();
+        agent.endTurn();
+        agent.endTurn();
 
-            script.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
+        agent.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 3));
-        });
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 3));
     }
 
     @Test
     public void testEviscerateCombo() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.YETI, 0);
-            script.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.YETI, 0);
+        agent.setCurrentPlayer("p1");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.setMana("p2", 10);
-            script.playNonMinionCard("p2", TestCards.MOONFIRE, "p1:hero");
-            script.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playNonMinionCard("p2", TestCards.MOONFIRE, "p1:hero");
+        agent.playNonMinionCard("p2", TestCards.EVISCERATE, "p1:0");
 
-            script.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 1));
-        });
+        agent.expectBoard("p1", TestCards.expectedMinion(TestCards.YETI, 4, 1));
     }
 
     @Test
     public void testDefiasRingLeaderCombo() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.setCurrentPlayer("p1");
 
-            script.playMinionCard("p1", TestCards.FLAME_OF_AZZINOTH, 0);
-            script.playMinionCard("p1", TestCards.SLIME, 1);
+        agent.playMinionCard("p1", TestCards.FLAME_OF_AZZINOTH, 0);
+        agent.playMinionCard("p1", TestCards.SLIME, 1);
 
-            script.playMinionCard("p1", TestCards.DEFIAS_RINGLEADER, 1);
+        agent.playMinionCard("p1", TestCards.DEFIAS_RINGLEADER, 1);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
 
-            script.playMinionCard("p1", TestCards.BLUEGILL_WARRIOR, 0);
+        agent.playMinionCard("p1", TestCards.BLUEGILL_WARRIOR, 0);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.DEFIAS_BANDIT, 2, 1),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
     }
 
     @Test
     public void testDefiasRingLeaderNoCombo() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.setCurrentPlayer("p1");
 
-            script.playMinionCard("p1", TestCards.DEFIAS_RINGLEADER, 0);
-            script.playMinionCard("p1", TestCards.FLAME_OF_AZZINOTH, 0);
-            script.playMinionCard("p1", TestCards.SLIME, 2);
+        agent.playMinionCard("p1", TestCards.DEFIAS_RINGLEADER, 0);
+        agent.playMinionCard("p1", TestCards.FLAME_OF_AZZINOTH, 0);
+        agent.playMinionCard("p1", TestCards.SLIME, 2);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
 
-            script.playMinionCard("p1", TestCards.BLUEGILL_WARRIOR, 0);
+        agent.playMinionCard("p1", TestCards.BLUEGILL_WARRIOR, 0);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
-                    TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
-                    TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
-                    TestCards.expectedMinion(TestCards.SLIME, 1, 2));
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.BLUEGILL_WARRIOR, 2, 1),
+            TestCards.expectedMinion(TestCards.FLAME_OF_AZZINOTH, 2, 1),
+            TestCards.expectedMinion(TestCards.DEFIAS_RINGLEADER, 2, 2),
+            TestCards.expectedMinion(TestCards.SLIME, 1, 2));
     }
 }

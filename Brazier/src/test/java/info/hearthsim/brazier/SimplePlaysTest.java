@@ -1,95 +1,88 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 
-public final class SimplePlaysTest {
+public final class SimplePlaysTest extends BrazierTest {
     @Test
     public void testSlamDrawsCards() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 4);
-            script.setMana("p2", 10);
-            script.deck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
+        agent.setMana("p1", 4);
+        agent.setMana("p2", 10);
+        agent.deck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
 
-            script.playMinionCard("p2", YETI, 0);
-            script.playMinionCard("p2", YETI, 0);
+        agent.playMinionCard("p2", YETI, 0);
+        agent.playMinionCard("p2", YETI, 0);
 
-            script.playNonMinionCard("p1", SLAM, "p2:0");
+        agent.playNonMinionCard("p1", SLAM, "p2:0");
 
-            script.expectBoard("p1");
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 3),
-                    expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p1");
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 3),
+            expectedMinion(YETI, 4, 5));
 
-            script.expectDeck("p1", YETI, SLUDGE_BELCHER);
-            script.expectHand("p1", WHIRLWIND);
-        });
+        agent.expectDeck("p1", YETI, SLUDGE_BELCHER);
+        agent.expectHand("p1", WHIRLWIND);
     }
 
     @Test
     public void testSlamDoesntDrawCards() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
-            script.deck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
+        agent.deck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
 
-            script.playMinionCard("p1", YETI, 0);
+        agent.playMinionCard("p1", YETI, 0);
 
-            script.playMinionCard("p2", YETI, 0);
-            script.playMinionCard("p2", YETI, 0);
+        agent.playMinionCard("p2", YETI, 0);
+        agent.playMinionCard("p2", YETI, 0);
 
-            script.refreshAttacks();
+        agent.refreshAttacks();
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(YETI, 4, 5));
 
-            script.attack("p1:0", "p2:1");
+        agent.attack("p1:0", "p2:1");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 1));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(YETI, 4, 1));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 1));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(YETI, 4, 1));
 
-            script.playNonMinionCard("p1", SLAM, "p2:1");
+        agent.playNonMinionCard("p1", SLAM, "p2:1");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 1));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 1));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5));
 
-            script.expectDeck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
-            script.expectHand("p1");
-        });
+        agent.expectDeck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);
+        agent.expectHand("p1");
     }
 
     @Test
     public void testPlaySimpleMinion() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 4);
-            script.playMinionCard("p1", YETI, 0);
+        agent.setMana("p1", 4);
+        agent.playMinionCard("p1", YETI, 0);
 
-            script.expectBoard("p1", expectedMinion(YETI, 4, 5));
-            script.expectBoard("p2");
-        });
+        agent.expectBoard("p1", expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p2");
     }
 
     @Test
     public void testPlayMultipleMinions() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", FROTHING_BERSERKER, 0);
-            script.playMinionCard("p1", FROTHING_BERSERKER, 1);
-            script.playMinionCard("p1", YETI, 1);
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", FROTHING_BERSERKER, 0);
+        agent.playMinionCard("p1", FROTHING_BERSERKER, 1);
+        agent.playMinionCard("p1", YETI, 1);
 
-            script.expectBoard("p1",
-                    expectedMinion(FROTHING_BERSERKER, 2, 4),
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(FROTHING_BERSERKER, 2, 4));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(FROTHING_BERSERKER, 2, 4),
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(FROTHING_BERSERKER, 2, 4));
     }
 }

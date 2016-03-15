@@ -1,51 +1,48 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 
-public final class TmpBuffTest {
+public final class TmpBuffTest extends BrazierTest {
     @Test
     public void testAbusiveSergeant() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", YETI, 0);
-            script.playMinionCard("p1", ABUSIVE_SERGEANT, 1, "p1:0");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", YETI, 0);
+        agent.playMinionCard("p1", ABUSIVE_SERGEANT, 1, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 6, 5),
-                    expectedMinion(ABUSIVE_SERGEANT, 2, 1));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 6, 5),
+            expectedMinion(ABUSIVE_SERGEANT, 2, 1));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(ABUSIVE_SERGEANT, 2, 1));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(ABUSIVE_SERGEANT, 2, 1));
     }
 
     @Test
     public void testSilencedAbusiveSergeantBuff() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", YETI, 0);
-            script.playMinionCard("p1", ABUSIVE_SERGEANT, 1, "p1:0");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", YETI, 0);
+        agent.playMinionCard("p1", ABUSIVE_SERGEANT, 1, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 6, 5),
-                    expectedMinion(ABUSIVE_SERGEANT, 2, 1));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 6, 5),
+            expectedMinion(ABUSIVE_SERGEANT, 2, 1));
 
-            script.playNonMinionCard("p1", SILENCE, "p1:0");
+        agent.playNonMinionCard("p1", SILENCE, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(ABUSIVE_SERGEANT, 2, 1));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(ABUSIVE_SERGEANT, 2, 1));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(ABUSIVE_SERGEANT, 2, 1));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(ABUSIVE_SERGEANT, 2, 1));
     }
 }

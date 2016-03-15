@@ -1,118 +1,110 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public final class WeaponHitTest {
+public final class WeaponHitTest extends BrazierTest {
     @Test
     public void testCantAttackSecondTimeAfterWeaponReplace() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
-            script.expectPlayer("p1", (player) -> {
-                assertTrue(player.getHero().getAttackTool().canAttackWith());
-            });
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.expectPlayer("p1", (player) -> {
+            assertTrue(player.getHero().getAttackTool().canAttackWith());
+        });
 
-            script.attack("p1:hero", "p2:hero");
-            script.expectPlayer("p1", (player) -> {
-                assertFalse(player.getHero().getAttackTool().canAttackWith());
-            });
+        agent.attack("p1:hero", "p2:hero");
+        agent.expectPlayer("p1", (player) -> {
+            assertFalse(player.getHero().getAttackTool().canAttackWith());
+        });
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
-            script.expectPlayer("p1", (player) -> {
-                assertFalse(player.getHero().getAttackTool().canAttackWith());
-            });
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.expectPlayer("p1", (player) -> {
+            assertFalse(player.getHero().getAttackTool().canAttackWith());
         });
     }
 
     @Test
     public void testLoseWeapon() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
 
-            script.expectBoard("p1");
-            script.expectBoard("p2");
+        agent.expectBoard("p1");
+        agent.expectBoard("p2");
 
-            script.expectWeapon("p1", 3, 2);
-            script.attack("p1:hero", "p2:hero");
-            script.expectWeapon("p1", 3, 1);
+        agent.expectWeapon("p1", 3, 2);
+        agent.attack("p1:hero", "p2:hero");
+        agent.expectWeapon("p1", 3, 1);
 
-            script.refreshAttacks();
-            script.attack("p1:hero", "p2:hero");
-            script.expectNoWeapon("p1", 0);
+        agent.refreshAttacks();
+        agent.attack("p1:hero", "p2:hero");
+        agent.expectNoWeapon("p1", 0);
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 24, 0);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 24, 0);
     }
 
     @Test
     public void testHitWeaponlessHeroWithWeapon() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
 
-            script.expectBoard("p1");
-            script.expectBoard("p2");
+        agent.expectBoard("p1");
+        agent.expectBoard("p2");
 
-            script.expectWeapon("p1", 3, 2);
-            script.attack("p1:hero", "p2:hero");
-            script.expectWeapon("p1", 3, 1);
+        agent.expectWeapon("p1", 3, 2);
+        agent.attack("p1:hero", "p2:hero");
+        agent.expectWeapon("p1", 3, 1);
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 27, 0);
-        });
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 27, 0);
     }
 
     @Test
     public void testHitWeaponedHeroWithWeapon() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
-            script.playCard("p2", TestCards.FIERY_WAR_AXE);
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.playCard("p2", TestCards.FIERY_WAR_AXE);
 
-            script.expectBoard("p1");
-            script.expectBoard("p2");
+        agent.expectBoard("p1");
+        agent.expectBoard("p2");
 
-            script.expectWeapon("p1", 3, 2);
-            script.attack("p1:hero", "p2:hero");
-            script.expectWeapon("p1", 3, 1);
+        agent.expectWeapon("p1", 3, 2);
+        agent.attack("p1:hero", "p2:hero");
+        agent.expectWeapon("p1", 3, 1);
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 27, 0);
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 27, 0);
 
-            script.expectWeapon("p1", 3, 1);
-        });
+        agent.expectWeapon("p1", 3, 1);
     }
 
     @Test
     public void testHitMinionWithWeapon() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playCard("p1", TestCards.FIERY_WAR_AXE);
-            script.playMinionCard("p2", TestCards.YETI, 0);
+        agent.playCard("p1", TestCards.FIERY_WAR_AXE);
+        agent.playMinionCard("p2", TestCards.YETI, 0);
 
-            script.expectBoard("p1");
-            script.expectBoard("p2",
-                    TestCards.expectedMinion(TestCards.YETI, 4, 5));
+        agent.expectBoard("p1");
+        agent.expectBoard("p2",
+            TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            script.expectWeapon("p1", 3, 2);
-            script.attack("p1:hero", "p2:0");
-            script.expectWeapon("p1", 3, 1);
+        agent.expectWeapon("p1", 3, 2);
+        agent.attack("p1:hero", "p2:0");
+        agent.expectWeapon("p1", 3, 1);
 
-            script.expectHeroHp("p1", 26, 0);
-            script.expectHeroHp("p2", 30, 0);
-        });
+        agent.expectHeroHp("p1", 26, 0);
+        agent.expectHeroHp("p2", 30, 0);
     }
 }

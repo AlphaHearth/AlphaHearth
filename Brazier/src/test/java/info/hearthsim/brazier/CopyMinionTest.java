@@ -1,109 +1,103 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestAgent;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 
-public final class CopyMinionTest {
+public final class CopyMinionTest extends BrazierTest {
     @Test
     public void testFacelessMinionKeptAliveByHpAura() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", STORMWIND_CHAMPION, 1);
-            script.playNonMinionCard("p1", MOONFIRE, "p1:0");
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", STORMWIND_CHAMPION, 1);
+        agent.playNonMinionCard("p1", MOONFIRE, "p1:0");
 
 
-            script.expectBoard("p1",
-                    expectedMinion(WISP, 2, 1),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2");
+        agent.expectBoard("p1",
+            expectedMinion(WISP, 2, 1),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2");
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(WISP, 2, 1),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2");
-        });
+        agent.expectBoard("p1",
+            expectedMinion(WISP, 2, 1),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2");
     }
 
     @Test
     public void testFacelessMinionKeptAliveByHpAuraThenMirrorEntity() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", WISP, 0);
-            script.playMinionCard("p1", STORMWIND_CHAMPION, 1);
-            script.playNonMinionCard("p1", MOONFIRE, "p1:0");
-            script.playCard("p1", MIRROR_ENTITY);
+        agent.playMinionCard("p1", WISP, 0);
+        agent.playMinionCard("p1", STORMWIND_CHAMPION, 1);
+        agent.playNonMinionCard("p1", MOONFIRE, "p1:0");
+        agent.playCard("p1", MIRROR_ENTITY);
 
-            script.expectBoard("p1",
-                    expectedMinion(WISP, 2, 1),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2");
+        agent.expectBoard("p1",
+            expectedMinion(WISP, 2, 1),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2");
 
-            script.setCurrentPlayer("p2");
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
+        agent.setCurrentPlayer("p2");
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(WISP, 2, 1),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6),
-                    expectedMinion(WISP, 2, 1));
-            script.expectBoard("p2");
-        });
+        agent.expectBoard("p1",
+            expectedMinion(WISP, 2, 1),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6),
+            expectedMinion(WISP, 2, 1));
+        agent.expectBoard("p2");
     }
 
     @Test
     public void testFacelessDamageMinionWithHpAura() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", EMPEROR_COBRA, 0);
-            script.playMinionCard("p1", STORMWIND_CHAMPION, 1);
-            script.playNonMinionCard("p1", MOONFIRE, "p1:0");
+        agent.playMinionCard("p1", EMPEROR_COBRA, 0);
+        agent.playMinionCard("p1", STORMWIND_CHAMPION, 1);
+        agent.playNonMinionCard("p1", MOONFIRE, "p1:0");
 
 
-            script.expectBoard("p1",
-                    expectedMinion(EMPEROR_COBRA, 3, 3),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2");
+        agent.expectBoard("p1",
+            expectedMinion(EMPEROR_COBRA, 3, 3),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2");
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(EMPEROR_COBRA, 3, 3),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2",
-                    expectedMinion(EMPEROR_COBRA, 2, 2));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(EMPEROR_COBRA, 3, 3),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2",
+            expectedMinion(EMPEROR_COBRA, 2, 2));
     }
 
     @Test
     public void testBasicFaceless() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", YETI, 0);
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", YETI, 0);
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5));
-            script.expectBoard("p2");
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p2");
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", FACELESS_MANIPULATOR, 0, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5));
     }
 
-    private static void setupAuraProviderCopy(PlayScript script) {
+    private static void setupAuraProviderCopy(TestAgent script) {
         script.setMana("p1", 10);
         script.playMinionCard("p1", BLUEGILL_WARRIOR, 0);
         script.playMinionCard("p1", STORMWIND_CHAMPION, 1);
@@ -112,86 +106,78 @@ public final class CopyMinionTest {
         script.playMinionCard("p2", YETI, 0);
 
         script.expectBoard("p1",
-                expectedMinion(BLUEGILL_WARRIOR, 3, 2),
-                expectedMinion(STORMWIND_CHAMPION, 6, 6));
+            expectedMinion(BLUEGILL_WARRIOR, 3, 2),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
         script.expectBoard("p2",
-                expectedMinion(YETI, 4, 5));
+            expectedMinion(YETI, 4, 5));
 
         script.setMana("p2", 10);
         script.playMinionCard("p2", FACELESS_MANIPULATOR, 1, "p1:1");
 
         script.expectBoard("p1",
-                expectedMinion(BLUEGILL_WARRIOR, 3, 2),
-                expectedMinion(STORMWIND_CHAMPION, 6, 6));
+            expectedMinion(BLUEGILL_WARRIOR, 3, 2),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
         script.expectBoard("p2",
-                expectedMinion(YETI, 5, 6),
-                expectedMinion(STORMWIND_CHAMPION, 6, 6));
+            expectedMinion(YETI, 5, 6),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
     }
 
     @Test
     public void testCopyAuraProvider() {
-        PlayScript.testScript((script) -> {
-            setupAuraProviderCopy(script);
-        });
+        setupAuraProviderCopy(agent);
     }
 
     @Test
     public void testCopyAuraProviderKillOriginalProvider() {
-        PlayScript.testScript((script) -> {
-            setupAuraProviderCopy(script);
+        setupAuraProviderCopy(agent);
 
-            script.setMana("p2", 10);
-            script.playNonMinionCard("p2", PYROBLAST, "p1:1");
+        agent.setMana("p2", 10);
+        agent.playNonMinionCard("p2", PYROBLAST, "p1:1");
 
-            script.expectBoard("p1",
-                    expectedMinion(BLUEGILL_WARRIOR, 2, 1));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 5, 6),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(BLUEGILL_WARRIOR, 2, 1));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 5, 6),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
     }
 
     @Test
     public void testCopyAuraProviderKillNewProvider() {
-        PlayScript.testScript((script) -> {
-            setupAuraProviderCopy(script);
+        setupAuraProviderCopy(agent);
 
-            script.setMana("p2", 10);
-            script.playNonMinionCard("p2", PYROBLAST, "p2:1");
+        agent.setMana("p2", 10);
+        agent.playNonMinionCard("p2", PYROBLAST, "p2:1");
 
-            script.expectBoard("p1",
-                expectedMinion(BLUEGILL_WARRIOR, 3, 2),
-                expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2",
-                expectedMinion(YETI, 4, 5));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(BLUEGILL_WARRIOR, 3, 2),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5));
     }
 
     @Test
     public void testAuraTargetCopy() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", BLUEGILL_WARRIOR, 0);
-            script.playMinionCard("p1", STORMWIND_CHAMPION, 1);
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", BLUEGILL_WARRIOR, 0);
+        agent.playMinionCard("p1", STORMWIND_CHAMPION, 1);
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", YETI, 0);
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", YETI, 0);
 
-            script.expectBoard("p1",
-                    expectedMinion(BLUEGILL_WARRIOR, 3, 2),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p1",
+            expectedMinion(BLUEGILL_WARRIOR, 3, 2),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5));
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", FACELESS_MANIPULATOR, 1, "p1:0");
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", FACELESS_MANIPULATOR, 1, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(BLUEGILL_WARRIOR, 3, 2),
-                    expectedMinion(STORMWIND_CHAMPION, 6, 6));
-            script.expectBoard("p2",
-                    expectedMinion(YETI, 4, 5),
-                    expectedMinion(BLUEGILL_WARRIOR, 2, 1));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(BLUEGILL_WARRIOR, 3, 2),
+            expectedMinion(STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p2",
+            expectedMinion(YETI, 4, 5),
+            expectedMinion(BLUEGILL_WARRIOR, 2, 1));
     }
 }

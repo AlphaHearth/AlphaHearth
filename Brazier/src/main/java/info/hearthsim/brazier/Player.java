@@ -250,7 +250,7 @@ public final class Player implements PlayerProperty {
 
             if (!playEvent.isVetoedPlay() && reserveUndo != null) {
                 PlayArg<Card> cardPlayArg = playEvent.getCardPlayArg();
-                result.addUndo(board.completeSummonMinion(minion, cardPlayArg.getTarget()));
+                result.addUndo(board.completeSummon(minion, cardPlayArg.getTarget()));
                 result.addUndo(executeCardPlayActions(cardPlayArg, onPlayActions));
             }
         }
@@ -346,7 +346,7 @@ public final class Player implements PlayerProperty {
             return UndoAction.DO_NOTHING;
         }
 
-        UndoAction summonUndo = board.completeSummonMinion(minion);
+        UndoAction summonUndo = board.completeSummon(minion);
         return () -> {
             summonUndo.undo();
             reservationUndo.undo();
@@ -362,7 +362,7 @@ public final class Player implements PlayerProperty {
             return UndoAction.DO_NOTHING;
         }
 
-        UndoAction summonUndo = board.completeSummonMinion(minion);
+        UndoAction summonUndo = board.completeSummon(minion);
         return () -> {
             summonUndo.undo();
             reservationUndo.undo();

@@ -9,12 +9,13 @@ import info.hearthsim.brazier.cards.CardId;
 
 import java.util.List;
 
+import info.hearthsim.brazier.utils.BrazierTest;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 import static org.junit.Assert.*;
 
-public final class TargetNeedsTest {
+public final class TargetNeedsTest extends BrazierTest {
     private static boolean canTarget(Player player, CardDescr card, TargetableCharacter target) {
         TargetNeed cardNeed = card.getCombinedTargetNeed(player);
         boolean hero = target instanceof Hero;
@@ -29,28 +30,26 @@ public final class TargetNeedsTest {
 
     @Test
     public void testExecute() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+        agent.setMana("p1", 10);
+        agent.setMana("p2", 10);
 
-            script.playMinionCard("p1", YETI, 0);
-            script.playMinionCard("p1", SLIME, 1);
+        agent.playMinionCard("p1", YETI, 0);
+        agent.playMinionCard("p1", SLIME, 1);
 
-            script.playNonMinionCard("p2", MOONFIRE, "p1:0");
+        agent.playNonMinionCard("p2", MOONFIRE, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 4),
-                    expectedMinion(SLIME, 1, 2));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 4),
+            expectedMinion(SLIME, 1, 2));
 
-            script.expectPlayer("p1", (player) -> {
-                Player opponent = player.getWorld().getOpponent(player.getPlayerId());
+        agent.expectPlayer("p1", (player) -> {
+            Player opponent = player.getWorld().getOpponent(player.getPlayerId());
 
-                List<Minion> minions = player.getBoard().getAllMinions();
-                CardDescr execute = getCard(EXECUTE);
+            List<Minion> minions = player.getBoard().getAllMinions();
+            CardDescr execute = getCard(EXECUTE);
 
-                assertTrue("Target:Yeti", canTarget(opponent, execute, minions.get(0)));
-                assertFalse("Target:Slime", canTarget(opponent, execute, minions.get(1)));
-            });
+            assertTrue("Target:Yeti", canTarget(opponent, execute, minions.get(0)));
+            assertFalse("Target:Slime", canTarget(opponent, execute, minions.get(1)));
         });
     }
 }

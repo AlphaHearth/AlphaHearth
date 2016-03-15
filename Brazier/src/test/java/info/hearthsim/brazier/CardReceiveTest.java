@@ -1,72 +1,70 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestAgent;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 
-public final class CardReceiveTest {
+public final class CardReceiveTest extends BrazierTest {
     @Test
     public void testHeadcrackNoCombo() {
-        PlayScript.testScript((script) -> {
-            script.setCurrentPlayer("p1");
+        agent.setCurrentPlayer("p1");
 
-            script.addToHand("p1", YETI, WHIRLWIND);
-            script.addToHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER);
+        agent.addToHand("p1", YETI, WHIRLWIND);
+        agent.addToHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER);
 
-            script.deck("p1", BLUEGILL_WARRIOR, ABUSIVE_SERGEANT);
-            script.deck("p2", ANCIENT_MAGE, CULT_MASTER);
+        agent.deck("p1", BLUEGILL_WARRIOR, ABUSIVE_SERGEANT);
+        agent.deck("p2", ANCIENT_MAGE, CULT_MASTER);
 
-            script.setHeroHp("p1", 30, 0);
-            script.setHeroHp("p2", 20, 0);
+        agent.setHeroHp("p1", 30, 0);
+        agent.setHeroHp("p2", 20, 0);
 
-            script.setMana("p1", 10);
-            script.playCard("p1", HEADCRACK);
+        agent.setMana("p1", 10);
+        agent.playCard("p1", HEADCRACK);
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 18, 0);
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 18, 0);
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectHand("p1", YETI, WHIRLWIND);
-            script.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
-        });
+        agent.expectHand("p1", YETI, WHIRLWIND);
+        agent.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
     }
 
     @Test
     public void testHeadcrackCombo() {
-        PlayScript.testScript((script) -> {
-            script.setCurrentPlayer("p1");
+        agent.setCurrentPlayer("p1");
 
-            script.addToHand("p1", YETI, WHIRLWIND);
-            script.addToHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER);
+        agent.addToHand("p1", YETI, WHIRLWIND);
+        agent.addToHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER);
 
-            script.deck("p1", BLUEGILL_WARRIOR, ABUSIVE_SERGEANT);
-            script.deck("p2", ANCIENT_MAGE, CULT_MASTER);
+        agent.deck("p1", BLUEGILL_WARRIOR, ABUSIVE_SERGEANT);
+        agent.deck("p2", ANCIENT_MAGE, CULT_MASTER);
 
-            script.setHeroHp("p1", 30, 0);
-            script.setHeroHp("p2", 20, 0);
+        agent.setHeroHp("p1", 30, 0);
+        agent.setHeroHp("p2", 20, 0);
 
-            script.setMana("p1", 10);
-            script.playCard("p1", THE_COIN);
-            script.playCard("p1", HEADCRACK);
+        agent.setMana("p1", 10);
+        agent.playCard("p1", THE_COIN);
+        agent.playCard("p1", HEADCRACK);
 
-            script.expectHeroHp("p1", 30, 0);
-            script.expectHeroHp("p2", 18, 0);
+        agent.expectHeroHp("p1", 30, 0);
+        agent.expectHeroHp("p2", 18, 0);
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectHand("p1", YETI, WHIRLWIND, HEADCRACK);
-            script.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
+        agent.expectHand("p1", YETI, WHIRLWIND, HEADCRACK);
+        agent.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectHand("p1", YETI, WHIRLWIND, HEADCRACK, ABUSIVE_SERGEANT);
-            script.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
+        agent.expectHand("p1", YETI, WHIRLWIND, HEADCRACK, ABUSIVE_SERGEANT);
+        agent.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER);
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectHand("p1", YETI, WHIRLWIND, HEADCRACK, ABUSIVE_SERGEANT);
-            script.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER, ANCIENT_MAGE);
-        });
+        agent.expectHand("p1", YETI, WHIRLWIND, HEADCRACK, ABUSIVE_SERGEANT);
+        agent.expectHand("p2", SHADOW_MADNESS, DEFIAS_RINGLEADER, CULT_MASTER, ANCIENT_MAGE);
     }
 }

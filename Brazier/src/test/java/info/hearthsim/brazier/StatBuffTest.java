@@ -1,25 +1,24 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
 import org.junit.Test;
 
-import static info.hearthsim.brazier.TestCards.*;
+import static info.hearthsim.brazier.utils.TestCards.*;
 
-public final class StatBuffTest {
+public final class StatBuffTest extends BrazierTest {
     @Test
     public void testAttackAndHpBuff() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playMinionCard("p1", YETI, 0);
+        agent.playMinionCard("p1", YETI, 0);
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 4, 5));
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 4, 5));
 
-            script.playMinionCard("p1", SHATTERED_SUN_CLERIC, 1, "p1:0");
+        agent.playMinionCard("p1", SHATTERED_SUN_CLERIC, 1, "p1:0");
 
-            script.expectBoard("p1",
-                    expectedMinion(YETI, 5, 6),
-                    expectedMinion(SHATTERED_SUN_CLERIC, 3, 2));
-        });
+        agent.expectBoard("p1",
+            expectedMinion(YETI, 5, 6),
+            expectedMinion(SHATTERED_SUN_CLERIC, 3, 2));
     }
 }

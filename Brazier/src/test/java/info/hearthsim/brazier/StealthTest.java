@@ -1,10 +1,13 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestAgent;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Assert;
 import org.junit.Test;
 
-public final class StealthTest {
-    private static void expectTargetable(PlayScript script, boolean expectation) {
+public final class StealthTest extends BrazierTest {
+    private static void expectTargetable(TestAgent script, boolean expectation) {
         script.expectMinion("p1:0", (tiger) -> {
             Player opponent = tiger.getWorld().getOpponent(tiger.getOwner().getPlayerId());
             PlayerId playerId = opponent.getPlayerId();
@@ -17,76 +20,72 @@ public final class StealthTest {
 
     @Test
     public void testBasicStealthFeatures() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.setMana("p2", 10);
+            agent.setMana("p1", 10);
+            agent.setMana("p2", 10);
 
-            script.playMinionCard("p1", TestCards.STRANGLETHORN_TIGER, 0);
-            script.playMinionCard("p2", TestCards.YETI, 0);
-            script.playCard("p2", TestCards.FIERY_WAR_AXE);
+            agent.playMinionCard("p1", TestCards.STRANGLETHORN_TIGER, 0);
+            agent.playMinionCard("p2", TestCards.YETI, 0);
+            agent.playCard("p2", TestCards.FIERY_WAR_AXE);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinionWithFlags(TestCards.STRANGLETHORN_TIGER, 5, 5, "stealth"));
-            script.expectBoard("p2",
-                    TestCards.expectedMinion(TestCards.YETI, 4, 5));
+            agent.expectBoard("p1",
+                TestCards.expectedMinionWithFlags(TestCards.STRANGLETHORN_TIGER, 5, 5, "stealth"));
+            agent.expectBoard("p2",
+                TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            script.setCurrentPlayer("p2");
+            agent.setCurrentPlayer("p2");
 
-            expectTargetable(script, false);
+            expectTargetable(agent, false);
 
-            script.endTurn();
+            agent.endTurn();
 
-            script.refreshAttacks();
-            script.attack("p1:0", "p2:hero");
+            agent.refreshAttacks();
+            agent.attack("p1:0", "p2:hero");
 
-            script.endTurn();
+            agent.endTurn();
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinionWithFlags(TestCards.STRANGLETHORN_TIGER, 5, 5));
-            script.expectBoard("p2",
-                    TestCards.expectedMinion(TestCards.YETI, 4, 5));
+            agent.expectBoard("p1",
+                TestCards.expectedMinionWithFlags(TestCards.STRANGLETHORN_TIGER, 5, 5));
+            agent.expectBoard("p2",
+                TestCards.expectedMinion(TestCards.YETI, 4, 5));
 
-            expectTargetable(script, true);
-        });
+            expectTargetable(agent, true);
     }
 
     @Test
     public void testStolenStealth() {
-        PlayScript.testScript((script) -> {
-            script.setCurrentPlayer("p1");
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.WISP, 0);
-            script.playNonMinionCard("p1", TestCards.FINICKY_CLOAKFIELD, "p1:0");
+            agent.setCurrentPlayer("p1");
+            agent.setMana("p1", 10);
+            agent.playMinionCard("p1", TestCards.WISP, 0);
+            agent.playNonMinionCard("p1", TestCards.FINICKY_CLOAKFIELD, "p1:0");
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
-            script.expectBoard("p2");
+            agent.expectBoard("p1",
+                TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
+            agent.expectBoard("p2");
 
-            script.endTurn();
+            agent.endTurn();
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
-            script.expectBoard("p2");
+            agent.expectBoard("p1",
+                TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
+            agent.expectBoard("p2");
 
-            script.setMana("p2", 10);
-            script.playMinionCard("p2", TestCards.SYLVANAS_WINDRUNNER, 0);
-            script.playNonMinionCard("p2", TestCards.FIREBALL, "p2:0");
+            agent.setMana("p2", 10);
+            agent.playMinionCard("p2", TestCards.SYLVANAS_WINDRUNNER, 0);
+            agent.playNonMinionCard("p2", TestCards.FIREBALL, "p2:0");
 
-            script.expectBoard("p1");
-            script.expectBoard("p2",
-                    TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
+            agent.expectBoard("p1");
+            agent.expectBoard("p2",
+                TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
 
-            script.endTurn();
+            agent.endTurn();
 
-            script.expectBoard("p1");
-            script.expectBoard("p2",
-                    TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
+            agent.expectBoard("p1");
+            agent.expectBoard("p2",
+                TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1, "stealth"));
 
-            script.endTurn();
+            agent.endTurn();
 
-            script.expectBoard("p1");
-            script.expectBoard("p2",
-                    TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1));
-        });
+            agent.expectBoard("p1");
+            agent.expectBoard("p2",
+                TestCards.expectedMinionWithFlags(TestCards.WISP, 1, 1));
     }
 }

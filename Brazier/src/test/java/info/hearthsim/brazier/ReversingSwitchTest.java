@@ -1,52 +1,50 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-public final class ReversingSwitchTest {
+public final class ReversingSwitchTest extends BrazierTest {
     @Test
     public void testReverseWithStormwind() {
-        PlayScript.testScript((script) -> {
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.EMPEROR_COBRA, 0);
-            script.playMinionCard("p1", TestCards.STORMWIND_CHAMPION, 1);
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.EMPEROR_COBRA, 0);
+        agent.playMinionCard("p1", TestCards.STORMWIND_CHAMPION, 1);
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
-                    TestCards.expectedMinion(TestCards.STORMWIND_CHAMPION, 6, 6));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
+            TestCards.expectedMinion(TestCards.STORMWIND_CHAMPION, 6, 6));
 
-            script.setMana("p1", 10);
+        agent.setMana("p1", 10);
 
-            script.playNonMinionCard("p1", TestCards.REVERSING_SWITCH, "p1:0");
+        agent.playNonMinionCard("p1", TestCards.REVERSING_SWITCH, "p1:0");
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 5, 4),
-                    TestCards.expectedMinion(TestCards.STORMWIND_CHAMPION, 6, 6));
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 5, 4),
+            TestCards.expectedMinion(TestCards.STORMWIND_CHAMPION, 6, 6));
     }
 
     @Test
     public void testReverseWithAbusive() {
-        PlayScript.testScript((script) -> {
-            script.setCurrentPlayer("p1");
-            script.setMana("p1", 10);
-            script.playMinionCard("p1", TestCards.EMPEROR_COBRA, 0);
-            script.playMinionCard("p1", TestCards.ABUSIVE_SERGEANT, 1, "p1:0");
+        agent.setCurrentPlayer("p1");
+        agent.setMana("p1", 10);
+        agent.playMinionCard("p1", TestCards.EMPEROR_COBRA, 0);
+        agent.playMinionCard("p1", TestCards.ABUSIVE_SERGEANT, 1, "p1:0");
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 4, 3),
-                    TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 4, 3),
+            TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
 
-            script.playNonMinionCard("p1", TestCards.REVERSING_SWITCH, "p1:0");
+        agent.playNonMinionCard("p1", TestCards.REVERSING_SWITCH, "p1:0");
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
-                    TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
+            TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
 
-            script.endTurn();
+        agent.endTurn();
 
-            script.expectBoard("p1",
-                    TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
-                    TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
-        });
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.EMPEROR_COBRA, 3, 4),
+            TestCards.expectedMinion(TestCards.ABUSIVE_SERGEANT, 2, 1));
     }
 }

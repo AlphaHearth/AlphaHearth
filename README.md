@@ -1,9 +1,20 @@
-# Brazier
+# AlphaHearth
 
-A Hearthstone simulator in Java, with all collectible NAXX, GNG and BRM cards implemented.
+Yes, this project is named after the famous AlphaGo.
 
-## Refactor and Changes
+As a MCTS AI for Hearthstone, AlphaHearth is still under construction. It uses a greatly changed version of [Brazier](https://github.com/HearthSim/Brazier) as its game simulator, which provides a better API, naming consistency and documentation than the original version. For more information, see the [Brazier](Brazier) module.
 
-Great changes and refactoring have been made in this project for a better readability and naming consistency. The project structure may keep changing rapidly for a considerable time until it comes to be stable.
+# License
 
-For detailed information about every change, see [CHANGE.md](CHANGE.md).
+AlphaHearth, a MCTS AI for Hearthstone: Heroes of Warcraft.
+Copyright (C) 2016  Robert Peng
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+[GNU General Public License](LICENSE) for more details.

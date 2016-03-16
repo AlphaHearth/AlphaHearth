@@ -15,7 +15,7 @@ import org.jtrim.utils.ExceptionHelper;
  * providing limited methods for client to use.
  */
 public class GameAgent {
-    private final Game game;
+    private Game game;
 
     /**
      * Creates a {@code GameAgent} with the given {@code Game}, and
@@ -128,5 +128,9 @@ public class GameAgent {
                 cardRef.undo();
             };
         });
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

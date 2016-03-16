@@ -99,6 +99,13 @@ public final class Game {
         this.userAgent = other.userAgent;
     }
 
+    /**
+     * Returns a copy of this {@code Game}.
+     */
+    public Game copy() {
+        return new Game(this);
+    }
+
     public HearthStoneDb getDb() {
         return db;
     }

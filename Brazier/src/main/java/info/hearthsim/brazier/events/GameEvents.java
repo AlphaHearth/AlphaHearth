@@ -89,7 +89,11 @@ public final class GameEvents {
         ExceptionHelper.checkNotNullArgument(other, "other");
 
         this.game = game;
-        this.pauseCollectorRef = new AtomicReference<>(other.pauseCollectorRef.get().copy());
+        GameActionList<Void> otherCollector = other.pauseCollectorRef.get();
+        if (otherCollector != null)
+            this.pauseCollectorRef = new AtomicReference<>(otherCollector.copy());
+        else
+            this.pauseCollectorRef = new AtomicReference<>(null);
 
         this.simpleListeners = new EnumMap<>(SimpleEventType.class);
         for (Map.Entry<SimpleEventType, EventContainer<?>> entry : other.simpleListeners.entrySet())

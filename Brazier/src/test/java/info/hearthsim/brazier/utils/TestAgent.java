@@ -27,12 +27,12 @@ import org.jtrim.utils.ExceptionHelper;
 import static org.junit.Assert.*;
 import static info.hearthsim.brazier.utils.TestUtils.*;
 
-public final class TestAgent {
+public class TestAgent {
     private final HearthStoneDb db;
     private final ScriptedRandomProvider randomProvider;
     private final ScriptedUserAgent userAgent;
-    private final Game game;
-    private final GameAgent playAgent;
+    private Game game;
+    private final GameAgent gameAgent;
 
     public TestAgent() {
         this(true);
@@ -48,67 +48,24 @@ public final class TestAgent {
             : new Game(db, PLAYER2_ID, PLAYER1_ID);
         this.game.setRandomProvider(randomProvider);
         this.game.setUserAgent(userAgent);
-        this.playAgent = new GameAgent(game);
+        this.gameAgent = new GameAgent(game);
     }
 
-    /**
-     * Applies the given action to the player with the given name.
-     */
-    public void applyToPlayer(String playerName, Function<? super Player, ? extends UndoAction> action) {
-        Player player = game.getPlayer(parsePlayerName(playerName));
-        action.apply(player);
-    }
-
-    /**
-     * Decreases the mana cost of all the cards in the hand of the player with the given name
-     * with {@code 1}.
-     */
-    public void decreaseManaCostOfHand(String playerName) {
-        PlayerId playerId = parsePlayerName(playerName);
-            Hand hand = game.getPlayer(playerId).getHand();
-        hand.forAllCards((card) -> card.decreaseManaCost(1));
-    }
-
-    /**
-     * Uses the given {@link Consumer} of {@link Player} to check the current state of the
-     * given player.
-     *
-     * @param playerName the name of the player to be checked.
-     * @param check      the test script, usually designated by a lambda expression.
-     */
-    public void expectPlayer(String playerName, Consumer<? super Player> check) {
-        PlayerId playerId = parsePlayerName(playerName);
-        Player player = game.getPlayer(playerId);
-        check.accept(player);
-    }
-
-    /**
-     * Expects the {@link Minion} with the given name by using the given {@link Consumer}
-     * of {@code Minion}.
-     *
-     * @throws AssertionError if there is no such minion.
-     */
-    public void expectMinion(String target, Consumer<? super Minion> check) {
-        Character foundTarget = findTarget(target);
-        assertNotNull("Minion", foundTarget);
-        assertTrue("Minion", foundTarget instanceof Minion);
-
-        check.accept((Minion) foundTarget);
-    }
+    /* Game Play Methods */
 
     /**
      * Sets the current player to the player with the given name
      */
     public void setCurrentPlayer(String playerName) {
         PlayerId playerId = parsePlayerName(playerName);
-        playAgent.setCurrentPlayerId(playerId);
+        game.setCurrentPlayerId(playerId);
     }
 
     /**
      * Ends the current turn.
      */
     public void endTurn() {
-        playAgent.endTurn();
+        game.endTurn();
     }
 
     public void playMinionCard(String playerName, int cardIndex, int minionPos) {
@@ -140,7 +97,7 @@ public final class TestAgent {
 
     private void playCard(PlayerId playerId, int cardIndex, int minionPos, String target) {
         expectGameContinues();
-        playAgent.playCard(cardIndex, toPlayTarget(playerId, minionPos, target));
+        gameAgent.playCard(cardIndex, toPlayTarget(playerId, minionPos, target));
     }
 
     /**
@@ -211,7 +168,171 @@ public final class TestAgent {
         hand.addCard(cardDescr);
 
         int cardIndex = hand.getCardCount() - 1;
-        playAgent.playCard(cardIndex, toPlayTarget(playerId, minionPos, target));
+        gameAgent.playCard(cardIndex, toPlayTarget(playerId, minionPos, target));
+    }
+
+    /**
+     * Puts the cards with the given names to the deck of the player with the given name.
+     */
+    public void deck(String playerName, String... cardNames) {
+        PlayerId playerId = parsePlayerName(playerName);
+        List<CardDescr> newCards = parseCards(db, cardNames);
+
+        Player player = game.getPlayer(playerId);
+        Deck deck = player.getDeck();
+
+        deck.setCards(newCards);
+    }
+
+    /**
+     * Adds the cards with the given names to the hand of the player with the given name.
+     */
+    public void addToHand(String playerName, String... cardNames) {
+        PlayerId playerId = parsePlayerName(playerName);
+        List<CardDescr> newCards = parseCards(db, cardNames);
+
+        Hand hand = game.getPlayer(playerId).getHand();
+        for (CardDescr card : newCards)
+            hand.addCard(card);
+    }
+
+    /**
+     * Applies the given action to the player with the given name.
+     */
+    public void applyToPlayer(String playerName, Function<? super Player, ? extends UndoAction> action) {
+        Player player = game.getPlayer(parsePlayerName(playerName));
+        action.apply(player);
+    }
+
+    /**
+     * Sets the health and armor point of the player with the given name to the given values.
+     */
+    public void setHeroHp(String playerName, int hp, int armor) {
+        PlayerId playerId = parsePlayerName(playerName);
+        Player player = game.getPlayer(playerId);
+        Hero hero = player.getHero();
+
+        hero.setCurrentArmor(armor);
+        hero.setCurrentHp(hp);
+    }
+
+    /**
+     * Sets the current mana of the player with the given name.
+     */
+    public void setMana(String playerName, int mana) {
+        PlayerId playerId = parsePlayerName(playerName);
+        Player player = game.getPlayer(playerId);
+
+        player.setMana(mana);
+    }
+
+    /**
+     * Refreshes the attack of characters of both players.
+     */
+    public void refreshAttacks() {
+        refreshAttack("p1");
+        refreshAttack("p2");
+    }
+
+    /**
+     * Refreshes the attack of characters of the player with the given name.
+     */
+    public void refreshAttack(String playerName) {
+        PlayerId playerId = parsePlayerName(playerName);
+
+        Player player = game.getPlayer(playerId);
+        player.getHero().refresh();
+        player.getBoard().refreshStartOfTurn();
+    }
+
+    /**
+     * Decreases the mana cost of all the cards in the hand of the player with the given name
+     * with {@code 1}.
+     */
+    public void decreaseManaCostOfHand(String playerName) {
+        PlayerId playerId = parsePlayerName(playerName);
+        Hand hand = game.getPlayer(playerId).getHand();
+        hand.forAllCards((card) -> card.decreaseManaCost(1));
+    }
+
+    public void addRoll(int possibilityCount, int rollResult) {
+        randomProvider.addRoll(possibilityCount, rollResult);
+    }
+
+    public void addCardChoice(int choiceIndex, String... cardNames) {
+        ExceptionHelper.checkArgumentInRange(choiceIndex, 0, cardNames.length - 1, "choiceIndex");
+
+        String[] cardNamesCopy = cardNames.clone();
+        ExceptionHelper.checkNotNullElements(cardNamesCopy, "cardNames");
+
+        userAgent.addChoice(choiceIndex, cardNamesCopy);
+    }
+
+    /** Attacks the target with the given name with the attacker with the given name. */
+    public void attack(String attacker, String target) {
+        TargetId attackerId = findTargetId(attacker);
+        TargetId targetId = findTargetId(target);
+
+        gameAgent.attack(attackerId, targetId);
+    }
+
+    public Character findTarget(String targetId) {
+        if (targetId.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] targetIdParts = targetId.split(":");
+        if (targetIdParts.length < 2) {
+            throw new IllegalArgumentException("Illegal target ID: " + targetId);
+        }
+
+        Player player = game.getPlayer(parsePlayerName(targetIdParts[0]));
+        String targetName = targetIdParts[1].trim();
+        if (targetName.equalsIgnoreCase("hero")) {
+            return player.getHero();
+        }
+
+        int minionIndex = Integer.parseInt(targetName);
+        Minion minion = player.getBoard().getAllMinions().get(minionIndex);
+        return minion;
+    }
+
+    public TargetId findTargetId(String targetId) {
+        Character target = findTarget(targetId);
+        return target != null ? target.getTargetId() : null;
+    }
+
+    public PlayTargetRequest toPlayTarget(PlayerId player, int minionPos, String targetId) {
+        return new PlayTargetRequest(player, minionPos, findTargetId(targetId));
+    }
+
+    /* Expect Methods */
+
+    /**
+     * Uses the given {@link Consumer} of {@link Player} to check the current state of the
+     * given player.
+     *
+     * @param playerName the name of the player to be checked.
+     * @param check      the test script, usually designated by a lambda expression.
+     */
+    public void expectPlayer(String playerName, Consumer<? super Player> check) {
+        PlayerId playerId = parsePlayerName(playerName);
+        Player player = game.getPlayer(playerId);
+        check.accept(player);
+    }
+
+    /**
+     * Expects the {@link Minion} with the given name by using the given {@link Consumer}
+     * of {@code Minion}.
+     *
+     * @throws AssertionError if there is no such minion.
+     */
+    public void expectMinion(String target, Consumer<? super Minion> check) {
+        Character foundTarget = findTarget(target);
+        assertNotNull("Minion", foundTarget);
+        assertTrue("Minion", foundTarget instanceof Minion);
+
+        check.accept((Minion) foundTarget);
     }
 
     /**
@@ -243,31 +364,6 @@ public final class TestAgent {
     }
 
     /**
-     * Puts the cards with the given names to the deck of the player with the given name.
-     */
-    public void deck(String playerName, String... cardNames) {
-        PlayerId playerId = parsePlayerName(playerName);
-        List<CardDescr> newCards = parseCards(db, cardNames);
-
-        Player player = game.getPlayer(playerId);
-        Deck deck = player.getDeck();
-
-        deck.setCards(newCards);
-    }
-
-    /**
-     * Adds the cards with the given names to the hand of the player with the given name.
-     */
-    public void addToHand(String playerName, String... cardNames) {
-        PlayerId playerId = parsePlayerName(playerName);
-        List<CardDescr> newCards = parseCards(db, cardNames);
-
-        Hand hand = game.getPlayer(playerId).getHand();
-        for (CardDescr card : newCards)
-            hand.addCard(card);
-    }
-
-    /**
      * Expects the deck of the player with the given name has and only has the cards with the given names.
      */
     public void expectDeck(String playerName, String... cardNames) {
@@ -282,18 +378,6 @@ public final class TestAgent {
         deckCards.forEach((card) -> deckCardDescrs.add(card.getCardDescr()));
 
         assertEquals("deck", expectedCards, deckCardDescrs);
-    }
-
-    /**
-     * Throws an {@link AssertionError} which indicates the given actual list of {@link Secret}
-     * does not conform to the given expected list of secret names.
-     */
-    private void unexpectedSecrets(String[] expectedNames, List<Secret> actual) {
-        List<String> actualNames = new ArrayList<>(actual.size());
-        actual.forEach((secret) -> actualNames.add(secret.getSecretId().getName()));
-        fail("The actual secrets are different than what was expected."
-            + " Expected: " + Arrays.toString(expectedNames)
-            + ". Actual: " + actualNames);
     }
 
     /**
@@ -319,6 +403,18 @@ public final class TestAgent {
     }
 
     /**
+     * Throws an {@link AssertionError} which indicates the given actual list of {@link Secret}
+     * does not conform to the given expected list of secret names.
+     */
+    private void unexpectedSecrets(String[] expectedNames, List<Secret> actual) {
+        List<String> actualNames = new ArrayList<>(actual.size());
+        actual.forEach((secret) -> actualNames.add(secret.getSecretId().getName()));
+        fail("The actual secrets are different than what was expected."
+            + " Expected: " + Arrays.toString(expectedNames)
+            + ". Actual: " + actualNames);
+    }
+
+    /**
      * Expects the hand of the player with the given name having the exact cards as the
      * given array of card names.
      */
@@ -334,28 +430,6 @@ public final class TestAgent {
         handCards.forEach((card) -> handCardDescrs.add(card.getCardDescr()));
 
         assertEquals("hand", expectedCards, handCardDescrs);
-    }
-
-    /**
-     * Sets the health and armor point of the player with the given name to the given values.
-     */
-    public void setHeroHp(String playerName, int hp, int armor) {
-        PlayerId playerId = parsePlayerName(playerName);
-        Player player = game.getPlayer(playerId);
-        Hero hero = player.getHero();
-
-        hero.setCurrentArmor(armor);
-        hero.setCurrentHp(hp);
-    }
-
-    /**
-     * Sets the current mana of the player with the given name.
-     */
-    public void setMana(String playerName, int mana) {
-        PlayerId playerId = parsePlayerName(playerName);
-        Player player = game.getPlayer(playerId);
-
-        player.setMana(mana);
     }
 
     /**
@@ -403,38 +477,6 @@ public final class TestAgent {
     }
 
     /**
-     * Refreshes the attack of characters of both players.
-     */
-    public void refreshAttacks() {
-        refreshAttack("p1");
-        refreshAttack("p2");
-    }
-
-    /**
-     * Refreshes the attack of characters of the player with the given name.
-     */
-    public void refreshAttack(String playerName) {
-        PlayerId playerId = parsePlayerName(playerName);
-
-        Player player = game.getPlayer(playerId);
-        player.getHero().refresh();
-        player.getBoard().refreshStartOfTurn();
-    }
-
-    public void addRoll(int possibilityCount, int rollResult) {
-        randomProvider.addRoll(possibilityCount, rollResult);
-    }
-
-    public void addCardChoice(int choiceIndex, String... cardNames) {
-        ExceptionHelper.checkArgumentInRange(choiceIndex, 0, cardNames.length - 1, "choiceIndex");
-
-        String[] cardNamesCopy = cardNames.clone();
-        ExceptionHelper.checkNotNullElements(cardNamesCopy, "cardNames");
-
-        userAgent.addChoice(choiceIndex, cardNamesCopy);
-    }
-
-    /**
      * Expects the minions of the player with the given name satisfying the given array of
      * {@link MinionExpectations}.
      */
@@ -458,44 +500,6 @@ public final class TestAgent {
             minionDescrsCopy[index].verifyExpectations(minion, () -> "Index: " + minionIndex + ".");
             index++;
         }
-    }
-
-    /** Attacks the target with the given name with the attacker with the given name. */
-    public void attack(String attacker, String target) {
-        TargetId attackerId = findTargetId(attacker);
-        TargetId targetId = findTargetId(target);
-
-        playAgent.attack(attackerId, targetId);
-    }
-
-    public Character findTarget(String targetId) {
-        if (targetId.trim().isEmpty()) {
-            return null;
-        }
-
-        String[] targetIdParts = targetId.split(":");
-        if (targetIdParts.length < 2) {
-            throw new IllegalArgumentException("Illegal target ID: " + targetId);
-        }
-
-        Player player = game.getPlayer(parsePlayerName(targetIdParts[0]));
-        String targetName = targetIdParts[1].trim();
-        if (targetName.equalsIgnoreCase("hero")) {
-            return player.getHero();
-        }
-
-        int minionIndex = Integer.parseInt(targetName);
-        Minion minion = player.getBoard().getAllMinions().get(minionIndex);
-        return minion;
-    }
-
-    public TargetId findTargetId(String targetId) {
-        Character target = findTarget(targetId);
-        return target != null ? target.getTargetId() : null;
-    }
-
-    public PlayTargetRequest toPlayTarget(PlayerId player, int minionPos, String targetId) {
-        return new PlayTargetRequest(player, minionPos, findTargetId(targetId));
     }
 
     private static final class CardChoiceDef {
@@ -649,5 +653,14 @@ public final class TestAgent {
 
             return choice.getChoice(db);
         }
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+        this.gameAgent.setGame(game);
     }
 }

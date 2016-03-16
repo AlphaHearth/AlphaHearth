@@ -2,6 +2,7 @@ package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.events.RegisterId;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
@@ -399,19 +400,16 @@ public final class ActionUtils {
     public static UndoAction doOnEndOfTurn(Game game, UndoableAction action) {
         GameActionEvents<Player> listeners = game.getEvents().turnEndsListeners();
 
-        AtomicReference<UndoableUnregisterAction> unregisterRef = new AtomicReference<>();
-        UndoableUnregisterAction unregisterAction = listeners.addAction((Game eventGame, Player player) -> {
-            UndoAction unregisterUndo = unregisterRef.get().unregister();
-            UndoAction actionUndo = action.doAction();
+        AtomicReference<RegisterId> idRef = new AtomicReference<>();
+        RegisterId id = listeners.addAction((Game eventGame, Player player) -> {
+            listeners.unregister(idRef.get());
+            action.doAction();
 
-            return () -> {
-                actionUndo.undo();
-                unregisterUndo.undo();
-            };
+            return UndoAction.DO_NOTHING;
         });
-        unregisterRef.set(unregisterAction);
+        idRef.set(id);
 
-        return unregisterAction;
+        return () -> listeners.unregister(id);
     }
 
     /**
@@ -445,7 +443,9 @@ public final class ActionUtils {
 
     private static UndoAction unregisterAfterTurnEnds(Game game, UndoableUnregisterAction unregisterAction) {
         GameActionEvents<Player> turnEndsListeners = game.getEvents().turnEndsListeners();
-        return turnEndsListeners.addAction((Game taskGame, Player object) -> unregisterAction.unregister());
+        RegisterId id =
+            turnEndsListeners.addAction((Game taskGame, Player object) -> unregisterAction.unregister());
+        return () -> turnEndsListeners.unregister(id);
     }
 
     /**
@@ -498,13 +498,14 @@ public final class ActionUtils {
         PlayerProperty turnOwner,
         UndoableUnregisterAction unregisterAction) {
         GameActionEvents<Player> turnStartsListeners = game.getEvents().turnStartsListeners();
-        return turnStartsListeners.addAction((Game taskGame, Player actionPlayer) -> {
+        RegisterId id = turnStartsListeners.addAction((Game taskGame, Player actionPlayer) -> {
             if (actionPlayer == turnOwner.getOwner()) {
                 return unregisterAction.unregister();
             } else {
                 return UndoAction.DO_NOTHING;
             }
         });
+        return () -> turnStartsListeners.unregister(id);
     }
 
     /**

@@ -80,13 +80,17 @@ public interface Ability <Self> {
         return (Self self) -> {
             GameEvents events = self.getGame().getEvents();
             GameActionEventsRegistry<EventArg> listeners = events.simpleListeners(eventType);
-            return listeners.addAction((Game game, EventArg eventArg) -> {
+            RegisterId id = listeners.addAction((Game game, EventArg eventArg) -> {
                 if (filter.applies(game, self, eventArg)) {
                     return action.alterGame(game, self, eventArg);
                 } else {
                     return UndoAction.DO_NOTHING;
                 }
             });
+            return () -> {
+                listeners.unregister(id);
+                return UndoAction.DO_NOTHING;
+            };
         };
     }
 }

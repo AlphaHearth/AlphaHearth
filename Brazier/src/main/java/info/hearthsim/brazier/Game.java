@@ -85,7 +85,7 @@ public final class Game {
         this.activeAuras = other.activeAuras.copy();
         this.gameResult = other.gameResult;
 
-        this.events = new GameEvents(this); // FIXME
+        this.events = other.events.copyFor(this);
 
         this.randomProvider = other.randomProvider;
         PlayerId curPlayerId = other.currentPlayer.getPlayerId();

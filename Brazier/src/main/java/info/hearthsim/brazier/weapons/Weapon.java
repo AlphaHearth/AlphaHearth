@@ -6,6 +6,7 @@ import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.events.RegisterId;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.events.GameActionEvents;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
@@ -198,14 +199,17 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
         return (Weapon self) -> {
             GameActionEvents<Weapon> listeners = self.getGame().getEvents()
                     .simpleListeners(SimpleEventType.WEAPON_DESTROYED);
-            return listeners.addAction((Game game, Weapon target) -> {
+            RegisterId id = listeners.addAction((Game game, Weapon target) -> {
                 if (target == self) {
                     return deathRattle.alterGame(game, self, target);
-                }
-                else {
+                } else {
                     return UndoAction.DO_NOTHING;
                 }
             });
+            return () -> {
+                listeners.unregister(id);
+                return UndoAction.DO_NOTHING;
+            };
         };
     }
 

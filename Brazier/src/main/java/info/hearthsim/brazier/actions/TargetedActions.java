@@ -14,6 +14,7 @@ import info.hearthsim.brazier.minions.MinionBody;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -319,7 +320,7 @@ public final class TargetedActions {
      * being the actor.
      */
     public static <Actor extends PlayerProperty, Target> TargetedAction<Actor, Target> actWithOpponent(
-            @NamedArg("action") TargetedAction<? super Player, ? super Target> action) {
+        @NamedArg("action") TargetedAction<? super Player, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (Game game, Actor actor, Target target) -> {
             return action.alterGame(game, actor.getOwner().getOpponent(), target);
@@ -331,7 +332,7 @@ public final class TargetedActions {
      * being actor and target.
      */
     public static <Target> TargetedAction<Object, Target> actWithTarget(
-            @NamedArg("action") TargetedAction<? super Target, ? super Target> action) {
+        @NamedArg("action") TargetedAction<? super Target, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (Game game, Object actor, Target target) -> {
             return action.alterGame(game, target, target);
@@ -358,7 +359,7 @@ public final class TargetedActions {
      * See spell <em>Blessing of Wisdom</em>.
      */
     public static <Actor extends PlayerProperty> TargetedAction<Actor, Minion> doOnAttack(
-            @NamedArg("action") TargetlessAction<? super Actor> action) {
+        @NamedArg("action") TargetlessAction<? super Actor> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (Game game, Actor actor, Minion target) -> {
             return target.addAndActivateAbility((Minion self) -> {
@@ -366,9 +367,14 @@ public final class TargetedActions {
                 GameActionEvents<AttackRequest> listeners = events.simpleListeners(SimpleEventType.ATTACK_INITIATED);
 
                 Predicate<AttackRequest> condition = (attackRequest) -> attackRequest.getAttacker() == self;
-                return listeners.addAction(Priorities.LOW_PRIORITY, condition, (attackGame, attackRequest) -> {
-                    return action.alterGame(attackGame, actor);
-                });
+                RegisterId id = listeners.addAction(Priorities.LOW_PRIORITY, condition,
+                    (attackGame, attackRequest) -> {
+                        return action.alterGame(attackGame, actor);
+                    });
+                return () -> {
+                    listeners.unregister(id);
+                    return UndoAction.DO_NOTHING;
+                };
             });
         };
     }
@@ -380,7 +386,7 @@ public final class TargetedActions {
      * @see ActionUtils#tryGetMinion(Object)
      */
     public static <Target> TargetedAction<Object, Target> withMinion(
-            @NamedArg("action") TargetedAction<? super Minion, ? super Target> action) {
+        @NamedArg("action") TargetedAction<? super Minion, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         return (Game game, Object actor, Target target) -> {
@@ -396,7 +402,7 @@ public final class TargetedActions {
      * @see GameEvents#doAtomic(UndoableAction)
      */
     public static <Actor, Target> TargetedAction<Actor, Target> doAtomic(
-            @NamedArg("action") TargetedAction<? super Actor, ? super Target> action) {
+        @NamedArg("action") TargetedAction<? super Actor, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         return (Game game, Actor actor, Target target) -> {
@@ -409,8 +415,8 @@ public final class TargetedActions {
      * targets and executes the given {@code TargetedAction}.
      */
     public static <Actor, Target, FinalTarget> TargetedAction<Actor, Target> forTargets(
-            @NamedArg("selector") TargetedEntitySelector<? super Actor, ? super Target, ? extends FinalTarget> selector,
-            @NamedArg("action") TargetedAction<? super Actor, ? super FinalTarget> action) {
+        @NamedArg("selector") TargetedEntitySelector<? super Actor, ? super Target, ? extends FinalTarget> selector,
+        @NamedArg("action") TargetedAction<? super Actor, ? super FinalTarget> action) {
         ExceptionHelper.checkNotNullArgument(selector, "targets");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
@@ -428,8 +434,8 @@ public final class TargetedActions {
      * actors and executes the given {@code TargetedAction}.
      */
     public static <Actor, Target, FinalActor> TargetedAction<Actor, Target> forActors(
-            @NamedArg("actors") TargetedEntitySelector<? super Actor, ? super Target, ? extends FinalActor> actors,
-            @NamedArg("action") TargetedAction<? super FinalActor, ? super Target> action) {
+        @NamedArg("actors") TargetedEntitySelector<? super Actor, ? super Target, ? extends FinalActor> actors,
+        @NamedArg("action") TargetedAction<? super FinalActor, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(actors, "actors");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
@@ -466,8 +472,8 @@ public final class TargetedActions {
      * See spell <em>Crackle</em>.
      */
     public static TargetedAction<DamageSource, Character> damageTarget(
-            @NamedArg("minDamage") int minDamage,
-            @NamedArg("maxDamage") int maxDamage) {
+        @NamedArg("minDamage") int minDamage,
+        @NamedArg("maxDamage") int maxDamage) {
         return (Game game, DamageSource actor, Character target) -> {
             int damage = game.getRandomProvider().roll(minDamage, maxDamage);
             return ActionUtils.damageCharacter(actor, damage, target);
@@ -479,8 +485,8 @@ public final class TargetedActions {
      * {@link TargetedActionCondition} is satisfied.
      */
     public static <Actor, Target> TargetedAction<Actor, Target> doIf(
-            @NamedArg("condition") TargetedActionCondition<? super Actor, ? super Target> condition,
-            @NamedArg("if") TargetedAction<? super Actor, ? super Target> ifAction) {
+        @NamedArg("condition") TargetedActionCondition<? super Actor, ? super Target> condition,
+        @NamedArg("if") TargetedAction<? super Actor, ? super Target> ifAction) {
         return doIf(condition, ifAction, TargetedAction.DO_NOTHING);
     }
 
@@ -489,17 +495,17 @@ public final class TargetedActions {
      * {@link TargetedActionCondition} is satisfied and executes the given {@code elseAction} otherwise.
      */
     public static <Actor, Target> TargetedAction<Actor, Target> doIf(
-            @NamedArg("condition") TargetedActionCondition<? super Actor, ? super Target> condition,
-            @NamedArg("if") TargetedAction<? super Actor, ? super Target> ifAction,
-            @NamedArg("else") TargetedAction<? super Actor, ? super Target> elseAction) {
+        @NamedArg("condition") TargetedActionCondition<? super Actor, ? super Target> condition,
+        @NamedArg("if") TargetedAction<? super Actor, ? super Target> ifAction,
+        @NamedArg("else") TargetedAction<? super Actor, ? super Target> elseAction) {
         ExceptionHelper.checkNotNullArgument(condition, "condition");
         ExceptionHelper.checkNotNullArgument(ifAction, "ifAction");
         ExceptionHelper.checkNotNullArgument(elseAction, "elseAction");
 
         return (Game game, Actor actor, Target target) -> {
             return condition.applies(game, actor, target)
-                    ? ifAction.alterGame(game, actor, target)
-                    : elseAction.alterGame(game, actor, target);
+                ? ifAction.alterGame(game, actor, target)
+                : elseAction.alterGame(game, actor, target);
         };
     }
 
@@ -507,7 +513,7 @@ public final class TargetedActions {
      * Returns a {@link TargetedAction} which adds the given {@link Ability} to the target minion.
      */
     public static TargetedAction<Object, Minion> addAbility(
-            @NamedArg("ability") Ability<? super Minion> ability) {
+        @NamedArg("ability") Ability<? super Minion> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
         return (Game game, Object actor, Minion target) -> {
             return target.addAndActivateAbility(ability);
@@ -519,7 +525,7 @@ public final class TargetedActions {
      * executes the given {@link GameEventAction} on start of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsStartOfTurnAbility(
-            @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
+        @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         return addOnActorsPlayerEventAbility(action, SimpleEventType.TURN_STARTS);
@@ -530,7 +536,7 @@ public final class TargetedActions {
      * executes the given {@link GameEventAction} on end of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsEndOfTurnAbility(
-            @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
+        @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
         return addOnActorsPlayerEventAbility(action, SimpleEventType.TURN_ENDS);
     }
 
@@ -539,16 +545,16 @@ public final class TargetedActions {
      * executes the given {@link GameEventAction} on the given type of event.
      */
     private static TargetedAction<PlayerProperty, Minion> addOnActorsPlayerEventAbility(
-            GameEventAction<? super Minion, ? super Player> action,
-            SimpleEventType eventType) {
+        GameEventAction<? super Minion, ? super Player> action,
+        SimpleEventType eventType) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         ExceptionHelper.checkNotNullArgument(eventType, "eventType");
 
         return (Game game, PlayerProperty actor, Minion target) -> {
             GameEventFilter<Minion, Player> filter
-                    = (filterGame, owner, eventSource) -> eventSource.getOwner() == actor.getOwner();
+                = (filterGame, owner, eventSource) -> eventSource.getOwner() == actor.getOwner();
             Ability<Minion> ability
-                    = Ability.onEventAbility(filter, action, eventType);
+                = Ability.onEventAbility(filter, action, eventType);
             return target.addAndActivateAbility(ability);
         };
     }
@@ -558,7 +564,7 @@ public final class TargetedActions {
      * target.
      */
     public static <Target> TargetedAction<Object, Target> buffTarget(
-            @NamedArg("buff") PermanentBuff<? super Target> buff) {
+        @NamedArg("buff") PermanentBuff<? super Target> buff) {
         ExceptionHelper.checkNotNullArgument(buff, "buff");
         return (Game game, Object actor, Target target) -> {
             return buff.buff(game, target, BuffArg.NORMAL_BUFF);
@@ -572,7 +578,7 @@ public final class TargetedActions {
      * See spell <em>Ancestral Spirit</em>.
      */
     public static <Target> TargetedAction<Object, Target> buffTargetThisTurn(
-            @NamedArg("buff") Buff<? super Target> buff) {
+        @NamedArg("buff") Buff<? super Target> buff) {
         ExceptionHelper.checkNotNullArgument(buff, "buff");
         return (Game game, Object actor, Target target) -> {
             return ActionUtils.doTemporary(game, () -> buff.buff(game, target, BuffArg.NORMAL_BUFF));
@@ -584,7 +590,7 @@ public final class TargetedActions {
      * a death rattle effect to the target minion.
      */
     public static TargetedAction<Object, Minion> addDeathRattle(
-            @NamedArg("action") GameEventAction<? super Minion, ? super Minion> action) {
+        @NamedArg("action") GameEventAction<? super Minion, ? super Minion> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         return (Game game, Object actor, Minion target) -> {
@@ -652,9 +658,9 @@ public final class TargetedActions {
      * See spell <em>Imp-losion</em>.
      */
     public static TargetedAction<DamageSource, Character> implosion(
-            @NamedArg("minDamage") int minDamage,
-            @NamedArg("maxDamage") int maxDamage,
-            @NamedArg("minion") MinionProvider minion) {
+        @NamedArg("minDamage") int minDamage,
+        @NamedArg("maxDamage") int maxDamage,
+        @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkArgumentInRange(minDamage, 0, maxDamage, "minDamage");
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
@@ -728,7 +734,7 @@ public final class TargetedActions {
      * See minion <em>Enhance-o Mechano</em>.
      */
     public static <Actor, Target> TargetedAction<Actor, Target> randomAction(
-            @NamedArg("actions") TargetedAction<? super Actor, ? super Target>[] actions) {
+        @NamedArg("actions") TargetedAction<? super Actor, ? super Target>[] actions) {
         ExceptionHelper.checkNotNullElements(actions, "actions");
         ExceptionHelper.checkArgumentInRange(actions.length, 1, Integer.MAX_VALUE, "actions.length");
 
@@ -746,7 +752,7 @@ public final class TargetedActions {
      * @see TargetedAction#merge(Collection)
      */
     public static <Actor, Target> TargetedAction<Actor, Target> combine(
-            @NamedArg("actions") TargetedAction<Actor, Target>[] actions) {
+        @NamedArg("actions") TargetedAction<Actor, Target>[] actions) {
         return TargetedAction.merge(Arrays.asList(actions));
     }
 
@@ -795,7 +801,7 @@ public final class TargetedActions {
      * See spell <em>Shadow Flame</em>.
      */
     public static <Actor extends DamageSource> TargetedAction<Actor, Character> shadowFlameDamage(
-            @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector) {
+        @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
         return (Game game, Actor actor, Character target) -> {
             int damage = target.getAttackTool().getAttack();

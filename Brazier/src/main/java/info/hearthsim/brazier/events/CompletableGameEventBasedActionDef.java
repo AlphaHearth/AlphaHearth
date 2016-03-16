@@ -56,7 +56,7 @@ public final class CompletableGameEventBasedActionDef <Self extends PlayerProper
             CompletableGameActionEventsRegistry<T> actionEvents,
             Self self,
             CompletableGameEventAction<? super Self, ? super T> appliedEventAction) {
-        return actionEvents.addAction(priority, (Game game, T object) -> {
+        RegisterId id = actionEvents.addAction(priority, (Game game, T object) -> {
             CompleteGameEventAction<? super Self, ? super T> result = appliedEventAction.startEvent(game, self, object);
             return new CompleteGameObjectAction<T>() {
                 @Override
@@ -70,6 +70,11 @@ public final class CompletableGameEventBasedActionDef <Self extends PlayerProper
                 }
             };
         });
+
+        return () -> {
+            actionEvents.unregister(id);
+            return UndoAction.DO_NOTHING;
+        };
     }
 
     public UndoableUnregisterAction registerForEvent(GameEvents gameEvents, Self self) {

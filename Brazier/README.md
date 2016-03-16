@@ -11,7 +11,7 @@ More works are remained to be done in this module, which include:
 - [ ] Rename `birthDate` to `birthTime`.
 - [ ] Add `clone` methods for classes like `Minion`, `Card`, `Player` and `Game`, which will be used by the AI module to copy a specific game state (deep copy a `Game`). Can we deep copy them lazily?
 - [ ] Refactor `EntityId` framework and rename `TargetId` to `EntityId`. See JavaDoc for `TargetId`.
-- [ ] Remove the `undo` framework from the whole project, which brings unnecessary memory cost to the simulator.
+- [ ] Remove the `undo` framework from the whole project, which brings unnecessary memory cost to the simulator. (The framework now is deprecated and does not function correctly any more. Do not use it in new code.)
 - [ ] `Ability` is now only used to add aura to characters and spell power. Consider defining minion's `Aura` in Json files to replace `Ability`.
 - [ ] Combine `AuraFilter` and `AuraTargetProvider` together, and extend it to use for other mechanics, such as renaming it to `TargetFilter` or `TargetProvider`.
 - [ ] Several methods in `ActionUtils` with `Game` as its parameter only use its `RandomProvider`. Consider using `RandomProvider` as parameter directly.

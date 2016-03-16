@@ -25,48 +25,64 @@ public final class DefaultCompletableGameActionEvents <T>
         this.actions = new RefLinkedList<>();
     }
 
+    /**
+     * Returns a copy of this {@code DefaultCompletableGameActionEvents} with the given new {@code Game}.
+     */
+    public DefaultCompletableGameActionEvents<T> copyFor(Game game) {
+        DefaultCompletableGameActionEvents<T> result = new DefaultCompletableGameActionEvents<>(game);
+        result.actions.addAll(actions);
+        return result;
+    }
+
     private static <T> int getPriority(RefList.ElementRef<ActionWrapper<? super T>> ref) {
         return ref.getElement().priority;
     }
 
-    private RefList.ElementRef<?> insert(ActionWrapper<? super T> listener) {
+    /**
+     * Inserts the given {@link ActionWrapper} to the list according to its priority and
+     * updates the given {@code ActionWrapper}'s {@code registerId} field.
+     */
+    private void insert(ActionWrapper<? super T> listener) {
         int priority = listener.priority;
         RefList.ElementRef<ActionWrapper<? super T>> previousRef = actions.getLastReference();
         while (previousRef != null && getPriority(previousRef) < priority) {
             previousRef = previousRef.getPrevious(1);
         }
 
-        return previousRef != null
-            ? previousRef.addAfter(listener)
-            : actions.addFirstGetReference(listener);
+        if (previousRef != null)
+            previousRef.addAfter(listener);
+        else
+            actions.addFirstGetReference(listener);
+
+        listener.registerId = new RegisterId();
     }
 
     @Override
-    public UndoableUnregisterAction addAction(int priority, CompletableGameObjectAction<? super T> action) {
+    public RegisterId addAction(int priority, CompletableGameObjectAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         ActionWrapper<? super T> wrappedAction = new ActionWrapper<>(priority, action);
 
-        RefList.ElementRef<?> actionRef = insert(wrappedAction);
-        Ref<RefList.ElementRef<?>> actionRefRef = new Ref<>(actionRef);
-        return new UndoableUnregisterAction() {
-            @Override
-            public UndoAction unregister() {
-                if (actionRefRef.obj.isRemoved()) {
-                    return UndoAction.DO_NOTHING;
-                }
+        insert(wrappedAction);
+        assert wrappedAction.registerId != null;
+        return wrappedAction.registerId;
+    }
 
-                int index = actionRefRef.obj.getIndex();
-                actionRefRef.obj.remove();
-
-                return () -> actionRefRef.obj = actions.addGetReference(index, wrappedAction);
+    /**
+     * Unregisters the game action with the given {@code RegisterId} from this object.
+     *
+     * @param registerId the given {@code RegisterId}.
+     * @return {@code true} if there is such {@code GameObjectAction}; {@code false} otherwise.
+     */
+    public boolean unregister(RegisterId registerId) {
+        for (int i = 0; i < actions.size(); i++) {
+            ActionWrapper action = actions.get(i);
+            if (action.registerId.equals(registerId)) {
+                actions.remove(i);
+                return true;
             }
-
-            @Override
-            public void undo() {
-                actionRefRef.obj.remove();
-            }
-        };
+        }
+        return false;
     }
 
     private UndoableAction combineCompleteActions(
@@ -106,6 +122,7 @@ public final class DefaultCompletableGameActionEvents <T>
     }
 
     private static final class ActionWrapper <T> implements CompletableGameObjectAction<T> {
+        private RegisterId registerId;
         private final int priority;
         private final CompletableGameObjectAction<T> wrapped;
 

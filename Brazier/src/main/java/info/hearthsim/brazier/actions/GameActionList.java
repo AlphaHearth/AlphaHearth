@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.events.RegisterId;
 import org.jtrim.collections.RefLinkedList;
 import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
@@ -59,7 +60,7 @@ public final class GameActionList <T> {
      *
      * @see Priorities#NORMAL_PRIORITY
      */
-    public UndoableUnregisterAction addAction(GameObjectAction<T> action) {
+    public RegisterId addAction(GameObjectAction<T> action) {
         return addAction(Priorities.NORMAL_PRIORITY, (arg) -> true, action);
     }
 
@@ -72,18 +73,21 @@ public final class GameActionList <T> {
 
     /**
      * Inserts the given {@link ActionWrapper} to the list according to its priority and
-     * returns the newly created {@link RefList.ElementRef} for the {@code ActionWrapper}.
+     * updates the given {@code ActionWrapper}'s {@code registerId} field.
      */
-    private RefList.ElementRef<?> insert(ActionWrapper<T> action) {
+    private void insert(ActionWrapper<T> action) {
         int priority = action.priority;
         RefList.ElementRef<ActionWrapper<T>> previousRef = actions.getLastReference();
         while (previousRef != null && getPriority(previousRef) < priority) {
             previousRef = previousRef.getPrevious(1);
         }
 
-        return previousRef != null
-                ? previousRef.addAfter(action)
-                : actions.addFirstGetReference(action);
+        if (previousRef != null)
+            previousRef.addAfter(action);
+        else
+            actions.addFirstGetReference(action);
+
+        action.registerId = new RegisterId();
     }
 
     /**
@@ -94,30 +98,31 @@ public final class GameActionList <T> {
      *
      * @throws NullPointerException if the given {@code GameObjectAction} is {@code null}.
      */
-    public UndoableUnregisterAction addAction(int priority, Predicate<? super T> condition, GameObjectAction<? super T> action) {
+    public RegisterId addAction(int priority, Predicate<? super T> condition, GameObjectAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         ActionWrapper<T> wrappedAction = new ActionWrapper<>(priority, condition, action);
+        insert(wrappedAction);
 
-        RefList.ElementRef<?> actionRef = insert(wrappedAction);
-        Ref<RefList.ElementRef<?>> actionRefRef = new Ref<>(actionRef);
-        return new UndoableUnregisterAction() {
-            @Override
-            public UndoAction unregister() {
-                if (actionRefRef.obj.isRemoved()) {
-                    return UndoAction.DO_NOTHING;
-                }
+        assert wrappedAction.registerId != null;
+        return wrappedAction.registerId;
+    }
 
-                int index = actionRefRef.obj.getIndex();
-                actionRefRef.obj.remove();
-                return () -> actionRefRef.obj = actions.addGetReference(index, wrappedAction);
+    /**
+     * Unregisters the game action with the given {@code RegisterId} from this {@code GameActionList}.
+     *
+     * @param registerId the given {@code RegisterId}.
+     * @return {@code true} if there is such {@code GameObjectAction}; {@code false} otherwise.
+     */
+    public boolean unregister(RegisterId registerId) {
+        for (int i = 0; i < actions.size(); i++) {
+            ActionWrapper action = actions.get(i);
+            if (action.registerId.equals(registerId)) {
+                actions.remove(i);
+                return true;
             }
-
-            @Override
-            public void undo() {
-                actionRefRef.obj.remove();
-            }
-        };
+        }
+        return false;
     }
 
     /**
@@ -280,6 +285,7 @@ public final class GameActionList <T> {
      * Wrapper for a {@link GameObjectAction}.
      */
     private static final class ActionWrapper<T> {
+        private RegisterId registerId = null;
         private final int priority;
         private final Predicate<? super T> condition;
         private final GameObjectAction<? super T> wrapped;

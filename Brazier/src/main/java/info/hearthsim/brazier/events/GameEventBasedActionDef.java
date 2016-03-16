@@ -89,8 +89,9 @@ public final class GameEventBasedActionDef <Self extends PlayerProperty, T> {
             Self self,
             GameEventAction<? super Self, ? super T> appliedEventAction) {
 
+        RegisterId id;
         if (lazyFilter) {
-            return actionEvents.addAction(priority, (Game game, T object) -> {
+            id = actionEvents.addAction(priority, (Game game, T object) -> {
                 if (sourceFilter.applies(game, self, object)) {
                     return appliedEventAction.alterGame(game, self, object);
                 }
@@ -101,10 +102,15 @@ public final class GameEventBasedActionDef <Self extends PlayerProperty, T> {
         }
         else {
             Predicate<T> condition = (T object) -> sourceFilter.applies(self.getGame(), self, object);
-            return actionEvents.addAction(priority, condition, (Game game, T object) -> {
+            id = actionEvents.addAction(priority, condition, (Game game, T object) -> {
                 return appliedEventAction.alterGame(game, self, object);
             });
         }
+
+        return () -> {
+            actionEvents.unregister(id);
+            return UndoAction.DO_NOTHING;
+        };
     }
 
     public UndoableUnregisterAction registerForEvent(GameEvents gameEvents, Self self) {

@@ -1304,7 +1304,7 @@ public final class TargetlessActions {
             GameEvents events = self.getGame().getEvents();
 
             GameActionEvents<CardPlayEvent> listeners = events.simpleListeners(SimpleEventType.START_PLAY_CARD);
-            UndoableUnregisterAction listenerRef = listeners.addAction((Game game, CardPlayEvent playEvent) -> {
+            RegisterId id = listeners.addAction((Game game, CardPlayEvent playEvent) -> {
                 if (deactivateCondition.test(playEvent.getCard())) {
                     return abilityRef.unregister();
                 }
@@ -1312,7 +1312,10 @@ public final class TargetlessActions {
                     return UndoAction.DO_NOTHING;
                 }
             });
-            result.addRef(listenerRef);
+            result.addRef(() -> {
+                listeners.unregister(id);
+                return UndoAction.DO_NOTHING;
+            });
 
             return result;
         };

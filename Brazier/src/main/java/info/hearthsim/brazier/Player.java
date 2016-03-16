@@ -100,7 +100,8 @@ public final class Player implements PlayerProperty {
         this.secrets = other.secrets.copyFor(this);
         this.deathRattleTriggerCount = other.deathRattleTriggerCount;
         this.auraFlags = other.auraFlags.copy();
-        this.weapon = other.weapon.copyFor(this);
+        if (other.weapon != null)
+            this.weapon = other.weapon.copyFor(this);
         this.graveyard = other.graveyard.copyFor(this);
         this.deck = other.deck.copyFor(this);
     }

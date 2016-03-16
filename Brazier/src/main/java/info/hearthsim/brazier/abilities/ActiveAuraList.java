@@ -77,7 +77,7 @@ public final class ActiveAuraList {
 
     /**
      * Updates all {@code ActiveAura} added to this list with the given game by calling the
-     * {@link ActiveAura#updateAura(Game)} method for each of them.
+     * {@link ActiveAura#applyAura(Game)} method for each of them.
      */
     public UndoAction updateAllAura(Game game) {
         if (auras.isEmpty()) {
@@ -103,7 +103,7 @@ public final class ActiveAuraList {
         }
 
         public UndoAction updateAura(Game game) {
-            return aura.updateAura(game);
+            return aura.applyAura(game);
         }
 
         public UndoAction deactivate() {

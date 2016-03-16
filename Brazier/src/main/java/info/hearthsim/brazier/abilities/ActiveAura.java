@@ -13,7 +13,7 @@ public interface ActiveAura {
     /**
      * Updates the entities in the given {@link Game} with this {@code ActiveAura}.
      */
-    public UndoAction updateAura(Game game);
+    public UndoAction applyAura(Game game);
 
     /**
      * Deactivates the aura.

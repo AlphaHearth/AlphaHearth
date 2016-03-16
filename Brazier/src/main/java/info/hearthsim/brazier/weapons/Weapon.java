@@ -67,6 +67,9 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
         return new Weapon(newOwner, this);
     }
 
+    /**
+     * Activates the weapon's passive abilities for the current {@code Game}.
+     */
     public UndoAction activatePassiveAbilities() {
         AbilityList<Weapon> ownedAbilities = abilities.getOwned();
 

@@ -74,6 +74,13 @@ public final class GameEvents {
     }
 
     /**
+     * Returns a copy of this {@code GameEvents} for the given new {@code Game}.
+     */
+    public GameEvents copyFor(Game game) {
+        return new GameEvents(game, this);
+    }
+
+    /**
      * Returns simple listener registered in this {@code GameEvents} which listens to the given type of event;
      * {@code null} if no such listener exists.
      */

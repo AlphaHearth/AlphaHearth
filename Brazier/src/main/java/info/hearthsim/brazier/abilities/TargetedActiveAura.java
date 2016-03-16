@@ -63,7 +63,7 @@ public final class TargetedActiveAura<Source, Target> implements ActiveAura {
      * @param game the given {@code Game}.
      */
     @Override
-    public UndoAction updateAura(Game game) {
+    public UndoAction applyAura(Game game) {
         ExceptionHelper.checkNotNullArgument(game, "game");
 
         List<? extends Target> targets = targetProvider.getPossibleTargets(game, source);

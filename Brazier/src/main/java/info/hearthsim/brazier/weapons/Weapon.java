@@ -44,6 +44,29 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
         this.deathRattle = deathRattleAction != null ? deathRattleToAbility(deathRattleAction) : null;
     }
 
+    private Weapon(Player newOwner, Weapon other) {
+        ExceptionHelper.checkNotNullArgument(newOwner, "newOwner");
+        ExceptionHelper.checkNotNullArgument(other, "other");
+
+        this.owner = newOwner;
+        this.baseDescr = other.baseDescr;
+        this.attack = other.attack.copy();
+        this.durability = other.durability;
+        this.birthDate = other.birthDate;
+        PreparedResult<CharacterAbilities<Weapon>> newAbilities = other.abilities.copyFor(this);
+        this.abilities = newAbilities.getResult();
+        newAbilities.activate();
+        this.scheduledToDestroy = new AtomicBoolean(other.isScheduledToDestroy());
+        this.deathRattle = other.deathRattle;
+    }
+
+    /**
+     * Returns a copy of this {@code Weapon} with the given new {@link Player owner}.
+     */
+    public Weapon copyFor(Player newOwner) {
+        return new Weapon(newOwner, this);
+    }
+
     public UndoAction activatePassiveAbilities() {
         AbilityList<Weapon> ownedAbilities = abilities.getOwned();
 

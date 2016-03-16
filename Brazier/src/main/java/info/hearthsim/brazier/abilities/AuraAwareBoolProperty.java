@@ -28,7 +28,7 @@ public final class AuraAwareBoolProperty implements Silencable {
 
     private AuraAwareBoolProperty(AuraAwareBoolProperty other) {
         this.baseValue = other.baseValue;
-        this.impl = other.impl.copy();
+        this.impl = other.impl.clone();
     }
 
     /**

@@ -8,9 +8,6 @@ import info.hearthsim.brazier.weapons.AttackTool;
  * A targetable character, which can be targeted by targeting action like attack, spell casting and buffing.
  */
 public interface Character extends PlayerProperty, LabeledEntity, DamageSource, BornEntity {
-    /** Sets the {@link TargetId} of this {@code Character} to the given value. */
-    public UndoAction setTargetId(TargetId targetId);
-
     /** Returns the {@link TargetId} of this {@code Character}. */
     public TargetId getTargetId();
 

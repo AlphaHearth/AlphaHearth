@@ -33,6 +33,15 @@ public final class HeroPower implements PlayerProperty {
         this.baseCardRef = new AtomicReference<>(null);
     }
 
+    /**
+     * Returns a copy of this {@code HeroPower} for the given new {@link Hero}.
+     */
+    public HeroPower copyFor(Hero newHero) {
+        HeroPower result = new HeroPower(newHero, this.powerDef);
+        result.useCount = this.useCount;
+        return result;
+    }
+
     private Card getBaseCard() {
         Card card = baseCardRef.get();
         if (card == null) {

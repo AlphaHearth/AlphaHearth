@@ -1,12 +1,16 @@
 # Brazier
 
-This module acts as the game simulator for the AI module [AlphaHearth](../AlphaHearth). Most of the work comes from [Kelemen](https://github.com/kelemen)'s original version of [Brazier](https://github.com/HearthSim/Brazier), but great changes have been made for a better using experience.
+This module acts as the game simulator for the AI module [AlphaHearth](../AlphaHearth). Most of the work comes from [Kelemen](https://github.com/kelemen)'s original version of [Brazier](https://github.com/HearthSim/Brazier), but great changes have been made for a better API and readability.
 
 ## TO-DO List
 
 More works are remained to be done in this module, which include:
 
-- [ ] Add `clone` methods for classes like `Minion`, `Card`, `Player` and `Game`, which will be used by the AI to copy a given game state (deep-copy a `Game`).
+- [ ] Replace `CharacterAbilities` with `AbilityList`, as its `externalAbilities` field is never used.
+- [ ] Remove `PreparedResult`.
+- [ ] Rename `birthDate` to `birthTime`.
+- [ ] Add `clone` methods for classes like `Minion`, `Card`, `Player` and `Game`, which will be used by the AI module to copy a specific game state (deep copy a `Game`). Can we deep copy them lazily?
+- [ ] Refactor `EntityId` framework and rename `TargetId` to `EntityId`. See JavaDoc for `TargetId`.
 - [ ] Remove the `undo` framework from the whole project, which brings unnecessary memory cost to the simulator.
 - [ ] `Ability` is now only used to add aura to characters and spell power. Consider defining minion's `Aura` in Json files to replace `Ability`.
 - [ ] Combine `AuraFilter` and `AuraTargetProvider` together, and extend it to use for other mechanics, such as renaming it to `TargetFilter` or `TargetProvider`.

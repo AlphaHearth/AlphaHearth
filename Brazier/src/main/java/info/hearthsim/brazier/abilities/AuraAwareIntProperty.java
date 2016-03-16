@@ -45,7 +45,7 @@ public final class AuraAwareIntProperty implements Silencable {
     private AuraAwareIntProperty(AuraAwareIntProperty other) {
         this.baseValue = other.baseValue;
         this.minValue = other.minValue;
-        this.impl = other.impl.copy();
+        this.impl = other.impl.clone();
     }
 
     /**

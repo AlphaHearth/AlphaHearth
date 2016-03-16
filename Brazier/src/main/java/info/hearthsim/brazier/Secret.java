@@ -27,6 +27,23 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
         this.ref = null;
     }
 
+    /**
+     * Creates a copy for the given {@code Secret} for the given owner.
+     */
+    private Secret(Player newOwner, Secret other) {
+        this.owner = newOwner;
+        this.baseCard = other.baseCard;
+        this.ability = other.ability;
+        this.ref = other.ref;
+    }
+
+    /**
+     * Returns a copy of this {@code Secret} with the given new owner.
+     */
+    public Secret copyFor(Player newOwner) {
+        return new Secret(newOwner, this);
+    }
+
     @Override
     public UndoableResult<Damage> createDamage(int damage) {
         return new UndoableResult<>(getOwner().getSpellDamage(damage));
@@ -72,10 +89,9 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
         }
 
         UndoableUnregisterAction prevRef = ref;
-        UndoableUnregisterAction currentRef = ref;
-        ref = null;
 
-        UndoAction unregisterUndo = currentRef.unregister();
+        UndoAction unregisterUndo = ref.unregister();
+        ref = null;
         return () -> {
             unregisterUndo.undo();
             ref = prevRef;

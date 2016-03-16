@@ -32,6 +32,16 @@ public final class Hand implements PlayerProperty {
         this.hand = new ArrayList<>(Player.MAX_HAND_SIZE);
     }
 
+    /**
+     * Returns a copy of this {@code Hand} with the given new owner.
+     */
+    public Hand copyFor(Player newOwner) {
+        Hand result = new Hand(newOwner, this.maxSize);
+        for (CardRef card : this.hand)
+            result.hand.add(new CardRef(card.card.copyFor(newOwner)));
+        return result;
+    }
+
     @Override
     public Player getOwner() {
         return owner;

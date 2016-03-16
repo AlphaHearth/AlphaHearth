@@ -81,6 +81,37 @@ public final class Player implements PlayerProperty {
         this.deck = new Deck(this);
     }
 
+    private Player(Game game, Player other) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
+        ExceptionHelper.checkNotNullArgument(other, "other");
+
+        this.game = game;
+        this.playerId = other.playerId;
+        this.hero = other.hero.copyFor(this);
+        this.board = other.board.copyFor(this);
+        this.hand = other.hand.copyFor(this);
+        this.manaResource = other.manaResource.copy();
+        this.fatigue = other.fatigue;
+        this.spellPower = other.spellPower.copy();
+        this.heroDamageMultiplier = other.heroDamageMultiplier.copy();
+        this.damagingHealAura = other.damagingHealAura.copy();
+        this.cardsPlayedThisTurn = other.cardsPlayedThisTurn;
+        this.minionsPlayedThisTurn = other.minionsPlayedThisTurn;
+        this.secrets = other.secrets.copyFor(this);
+        this.deathRattleTriggerCount = other.deathRattleTriggerCount;
+        this.auraFlags = other.auraFlags.copy();
+        this.weapon = other.weapon.copyFor(this);
+        this.graveyard = other.graveyard.copyFor(this);
+        this.deck = other.deck.copyFor(this);
+    }
+
+    /**
+     * Returns a copy of this {@code Player} for the given new {@code Game}.
+     */
+    public Player copyFor(Game game) {
+        return new Player(game, this);
+    }
+
     public FlagContainer getAuraFlags() {
         return auraFlags;
     }

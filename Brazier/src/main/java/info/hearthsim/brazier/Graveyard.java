@@ -22,6 +22,18 @@ public final class Graveyard {
         this.minionsDiedThisTurn = new ArrayList<>();
     }
 
+    /**
+     * Returns a copy of this {@code Graveyard} with the given new owner.
+     */
+    public Graveyard copyFor(Player newOwner) {
+        Graveyard result = new Graveyard();
+        for (Minion minion : deadMinions)
+            result.deadMinions.add(minion.copyFor(newOwner));
+        for (Minion minion : minionsDiedThisTurn) // FIXME: Redundant copies of minions are made here
+            result.minionsDiedThisTurn.add(minion.copyFor(newOwner));
+        return result;
+    }
+
     private static <T> boolean containsAll(Set<? extends T> set, T[] elements) {
         for (T element: elements) {
             if (!set.contains(element)) {

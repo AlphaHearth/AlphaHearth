@@ -21,7 +21,7 @@ import org.jtrim.utils.ExceptionHelper;
  * {@link Aura} or buffs the owner's <b>Spell Power</b> when it is activated.
  * <p>
  * Instances of {@code Ability} must be <b>immutable</b>: no state can be stored. Using the interface as
- * a functional interface and implementing it by using lambda expression is highly recommended.
+ * a functional interface and implementing it with lambda expression is highly recommended.
  * <p>
  * For predefined {@code Ability}s, see {@link Abilities} and {@link MinionAbilities}.
  *

@@ -29,6 +29,16 @@ public final class Deck implements PlayerProperty {
     }
 
     /**
+     * Returns a copy of this {@code Deck} with the given new owner.
+     */
+    public Deck copyFor(Player newOwner) {
+        Deck result = new Deck(newOwner);
+        for (Card card : cards)
+            result.cards.add(card.copyFor(newOwner));
+        return result;
+    }
+
+    /**
      * Returns a list of {@link Card}s in this {@code Deck} which satisfies the given
      * {@link Predicate}.
      */

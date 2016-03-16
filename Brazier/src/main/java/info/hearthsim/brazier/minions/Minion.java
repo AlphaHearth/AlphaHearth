@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class Minion implements Character, DestroyableEntity, Silencable, CardRef {
-    private TargetId minionId;
+    private final TargetId minionId;
     private Player owner;
     private MinionProperties properties;
 
@@ -52,6 +52,25 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         this.birthDate = owner.getGame().getCurrentTime();
         this.destroyed = new AtomicBoolean(false);
         this.scheduledToDestroy = new AtomicBoolean(false);
+    }
+
+    /**
+     * Creates a copy of the given {@code Minion} with the given new {@link Player owner}.
+     * The new copy will have the same {@link TargetId} as the given {@code Minion}.
+     *
+     * @param owner the given new owner.
+     * @param minion the given {@code Minion} to be copied.
+     */
+    private Minion(Player owner, Minion minion) {
+        ExceptionHelper.checkNotNullArgument(owner, "owner");
+        ExceptionHelper.checkNotNullArgument(minion, "minion");
+
+        this.owner = minion.owner;
+        this.minionId = minion.minionId;
+        this.birthDate = minion.birthDate;
+        this.destroyed = new AtomicBoolean(minion.destroyed.get());
+        this.scheduledToDestroy = new AtomicBoolean(minion.scheduledToDestroy.get());
+        this.properties = minion.properties.copyFor(this);
     }
 
     @Override
@@ -131,12 +150,10 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
 
         builder.addUndo(properties.deactivateAllAbilities());
 
-        PreparedResult<MinionProperties> copiedProperties = other.properties.copyFor(this);
+        properties = other.properties.copyFor(this);
 
         MinionProperties prevProperties = properties;
-        properties = copiedProperties.getResult();
         builder.addUndo(() -> properties = prevProperties);
-        builder.addUndo(copiedProperties.activate());
         builder.addUndo(properties.exhaust());
 
         return builder;
@@ -331,13 +348,6 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         return minionId;
     }
 
-    @Override
-    public UndoAction setTargetId(TargetId targetId) {
-        TargetId oldId = minionId;
-        minionId = targetId;
-        return () -> minionId = oldId;
-    }
-
     public MinionDescr getBaseDescr() {
         return getBody().getBaseStats();
     }
@@ -370,7 +380,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     /**
-     * Refreshes the state of the minion at the start of a turn. That is,
+     * Refreshes the state of the minion at start of turn. That is,
      * sleeping minion will be awakened and the number of attacks will reset.
      */
     public UndoAction refreshStartOfTurn() {
@@ -378,7 +388,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     /**
-     * Refreshes the state of the minion at the end of a turn. That is,
+     * Refreshes the state of the minion at end of turn. That is,
      * frozen minion will be unfrozen.
      */
     public UndoAction refreshEndOfTurn() {
@@ -387,6 +397,13 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
 
     public UndoAction updateAuras() {
         return properties.updateAuras();
+    }
+
+    /**
+     * Returns a copy of this {@code Minion} with the given new {@link Player owner}.
+     */
+    public Minion copyFor(Player newOwner) {
+        return new Minion(newOwner, this);
     }
 
     @Override

@@ -33,6 +33,15 @@ public final class BuffableBoolProperty implements Silencable {
     }
 
     /**
+     * Returns a new copy of this {@link BuffableBoolProperty}.
+     */
+    public BuffableBoolProperty copy() {
+        BuffableBoolProperty result = copy(baseValue);
+        result.topBuff = topBuff;
+        return result;
+    }
+
+    /**
      * Returns a new copy of this {@link BuffableBoolProperty} with the new given base value supplier.
      * This method is useful when you try to copy all the buffs added to this {@link BuffableBoolProperty}.
      */

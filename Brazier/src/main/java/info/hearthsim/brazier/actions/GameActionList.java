@@ -46,6 +46,15 @@ public final class GameActionList <T> {
     }
 
     /**
+     * Returns a copy of this {@code GameActionList}.
+     */
+    public GameActionList<T> copy() {
+        GameActionList<T> result = new GameActionList<>();
+        result.actions.addAll(actions);
+        return result;
+    }
+
+    /**
      * Adds the given {@link GameObjectAction} to the list with normal priority and no specific condition.
      *
      * @see Priorities#NORMAL_PRIORITY
@@ -101,9 +110,7 @@ public final class GameActionList <T> {
 
                 int index = actionRefRef.obj.getIndex();
                 actionRefRef.obj.remove();
-                return () -> {
-                    actionRefRef.obj = actions.addGetReference(index, wrappedAction);
-                };
+                return () -> actionRefRef.obj = actions.addGetReference(index, wrappedAction);
             }
 
             @Override

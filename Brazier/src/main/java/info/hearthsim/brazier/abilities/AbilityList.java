@@ -17,6 +17,9 @@ public final class AbilityList <Self> {
     private final Self self;
     private List<AbilityRef<Self>> abilities;
 
+    /**
+     * Creates an empty {@code AbilityList} for the given object.
+     */
     public AbilityList(Self self) {
         ExceptionHelper.checkNotNullArgument(self, "self");
 

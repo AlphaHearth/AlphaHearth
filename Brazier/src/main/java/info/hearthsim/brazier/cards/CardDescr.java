@@ -31,10 +31,11 @@ import org.jtrim.utils.ExceptionHelper;
  * <p>
  * Unlike {@link Card} who stands for in-game card and different {@code Card} instances may have the same name,
  * {@code CardDescr} stands for the game-irrelevant properties of a kind of card, by which different {@code CardDescr}
- * must have different names.
+ * must have different names. Essentially, a {@code CardDescr} is <b>immutable</b>.
  */
 public final class CardDescr implements HearthStoneEntity {
-    public static final CardDescr DO_NOTHING = new Builder(new CardId(""), CardType.UNKNOWN, 0).create();
+    public static final CardDescr DO_NOTHING =
+        new Builder(new CardId(""), CardType.UNKNOWN, 0).create();
 
     private final CardId cardId;
     private final int manaCost;

@@ -33,6 +33,19 @@ public final class BoardSide implements PlayerProperty {
     }
 
     /**
+     * Returns a copy of this {@code BoardSide} of the given new owner.
+     */
+    public BoardSide copyFor(Player newOwner) {
+        BoardSide result = new BoardSide(newOwner, this.maxSize);
+        for (BoardMinionRef minionRef : minionRefs) {
+            BoardMinionRef newMinionRef =
+                new BoardMinionRef(minionRef.minion.copyFor(newOwner), minionRef.needsSpace);
+            result.minionRefs.add(newMinionRef);
+        }
+        return result;
+    }
+
+    /**
      * Tries to add the given minion to the given index of the board.
      * If the given index is less than {@code 0}, the given minion will be added to the left most of the board;
      * if the given index is larger than or equal to the number of minions on this board,

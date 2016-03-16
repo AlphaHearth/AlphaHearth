@@ -21,6 +21,16 @@ public final class ActiveAuraList {
     }
 
     /**
+     * Returns a copy of this {@code ActiveAuraList}.
+     */
+    public ActiveAuraList copy() {
+        ActiveAuraList result = new ActiveAuraList();
+        for (AuraWrapper aura : auras)
+            result.addAura(aura.aura);
+        return result;
+    }
+
+    /**
      * Removes the element wit the given value from the given list, and returns its index.
      */
     private <T> int removeAndGetIndex(List<T> list, T value) {

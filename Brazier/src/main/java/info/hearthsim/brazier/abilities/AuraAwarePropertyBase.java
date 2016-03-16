@@ -91,7 +91,7 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     /**
      * Returns a new copy of this {@code AuraAwarePropertyBase}.
      */
-    public AuraAwarePropertyBase<T> copy() {
+    public AuraAwarePropertyBase<T> clone() {
         return new AuraAwarePropertyBase<>(this);
     }
 

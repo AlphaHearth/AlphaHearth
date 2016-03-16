@@ -72,6 +72,33 @@ public final class Game {
         };
     }
 
+    /**
+     * Creates a copy of the given {@code Game}.
+     */
+    private Game(Game other) {
+        ExceptionHelper.checkNotNullArgument(other, "other");
+
+        this.db = other.db;
+        this.currentTime = new AtomicLong(other.currentTime.longValue());
+        this.player1 = other.player1.copyFor(this);
+        this.player2 = other.player2.copyFor(this);
+        this.activeAuras = other.activeAuras.copy();
+        this.gameResult = other.gameResult;
+
+        this.events = new GameEvents(this); // FIXME
+
+        this.randomProvider = other.randomProvider;
+        PlayerId curPlayerId = other.currentPlayer.getPlayerId();
+        if (curPlayerId == player1.getPlayerId())
+            this.currentPlayer = player1;
+        else if (curPlayerId == player2.getPlayerId())
+            this.currentPlayer = player2;
+        else
+            throw new AssertionError();
+
+        this.userAgent = other.userAgent;
+    }
+
     public HearthStoneDb getDb() {
         return db;
     }

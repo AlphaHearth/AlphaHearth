@@ -57,18 +57,15 @@ public final class MinionProperties implements Silencable {
         this.activated = false;
     }
 
-    public PreparedResult<MinionProperties> copyFor(Minion other) {
-        PreparedResult<CharacterAbilities<Minion>> newAbilities = abilities.copyFor(other);
-        MinionProperties result = new MinionProperties(other, this, newAbilities.getResult());
-        return new PreparedResult<>(result, () -> {
-            UndoAction activateUndo = newAbilities.activate();
-            boolean prevActivated = activated;
-            result.activated = true;
-            return () -> {
-                result.activated = prevActivated;
-                activateUndo.undo();
-            };
-        });
+    /**
+     * Returns a copy of this {@code MinionProperties} for the given new minion.
+     */
+    public MinionProperties copyFor(Minion newMinion) {
+        PreparedResult<CharacterAbilities<Minion>> newAbilities = abilities.copyFor(newMinion);
+        MinionProperties result = new MinionProperties(newMinion, this, newAbilities.getResult());
+        newAbilities.activate();
+        result.activated = true;
+        return result;
     }
 
     /**

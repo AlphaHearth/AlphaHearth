@@ -27,6 +27,16 @@ public final class SecretContainer implements PlayerProperty {
         this.secretsView = Collections.unmodifiableList(secrets);
     }
 
+    /**
+     * Returns a copy of this {@code SecretContainer} with the given new owner.
+     */
+    public SecretContainer copyFor(Player newOwner) {
+        SecretContainer result = new SecretContainer(newOwner);
+        for (Secret secret : secrets)
+            result.addSecret(secret.copyFor(newOwner));
+        return result;
+    }
+
     public List<Secret> getSecrets() {
         return secretsView;
     }

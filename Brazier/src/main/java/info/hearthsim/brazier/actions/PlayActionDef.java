@@ -10,6 +10,8 @@ import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Definition of a {@link PlayAction}, combined with its {@link TargetNeed} and {@link PlayActionRequirement}.
+ * <p>
+ * Instances of {@code PlayActionDef} must be <b>immutable</b>: no state can be stored.
  */
 // TODO refactor this bizarre PlayAction framework.
 public final class PlayActionDef<Actor> {

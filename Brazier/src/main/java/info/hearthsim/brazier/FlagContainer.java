@@ -16,6 +16,15 @@ public final class FlagContainer {
     }
 
     /**
+     * Returns a copy of this {@code FlagContainer}.
+     */
+    public FlagContainer copy() {
+        FlagContainer result = new FlagContainer();
+        result.flags.putAll(flags);
+        return result;
+    }
+
+    /**
      * Returns if the given flag has already been registered in this container.
      */
     public boolean hasFlag(Object flag) {

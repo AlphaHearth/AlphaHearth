@@ -19,6 +19,18 @@ public final class ManaResource {
     }
 
     /**
+     * Returns a copy of this {@code ManaResource}.
+     */
+    public ManaResource copy() {
+        ManaResource result = new ManaResource();
+        result.nextTurnOverload = this.nextTurnOverload;
+        result.overloadedMana = this.overloadedMana;
+        result.manaCrystals = this.manaCrystals;
+        result.mana = this.mana;
+        return result;
+    }
+
+    /**
      * Refreshes the player's mana. Happens when a new turn starts.
      */
     public UndoAction refresh() {

@@ -24,7 +24,7 @@ import org.jtrim.utils.ExceptionHelper;
  * The hero in a game, controlled by the specific player.
  */
 public final class Hero implements Character {
-    private TargetId heroId;
+    private final TargetId heroId;
     private final Player owner;
     private final long birthDate;
     private HeroPower heroPower;
@@ -65,6 +65,33 @@ public final class Hero implements Character {
         this.birthDate = owner.getGame().getCurrentTime();
 
         ExceptionHelper.checkNotNullElements(this.keywords, "keywords");
+    }
+
+    /**
+     * Creates a copy of the given {@code Hero} with the given new {@link Player owner}.
+     */
+    private Hero(Player newOwner, Hero hero) {
+        ExceptionHelper.checkNotNullArgument(newOwner, "newOwner");
+        ExceptionHelper.checkNotNullArgument(hero, "hero");
+
+        this.heroId = hero.heroId;
+        this.heroPower = hero.heroPower.copyFor(this);
+        this.owner = newOwner;
+        this.hp = hero.hp.copy();
+        this.currentArmor = hero.currentArmor;
+        this.attackTool = hero.attackTool.copy();
+        this.immune = hero.immune.copy();
+        this.heroClass = hero.heroClass;
+        this.keywords = hero.keywords; // This field is unmodifiable
+        this.poisoned = hero.poisoned;
+        this.birthDate = hero.birthDate;
+    }
+
+    /**
+     * Returns a copy of this {@code Hero} with the given new {@link Player owner}.
+     */
+    public Hero copyFor(Player newOwner) {
+        return new Hero(newOwner, this);
     }
 
     private static <T> Set<T> copySet(Collection<? extends T> other) {
@@ -185,13 +212,6 @@ public final class Hero implements Character {
     @Override
     public AttackTool getAttackTool() {
         return attackTool;
-    }
-
-    @Override
-    public UndoAction setTargetId(TargetId targetId) {
-        TargetId oldId = heroId;
-        heroId = targetId;
-        return () -> heroId = oldId;
     }
 
     @Override
@@ -363,6 +383,22 @@ public final class Hero implements Character {
             this.freezeManager = new FreezeManager();
             this.attackCount = 0;
             this.extraAttack = 0;
+        }
+
+        /**
+         * Creates a copy of the given {@code HeroAttackTool}.
+         */
+        private HeroAttackTool(HeroAttackTool other) {
+            this.freezeManager = other.freezeManager.copy();
+            this.attackCount = other.attackCount;
+            this.extraAttack = other.extraAttack;
+        }
+
+        /**
+         * Returns a copy of this {@code HeroAttackTool}.
+         */
+        public HeroAttackTool copy() {
+            return new HeroAttackTool(this);
         }
 
         private Weapon tryGetWeapon() {

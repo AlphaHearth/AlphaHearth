@@ -30,10 +30,12 @@ import org.jtrim.utils.ExceptionHelper;
  * In this sense, more in-game properties can be included in this class, which include:
  * <ul>
  *     <li>{@code owner}: the owning {@link Player};</li>
- *     <li>{@code cardDescr}: the {@link CardDescr} which describes all its game-irrelevant properties;</li>
  *     <li>
- *         {@code manaCost}: an {@link AuraAwareIntProperty} which can be reduced by auras or buffs registered
- *         in the game, including <em>Emperor Thaurissan</em> and <em>Sorcerer's Apprentice</em>.
+ *         {@code cardDescr}: the {@link CardDescr} which describes all its game-irrelevant properties;
+ *     </li>
+ *     <li>
+ *         {@code manaCost}: an {@link AuraAwareIntProperty} which can be reduced by auras or buffs
+ *         registered in the game, including <em>Emperor Thaurissan</em> and <em>Sorcerer's Apprentice</em>.
  *     </li>
  * </ul>
  */
@@ -45,13 +47,14 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
     private final AuraAwareIntProperty manaCost;
 
     /**
-     * Creates a {@code Card} with the given {@code CardDescr} and the owning {@code Player}
+     * Creates a {@code Card} with the given {@code CardDescr} and the owning {@code Player}.
      *
-     * @param owner the owning {@code Player}
-     * @param cardDescr the given {@code CardDescr}
+     * @param owner the owning {@code Player}.
+     * @param cardDescr the given {@code CardDescr}.
      */
     public Card(Player owner, CardDescr cardDescr) {
         ExceptionHelper.checkNotNullArgument(cardDescr, "cardDescr");
+        ExceptionHelper.checkNotNullArgument(owner, "owner");
 
         this.owner = owner;
         this.cardDescr = cardDescr;
@@ -60,6 +63,22 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
 
         MinionDescr minionDescr = cardDescr.getMinion();
         this.minion = minionDescr != null ? new Minion(owner, cardDescr.getMinion()) : null;
+    }
+
+    /**
+     * Creates a copy of the given {@code Card} with the given new {@link Player owner}.
+     *
+     * @param owner the given new owner.
+     * @param card the given {@code Card} to be copied.
+     */
+    private Card(Player owner, Card card) {
+        ExceptionHelper.checkNotNullArgument(card, "card");
+        ExceptionHelper.checkNotNullArgument(owner, "owner");
+
+        this.owner = owner;
+        this.cardDescr = card.cardDescr;
+        this.manaCost = card.manaCost.copy();
+        this.minion = card.minion.copyFor(owner);
     }
 
     public Minion getMinion() {
@@ -147,6 +166,13 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
             }
         }
         return result;
+    }
+
+    /**
+     * Returns a copy of this {@code Card} with the given new {@link Player owner}.
+     */
+    public Card copyFor(Player newOwner) {
+        return new Card(newOwner, this);
     }
 
     @Override

@@ -26,7 +26,7 @@ public final class GameEvents {
     private final AtomicReference<GameActionList<Void>> pauseCollectorRef;
 
     // These listeners containers are just convenience methods to access
-    // summoninListeners
+    // summoningListeners
     private final GameActionEventsRegistry<Minion> startSummoningListeners;
     private final GameActionEventsRegistry<Minion> doneSummoningListeners;
 
@@ -57,6 +57,20 @@ public final class GameEvents {
                 return CompleteGameObjectAction.nothingToUndo(action);
             });
         };
+    }
+
+    private GameEvents(Game game, GameEvents other) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
+        ExceptionHelper.checkNotNullArgument(other, "other");
+
+        this.game = game;
+        this.pauseCollectorRef = new AtomicReference<>(other.pauseCollectorRef.get().copy());
+
+        this.simpleListeners = new EnumMap<>(SimpleEventType.class);
+        this.summoningListeners = createCompletableGameActionEvents();
+
+        this.startSummoningListeners = other.startSummoningListeners;
+        this.doneSummoningListeners = other.doneSummoningListeners;
     }
 
     /**

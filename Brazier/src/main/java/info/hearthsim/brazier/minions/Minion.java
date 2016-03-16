@@ -18,8 +18,8 @@ import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.weapons.AttackTool;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,7 +49,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         this.owner = owner;
         this.minionId = new TargetId();
         this.properties = new MinionProperties(this, baseDescr);
-        this.birthDate = owner.getWorld().getCurrentTime();
+        this.birthDate = owner.getGame().getCurrentTime();
         this.destroyed = new AtomicBoolean(false);
         this.scheduledToDestroy = new AtomicBoolean(false);
     }
@@ -188,9 +188,9 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     /**
-     * Adds the given {@link WorldEventAction} as a death rattle effect to this minion.
+     * Adds the given {@link GameEventAction} as a death rattle effect to this minion.
      */
-    public UndoAction addDeathRattle(WorldEventAction<? super Minion, ? super Minion> deathRattle) {
+    public UndoAction addDeathRattle(GameEventAction<? super Minion, ? super Minion> deathRattle) {
         return properties.addDeathRattle(deathRattle);
     }
 
@@ -219,7 +219,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * Triggers a {@link SimpleEventType#MINION_KILLED} event for this minion.
      */
     private UndoAction triggerKilledEvents() {
-        WorldEvents events = getOwner().getWorld().getEvents();
+        GameEvents events = getOwner().getGame().getEvents();
         return events.triggerEvent(SimpleEventType.MINION_KILLED, this);
     }
 

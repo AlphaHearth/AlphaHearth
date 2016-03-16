@@ -43,7 +43,7 @@ public final class TargetNeedsTest extends BrazierTest {
             expectedMinion(SLIME, 1, 2));
 
         agent.expectPlayer("p1", (player) -> {
-            Player opponent = player.getWorld().getOpponent(player.getPlayerId());
+            Player opponent = player.getGame().getOpponent(player.getPlayerId());
 
             List<Minion> minions = player.getBoard().getAllMinions();
             CardDescr execute = getCard(EXECUTE);

@@ -8,13 +8,13 @@
     "secret": {
         "start-play-card": {
             "filter": [
-                "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
                 {
-                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "class": "GameEventFilters.eventSourceHasKeyword",
                     "keywords": "spell"
                 }
             ],
-            "action": "WorldEventActions.PREVENT_CARD_PLAY"
+            "action": "GameEventActions.PREVENT_CARD_PLAY"
         }
     }
 }

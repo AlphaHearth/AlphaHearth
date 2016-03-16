@@ -2,21 +2,21 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.events.WorldEventAction;
+import info.hearthsim.brazier.events.GameEventAction;
 import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
+import info.hearthsim.brazier.events.GameEventActionDefs;
 import org.jtrim.utils.ExceptionHelper;
 
 // TODO understand this class.
 public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
     private final Ability<? super Self> ability;
-    private final WorldEventActionDefs<Self> eventActionDefs;
-    private final WorldEventAction<? super Self, ? super Self> deathRattle;
+    private final GameEventActionDefs<Self> eventActionDefs;
+    private final GameEventAction<? super Self, ? super Self> deathRattle;
 
     public LivingEntitiesAbilities(
             Ability<? super Self> ability,
-            WorldEventActionDefs<Self> eventActionDefs,
-            WorldEventAction<? super Self, ? super Self> deathRattle) {
+            GameEventActionDefs<Self> eventActionDefs,
+            GameEventAction<? super Self, ? super Self> deathRattle) {
         ExceptionHelper.checkNotNullArgument(eventActionDefs, "eventActionDefs");
 
         this.ability = ability;
@@ -27,7 +27,7 @@ public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
     public static <Self extends PlayerProperty> LivingEntitiesAbilities<Self> noAbilities() {
         return new LivingEntitiesAbilities<>(
             null,
-            new WorldEventActionDefs.Builder<Self>().create(),
+            new GameEventActionDefs.Builder<Self>().create(),
             null);
     }
 
@@ -41,17 +41,17 @@ public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
                 : (self) -> UndoableUnregisterAction.DO_NOTHING;
     }
 
-    public WorldEventActionDefs<Self> getEventActionDefs() {
+    public GameEventActionDefs<Self> getEventActionDefs() {
         return eventActionDefs;
     }
 
-    public WorldEventAction<? super Self, ? super Self> tryGetDeathRattle() {
+    public GameEventAction<? super Self, ? super Self> tryGetDeathRattle() {
         return deathRattle;
     }
 
-    public WorldEventAction<? super Self, ? super Self> getDeathRattle() {
+    public GameEventAction<? super Self, ? super Self> getDeathRattle() {
         return deathRattle != null
                 ? deathRattle
-                : (world, self, eventSource) -> UndoAction.DO_NOTHING;
+                : (game, self, eventSource) -> UndoAction.DO_NOTHING;
     }
 }

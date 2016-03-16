@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +13,15 @@ import org.jtrim.collections.RefLinkedList;
 import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
 
-public final class DefaultCompletableWorldActionEvents <T>
-    implements CompletableWorldActionEvents<T> {
+public final class DefaultCompletableGameActionEvents <T>
+    implements CompletableGameActionEvents<T> {
 
-    private final World world;
+    private final Game game;
     private final RefList<ActionWrapper<? super T>> actions;
 
-    public DefaultCompletableWorldActionEvents(World world) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
-        this.world = world;
+    public DefaultCompletableGameActionEvents(Game game) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
+        this.game = game;
         this.actions = new RefLinkedList<>();
     }
 
@@ -42,7 +42,7 @@ public final class DefaultCompletableWorldActionEvents <T>
     }
 
     @Override
-    public UndoableUnregisterAction addAction(int priority, CompletableWorldObjectAction<? super T> action) {
+    public UndoableUnregisterAction addAction(int priority, CompletableGameObjectAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         ActionWrapper<? super T> wrappedAction = new ActionWrapper<>(priority, action);
@@ -71,11 +71,11 @@ public final class DefaultCompletableWorldActionEvents <T>
 
     private UndoableAction combineCompleteActions(
         T object,
-        List<CompleteWorldObjectAction<? super T>> actions) {
+        List<CompleteGameObjectAction<? super T>> actions) {
         return () -> {
             UndoAction.Builder builder = new UndoAction.Builder(actions.size());
-            for (CompleteWorldObjectAction<? super T> action : actions) {
-                builder.addUndo(action.alterWorld(world, object));
+            for (CompleteGameObjectAction<? super T> action : actions) {
+                builder.addUndo(action.alterGame(game, object));
             }
             return builder;
         };
@@ -87,12 +87,12 @@ public final class DefaultCompletableWorldActionEvents <T>
             return new UndoableResult<>(() -> UndoAction.DO_NOTHING);
         }
 
-        List<CompletableWorldObjectAction<? super T>> currentActions = new ArrayList<>(actions);
-        List<CompleteWorldObjectAction<? super T>> result = new ArrayList<>(currentActions.size());
+        List<CompletableGameObjectAction<? super T>> currentActions = new ArrayList<>(actions);
+        List<CompleteGameObjectAction<? super T>> result = new ArrayList<>(currentActions.size());
 
         UndoAction.Builder undoBuilder = new UndoAction.Builder(currentActions.size());
-        for (CompletableWorldObjectAction<? super T> action : currentActions) {
-            CompleteWorldObjectAction<? super T> completeAction = action.startAlterWorld(world, object);
+        for (CompletableGameObjectAction<? super T> action : currentActions) {
+            CompleteGameObjectAction<? super T> completeAction = action.startAlterGame(game, object);
             undoBuilder.addUndo(completeAction);
             result.add(completeAction);
         }
@@ -105,19 +105,19 @@ public final class DefaultCompletableWorldActionEvents <T>
         return triggerEvent(true, object);
     }
 
-    private static final class ActionWrapper <T> implements CompletableWorldObjectAction<T> {
+    private static final class ActionWrapper <T> implements CompletableGameObjectAction<T> {
         private final int priority;
-        private final CompletableWorldObjectAction<T> wrapped;
+        private final CompletableGameObjectAction<T> wrapped;
 
-        public ActionWrapper(int priority, CompletableWorldObjectAction<T> wrapped) {
+        public ActionWrapper(int priority, CompletableGameObjectAction<T> wrapped) {
             ExceptionHelper.checkNotNullArgument(wrapped, "wrapped");
             this.priority = priority;
             this.wrapped = wrapped;
         }
 
         @Override
-        public CompleteWorldObjectAction<T> startAlterWorld(World world, T object) {
-            return wrapped.startAlterWorld(world, object);
+        public CompleteGameObjectAction<T> startAlterGame(Game game, T object) {
+            return wrapped.startAlterGame(game, object);
         }
     }
 

@@ -10,7 +10,7 @@
         "hp": 9,
         "triggers": {
             "minion-damaged": {
-                "filter": "WorldEventFilters.TARGET_SELF",
+                "filter": "GameEventFilters.TARGET_SELF",
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",
                     "buff": "Buffs.DOUBLE_ATTACK"

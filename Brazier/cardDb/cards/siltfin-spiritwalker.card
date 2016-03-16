@@ -12,9 +12,9 @@
         "triggers": {
             "minion-killed": {
                 "filter": [
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "WorldEventFilters.eventSourceHasKeyword",
+                        "class": "GameEventFilters.eventSourceHasKeyword",
                         "keywords": "murloc"
                     }
                 ],

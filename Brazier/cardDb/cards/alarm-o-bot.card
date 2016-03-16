@@ -10,7 +10,7 @@
         "hp": 3,
         "triggers": {
             "turn-starts": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": "TargetlessActions.SWAP_WITH_MINION_IN_HAND"
             }
         }

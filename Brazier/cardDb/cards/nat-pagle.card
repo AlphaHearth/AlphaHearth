@@ -9,7 +9,7 @@
         "hp": 4,
         "triggers": {
             "turn-starts": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": "TargetlessActions.FISH_CARD_FOR_SELF"
             }
         }

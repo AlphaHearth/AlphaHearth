@@ -10,7 +10,7 @@
         "stealth": true,
         "triggers": {
             "turn-starts": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",
                     "buff": "1/1"

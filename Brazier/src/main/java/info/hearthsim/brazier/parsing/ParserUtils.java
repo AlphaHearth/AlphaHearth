@@ -6,9 +6,10 @@ import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.cards.CardProvider;
+import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.events.GameEventFilter;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
+import info.hearthsim.brazier.events.GameEventActionDefs;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionId;
@@ -16,7 +17,6 @@ import info.hearthsim.brazier.minions.MinionProvider;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.PlayAction;
-import info.hearthsim.brazier.events.WorldEventFilter;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 import info.hearthsim.brazier.weapons.WeaponId;
 import info.hearthsim.brazier.weapons.WeaponProvider;
@@ -77,19 +77,19 @@ public final class ParserUtils {
      */
     private static void addTypeMergers(JsonDeserializer.Builder builder) {
         builder.setTypeMerger(PlayActionRequirement.class, (elements) -> PlayActionRequirement.merge(elements));
-        builder.setTypeMerger(WorldEventFilter.class, (worldEventFilters) -> {
+        builder.setTypeMerger(GameEventFilter.class, (gameEventFilters) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends WorldEventFilter<Object, Object>> unsafeElements
-                = (Collection<? extends WorldEventFilter<Object, Object>>) worldEventFilters;
-            return WorldEventFilter.merge(unsafeElements);
+            Collection<? extends GameEventFilter<Object, Object>> unsafeElements
+                = (Collection<? extends GameEventFilter<Object, Object>>) gameEventFilters;
+            return GameEventFilter.merge(unsafeElements);
         });
-        builder.setTypeMerger(WorldEventAction.class, (worldEventActions) -> {
+        builder.setTypeMerger(GameEventAction.class, (gameEventActions) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends WorldEventAction<PlayerProperty, Object>> unsafeElements
-                = (Collection<? extends WorldEventAction<PlayerProperty, Object>>) worldEventActions;
-            return WorldEventAction.merge(unsafeElements);
+            Collection<? extends GameEventAction<PlayerProperty, Object>> unsafeElements
+                = (Collection<? extends GameEventAction<PlayerProperty, Object>>) gameEventActions;
+            return GameEventAction.merge(unsafeElements);
         });
 
         builder.setTypeMerger(TargetNeed.class, (targetNeeds) -> {
@@ -121,12 +121,12 @@ public final class ParserUtils {
                 = (Collection<? extends AuraFilter<Object, Object>>) auraFilters;
             return AuraFilter.merge(unsafeElements);
         });
-        builder.setTypeMerger(WorldObjectAction.class, (worldObjectActions) -> {
+        builder.setTypeMerger(GameObjectAction.class, (gameObjectActions) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends WorldObjectAction<Object>> unsafeElements
-                = (Collection<? extends WorldObjectAction<Object>>) worldObjectActions;
-            return WorldObjectAction.merge(unsafeElements);
+            Collection<? extends GameObjectAction<Object>> unsafeElements
+                = (Collection<? extends GameObjectAction<Object>>) gameObjectActions;
+            return GameObjectAction.merge(unsafeElements);
         });
         builder.setTypeMerger(TargetedAction.class, (targetedActions) -> {
             // Unsafe but there is nothing to do.
@@ -197,27 +197,27 @@ public final class ParserUtils {
      * Adds default type converters to the given {@link JsonDeserializer.Builder}.
      */
     private static void addTypeConversions(JsonDeserializer.Builder builder) {
-        builder.addTypeConversion(WorldAction.class, WorldEventAction.class,
-            (action) -> (world, self, eventSource) -> action.alterWorld(world));
-        builder.addTypeConversion(TargetlessAction.class, WorldEventAction.class, (action) -> {
+        builder.addTypeConversion(GameAction.class, GameEventAction.class,
+            (action) -> (game, self, eventSource) -> action.alterGame(game));
+        builder.addTypeConversion(TargetlessAction.class, GameEventAction.class, (action) -> {
             // Not truly safe but there is not much to do.
             // The true requirement is that the "Actor" extends the "Self" object of
-            // WorldEventAction.
+            // GameEventAction.
             @SuppressWarnings("unchecked")
             TargetlessAction<PlayerProperty> safeAction = (TargetlessAction<PlayerProperty>) action;
-            return (World world, PlayerProperty self, Object eventSource) -> {
-                return safeAction.alterWorld(world, self);
+            return (Game game, PlayerProperty self, Object eventSource) -> {
+                return safeAction.alterGame(game, self);
             };
         });
 
         builder.addTypeConversion(TargetedAction.class, TargetlessAction.class, (action) -> {
             // Not truly safe but there is not much to do.
             // The true requirement is that the "Actor" extends the "Self" object of
-            // WorldEventAction.
+            // GameEventAction.
             @SuppressWarnings("unchecked")
             TargetedAction<Object, Object> safeAction = (TargetedAction<Object, Object>) action;
-            return (World world, Object actor) -> {
-                return safeAction.alterWorld(world, actor, actor);
+            return (Game game, Object actor) -> {
+                return safeAction.alterGame(game, actor, actor);
             };
         });
 
@@ -501,11 +501,11 @@ public final class ParserUtils {
                 : PlayActionRequirement.ALLOWED;
     }
 
-    private static <Self extends PlayerProperty> WorldEventActionDefs<Self> parseEventActionDefs(
+    private static <Self extends PlayerProperty> GameEventActionDefs<Self> parseEventActionDefs(
             EventNotificationParser<Self> eventNotificationParser,
             JsonTree triggersElement) throws ObjectParsingException {
         if (triggersElement == null) {
-            return new WorldEventActionDefs.Builder<Self>().create();
+            return new GameEventActionDefs.Builder<Self>().create();
         }
 
         return eventNotificationParser.fromJson(triggersElement);
@@ -528,7 +528,7 @@ public final class ParserUtils {
         return ability;
     }
 
-    private static <Self extends PlayerProperty> WorldEventAction<? super Self, ? super Self> parseDeathRattle(
+    private static <Self extends PlayerProperty> GameEventAction<? super Self, ? super Self> parseDeathRattle(
             Class<Self> selfClass,
             EventNotificationParser<Self> eventNotificationParser,
             JsonTree root) throws ObjectParsingException {
@@ -539,19 +539,19 @@ public final class ParserUtils {
         }
 
         JsonTree deathRattleConditionElement = root.getChild("deathRattleCondition");
-        WorldEventFilter<? super Self, ? super Self> deathRattleFilter = deathRattleConditionElement != null
+        GameEventFilter<? super Self, ? super Self> deathRattleFilter = deathRattleConditionElement != null
                 ? eventNotificationParser.parseFilter(selfClass, deathRattleConditionElement)
                 : null;
 
-        WorldEventAction<? super Self, ? super Self> action
+        GameEventAction<? super Self, ? super Self> action
                 = eventNotificationParser.parseAction(selfClass, deathRattleElement);
 
         if (deathRattleFilter != null) {
-            return (World world, Self self, Self eventSource) -> {
-                if (!deathRattleFilter.applies(world, self, eventSource)) {
+            return (Game game, Self self, Self eventSource) -> {
+                if (!deathRattleFilter.applies(game, self, eventSource)) {
                     return UndoAction.DO_NOTHING;
                 }
-                return action.alterWorld(world, self, eventSource);
+                return action.alterGame(game, self, eventSource);
             };
         }
         else {
@@ -566,8 +566,8 @@ public final class ParserUtils {
             JsonTree root) throws ObjectParsingException {
 
         Ability<? super Self> ability = parseAbility(selfClass, objectParser, root.getChild("ability"));
-        WorldEventActionDefs<Self> eventActionDefs = parseEventActionDefs(eventNotificationParser, root.getChild("triggers"));
-        WorldEventAction<? super Self, ? super Self> deathRattle = parseDeathRattle(selfClass, eventNotificationParser, root);
+        GameEventActionDefs<Self> eventActionDefs = parseEventActionDefs(eventNotificationParser, root.getChild("triggers"));
+        GameEventAction<? super Self, ? super Self> deathRattle = parseDeathRattle(selfClass, eventNotificationParser, root);
 
         return new LivingEntitiesAbilities<>(ability, eventActionDefs, deathRattle);
     }
@@ -605,14 +605,14 @@ public final class ParserUtils {
                 actionElement,
                 TargetedAction.class,
                 TypeCheckers.genericTypeChecker(TargetedAction.class, actorType, targetType));
-        return (World world, Actor actor, Optional<Character> optTarget) -> {
+        return (Game game, Actor actor, Optional<Character> optTarget) -> {
             if (!optTarget.isPresent()) {
                 return UndoAction.DO_NOTHING;
             }
 
             Character target = optTarget.get();
             if (targetType.isInstance(target)) {
-                return result.alterWorld(world, actor, targetType.cast(target));
+                return result.alterGame(game, actor, targetType.cast(target));
             }
             else {
                 return UndoAction.DO_NOTHING;
@@ -634,7 +634,7 @@ public final class ParserUtils {
                         actionElement,
                         TargetlessAction.class,
                         TypeCheckers.genericTypeChecker(TargetlessAction.class, actorType));
-                return (world, actor, target) -> result.alterWorld(world, actor);
+                return (game, actor, target) -> result.alterGame(game, actor);
             }
             else {
                 return parseTargetedAction(objectParser, actionElement, actorType, Minion.class);
@@ -724,9 +724,9 @@ public final class ParserUtils {
             return action;
         }
 
-        return (World world, Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
+        return (Game game, Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
             if (condition.meetsRequirement(actor.getOwner())) {
-                return action.alterWorld(world, actor, target);
+                return action.alterGame(game, actor, target);
             }
             else {
                 return UndoAction.DO_NOTHING;

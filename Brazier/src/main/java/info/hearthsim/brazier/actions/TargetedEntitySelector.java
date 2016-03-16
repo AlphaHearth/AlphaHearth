@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.stream.Stream;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * Functional interface with sole un-implemented method {@link #select(World, Actor, Target)} which
- * selects {@link Stream} of {@code Selection} from the given {@link World} with the given {@code Actor}
+ * Functional interface with sole un-implemented method {@link #select(Game, Actor, Target)} which
+ * selects {@link Stream} of {@code Selection} from the given {@link Game} with the given {@code Actor}
  * and {@code Target}.
  * <p>
  * For predefined {@code TargetedEntitySelector}s, see {@link TargetedEntitySelectors}.
@@ -19,10 +20,10 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface TargetedEntitySelector<Actor, Target, Selection> {
     /**
-     * Selects {@code Selection} from the given {@link World} with the given {@code Actor} and {@code Target}
+     * Selects {@code Selection} from the given {@link Game} with the given {@code Actor} and {@code Target}
      * and returns the selected results as a {@link Stream}.
      */
-    public Stream<? extends Selection> select(World world, Actor actor, Target target);
+    public Stream<? extends Selection> select(Game game, Actor actor, Target target);
 
     /**
      * Merges a given collection of {@link TargetedEntitySelector}s to one which returns all the selected results
@@ -44,10 +45,10 @@ public interface TargetedEntitySelector<Actor, Target, Selection> {
         List<TargetedEntitySelector<? super Actor, ? super Target, ? extends Selection>> selectorsCopy =
             new ArrayList<>(selectors);
 
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             Stream<? extends Selection> result = null;
             for (TargetedEntitySelector<? super Actor, ? super Target, ? extends Selection> selector: selectorsCopy) {
-                Stream<? extends Selection> selected = selector.select(world, actor, target);
+                Stream<? extends Selection> selected = selector.select(game, actor, target);
                 result = result != null
                         ? Stream.concat(result, selected)
                         : selected;

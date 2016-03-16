@@ -16,10 +16,10 @@ public class Board {
     private static final PlayerId AI_PLAYER = new PlayerId("AiPlayer");
     private static final PlayerId AI_OPPONENT = new PlayerId("AiOpponent");
 
-    private final WorldPlayAgent playAgent;
+    private final GameAgent playAgent;
 
     public Board(HearthStoneDb db) {
-        playAgent = new WorldPlayAgent(new World(db, AI_PLAYER, AI_OPPONENT));
+        playAgent = new GameAgent(new Game(db, AI_PLAYER, AI_OPPONENT));
     }
 
     /**
@@ -44,10 +44,10 @@ public class Board {
             return newBoard;
         });
 
-        World currentWorld = cachedBoard.playAgent.getWorld();
-        Player curPlayer = currentWorld.getCurrentPlayer();
+        Game currentGame = cachedBoard.playAgent.getGame();
+        Player curPlayer = currentGame.getCurrentPlayer();
         PlayerId curPlayerId = curPlayer.getPlayerId();
-        Player curOpponent = currentWorld.getOpponent(curPlayer.getPlayerId());
+        Player curOpponent = currentGame.getOpponent(curPlayer.getPlayerId());
         Hero friendlyHero = curPlayer.getHero();
         Hero enemyHero = curOpponent.getHero();
         BoardSide friendlyMinions = curPlayer.getBoard();
@@ -62,7 +62,7 @@ public class Board {
                 SingleMove heroPowerPlaying = new HeroPowerPlaying(null);
                 addAndCache(selectedMove, heroPowerPlaying, cachedBoard, availableMoves, cachedBoards);
             } else {
-                currentWorld.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
+                currentGame.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
                     SingleMove heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getTargetId());
                     addAndCache(selectedMove, heroPowerPlaying, cachedBoard, availableMoves, cachedBoards);
                 });
@@ -70,7 +70,7 @@ public class Board {
         }
 
         // List direct attack
-        currentWorld.getTargets((target) -> target.getOwner() == curPlayer && target.getAttackTool().canAttackWith())
+        currentGame.getTargets((target) -> target.getOwner() == curPlayer && target.getAttackTool().canAttackWith())
             .forEach((attacker) -> {
                 if (enemyMinions.hasNonStealthTaunt()) {
                     enemyMinions.getMinions((minion) -> minion.getBody().isTaunt() && !minion.getBody().isStealth())
@@ -105,7 +105,7 @@ public class Board {
                 new PlayerTargetNeed(new TargeterDef(AI_PLAYER, true, false), card.getTargetNeed());
             if (card.isMinionCard()) {
                 if (card.getTargetNeed().hasTarget()) { // Minion card with battle cry target
-                    for (Character target : currentWorld.getTargets()) {
+                    for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
                                 SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getTargetId());
@@ -121,7 +121,7 @@ public class Board {
                 }
             } else {
                 if (card.getTargetNeed().hasTarget()) { // Spell or Weapon card with target
-                    for (Character target : currentWorld.getTargets()) {
+                    for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getTargetId());
                             addAndCache(selectedMove, cardPlaying, cachedBoard, availableMoves, cachedBoards);
@@ -188,7 +188,7 @@ public class Board {
      * Returns if the game is over (any player is dead).
      */
     public boolean isGameOver() {
-        return playAgent.getWorld().isGameOver();
+        return playAgent.getGame().isGameOver();
     }
 
     /**

@@ -3,6 +3,7 @@ package info.hearthsim.brazier.actions;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
+import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.cards.Card;
@@ -10,12 +11,8 @@ import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.cards.CardProvider;
 import info.hearthsim.brazier.cards.CardType;
-import info.hearthsim.brazier.events.CardPlayEvent;
-import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.events.WorldActionEvents;
-import info.hearthsim.brazier.events.WorldEventFilter;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.GameEventFilter;
 import info.hearthsim.brazier.minions.MinionBody;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionId;
@@ -48,7 +45,7 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which makes the actor's owner draw a card from the deck.
      */
-    public static final TargetlessAction<PlayerProperty> DRAW_FOR_SELF = (World world, PlayerProperty actor) -> {
+    public static final TargetlessAction<PlayerProperty> DRAW_FOR_SELF = (Game game, PlayerProperty actor) -> {
         return actor.getOwner().drawCardToHand();
     };
 
@@ -60,7 +57,7 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which makes the actor's owner discard a random card from the hand.
      */
-    public static final TargetlessAction<PlayerProperty> DISCARD_RANDOM_CARD = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DISCARD_RANDOM_CARD = (game, actor) -> {
         Player player = actor.getOwner();
         Hand hand = player.getHand();
         int cardCount = hand.getCardCount();
@@ -68,7 +65,7 @@ public final class TargetlessActions {
             return UndoAction.DO_NOTHING;
         }
 
-        int cardIndex = world.getRandomProvider().roll(cardCount);
+        int cardIndex = game.getRandomProvider().roll(cardCount);
         // TODO: Show discarded card to the opponent.
         return hand.removeAtIndex(cardIndex);
     };
@@ -76,7 +73,7 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which makes the actor's owner discard the card on the top of the deck.
      */
-    public static final TargetlessAction<PlayerProperty> DISCARD_FROM_DECK = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DISCARD_FROM_DECK = (game, actor) -> {
         Player player = actor.getOwner();
         Deck deck = player.getDeck();
         if (deck.getNumberOfCards() <= 0) {
@@ -91,7 +88,7 @@ public final class TargetlessActions {
     /**
      * {@code TargetlessAction} which re-summons a same minion on the right of the given minion.
      */
-    public static final TargetlessAction<Minion> RESUMMON_RIGHT = (World world, Minion minion) -> {
+    public static final TargetlessAction<Minion> RESUMMON_RIGHT = (Game game, Minion minion) -> {
         BoardSide board = minion.getOwner().getBoard();
         int minionIndex = board.indexOf(minion.getTargetId());
         return board.getOwner().summonMinion(minion.getBaseDescr(), minionIndex + 1);
@@ -100,7 +97,7 @@ public final class TargetlessActions {
     /**
      * {@code TargetedAction} which resurrects all minions that died in the last turn.
      */
-    public static final TargetlessAction<PlayerProperty> RESURRECT_DEAD_MINIONS = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> RESURRECT_DEAD_MINIONS = (game, actor) -> {
         Player player = actor.getOwner();
         List<Minion> deadMinions = player.getGraveyard().getMinionsDiedThisTurn();
         if (deadMinions.isEmpty()) {
@@ -117,14 +114,14 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which destroys the opponent's weapon.
      */
-    public static final TargetlessAction<PlayerProperty> DESTROY_OPPONENTS_WEAPON = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DESTROY_OPPONENTS_WEAPON = (game, actor) -> {
         return actor.getOwner().destroyWeapon();
     };
 
     /**
      * {@link TargetlessAction} which destroys all of the opponent's secrets.
      */
-    public static final TargetlessAction<PlayerProperty> DESTROY_OPPONENT_SECRETS = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DESTROY_OPPONENT_SECRETS = (game, actor) -> {
         Player player = actor.getOwner();
         SecretContainer secrets = player.getOpponent().getSecrets();
         return secrets.removeAllSecrets();
@@ -133,7 +130,7 @@ public final class TargetlessActions {
     /**
      * {@code TargetedAction} which discards all cards in the player's hand.
      */
-    public static final TargetlessAction<PlayerProperty> DISCARD_HAND = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DISCARD_HAND = (game, actor) -> {
         Player player = actor.getOwner();
         // TODO: Display discarded cards to opponent
         return player.getHand().discardAll();
@@ -147,7 +144,7 @@ public final class TargetlessActions {
     /**
      * {@code TargetedAction} which swaps the given minion with a random minion card in the player's hand.
      */
-    public static final TargetlessAction<Minion> SWAP_WITH_MINION_IN_HAND = (World world, Minion minion) -> {
+    public static final TargetlessAction<Minion> SWAP_WITH_MINION_IN_HAND = (Game game, Minion minion) -> {
         Hand hand = minion.getOwner().getHand();
         int cardIndex = hand.chooseRandomCardIndex(Card::isMinionCard);
         if (cardIndex < 0) {
@@ -182,7 +179,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Ancestor's Call</em>.
      */
-    public static TargetlessAction<PlayerProperty> SUMMON_RANDOM_MINION_FROM_HAND = (world, actor) -> {
+    public static TargetlessAction<PlayerProperty> SUMMON_RANDOM_MINION_FROM_HAND = (game, actor) -> {
         Player player = actor.getOwner();
         Hand hand = player.getHand();
         int cardIndex = hand.chooseRandomCardIndex(Card::isMinionCard);
@@ -204,7 +201,7 @@ public final class TargetlessActions {
     /**
      * {@code TargetedAction} which creates a copy of the given minion on the right of that minion.
      */
-    public static final TargetlessAction<Minion> COPY_SELF = (world, actor) -> {
+    public static final TargetlessAction<Minion> COPY_SELF = (game, actor) -> {
         Player owner = actor.getOwner();
         if (owner.getBoard().isFull()) {
             return UndoAction.DO_NOTHING;
@@ -224,7 +221,7 @@ public final class TargetlessActions {
     /**
      * {@link TargetlessAction} which kills the actor.
      */
-    public static final TargetlessAction<Character> SELF_DESTRUCT = (world, actor) -> {
+    public static final TargetlessAction<Character> SELF_DESTRUCT = (game, actor) -> {
         return actor.kill();
     };
 
@@ -233,7 +230,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Lava Shock</em>.
      */
-    public static final TargetlessAction<PlayerProperty> REMOVE_OVERLOAD = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> REMOVE_OVERLOAD = (game, actor) -> {
         ManaResource mana = actor.getOwner().getManaResource();
         UndoAction thisTurnUndo = mana.setOverloadedMana(0);
         UndoAction nextTurnUndo = mana.setNextTurnOverload(0);
@@ -248,7 +245,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Battle Rage</em>.
      */
-    public static final TargetlessAction<PlayerProperty> BATTLE_RAGE = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> BATTLE_RAGE = (game, actor) -> {
         Player player = actor.getOwner();
         int cardsToDraw = player.getHero().isDamaged() ? 1 : 0;
         cardsToDraw += player.getBoard().countMinions(Minion::isDamaged);
@@ -265,7 +262,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Mind Vision</em>.
      */
-    public static final TargetlessAction<PlayerProperty> MIND_VISION = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> MIND_VISION = (game, actor) -> {
         Player player = actor.getOwner();
         Card card = player.getOpponent().getHand().getRandomCard();
         if (card == null) {
@@ -279,9 +276,9 @@ public final class TargetlessActions {
      * <p>
      * See minion <em>Nat Pagle</em>.
      */
-    public static final TargetlessAction<PlayerProperty> FISH_CARD_FOR_SELF = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> FISH_CARD_FOR_SELF = (game, actor) -> {
         Player player = actor.getOwner();
-        if (world.getRandomProvider().roll(2) < 1) {
+        if (game.getRandomProvider().roll(2) < 1) {
             return player.drawCardToHand();
         }
         else {
@@ -294,14 +291,14 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Resurrect</em>.
      */
-    public static final TargetlessAction<PlayerProperty> SUMMON_DEAD_MINION = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> SUMMON_DEAD_MINION = (game, actor) -> {
         Player player = actor.getOwner();
         List<Minion> deadMinions = player.getGraveyard().getDeadMinions();
         if (deadMinions.isEmpty()) {
             return UndoAction.DO_NOTHING;
         }
 
-        RandomProvider rng = world.getRandomProvider();
+        RandomProvider rng = game.getRandomProvider();
         Minion minion = deadMinions.get(rng.roll(deadMinions.size()));
         return player.summonMinion(minion.getBaseDescr());
     };
@@ -314,7 +311,7 @@ public final class TargetlessActions {
      */
     // TODO The action now deals damage equal to the hero's attack, instead of the weapon's attack. See if
     // TODO it's accurate when the hero is buffed with something like `Rockbiter Weapon` or `Shapeshift`.
-    public static final TargetlessAction<DamageSource> BLADE_FLURRY = (World world, DamageSource actor) -> {
+    public static final TargetlessAction<DamageSource> BLADE_FLURRY = (Game game, DamageSource actor) -> {
         Player player = actor.getOwner();
         if (player.tryGetWeapon() == null) {
             return UndoAction.DO_NOTHING;
@@ -327,7 +324,7 @@ public final class TargetlessActions {
         EntitySelector<DamageSource, Character> targets = EntitySelectors.enemyTargets();
         TargetlessAction<DamageSource> damageAction = damageTarget(targets, damage);
 
-        UndoAction damageUndo = damageAction.alterWorld(world, actor);
+        UndoAction damageUndo = damageAction.alterGame(game, actor);
         return () -> {
             damageUndo.undo();
             destroyUndo.undo();
@@ -348,7 +345,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Void Terror</em>.
      */
-    public static final TargetlessAction<Minion> CONSUME_NEIGHBOURS = (World world, Minion actor) -> {
+    public static final TargetlessAction<Minion> CONSUME_NEIGHBOURS = (Game game, Minion actor) -> {
         int attackBuff = 0;
         int hpBuff = 0;
 
@@ -361,14 +358,14 @@ public final class TargetlessActions {
         if (left != null) {
             attackBuff += left.getAttackTool().getAttack();
             hpBuff += left.getBody().getCurrentHp();
-            builder.addUndo(TargetedActions.KILL_TARGET.alterWorld(world, actor, left));
+            builder.addUndo(TargetedActions.KILL_TARGET.alterGame(game, actor, left));
         }
 
         Minion right = board.getMinion(actorLoc + 1);
         if (right != null) {
             attackBuff += right.getAttackTool().getAttack();
             hpBuff += right.getBody().getCurrentHp();
-            builder.addUndo(TargetedActions.KILL_TARGET.alterWorld(world, actor, right));
+            builder.addUndo(TargetedActions.KILL_TARGET.alterGame(game, actor, right));
         }
 
         if (hpBuff != 0 && attackBuff != 0) {
@@ -385,7 +382,7 @@ public final class TargetlessActions {
      * <p>
      * See minion <em>Harrison Jones</em>.
      */
-    public static final TargetlessAction<PlayerProperty> DRAW_CARD_FOR_OPPONENTS_WEAPON = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DRAW_CARD_FOR_OPPONENTS_WEAPON = (game, actor) -> {
         Player player = actor.getOwner();
         Player opponent = player.getOpponent();
         Weapon weapon = opponent.tryGetWeapon();
@@ -395,10 +392,10 @@ public final class TargetlessActions {
 
         int durability = weapon.getDurability();
         UndoAction.Builder builder = new UndoAction.Builder(durability + 1);
-        builder.addUndo(DESTROY_OPPONENTS_WEAPON.alterWorld(world, player));
+        builder.addUndo(DESTROY_OPPONENTS_WEAPON.alterGame(game, player));
 
         for (int i = 0; i < durability; i++) {
-            builder.addUndo(TargetlessActions.DRAW_FOR_SELF.alterWorld(world, player));
+            builder.addUndo(TargetlessActions.DRAW_FOR_SELF.alterGame(game, player));
         }
         return builder;
     };
@@ -408,7 +405,7 @@ public final class TargetlessActions {
      * <p>
      * See minion <em>Kezan Mystic</em>.
      */
-    public static final TargetlessAction<PlayerProperty> STEAL_SECRET = (World world, PlayerProperty actor) -> {
+    public static final TargetlessAction<PlayerProperty> STEAL_SECRET = (Game game, PlayerProperty actor) -> {
         Player player = actor.getOwner();
         Player opponent = player.getOpponent();
         List<Secret> opponentSecrets = opponent.getSecrets().getSecrets();
@@ -423,7 +420,7 @@ public final class TargetlessActions {
         ourSecrets.forEach((secret) -> stealCandidates.remove(secret.getSecretId()));
 
         if (stealCandidates.isEmpty()) {
-            Secret selected = ActionUtils.pickRandom(world, opponentSecrets);
+            Secret selected = ActionUtils.pickRandom(game, opponentSecrets);
             if (selected == null) {
                 return UndoAction.DO_NOTHING;
             }
@@ -431,7 +428,7 @@ public final class TargetlessActions {
             return opponent.getSecrets().removeSecret(selected);
         }
         else {
-            Secret selected = ActionUtils.pickRandom(world, new ArrayList<>(stealCandidates.values()));
+            Secret selected = ActionUtils.pickRandom(game, new ArrayList<>(stealCandidates.values()));
             if (selected == null) {
                 return UndoAction.DO_NOTHING;
             }
@@ -445,7 +442,7 @@ public final class TargetlessActions {
      * <p>
      * See minion <em>Sylvanas Windrunner</em>.
      */
-    public static final TargetlessAction<PlayerProperty> STEAL_RANDOM_MINION = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> STEAL_RANDOM_MINION = (game, actor) -> {
         Player player = actor.getOwner();
         Player opponent = player.getOpponent();
         List<Minion> minions = opponent.getBoard().getAliveMinions();
@@ -453,7 +450,7 @@ public final class TargetlessActions {
             return UndoAction.DO_NOTHING;
         }
 
-        Minion stolenMinion = minions.get(world.getRandomProvider().roll(minions.size()));
+        Minion stolenMinion = minions.get(game.getRandomProvider().roll(minions.size()));
         return player.getBoard().takeOwnership(stolenMinion);
     };
 
@@ -463,10 +460,10 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Brawl</em> and minion <em>Dark Iron Bouncer</em>.
      */
-    public static final TargetlessAction<Object> BRAWL = (world, actor) -> {
+    public static final TargetlessAction<Object> BRAWL = (game, actor) -> {
         List<Minion> minions = new ArrayList<>(2 * Player.MAX_BOARD_SIZE);
-        world.getPlayer1().getBoard().collectMinions(minions);
-        world.getPlayer2().getBoard().collectMinions(minions);
+        game.getPlayer1().getBoard().collectMinions(minions);
+        game.getPlayer2().getBoard().collectMinions(minions);
 
         // TODO: Brawler shouldn't be a keyword because keywords cannot be silenced.
         List<Minion> brawlers = minions.stream()
@@ -474,8 +471,8 @@ public final class TargetlessActions {
                 .collect(Collectors.toList());
 
         Minion winner = brawlers.isEmpty()
-                ? ActionUtils.pickRandom(world, minions)
-                : ActionUtils.pickRandom(world, brawlers);
+                ? ActionUtils.pickRandom(game, minions)
+                : ActionUtils.pickRandom(game, brawlers);
 
         UndoAction.Builder builder = new UndoAction.Builder();
         for (Minion minion: minions) {
@@ -491,7 +488,7 @@ public final class TargetlessActions {
      * <p>
      * See secret <em>Mirror Entity</em>.
      */
-    public static final TargetlessAction<Minion> SUMMON_COPY_FOR_OPPONENT = (World world, Minion minion) -> {
+    public static final TargetlessAction<Minion> SUMMON_COPY_FOR_OPPONENT = (Game game, Minion minion) -> {
         Player receiver = minion.getOwner().getOpponent();
         Minion newMinion = new Minion(receiver, minion.getBaseDescr());
         newMinion.copyOther(minion);
@@ -506,7 +503,7 @@ public final class TargetlessActions {
      * See spell <em>Divine Favor</em>.
      */
     // TODO Check what would happen if there is not enough cards left in the deck.
-    public static final TargetlessAction<PlayerProperty> DIVINE_FAVOR = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> DIVINE_FAVOR = (game, actor) -> {
         Player player = actor.getOwner();
 
         int playerHand = player.getHand().getCardCount();
@@ -528,7 +525,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Echo of Medivh</em>.
      */
-    public static final TargetlessAction<PlayerProperty> ECHO_MINIONS = (world, actor) -> {
+    public static final TargetlessAction<PlayerProperty> ECHO_MINIONS = (game, actor) -> {
         Player player = actor.getOwner();
         BoardSide board = player.getBoard();
         List<Minion> minions = new ArrayList<>(board.getMaxSize());
@@ -559,10 +556,10 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(actors, "actors");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Actor initialActor) -> {
+        return (Game game, Actor initialActor) -> {
             UndoAction.Builder result = new UndoAction.Builder();
-            actors.select(world, initialActor).forEach((FinalActor actor) -> {
-                result.addUndo(action.alterWorld(world, actor));
+            actors.select(game, initialActor).forEach((FinalActor actor) -> {
+                result.addUndo(action.alterGame(game, actor));
             });
             return result;
         };
@@ -607,17 +604,17 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(selector, "targets");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        TargetlessAction<Actor> resultAction = (World world, Actor actor) -> {
+        TargetlessAction<Actor> resultAction = (Game game, Actor actor) -> {
             UndoAction.Builder result = new UndoAction.Builder();
-            selector.select(world, actor).forEach((Target target) -> {
-                result.addUndo(action.alterWorld(world, actor, target));
+            selector.select(game, actor).forEach((Target target) -> {
+                result.addUndo(action.alterGame(game, actor, target));
             });
             return result;
         };
 
         if (atomic) {
-            return (World world, Actor actor) -> {
-                return world.getEvents().doAtomic(() -> resultAction.alterWorld(world, actor));
+            return (Game game, Actor actor) -> {
+                return game.getEvents().doAtomic(() -> resultAction.alterGame(game, actor));
             };
         }
         else {
@@ -639,18 +636,18 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(ifAction, "ifAction");
         ExceptionHelper.checkNotNullArgument(elseAction, "elseAction");
 
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             return condition.test(actor)
-                    ? ifAction.alterWorld(world, actor)
-                    : elseAction.alterWorld(world, actor);
+                    ? ifAction.alterGame(game, actor)
+                    : elseAction.alterGame(game, actor);
         };
     }
 
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> actWithOpponent(
             @NamedArg("action") TargetlessAction<? super Player> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (World world, Actor actor) -> {
-            return action.alterWorld(world, actor.getOwner().getOpponent());
+        return (Game game, Actor actor) -> {
+            return action.alterGame(game, actor.getOwner().getOpponent());
         };
     }
 
@@ -658,10 +655,10 @@ public final class TargetlessActions {
             @NamedArg("actionCount") int actionCount,
             @NamedArg("action") TargetlessAction<? super Actor> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             UndoAction.Builder result = new UndoAction.Builder(actionCount);
             for (int i = 0; i < actionCount; i++) {
-                result.addUndo(action.alterWorld(world, actor));
+                result.addUndo(action.alterGame(game, actor));
             }
             return result;
         };
@@ -670,7 +667,7 @@ public final class TargetlessActions {
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> equipWeapon(
             @NamedArg("weapon") WeaponProvider weapon) {
         ExceptionHelper.checkNotNullArgument(weapon, "weapon");
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Player player = actor.getOwner();
             return player.equipWeapon(weapon.getWeapon());
         };
@@ -679,10 +676,10 @@ public final class TargetlessActions {
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> equipSelectedWeapon(
             @NamedArg("weapon") EntitySelector<? super Actor, ? extends WeaponDescr> weapon) {
         ExceptionHelper.checkNotNullArgument(weapon, "weapon");
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Player player = actor.getOwner();
             // Equip the first weapon, since equiping multiple weapons make no sense.
-            WeaponDescr toEquip = weapon.select(world, actor).findFirst().orElse(null);
+            WeaponDescr toEquip = weapon.select(game, actor).findFirst().orElse(null);
             return toEquip != null
                     ? player.equipWeapon(toEquip)
                     : UndoAction.DO_NOTHING;
@@ -692,7 +689,7 @@ public final class TargetlessActions {
     public static TargetlessAction<Minion> summonMinionLeft(
             @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
-        return (World world, Minion actor) -> {
+        return (Game game, Minion actor) -> {
             Player owner = actor.getOwner();
             return owner.summonMinion(minion.getMinion(), owner.getBoard().indexOf(actor) - 1);
         };
@@ -701,7 +698,7 @@ public final class TargetlessActions {
     public static TargetlessAction<Minion> summonMinionRight(
             @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
-        return (World world, Minion actor) -> {
+        return (Game game, Minion actor) -> {
             Player owner = actor.getOwner();
             return owner.summonMinion(minion.getMinion(), owner.getBoard().indexOf(actor) + 1);
         };
@@ -710,7 +707,7 @@ public final class TargetlessActions {
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> summonMinion(
             @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Player player = actor.getOwner();
             return player.summonMinion(minion.getMinion());
         };
@@ -722,7 +719,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         if (minionCount <= 0) {
-            return (world, player) -> UndoAction.DO_NOTHING;
+            return (game, player) -> UndoAction.DO_NOTHING;
         }
         if (minionCount == 1) {
             return summonMinion(minion);
@@ -734,12 +731,12 @@ public final class TargetlessActions {
             @NamedArg("minMinionCount") int minMinionCount,
             @NamedArg("maxMinionCount") int maxMinionCount,
             @NamedArg("minion") MinionProvider minion) {
-        return (world, actor) -> {
+        return (game, actor) -> {
             Player player = actor.getOwner();
 
             MinionDescr minionDescr = minion.getMinion();
 
-            int minionCount = world.getRandomProvider().roll(minMinionCount, maxMinionCount);
+            int minionCount = game.getRandomProvider().roll(minMinionCount, maxMinionCount);
 
             UndoAction.Builder result = new UndoAction.Builder(minionCount);
             for (int i = 0; i < minionCount; i++) {
@@ -752,16 +749,16 @@ public final class TargetlessActions {
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> summonSelectedMinion(
             @NamedArg("minion") EntitySelector<? super Actor, ? extends MinionDescr> minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Player player = actor.getOwner();
-            return minion.forEach(world, actor, (toSummon) -> player.summonMinion(toSummon));
+            return minion.forEach(game, actor, (toSummon) -> player.summonMinion(toSummon));
         };
     }
 
     public static TargetlessAction<Minion> summonSelectedRight(
             @NamedArg("minion") EntitySelector<? super Minion, ? extends MinionDescr> minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
-        return (World world, Minion actor) -> minion.forEach(world, actor,
+        return (Game game, Minion actor) -> minion.forEach(game, actor,
             (toSummon) -> {
                 Player owner = actor.getOwner();
                 return owner.summonMinion(toSummon, owner.getBoard().indexOf(actor) + 1);
@@ -777,9 +774,9 @@ public final class TargetlessActions {
     public static TargetlessAction<PlayerProperty> shuffleCardIntoDeck(@NamedArg("card") CardProvider card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Deck deck = actor.getOwner().getDeck();
-            return deck.shuffle(world.getRandomProvider(), card.getCard());
+            return deck.shuffle(game.getRandomProvider(), card.getCard());
         };
     }
 
@@ -797,7 +794,7 @@ public final class TargetlessActions {
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> addManaCrystal(
             @NamedArg("empty") boolean empty,
             @NamedArg("amount") int amount) {
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             ManaResource manaResource = actor.getOwner().getManaResource();
             UndoAction crystalUndo = manaResource.setManaCrystals(Math.max(0, manaResource.getManaCrystals() + amount));
             if (empty) {
@@ -823,7 +820,7 @@ public final class TargetlessActions {
             @NamedArg("missleCount") int missleCount) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             UndoableResult<Damage> missleCountRef = actor.createDamage(missleCount);
             int appliedMissleCount = missleCountRef.getResult().getDamage();
 
@@ -835,7 +832,7 @@ public final class TargetlessActions {
                 result.addUndo(target.damage(damage));
             };
             for (int i = 0; i < appliedMissleCount; i++) {
-                selector.select(world, actor).forEach(damageAction);
+                selector.select(game, actor).forEach(damageAction);
             }
             return result;
         };
@@ -843,7 +840,7 @@ public final class TargetlessActions {
 
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> addCard(
             @NamedArg("card") CardProvider card) {
-        return addSelectedCard((World world, Actor actor) -> Stream.of(card.getCard()));
+        return addSelectedCard((Game game, Actor actor) -> Stream.of(card.getCard()));
     }
 
     public static <Actor extends PlayerProperty> TargetlessAction<Actor> addSelectedCard(
@@ -857,23 +854,23 @@ public final class TargetlessActions {
             @NamedArg("card") EntitySelector<? super Actor, ? extends CardDescr> card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
 
-        return (World world, Actor actor) -> {
-            return addCards(world, actor, card, costReduction);
+        return (Game game, Actor actor) -> {
+            return addCards(game, actor, card, costReduction);
         };
     }
 
     private static <Actor extends PlayerProperty, CardType extends CardDescr> UndoAction addCards(
-            World world,
+            Game game,
             Actor actor,
             EntitySelector<? super Actor, CardType> card,
             int costReduction) {
         Player player = actor.getOwner();
         Hand hand = actor.getOwner().getHand();
         if (costReduction == 0) {
-            return card.forEach(world, actor, hand::addCard);
+            return card.forEach(game, actor, hand::addCard);
         }
         else {
-            return card.forEach(world, actor, (cardDescr) -> {
+            return card.forEach(game, actor, (cardDescr) -> {
                 Card toAdd = new Card(player, cardDescr);
                 toAdd.decreaseManaCost(costReduction);
                 return hand.addCard(toAdd);
@@ -898,9 +895,9 @@ public final class TargetlessActions {
      * {@link Minion} and executes the given {@code TargetlessAction} of {@code Minion}.
      */
     private static TargetlessAction<Object> applyToMinionAction(TargetlessAction<? super Minion> action) {
-        return (World world, Object actor) -> {
+        return (Game game, Object actor) -> {
             Minion minion = ActionUtils.tryGetMinion(actor);
-            return minion != null ? action.alterWorld(world, minion) : UndoAction.DO_NOTHING;
+            return minion != null ? action.alterGame(game, minion) : UndoAction.DO_NOTHING;
         };
     }
 
@@ -908,12 +905,12 @@ public final class TargetlessActions {
      * Returns a {@link TargetlessAction} which increases the actor's owner's armor with the given amount.
      */
     public static TargetlessAction<PlayerProperty> armorUp(@NamedArg("armor") int armor) {
-        return (world, actor) -> {
+        return (game, actor) -> {
             return actor.getOwner().getHero().armorUp(armor);
         };
     }
 
-    private static UndoAction rollRandomTotem(World world, Player player, MinionProvider[] totems) {
+    private static UndoAction rollRandomTotem(Game game, Player player, MinionProvider[] totems) {
         Map<MinionId, MinionDescr> allowedMinions = new HashMap<>();
         for (MinionProvider minionProvider: totems) {
             MinionDescr minion = minionProvider.getMinion();
@@ -928,7 +925,7 @@ public final class TargetlessActions {
             return UndoAction.DO_NOTHING;
         }
 
-        int totemIndex = world.getRandomProvider().roll(allowedCount);
+        int totemIndex = game.getRandomProvider().roll(allowedCount);
 
         Iterator<MinionDescr> minionItr = allowedMinions.values().iterator();
         MinionDescr selected = minionItr.next();
@@ -944,8 +941,8 @@ public final class TargetlessActions {
         MinionProvider[] totemsCopy = totems.clone();
         ExceptionHelper.checkNotNullElements(totemsCopy, "totems");
 
-        return (world, actor) -> {
-            return rollRandomTotem(world, actor.getOwner(), totemsCopy);
+        return (game, actor) -> {
+            return rollRandomTotem(game, actor.getOwner(), totemsCopy);
         };
     }
 
@@ -958,7 +955,7 @@ public final class TargetlessActions {
     public static TargetlessAction<Minion> eatDivineShields(
             @NamedArg("attackPerShield") int attackPerShield,
             @NamedArg("hpPerShield") int hpPerShield) {
-        return (World world, Minion actor) -> {
+        return (Game game, Minion actor) -> {
             AtomicInteger shieldCountRef = new AtomicInteger(0);
             Function<Minion, UndoAction> collector = (Minion minion) -> {
                 MinionBody body = minion.getBody();
@@ -971,8 +968,8 @@ public final class TargetlessActions {
                 }
             };
 
-            UndoAction collect1Undo = world.getPlayer1().getBoard().forAllMinions(collector);
-            UndoAction collect2Undo = world.getPlayer2().getBoard().forAllMinions(collector);
+            UndoAction collect1Undo = game.getPlayer1().getBoard().forAllMinions(collector);
+            UndoAction collect2Undo = game.getPlayer2().getBoard().forAllMinions(collector);
             int shieldCount = shieldCountRef.get();
             if (shieldCount <= 0) {
                 return UndoAction.DO_NOTHING;
@@ -996,7 +993,7 @@ public final class TargetlessActions {
     public static TargetlessAction<PlayerProperty> reduceWeaponDurability(@NamedArg("amount") int amount) {
         ExceptionHelper.checkArgumentInRange(amount, 1, Integer.MAX_VALUE, "amount");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Weapon weapon = actor.getOwner().tryGetWeapon();
             if (weapon == null) {
                 return UndoAction.DO_NOTHING;
@@ -1031,7 +1028,7 @@ public final class TargetlessActions {
             return currentHp > 0 && !body.isImmune() && body.getMinHpProperty().getValue() < currentHp;
         };
 
-        return (World world, DamageSource actor) -> {
+        return (Game game, DamageSource actor) -> {
             UndoAction.Builder builder = new UndoAction.Builder();
 
             UndoableResult<Damage> damageRef = actor.createDamage(baseDamage);
@@ -1040,10 +1037,10 @@ public final class TargetlessActions {
             List<Minion> targets = new ArrayList<>();
             for (int i = 0; i < maxBounces; i++) {
                 targets.clear();
-                world.getPlayer1().getBoard().collectMinions(targets, minionFilter);
-                world.getPlayer2().getBoard().collectMinions(targets, minionFilter);
+                game.getPlayer1().getBoard().collectMinions(targets, minionFilter);
+                game.getPlayer2().getBoard().collectMinions(targets, minionFilter);
 
-                Minion selected = ActionUtils.pickRandom(world, targets);
+                Minion selected = ActionUtils.pickRandom(game, targets);
                 if (selected == null) {
                     break;
                 }
@@ -1064,24 +1061,24 @@ public final class TargetlessActions {
      * See spell <em>Far Sight</em>.
      */
     public static TargetlessAction<PlayerProperty> drawCard(@NamedArg("costReduction") int costReduction) {
-        return drawCard(costReduction, WorldEventFilter.ANY);
+        return drawCard(costReduction, GameEventFilter.ANY);
     }
 
     /**
      * Returns a {@link TargetlessAction} which draws a card for the actor's owner and reduce its cost with
-     * the given amount if it satisfies the given {@link WorldEventFilter}.
+     * the given amount if it satisfies the given {@link GameEventFilter}.
      * <p>
      * See spell <em>Call Pet</em>.
      */
     public static TargetlessAction<PlayerProperty> drawCard(
             @NamedArg("costReduction") int costReduction,
-            @NamedArg("costReductionFilter") WorldEventFilter<? super Player, ? super Card> costReductionFilter) {
+            @NamedArg("costReductionFilter") GameEventFilter<? super Player, ? super Card> costReductionFilter) {
         ExceptionHelper.checkNotNullArgument(costReductionFilter, "costReductionFilter");
         if (costReduction == 0) {
             return TargetlessActions.DRAW_FOR_SELF;
         }
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             UndoableResult<Card> cardRef = player.drawFromDeck();
             Card card = cardRef.getResult();
@@ -1089,7 +1086,7 @@ public final class TargetlessActions {
                 return cardRef.getUndoAction();
             }
 
-            if (costReductionFilter.applies(world, player, card)) {
+            if (costReductionFilter.applies(game, player, card)) {
                 card.decreaseManaCost(costReduction);
             }
             UndoAction addUndo = player.addCardToHand(card);
@@ -1156,7 +1153,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkArgumentInRange(cardCount, 1, Integer.MAX_VALUE, "cardCount");
         ExceptionHelper.checkNotNullArgument(cardFilter, "cardFilter");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
 
             UndoAction.Builder builder = new UndoAction.Builder();
@@ -1195,7 +1192,7 @@ public final class TargetlessActions {
 
         Predicate<LabeledEntity> mechFilter = ActionUtils.includedKeywordsFilter(Keywords.RACE_MECH);
 
-        return (World world, Minion actor) -> {
+        return (Game game, Minion actor) -> {
             Player player = actor.getOwner();
 
             List<Minion> mechs = new ArrayList<>();
@@ -1206,7 +1203,7 @@ public final class TargetlessActions {
                 for (Minion mech: mechs) {
                     result.addUndo(mech.kill());
                 }
-                result.addUndo(world.endPhase());
+                result.addUndo(game.endPhase());
                 result.addUndo(player.summonMinion(minion.getMinion()));
                 return result;
             }
@@ -1219,8 +1216,8 @@ public final class TargetlessActions {
     public static <Actor> TargetlessAction<Actor> addThisTurnAbility(
             @NamedArg("ability") Ability<? super Actor> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
-        return (world, actor) -> {
-            return ActionUtils.doTemporary(world, () -> ability.activate(actor));
+        return (game, actor) -> {
+            return ActionUtils.doTemporary(game, () -> ability.activate(actor));
         };
     }
 
@@ -1233,7 +1230,7 @@ public final class TargetlessActions {
             @NamedArg("fallbackMinion") MinionProvider fallbackMinion) {
 
         Predicate<Card> appliedFilter = (card) -> card.getMinion() != null;
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
 
             UndoableResult<Card> cardRef = ActionUtils.pollDeckForCard(player, appliedFilter);
@@ -1264,7 +1261,7 @@ public final class TargetlessActions {
             @NamedArg("keywords") Keyword[] keywords) {
         Predicate<LabeledEntity> cardFilter = ActionUtils.includedKeywordsFilter(keywords);
 
-        return (world, actor) -> {
+        return (game, actor) -> {
             Hand hand = actor.getOwner().getHand();
             int cardIndex = hand.chooseRandomCardIndex(cardFilter);
             if (cardIndex < 0) {
@@ -1288,7 +1285,7 @@ public final class TargetlessActions {
             Ability<Player> ability,
             AuraFilter<? super Player, ? super Card> filter) {
         return deactivateAfterCardPlay(ability, (card) -> {
-            return filter.isApplicable(card.getWorld(), card.getOwner(), card);
+            return filter.isApplicable(card.getGame(), card.getOwner(), card);
         });
     }
 
@@ -1304,10 +1301,10 @@ public final class TargetlessActions {
             UndoableUnregisterAction abilityRef = ability.activate(self);
             result.addRef(abilityRef);
 
-            WorldEvents events = self.getWorld().getEvents();
+            GameEvents events = self.getGame().getEvents();
 
-            WorldActionEvents<CardPlayEvent> listeners = events.simpleListeners(SimpleEventType.START_PLAY_CARD);
-            UndoableUnregisterAction listenerRef = listeners.addAction((World world, CardPlayEvent playEvent) -> {
+            GameActionEvents<CardPlayEvent> listeners = events.simpleListeners(SimpleEventType.START_PLAY_CARD);
+            UndoableUnregisterAction listenerRef = listeners.addAction((Game game, CardPlayEvent playEvent) -> {
                 if (deactivateCondition.test(playEvent.getCard())) {
                     return abilityRef.unregister();
                 }
@@ -1325,7 +1322,7 @@ public final class TargetlessActions {
             @NamedArg("replaceCard") CardProvider replaceCard) {
         ExceptionHelper.checkNotNullArgument(replaceCard, "replaceCard");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             UndoableResult<Card> cardRef = player.drawFromDeck();
             Card card = cardRef.getResult();
@@ -1336,9 +1333,9 @@ public final class TargetlessActions {
             CardDescr cardDescr = card.getCardDescr();
 
             if (cardDescr.getCardType() == CardType.MINION) {
-                UndoAction drawActionsUndo = WorldActionList.executeActionsNow(world, card, cardDescr.getOnDrawActions());
+                UndoAction drawActionsUndo = GameActionList.executeActionsNow(game, card, cardDescr.getOnDrawActions());
                 UndoAction addCardUndo = player.getHand().addCard(replaceCard.getCard());
-                UndoAction eventUndo = world.getEvents().triggerEvent(SimpleEventType.DRAW_CARD, card);
+                UndoAction eventUndo = game.getEvents().triggerEvent(SimpleEventType.DRAW_CARD, card);
 
                 return () -> {
                     eventUndo.undo();
@@ -1358,7 +1355,7 @@ public final class TargetlessActions {
     }
 
     public static TargetlessAction<PlayerProperty> drawCardToFillHand(@NamedArg("targetHandSize") int targetHandSize) {
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             int currentHandSize = player.getHand().getCardCount();
             if (currentHandSize >= targetHandSize) {
@@ -1378,12 +1375,12 @@ public final class TargetlessActions {
             @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        return (World world, Object actor) -> {
+        return (Game game, Object actor) -> {
             List<Minion> minions1 = new ArrayList<>(Player.MAX_BOARD_SIZE);
             List<Minion> minions2 = new ArrayList<>(Player.MAX_BOARD_SIZE);
 
-            Player player1 = world.getPlayer1();
-            Player player2 = world.getPlayer2();
+            Player player1 = game.getPlayer1();
+            Player player2 = game.getPlayer2();
 
             player1.getBoard().collectMinions(minions1);
             player2.getBoard().collectMinions(minions2);
@@ -1397,10 +1394,10 @@ public final class TargetlessActions {
                 result.addUndo(killedMinion.kill());
             }
 
-            result.addUndo(world.endPhase());
+            result.addUndo(game.endPhase());
 
-            result.addUndo(TargetlessActions.summonMinion(minions1.size(), minion).alterWorld(world, player1));
-            result.addUndo(TargetlessActions.summonMinion(minions2.size(), minion).alterWorld(world, player2));
+            result.addUndo(TargetlessActions.summonMinion(minions1.size(), minion).alterGame(game, player1));
+            result.addUndo(TargetlessActions.summonMinion(minions2.size(), minion).alterGame(game, player2));
 
             return result;
         };
@@ -1410,7 +1407,7 @@ public final class TargetlessActions {
             @NamedArg("heroClass") Keyword heroClass,
             @NamedArg("heroPower") CardId heroPower) {
 
-        return (World world, Minion actor) -> {
+        return (Game game, Minion actor) -> {
             Player player = actor.getOwner();
             UndoAction removeUndo = player.getBoard().removeFromBoard(actor.getTargetId());
 
@@ -1418,7 +1415,7 @@ public final class TargetlessActions {
 
             Hero hero = new Hero(player, body.getHp(), 0, heroClass, actor.getKeywords());
             hero.setCurrentHp(body.getCurrentHp());
-            hero.setHeroPower(world.getDb().getHeroPowerDb().getById(heroPower));
+            hero.setHeroPower(game.getDb().getHeroPowerDb().getById(heroPower));
 
             UndoAction setHeroUndo = player.setHero(hero);
             return () -> {
@@ -1448,10 +1445,10 @@ public final class TargetlessActions {
         List<Keyword> keywordsCopy = new ArrayList<>(Arrays.asList(keywords));
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             Hero hero = new Hero(player, maxHp, armor, heroClass, keywordsCopy);
-            hero.setHeroPower(world.getDb().getHeroPowerDb().getById(new CardId(heroPower)));
+            hero.setHeroPower(game.getDb().getHeroPowerDb().getById(new CardId(heroPower)));
 
             return player.setHero(hero);
         };
@@ -1464,7 +1461,7 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullElements(heroPowerCopy, "heroPower");
 
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Hero hero = actor.getOwner().getHero();
 
             CardId currentId = hero.getHeroPower().getPowerDef().getId();
@@ -1479,12 +1476,12 @@ public final class TargetlessActions {
                 }
             }
 
-            return hero.setHeroPower(world.getDb().getHeroPowerDb().getById(newId));
+            return hero.setHeroPower(game.getDb().getHeroPowerDb().getById(newId));
         };
     }
 
     public static TargetlessAction<PlayerProperty> gainMana(@NamedArg("mana") int mana) {
-        return (world, actor) -> {
+        return (game, actor) -> {
             Player player = actor.getOwner();
             return player.setMana(player.getMana() + mana);
         };
@@ -1495,13 +1492,13 @@ public final class TargetlessActions {
             @NamedArg("filter") AuraFilter<? super Player, ? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
                 Auras.setManaCost(manaCost));
             aura = deactivateAfterPlay(aura, filter);
-            aura = ActionUtils.toSingleTurnAbility(world, aura);
+            aura = ActionUtils.toSingleTurnAbility(game, aura);
 
             return aura.activate(actor.getOwner());
         };
@@ -1512,13 +1509,13 @@ public final class TargetlessActions {
             @NamedArg("filter") AuraFilter<? super Player, ? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
                 Auras.decreaseManaCost(amount));
             aura = deactivateAfterPlay(aura, filter);
-            aura = ActionUtils.toSingleTurnAbility(world, aura);
+            aura = ActionUtils.toSingleTurnAbility(game, aura);
 
             return aura.activate(actor.getOwner());
         };
@@ -1529,7 +1526,7 @@ public final class TargetlessActions {
             @NamedArg("filter") AuraFilter<? super Player, ? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
@@ -1551,10 +1548,10 @@ public final class TargetlessActions {
             @NamedArg("filter") AuraFilter<? super Player, ? super Target> filter,
             @NamedArg("aura") Aura<? super Player, ? super Target> aura) {
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
-            return ActionUtils.doUntilNewTurnStart(player.getWorld(), player, () -> {
-                return player.getWorld().addAura(new TargetedActiveAura<>(player, target, filter, aura));
+            return ActionUtils.doUntilNewTurnStart(player.getGame(), player, () -> {
+                return player.getGame().addAura(new TargetedActiveAura<>(player, target, filter, aura));
             });
         };
     }
@@ -1563,8 +1560,8 @@ public final class TargetlessActions {
             @NamedArg("action") TargetlessAction<? super Actor> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Actor actor) -> {
-            return ActionUtils.doOnEndOfTurn(world, () -> action.alterWorld(world, actor));
+        return (Game game, Actor actor) -> {
+            return ActionUtils.doOnEndOfTurn(game, () -> action.alterGame(game, actor));
         };
     }
 
@@ -1576,7 +1573,7 @@ public final class TargetlessActions {
     private static <Actor extends PlayerProperty> TargetlessAction<Actor> drawAndPlayCard(Predicate<? super Card> cardFilter) {
         ExceptionHelper.checkNotNullArgument(cardFilter, "cardFilter");
 
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Player player = actor.getOwner();
             UndoableResult<Card> cardRef = ActionUtils.pollDeckForCard(player, cardFilter);
             if (cardRef == null) {
@@ -1592,7 +1589,7 @@ public final class TargetlessActions {
         };
     }
 
-    private static CardDescr chooseCard(World world, List<CardDescr> cards) {
+    private static CardDescr chooseCard(Game game, List<CardDescr> cards) {
         int cardCount = cards.size();
         if (cardCount == 0) {
             return null;
@@ -1602,13 +1599,13 @@ public final class TargetlessActions {
             return cards.get(0);
         }
 
-        return world.getUserAgent().selectCard(false, cards);
+        return game.getUserAgent().selectCard(false, cards);
     }
 
     public static TargetlessAction<PlayerProperty> trackCard(@NamedArg("cardCount") int cardCount) {
         ExceptionHelper.checkArgumentInRange(cardCount, 1, Integer.MAX_VALUE, "cardCount");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             Deck deck = player.getDeck();
 
@@ -1624,7 +1621,7 @@ public final class TargetlessActions {
                 choosenCards.add(cardRef.getResult().getCardDescr());
             }
 
-            CardDescr chosenCard = chooseCard(world, choosenCards);
+            CardDescr chosenCard = chooseCard(game, choosenCards);
             if (chosenCard != null) {
                 result.addUndo(player.getHand().addCard(chosenCard));
             }
@@ -1637,7 +1634,7 @@ public final class TargetlessActions {
             @NamedArg("minion") MinionProvider minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        return (World world, PlayerProperty actor) -> {
+        return (Game game, PlayerProperty actor) -> {
             Player player = actor.getOwner();
             int minionCount = player.getOpponent().getBoard().getMinionCount();
 

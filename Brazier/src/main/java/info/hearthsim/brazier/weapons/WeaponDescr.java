@@ -4,8 +4,8 @@ import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
+import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.events.GameEventActionDefs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -79,11 +79,11 @@ public final class WeaponDescr implements HearthStoneEntity {
         return canTargetRetaliate;
     }
 
-    public WorldEventActionDefs<Weapon> getEventActionDefs() {
+    public GameEventActionDefs<Weapon> getEventActionDefs() {
         return abilities.getEventActionDefs();
     }
 
-    public WorldEventAction<? super Weapon, ? super Weapon> tryGetDeathRattle() {
+    public GameEventAction<? super Weapon, ? super Weapon> tryGetDeathRattle() {
         return abilities.tryGetDeathRattle();
     }
 

@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.Priorities;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +18,8 @@ import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * A {@code WorldActionList} is essentially a weighted sequence of {@link WorldObjectAction}. Every action element
- * is added to the list via {@link #addAction(int, Predicate, WorldObjectAction)} method, where its priority and
+ * A {@code GameActionList} is essentially a weighted sequence of {@link GameObjectAction}. Every action element
+ * is added to the list via {@link #addAction(int, Predicate, GameObjectAction)} method, where its priority and
  * trigger condition will be designated. The list will organised the added actions in a decreasing order of their
  * priorities. For actions with the same priority, they will be organised based on the sequence they are added.
  * <p>
@@ -35,22 +35,22 @@ import org.jtrim.utils.ExceptionHelper;
  *     </li>
  * </ul>
  */
-public final class WorldActionList<T> {
+public final class GameActionList <T> {
     private final RefList<ActionWrapper<T>> actions;
 
     /**
-     * Creates an empty {@code WorldActionList}.
+     * Creates an empty {@code GameActionList}.
      */
-    public WorldActionList() {
+    public GameActionList() {
         this.actions = new RefLinkedList<>();
     }
 
     /**
-     * Adds the given {@link WorldObjectAction} to the list with normal priority and no specific condition.
+     * Adds the given {@link GameObjectAction} to the list with normal priority and no specific condition.
      *
      * @see Priorities#NORMAL_PRIORITY
      */
-    public UndoableUnregisterAction addAction(WorldObjectAction<T> action) {
+    public UndoableUnregisterAction addAction(GameObjectAction<T> action) {
         return addAction(Priorities.NORMAL_PRIORITY, (arg) -> true, action);
     }
 
@@ -78,14 +78,14 @@ public final class WorldActionList<T> {
     }
 
     /**
-     * Adds the given {@link WorldObjectAction} to the list with given priority and trigger condition.
+     * Adds the given {@link GameObjectAction} to the list with given priority and trigger condition.
      * @param priority the given priority.
      * @param condition the given trigger condition.
-     * @param action the given {@code WorldObjectAction}.
+     * @param action the given {@code GameObjectAction}.
      *
-     * @throws NullPointerException if the given {@code WorldObjectAction} is {@code null}.
+     * @throws NullPointerException if the given {@code GameObjectAction} is {@code null}.
      */
-    public UndoableUnregisterAction addAction(int priority, Predicate<? super T> condition, WorldObjectAction<? super T> action) {
+    public UndoableUnregisterAction addAction(int priority, Predicate<? super T> condition, GameObjectAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         ActionWrapper<T> wrappedAction = new ActionWrapper<>(priority, condition, action);
@@ -114,37 +114,37 @@ public final class WorldActionList<T> {
     }
 
     /**
-     * Executes the {@link WorldAction}s in this list with the given {@link World} and {@code object}.
+     * Executes the {@link GameAction}s in this list with the given {@link Game} and {@code object}.
      *
-     * @param world the given {@link World}.
+     * @param game the given {@link Game}.
      * @param object the given {@code object}.
      * @param greedy whether to execute these actions greedily.
      */
-    public UndoAction executeActionsNow(World world, T object, boolean greedy) {
+    public UndoAction executeActionsNow(Game game, T object, boolean greedy) {
         if (actions.isEmpty()) {
             return UndoAction.DO_NOTHING;
         }
 
         if (greedy) {
-            return executeActionsNowGreedily(world, object);
+            return executeActionsNowGreedily(game, object);
         }
         else {
             // We have to first check if the action conditions are met, otherwise
             // two Hobgoblin would be the same as a single hobgoblin (because the first buff
             // would prevent the second to trigger).
-            List<WorldObjectAction<? super T>> applicableActions = getApplicableActions(object);
-            return executeActionsNow(world, object, applicableActions);
+            List<GameObjectAction<? super T>> applicableActions = getApplicableActions(object);
+            return executeActionsNow(game, object, applicableActions);
         }
     }
 
     /**
-     * Executes the applicable actions in this list with the given {@link World} and {@code object} greedily.
+     * Executes the applicable actions in this list with the given {@link Game} and {@code object} greedily.
      */
-    private UndoAction executeActionsNowGreedily(World world, T object) {
+    private UndoAction executeActionsNowGreedily(Game game, T object) {
         List<ActionWrapper<T>> remainingAll = new LinkedList<>(actions);
         List<ActionWrapper<T>> remainingQueue = new ArrayList<>(actions.size());
         List<ActionWrapper<T>> skippedActions = new LinkedList<>();
-        List<WorldObjectAction<? super T>> toExecute = new ArrayList<>();
+        List<GameObjectAction<? super T>> toExecute = new ArrayList<>();
 
         UndoAction.Builder undoBuilder = new UndoAction.Builder(remainingAll.size());
 
@@ -164,8 +164,8 @@ public final class WorldActionList<T> {
                 }
                 remainingQueue.clear();
 
-                for (WorldObjectAction<? super T> action: toExecute) {
-                    undoBuilder.addUndo(action.alterWorld(world, object));
+                for (GameObjectAction<? super T> action: toExecute) {
+                    undoBuilder.addUndo(action.alterGame(game, object));
                 }
 
                 Iterator<ActionWrapper<T>> skippedActionsItr = skippedActions.iterator();
@@ -187,43 +187,43 @@ public final class WorldActionList<T> {
     }
 
     /**
-     * Executes the given collection of {@code WorldObjectAction}s with the given {@code World} instance
-     * and {@code object}, and returns the undo actions corresponding to these {@code WorldObjectAction}s.
+     * Executes the given collection of {@code GameObjectAction}s with the given {@code Game} instance
+     * and {@code object}, and returns the undo actions corresponding to these {@code GameObjectAction}s.
      *
-     * @param world the given {@code World} instance.
+     * @param game the given {@code Game} instance.
      * @param object object.
-     * @param actions collection of {@code WorldObjectAction}s, which will be executed with the given
-     *                {@code World} instance and {@code object}.
+     * @param actions collection of {@code GameObjectAction}s, which will be executed with the given
+     *                {@code Game} instance and {@code object}.
      * @param <T> the type param of {@code object}.
-     * @return undo actions corresponding to these {@code WorldObjectAction}s.
+     * @return undo actions corresponding to these {@code GameObjectAction}s.
      */
     public static <T> UndoAction executeActionsNow(
-        World world,
+        Game game,
         T object,
-        Collection<? extends WorldObjectAction<? super T>> actions) {
+        Collection<? extends GameObjectAction<? super T>> actions) {
 
         if (actions.isEmpty()) {
             return UndoAction.DO_NOTHING;
         }
 
         UndoAction.Builder result = new UndoAction.Builder();
-        for (WorldObjectAction<? super T> action: actions) {
-            result.addUndo(action.alterWorld(world, object));
+        for (GameObjectAction<? super T> action: actions) {
+            result.addUndo(action.alterGame(game, object));
         }
         return result;
     }
 
     /**
-     * Returns a {@link WorldAction} which can be used to execute the application actions in this list for the given
+     * Returns a {@link GameAction} which can be used to execute the application actions in this list for the given
      * object in some future time point.
      */
-    public WorldAction snapshotCurrentEvents(T object) {
-        List<WorldObjectAction<? super T>> snapshot = getApplicableActions(object);
+    public GameAction snapshotCurrentEvents(T object) {
+        List<GameObjectAction<? super T>> snapshot = getApplicableActions(object);
         if (snapshot.isEmpty()) {
-            return (world) -> UndoAction.DO_NOTHING;
+            return (game) -> UndoAction.DO_NOTHING;
         }
 
-        return (world) -> executeActionsNow(world, object, snapshot);
+        return (game) -> executeActionsNow(game, object, snapshot);
     }
 
     /**
@@ -252,14 +252,14 @@ public final class WorldActionList<T> {
     }
 
     /**
-     * Returns {@link WorldObjectAction}s in this list that are applicable to the given object.
+     * Returns {@link GameObjectAction}s in this list that are applicable to the given object.
      */
-    private List<WorldObjectAction<? super T>> getApplicableActions(T object) {
+    private List<GameObjectAction<? super T>> getApplicableActions(T object) {
         if (actions.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<WorldObjectAction<? super T>> result = new ArrayList<>(actions.size());
+        List<GameObjectAction<? super T>> result = new ArrayList<>(actions.size());
         for (ActionWrapper<T> action: actions) {
             if (action.isApplicable(object)) {
                 result.add(action.getAction());
@@ -270,18 +270,18 @@ public final class WorldActionList<T> {
     }
 
     /**
-     * Wrapper for a {@link WorldObjectAction}.
+     * Wrapper for a {@link GameObjectAction}.
      */
     private static final class ActionWrapper<T> {
         private final int priority;
         private final Predicate<? super T> condition;
-        private final WorldObjectAction<? super T> wrapped;
+        private final GameObjectAction<? super T> wrapped;
 
         /**
          * Creates a {@code ActionWrapper} with the given {@code priority}, {@code condition} and wrapping
-         * {@link WorldObjectAction}.
+         * {@link GameObjectAction}.
          */
-        public ActionWrapper(int priority, Predicate<? super T> condition, WorldObjectAction<? super T> wrapped) {
+        public ActionWrapper(int priority, Predicate<? super T> condition, GameObjectAction<? super T> wrapped) {
             ExceptionHelper.checkNotNullArgument(condition, "condition");
             ExceptionHelper.checkNotNullArgument(wrapped, "wrapped");
 
@@ -297,7 +297,7 @@ public final class WorldActionList<T> {
             return condition.test(arg);
         }
 
-        public WorldObjectAction<? super T> getAction() {
+        public GameObjectAction<? super T> getAction() {
             return wrapped;
         }
     }

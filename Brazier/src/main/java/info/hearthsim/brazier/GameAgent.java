@@ -1,8 +1,8 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.actions.GameAction;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.WorldAction;
 import info.hearthsim.brazier.cards.Card;
 
 import java.util.Optional;
@@ -11,44 +11,44 @@ import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * {@code WorldPlayAgent} acts as an agent of a given {@link World},
+ * {@code GameAgent} acts as an agent of a given {@link Game},
  * providing limited methods for client to use.
  */
-public class WorldPlayAgent {
-    private final World world;
+public class GameAgent {
+    private final Game game;
 
     /**
-     * Creates a {@code WorldPlayAgent} with the given {@code World}, and
+     * Creates a {@code GameAgent} with the given {@code Game}, and
      * set {@code Player1} as the starting player.
      *
-     * @param world the given {@code World}
+     * @param game the given {@code Game}
      */
-    public WorldPlayAgent(World world) {
-        this(world, world.getPlayer1().getPlayerId());
+    public GameAgent(Game game) {
+        this(game, game.getPlayer1().getPlayerId());
     }
 
     /**
-     * Creates a {@code WorldPlayAgent} with the given {@code World} and
+     * Creates a {@code GameAgent} with the given {@code Game} and
      * specific starting player.
      *
-     * @param world the given {@code World}
+     * @param game the given {@code Game}
      * @param startingPlayer the {@link PlayerId} of the starting player
      */
-    public WorldPlayAgent(World world, PlayerId startingPlayer) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
-        this.world = world;
-        this.world.setCurrentPlayerId(startingPlayer);
+    public GameAgent(Game game, PlayerId startingPlayer) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
+        this.game = game;
+        this.game.setCurrentPlayerId(startingPlayer);
     }
 
-    public World getWorld() {
-        return world;
+    public Game getGame() {
+        return game;
     }
 
     /**
      * Ends the current turn.
      */
     public UndoAction endTurn() {
-        return doWorldAction(World::endTurn);
+        return doGameAction(Game::endTurn);
     }
 
     /**
@@ -57,11 +57,11 @@ public class WorldPlayAgent {
      * @param currentPlayerId the {@code PlayerId} of the given player
      */
     public UndoAction setCurrentPlayerId(PlayerId currentPlayerId) {
-        return world.setCurrentPlayerId(currentPlayerId);
+        return game.setCurrentPlayerId(currentPlayerId);
     }
 
     public Player getCurrentPlayer() {
-        return world.getCurrentPlayer();
+        return game.getCurrentPlayer();
     }
 
     public PlayerId getCurrentPlayerId() {
@@ -69,14 +69,14 @@ public class WorldPlayAgent {
     }
 
     /**
-     * Executes the given {@link WorldAction}.
-     * @param worldAction the given {@link WorldAction}.
+     * Executes the given {@link GameAction}.
+     * @param gameAction the given {@link GameAction}.
      */
-    public UndoAction doWorldAction(WorldAction worldAction) {
-        ExceptionHelper.checkNotNullArgument(worldAction, "worldAction");
+    public UndoAction doGameAction(GameAction gameAction) {
+        ExceptionHelper.checkNotNullArgument(gameAction, "gameAction");
 
-        UndoAction action = worldAction.alterWorld(world);
-        UndoAction deathResults = world.endPhase();
+        UndoAction action = gameAction.alterGame(game);
+        UndoAction deathResults = game.endPhase();
         return () -> {
             deathResults.undo();
             action.undo();
@@ -91,19 +91,19 @@ public class WorldPlayAgent {
      */
     public UndoAction attack(TargetId attacker, TargetId defender) {
         // TODO: Check if the action is actually a valid move.
-        return doWorldAction((currentWorld) -> currentWorld.attack(attacker, defender));
+        return doGameAction((currentGame) -> currentGame.attack(attacker, defender));
     }
 
     /**
      * Plays the designated player's hero power towards the given target.
      */
     public UndoAction playHeroPower(PlayTargetRequest targetRequest) {
-        return doWorldAction((currentWorld) -> {
-            Player castingPlayer = currentWorld.getPlayer(targetRequest.getCastingPlayerId());
-            Character target = currentWorld.findTarget(targetRequest.getTargetId());
+        return doGameAction((currentGame) -> {
+            Player castingPlayer = currentGame.getPlayer(targetRequest.getCastingPlayerId());
+            Character target = currentGame.findTarget(targetRequest.getTargetId());
 
             HeroPower selectedPower = castingPlayer.getHero().getHeroPower();
-            return selectedPower.play(currentWorld, Optional.ofNullable(target));
+            return selectedPower.play(currentGame, Optional.ofNullable(target));
         });
     }
 
@@ -112,8 +112,8 @@ public class WorldPlayAgent {
      */
     public UndoAction playCard(int cardIndex, PlayTargetRequest playTarget) {
         // TODO: Check if the action is actually a valid move.
-        return doWorldAction((currentWorld) -> {
-            Player player = currentWorld.getPlayer(playTarget.getCastingPlayerId());
+        return doGameAction((currentGame) -> {
+            Player player = currentGame.getPlayer(playTarget.getCastingPlayerId());
             Hand hand = player.getHand();
             int manaCost = hand.getCard(cardIndex).getActiveManaCost();
 

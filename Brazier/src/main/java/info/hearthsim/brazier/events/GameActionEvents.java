@@ -2,7 +2,7 @@ package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
-public interface WorldActionEvents<T> extends WorldActionEventsRegistry<T> {
+public interface GameActionEvents <T> extends GameActionEventsRegistry<T> {
     /**
      * Triggers event actions for the given {@code object}.
      *

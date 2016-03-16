@@ -1,15 +1,12 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.BoardSide;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keyword;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.Weapon;
 
@@ -23,7 +20,7 @@ public final class Buffs {
     /**
      * {@link Buff} that makes the given {@link Character} immune.
      */
-    public static Buff<Character> IMMUNE = (World world, Character target, BuffArg arg) -> {
+    public static Buff<Character> IMMUNE = (Game game, Character target, BuffArg arg) -> {
         if (target instanceof Minion) {
             Minion minion = (Minion)target;
             return minion.getProperties().getBody().getImmuneProperty().setValueTo(arg, true);
@@ -40,7 +37,7 @@ public final class Buffs {
     /**
      * {@link Buff} that doubles the target {@link Minion}'s attack.
      */
-    public static final Buff<Minion> DOUBLE_ATTACK = (world, target, arg) -> {
+    public static final Buff<Minion> DOUBLE_ATTACK = (game, target, arg) -> {
         return target.getProperties().getBuffableAttack().addBuff(arg, (prev) -> 2 * prev);
     };
 
@@ -58,7 +55,7 @@ public final class Buffs {
      * <p>
      * See minion <em>Twilight Drake</em>.
      */
-    public static final PermanentBuff<Minion> TWILIGHT_BUFF = (world, target, arg) -> {
+    public static final PermanentBuff<Minion> TWILIGHT_BUFF = (game, target, arg) -> {
         return buff(target, arg, 0, target.getOwner().getHand().getCardCount());
     };
 
@@ -67,7 +64,7 @@ public final class Buffs {
      * <p>
      * See spell <em>Inner Fire</em>.
      */
-    public static final PermanentBuff<Minion> INNER_FIRE = (world, target, arg) -> {
+    public static final PermanentBuff<Minion> INNER_FIRE = (game, target, arg) -> {
         int hp = target.getBody().getCurrentHp();
         return target.getProperties().getBuffableAttack().setValueTo(arg, hp);
     };
@@ -78,7 +75,7 @@ public final class Buffs {
      * <p>
      * See minion <em>Lil' Exorcist</em>.
      */
-    public static final PermanentBuff<Minion> EXORCIST_BUFF = (World world, Minion target, BuffArg arg) -> {
+    public static final PermanentBuff<Minion> EXORCIST_BUFF = (Game game, Minion target, BuffArg arg) -> {
         BoardSide opponentBoard = target.getOwner().getOpponent().getBoard();
         int buff = opponentBoard.countMinions((opponentMinion) -> opponentMinion.getProperties().isDeathRattle());
 
@@ -101,13 +98,13 @@ public final class Buffs {
      * {@link PermanentBuff} that sets the target {@link Minion}'s attack to the given value.
      */
     public static PermanentBuff<Minion> setAttack(@NamedArg("attack") int attack) {
-        return (World world, Minion target, BuffArg arg) -> {
+        return (Game game, Minion target, BuffArg arg) -> {
             return target.getBuffableAttack().setValueTo(arg, attack);
         };
     }
 
     private static PermanentBuff<Character> adjustHp(Function<HpProperty, UndoAction> action) {
-        return (World world, Character target, BuffArg arg) -> {
+        return (Game game, Character target, BuffArg arg) -> {
             arg.checkNormalBuff();
             return ActionUtils.adjustHp(target, action);
         };
@@ -147,8 +144,8 @@ public final class Buffs {
     public static PermanentBuff<Minion> buffAttack(
             @NamedArg("minAttack") int minAttack,
             @NamedArg("maxAttack") int maxAttack) {
-        return (World world, Minion target, BuffArg arg) -> {
-            int buff = world.getRandomProvider().roll(minAttack, maxAttack);
+        return (Game game, Minion target, BuffArg arg) -> {
+            int buff = game.getRandomProvider().roll(minAttack, maxAttack);
             return target.getBuffableAttack().addBuff(arg, buff);
         };
     }
@@ -173,7 +170,7 @@ public final class Buffs {
     public static PermanentBuff<Character> buff(
             @NamedArg("attack") int attack,
             @NamedArg("hp") int hp) {
-        return (World world, Character target, BuffArg arg) -> {
+        return (Game game, Character target, BuffArg arg) -> {
             return buff(target, arg, attack, hp);
         };
     }
@@ -235,7 +232,7 @@ public final class Buffs {
             throw new UnsupportedOperationException("Temporary health buffs are not yet supported.");
         }
 
-        return (World world, Character target, BuffArg arg) -> {
+        return (Game game, Character target, BuffArg arg) -> {
             if (target instanceof Minion) {
                 return ((Minion)target).getBuffableAttack().addBuff(arg, attack);
             }
@@ -255,7 +252,7 @@ public final class Buffs {
     public static Buff<Minion> weaponAttackBuff(
             @NamedArg("buffPerAttack") int buffPerAttack) {
 
-        return (World world, Minion target, BuffArg arg) -> {
+        return (Game game, Minion target, BuffArg arg) -> {
             Weapon weapon = target.getOwner().tryGetWeapon();
             if (weapon == null) {
                 return UndoableUnregisterAction.DO_NOTHING;
@@ -281,10 +278,10 @@ public final class Buffs {
             @NamedArg("attack") int attack,
             @NamedArg("durability") int durability) {
         if (durability == 0) {
-            return (world, target, arg) -> target.getBuffableAttack().addBuff(arg, attack);
+            return (game, target, arg) -> target.getBuffableAttack().addBuff(arg, attack);
         }
 
-        return (world, target, arg) -> {
+        return (game, target, arg) -> {
             arg.checkNormalBuff();
             UndoAction attackBuffUndo = target.getBuffableAttack().addBuff(arg, attack);
             UndoAction incChargesUndo = target.increaseDurability(durability);
@@ -305,7 +302,7 @@ public final class Buffs {
     public static PermanentBuff<Minion> vancleefBuff(
             @NamedArg("attack") int attack,
             @NamedArg("hp") int hp) {
-        return (World world, Minion minion, BuffArg arg) -> {
+        return (Game game, Minion minion, BuffArg arg) -> {
             int mul = minion.getOwner().getCardsPlayedThisTurn() - 1;
             if (mul <= 0) {
                 return UndoAction.DO_NOTHING;
@@ -327,7 +324,7 @@ public final class Buffs {
             @NamedArg("keywords") Keyword... keywords) {
 
         Predicate<LabeledEntity> minionFilter = ActionUtils.includedKeywordsFilter(keywords);
-        return (World world, Minion target, BuffArg arg) -> {
+        return (Game game, Minion target, BuffArg arg) -> {
             Predicate<LabeledEntity> appliedFilter = minionFilter.and((otherMinion) -> target != otherMinion);
             int buff = target.getOwner().getBoard().countMinions(appliedFilter);
             if (buff <= 0) {

@@ -1,21 +1,12 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.events.CompletableWorldEventAction;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.Priorities;
-import info.hearthsim.brazier.World;
-import info.hearthsim.brazier.events.WorldEventFilters;
 import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.events.CompletableWorldEventBasedActionDef;
-import info.hearthsim.brazier.events.CompleteWorldEventAction;
-import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldActionEventsRegistry;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
-import info.hearthsim.brazier.events.WorldEventBasedActionDef;
-import info.hearthsim.brazier.events.WorldEventFilter;
+import info.hearthsim.brazier.events.GameActionEventsRegistry;
 import com.google.gson.JsonPrimitive;
 
 import java.util.Locale;
@@ -25,23 +16,23 @@ import java.util.function.Function;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class EventNotificationParser <Self extends PlayerProperty> {
-    private static final WorldEventAction<PlayerProperty, Object> DO_NOTHING
-        = (world, self, arg) -> UndoAction.DO_NOTHING;
+    private static final GameEventAction<PlayerProperty, Object> DO_NOTHING
+        = (game, self, arg) -> UndoAction.DO_NOTHING;
 
     private final Class<? extends Self> selfType;
     private final JsonDeserializer objectParser;
-    private final WorldEventFilter<? super Self, Object> globalFilter;
-    private final WorldEventAction<? super Self, Object> actionFinalizer;
+    private final GameEventFilter<? super Self, Object> globalFilter;
+    private final GameEventAction<? super Self, Object> actionFinalizer;
 
     public EventNotificationParser(Class<? extends Self> selfType, JsonDeserializer objectParser) {
-        this(selfType, objectParser, WorldEventFilters.ANY, DO_NOTHING);
+        this(selfType, objectParser, GameEventFilters.ANY, DO_NOTHING);
     }
 
     public EventNotificationParser(
         Class<? extends Self> selfType,
         JsonDeserializer objectParser,
-        WorldEventFilter<? super Self, Object> globalFilter,
-        WorldEventAction<? super Self, Object> actionFinalizer) {
+        GameEventFilter<? super Self, Object> globalFilter,
+        GameEventAction<? super Self, Object> actionFinalizer) {
         ExceptionHelper.checkNotNullArgument(selfType, "selfType");
         ExceptionHelper.checkNotNullArgument(objectParser, "objectParser");
         ExceptionHelper.checkNotNullArgument(globalFilter, "globalFilter");
@@ -54,14 +45,14 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
     }
 
     /**
-     * Parses the given {@link JsonTree} to a {@link WorldEventActionDefs}.
+     * Parses the given {@link JsonTree} to a {@link GameEventActionDefs}.
      *
      * @param tree the given {@code JsonTree}.
      * @return the parsed result as a {@code CardDescr}.
      * @throws ObjectParsingException if failed to parse the given {@code JsonTree}.
      */
-    public WorldEventActionDefs<Self> fromJson(JsonTree tree) throws ObjectParsingException {
-        WorldEventActionDefs.Builder<Self> builder = new WorldEventActionDefs.Builder<>();
+    public GameEventActionDefs<Self> fromJson(JsonTree tree) throws ObjectParsingException {
+        GameEventActionDefs.Builder<Self> builder = new GameEventActionDefs.Builder<>();
 
         // Try to parse the card json with every possible `SimpleEventType`
         for (SimpleEventType eventType : SimpleEventType.values()) {
@@ -73,28 +64,28 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
         parseActionDefs(
             Minion.class,
             tree.getChild("start-summoning"),
-            WorldEvents::startSummoningListeners,
-            (actionDef) -> builder.addOnSummoningActionDef(actionDef.toStartEventDef(WorldEvents::summoningListeners)),
+            GameEvents::startSummoningListeners,
+            (actionDef) -> builder.addOnSummoningActionDef(actionDef.toStartEventDef(GameEvents::summoningListeners)),
             null);
 
         parseActionDefs(
             Minion.class,
             tree.getChild("done-summoning"),
-            WorldEvents::doneSummoningListeners,
-            (actionDef) -> builder.addOnSummoningActionDef(actionDef.toDoneEventDef(WorldEvents::summoningListeners)),
+            GameEvents::doneSummoningListeners,
+            (actionDef) -> builder.addOnSummoningActionDef(actionDef.toDoneEventDef(GameEvents::summoningListeners)),
             null);
 
         return builder.create();
     }
 
     /**
-     * Parses the given {@link JsonTree} and adds the converted {@link WorldEventBasedActionDef} to the given builder
+     * Parses the given {@link JsonTree} and adds the converted {@link GameEventBasedActionDef} to the given builder
      * if the given {@code JsonTree} declares the given type of event.
      */
     private <T> void parseSimpleActionDefs(
         JsonTree tree,
         SimpleEventType eventType,
-        WorldEventActionDefs.Builder<Self> builder) throws ObjectParsingException {
+        GameEventActionDefs.Builder<Self> builder) throws ObjectParsingException {
 
         JsonTree actionDefsElement = tree.getChild(eventType.getEventName());
         if (actionDefsElement == null) {
@@ -104,10 +95,10 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
         @SuppressWarnings("unchecked")
         Class<T> eventArgType = (Class<T>) eventType.getArgumentType();
 
-        Function<WorldEvents, ? extends WorldActionEventsRegistry<T>> actionEventListenersGetter =
-            (worldEvents) -> worldEvents.simpleListeners(eventType);
+        Function<GameEvents, ? extends GameActionEventsRegistry<T>> actionEventListenersGetter =
+            (gameEvents) -> gameEvents.simpleListeners(eventType);
 
-        Consumer<WorldEventBasedActionDef<Self, T>> actionDefAdder =
+        Consumer<GameEventBasedActionDef<Self, T>> actionDefAdder =
             (actionDef) -> builder.addSimpleEventDef(eventType, actionDef);
 
         parseActionDefs(
@@ -117,16 +108,16 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
     }
 
     /**
-     * Parses the given {@link JsonTree} to {@link WorldEventBasedActionDef}(s) by using
-     * {@link #tryParseActionDef(Class, JsonTree, Function, WorldEventFilter)} and consume the parsed result with the
+     * Parses the given {@link JsonTree} to {@link GameEventBasedActionDef}(s) by using
+     * {@link #tryParseActionDef(Class, JsonTree, Function, GameEventFilter)} and consume the parsed result with the
      * given {@code actionDefAdder}.
      */
     private <T> void parseActionDefs(
         Class<T> targetType,
         JsonTree actionDefsElement,
-        Function<WorldEvents, ? extends WorldActionEventsRegistry<T>> actionEventListenersGetter,
-        Consumer<WorldEventBasedActionDef<Self, T>> actionDefAdder,
-        WorldEventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
+        Function<GameEvents, ? extends GameActionEventsRegistry<T>> actionEventListenersGetter,
+        Consumer<GameEventBasedActionDef<Self, T>> actionDefAdder,
+        GameEventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
 
         if (actionDefsElement == null) {
             return;
@@ -134,14 +125,14 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
 
         if (actionDefsElement.isJsonArray()) {
             for (JsonTree singleActionDefElement : actionDefsElement.getChildren()) {
-                WorldEventBasedActionDef<Self, T> actionDef
+                GameEventBasedActionDef<Self, T> actionDef
                     = tryParseActionDef(targetType, singleActionDefElement, actionEventListenersGetter, globalFilter);
                 if (actionDef != null) {
                     actionDefAdder.accept(actionDef);
                 }
             }
         } else {
-            WorldEventBasedActionDef<Self, T> actionDef
+            GameEventBasedActionDef<Self, T> actionDef
                 = tryParseActionDef(targetType, actionDefsElement, actionEventListenersGetter, globalFilter);
             if (actionDef != null) {
                 actionDefAdder.accept(actionDef);
@@ -150,29 +141,29 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
     }
 
     /**
-     * Parses the given {@link JsonTree} to a {@link WorldEventBasedActionDef} of the {@code selfType} of this
+     * Parses the given {@link JsonTree} to a {@link GameEventBasedActionDef} of the {@code selfType} of this
      * {@code EventNotificationParser} and the given target type.
      */
-    private <T> WorldEventBasedActionDef<Self, T> tryParseActionDef(
+    private <T> GameEventBasedActionDef<Self, T> tryParseActionDef(
         Class<T> targetType,
         JsonTree actionDefElement,
-        Function<WorldEvents, ? extends WorldActionEventsRegistry<T>> actionEventListenersGetter,
-        WorldEventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
+        Function<GameEvents, ? extends GameActionEventsRegistry<T>> actionEventListenersGetter,
+        GameEventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
 
         if (actionDefElement == null) {
             return null;
         }
 
         if (!actionDefElement.isJsonObject()) {
-            throw new ObjectParsingException("WorldEventBasedActionDef requires a JsonObject.");
+            throw new ObjectParsingException("GameEventBasedActionDef requires a JsonObject.");
         }
 
-        WorldEventFilter<? super Self, ? super T> baseFilter = parseFilter(targetType, actionDefElement.getChild("filter"));
-        WorldEventAction<? super Self, ? super T> action = parseAction(targetType, actionDefElement.getChild("action"));
+        GameEventFilter<? super Self, ? super T> baseFilter = parseFilter(targetType, actionDefElement.getChild("filter"));
+        GameEventAction<? super Self, ? super T> action = parseAction(targetType, actionDefElement.getChild("action"));
 
-        WorldEventFilter<? super Self, ? super T> filter;
+        GameEventFilter<? super Self, ? super T> filter;
         if (globalFilter != null) {
-            filter = (world, self, arg) -> baseFilter.applies(world, self, arg) && globalFilter.applies(world, self, arg);
+            filter = (game, self, arg) -> baseFilter.applies(game, self, arg) && globalFilter.applies(game, self, arg);
         } else {
             filter = baseFilter;
         }
@@ -185,11 +176,11 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
 
         int priority = getPriority(actionDefElement);
 
-        return new WorldEventBasedActionDef<>(lazyFilter, triggerOnce, priority, actionEventListenersGetter, filter, action);
+        return new GameEventBasedActionDef<>(lazyFilter, triggerOnce, priority, actionEventListenersGetter, filter, action);
     }
 
     /**
-     * Parses the given {@link JsonTree} to an {@link WorldEventFilter} of the {@code selfType} of this
+     * Parses the given {@link JsonTree} to an {@link GameEventFilter} of the {@code selfType} of this
      * {@code EventNotificationParser} and the given target type. The global filter of this
      * {@code EventNotificationParser} will be added to the converted filter before it is returned.
      *
@@ -199,7 +190,7 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
      * @return the converted result.
      * @throws ObjectParsingException if failed to convert the given {@code JsonTree}.
      */
-    public <T> WorldEventFilter<? super Self, ? super T> parseFilter(
+    public <T> GameEventFilter<? super Self, ? super T> parseFilter(
         Class<T> targetType,
         JsonTree filterElement) throws ObjectParsingException {
         if (filterElement == null) {
@@ -208,21 +199,21 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
 
         // This is not safe at all but there is nothing we can do about it.
         @SuppressWarnings("unchecked")
-        WorldEventFilter<? super Self, ? super T> result = (WorldEventFilter<? super Self, ? super T>) objectParser
-            .toJavaObject(filterElement, WorldEventFilter.class, eventFilterTypeChecker(targetType));
-          // checks the actual type arguments of the generated WorldEventFilter actually super `Self` and `T`
-        if (globalFilter == WorldEventFilters.ANY) {
+        GameEventFilter<? super Self, ? super T> result = (GameEventFilter<? super Self, ? super T>) objectParser
+            .toJavaObject(filterElement, GameEventFilter.class, eventFilterTypeChecker(targetType));
+          // checks the actual type arguments of the generated GameEventFilter actually super `Self` and `T`
+        if (globalFilter == GameEventFilters.ANY) {
             return result;
         }
 
-        return (World world, Self owner, T eventSource) -> {
-            return globalFilter.applies(world, owner, eventSource)
-                && result.applies(world, owner, eventSource);
+        return (Game game, Self owner, T eventSource) -> {
+            return globalFilter.applies(game, owner, eventSource)
+                && result.applies(game, owner, eventSource);
         };
     }
 
     /**
-     * Parses the given {@link JsonTree} to an {@link WorldEventAction} of the {@code selfType} of this
+     * Parses the given {@link JsonTree} to an {@link GameEventAction} of the {@code selfType} of this
      * {@code EventNotificationParser} and the given target type. The action finalizer of this
      * {@code EventNotificationParser} will be appended to the converted action before it is returned.
      *
@@ -232,18 +223,18 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
      * @return the converted result.
      * @throws ObjectParsingException if failed to convert the given {@code JsonTree}.
      */
-    public <T> WorldEventAction<? super Self, ? super T> parseAction(
+    public <T> GameEventAction<? super Self, ? super T> parseAction(
         Class<T> targetType,
         JsonTree actionElement) throws ObjectParsingException {
         if (actionElement == null) {
             throw new ObjectParsingException("Missing action definition.");
         }
 
-        WorldEventAction<?, ?> resultObj = objectParser.toJavaObject(
+        GameEventAction<?, ?> resultObj = objectParser.toJavaObject(
             actionElement,
-            WorldEventAction.class,
+            GameEventAction.class,
             actionFilterTypeChecker(targetType)
-            // checks the actual type arguments of the generated WorldEventAction actually super `Self` and `T`
+            // checks the actual type arguments of the generated GameEventAction actually super `Self` and `T`
         );
         return toFinalizedAction(unsafeCastToEventAction(resultObj));
     }
@@ -251,38 +242,38 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
     /**
      * Returns a {@link TypeChecker} which checks if it is assignable from the actual type arguments of the testing
      * generic type to the {@code selfType} of this {@code EventNotificationParser} and the given target type when
-     * the raw type of the testing generic type is {@link WorldEventFilter}.
+     * the raw type of the testing generic type is {@link GameEventFilter}.
      */
     private TypeChecker eventFilterTypeChecker(Class<?> targetType) {
-        return TypeCheckers.genericTypeChecker(WorldEventFilter.class, selfType, targetType);
+        return TypeCheckers.genericTypeChecker(GameEventFilter.class, selfType, targetType);
     }
 
     /**
      * Returns a {@link TypeChecker} which checks if it is assignable from the actual type arguments of the testing
      * generic type to the {@code selfType} of this {@code EventNotificationParser} and the given target type when
-     * the raw type of the testing generic type is {@link WorldEventAction}.
+     * the raw type of the testing generic type is {@link GameEventAction}.
      */
     private TypeChecker actionFilterTypeChecker(Class<?> targetType) {
-        return TypeCheckers.genericTypeChecker(WorldEventAction.class, selfType, targetType);
+        return TypeCheckers.genericTypeChecker(GameEventAction.class, selfType, targetType);
     }
 
     // This is not safe at all but there is nothing we can do about it.
     @SuppressWarnings("unchecked")
-    private <T> WorldEventAction<? super Self, ? super T> unsafeCastToEventAction(Object obj) {
-        return (WorldEventAction<? super Self, ? super T>) obj;
+    private <T> GameEventAction<? super Self, ? super T> unsafeCastToEventAction(Object obj) {
+        return (GameEventAction<? super Self, ? super T>) obj;
     }
 
     /**
      * Appends the action finalizer of this {@code EventNotificationParser} to the given action and returns.
      */
-    private <T> WorldEventAction<? super Self, ? super T> toFinalizedAction(WorldEventAction<? super Self, ? super T> action) {
+    private <T> GameEventAction<? super Self, ? super T> toFinalizedAction(GameEventAction<? super Self, ? super T> action) {
         if (actionFinalizer == DO_NOTHING) {
             return action;
         }
 
-        return (World world, Self self, T eventSource) -> {
-            UndoAction actionUndo = action.alterWorld(world, self, eventSource);
-            UndoAction finalizeUndo = actionFinalizer.alterWorld(world, self, eventSource);
+        return (Game game, Self self, T eventSource) -> {
+            UndoAction actionUndo = action.alterGame(game, self, eventSource);
+            UndoAction finalizeUndo = actionFinalizer.alterGame(game, self, eventSource);
             return () -> {
                 finalizeUndo.undo();
                 actionUndo.undo();
@@ -321,45 +312,45 @@ public final class EventNotificationParser <Self extends PlayerProperty> {
 
     private void parseSingleOnSummonEvent(
         JsonTree actionDefElement,
-        WorldEventActionDefs.Builder<Self> result) throws ObjectParsingException {
+        GameEventActionDefs.Builder<Self> result) throws ObjectParsingException {
 
         if (actionDefElement == null) {
             return;
         }
 
-        WorldEventFilter<? super Self, ? super Minion> filter = parseFilter(Minion.class, actionDefElement.getChild("filter"));
-        WorldEventAction<? super Self, ? super Minion> action = parseAction(Minion.class, actionDefElement.getChild("action"));
+        GameEventFilter<? super Self, ? super Minion> filter = parseFilter(Minion.class, actionDefElement.getChild("filter"));
+        GameEventAction<? super Self, ? super Minion> action = parseAction(Minion.class, actionDefElement.getChild("action"));
 
         JsonTree triggerOnceElement = actionDefElement.getChild("triggerOnce");
         boolean triggerOnce = triggerOnceElement != null ? triggerOnceElement.getAsBoolean() : false;
 
         int priority = getPriority(actionDefElement);
 
-        CompletableWorldEventAction<Self, Minion> eventDef = (World world, Self self, Minion eventSource) -> {
+        CompletableGameEventAction<Self, Minion> eventDef = (Game game, Self self, Minion eventSource) -> {
             if (self == eventSource) {
-                return CompleteWorldEventAction.doNothing(UndoAction.DO_NOTHING);
+                return CompleteGameEventAction.doNothing(UndoAction.DO_NOTHING);
             }
 
-            if (filter.applies(world, self, eventSource)) {
-                UndoAction alterWorld = action.alterWorld(world, self, eventSource);
-                return CompleteWorldEventAction.doNothing(alterWorld);
+            if (filter.applies(game, self, eventSource)) {
+                UndoAction alterGame = action.alterGame(game, self, eventSource);
+                return CompleteGameEventAction.doNothing(alterGame);
             }
 
-            return CompleteWorldEventAction.nothingToUndo((completeWorld, completeSelf, completeEventSource) -> {
-                if (filter.applies(world, self, eventSource)) {
-                    return action.alterWorld(world, self, eventSource);
+            return CompleteGameEventAction.nothingToUndo((completeGame, completeSelf, completeEventSource) -> {
+                if (filter.applies(game, self, eventSource)) {
+                    return action.alterGame(game, self, eventSource);
                 } else {
                     return UndoAction.DO_NOTHING;
                 }
             });
         };
 
-        result.addOnSummoningActionDef(new CompletableWorldEventBasedActionDef<>(triggerOnce, priority, WorldEvents::summoningListeners, eventDef));
+        result.addOnSummoningActionDef(new CompletableGameEventBasedActionDef<>(triggerOnce, priority, GameEvents::summoningListeners, eventDef));
     }
 
     private void parseOnSummonEvents(
         JsonTree actionDefsElement,
-        WorldEventActionDefs.Builder<Self> result) throws ObjectParsingException {
+        GameEventActionDefs.Builder<Self> result) throws ObjectParsingException {
         if (actionDefsElement == null) {
             return;
         }

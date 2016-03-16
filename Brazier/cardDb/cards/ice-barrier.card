@@ -7,7 +7,7 @@
     "secret": {
         "attack-initiated": {
             "priority": "low",
-            "filter": "WorldEventFilters.ATTACK_TARGET_IS_OWN_HERO",
+            "filter": "GameEventFilters.ATTACK_TARGET_IS_OWN_HERO",
             "action": {
                 "class": "TargetlessActions.armorUp",
                 "armor": 8

@@ -9,9 +9,9 @@
         "hp": 3,
         "triggers": {
             "minion-damaged": {
-                "filter": "WorldEventFilters.DAMAGE_SOURCE_SELF",
+                "filter": "GameEventFilters.DAMAGE_SOURCE_SELF",
                 "action": {
-                    "class": "WorldEventActions.forDamageTarget",
+                    "class": "GameEventActions.forDamageTarget",
                     "action": "TargetedActions.FREEZE_TARGET"
                 }
             }

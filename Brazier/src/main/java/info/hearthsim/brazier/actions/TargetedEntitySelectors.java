@@ -19,14 +19,14 @@ public final class TargetedEntitySelectors {
      * Returns a {@link TargetedEntitySelector} which returns nothing.
      */
     public static <Actor, Target, Selection> TargetedEntitySelector<Actor, Target, Selection> empty() {
-        return (World world, Actor actor, Target target) -> Stream.empty();
+        return (Game game, Actor actor, Target target) -> Stream.empty();
     }
 
     /**
      * Returns a {@link TargetedEntitySelector} which returns only the given actor.
      */
     public static <Actor, Target> TargetedEntitySelector<Actor, Target, Actor> self() {
-        return (World world, Actor actor, Target target) -> Stream.of(actor);
+        return (Game game, Actor actor, Target target) -> Stream.of(actor);
     }
 
     /**
@@ -37,8 +37,8 @@ public final class TargetedEntitySelectors {
             @NamedArg("selector") TargetedEntitySelector<? super Actor, ? super Target, ? extends Selection> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
-        return (World world, Actor actor, Target target) -> {
-            Stream<? extends Selection> selection = selector.select(world, actor, target);
+        return (Game game, Actor actor, Target target) -> {
+            Stream<? extends Selection> selection = selector.select(game, actor, target);
             return selection.filter((element) -> element != target);
         };
     }
@@ -53,9 +53,9 @@ public final class TargetedEntitySelectors {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
-        return (World world, Actor actor, Target target) -> {
-            Stream<? extends Selection> selection = selector.select(world, actor, target);
-            return filter.select(world, selection);
+        return (Game game, Actor actor, Target target) -> {
+            Stream<? extends Selection> selection = selector.select(game, actor, target);
+            return filter.select(game, selection);
         };
     }
 
@@ -63,28 +63,28 @@ public final class TargetedEntitySelectors {
      * Returns a {@link TargetedEntitySelector} which returns only the given target.
      */
     public static <Actor, Target> TargetedEntitySelector<Actor, Target, Target> target() {
-        return (World world, Actor actor, Target target) -> Stream.of(target);
+        return (Game game, Actor actor, Target target) -> Stream.of(target);
     }
 
     /**
      * Returns a {@link TargetedEntitySelector} which returns only the owner of the given target.
      */
     public static <Actor, Target extends PlayerProperty> TargetedEntitySelector<Actor, Target, Player> targetsOwnerPlayer() {
-        return (World world, Actor actor, Target target) -> Stream.of(target.getOwner());
+        return (Game game, Actor actor, Target target) -> Stream.of(target.getOwner());
     }
 
     /**
      * Returns a {@link TargetedEntitySelector} which returns only the owner's {@link Hero} of the given target.
      */
     public static <Actor, Target extends PlayerProperty> TargetedEntitySelector<Actor, Target, Hero> targetsHero() {
-        return (World world, Actor actor, Target target) -> Stream.of(target.getOwner().getHero());
+        return (Game game, Actor actor, Target target) -> Stream.of(target.getOwner().getHero());
     }
 
     /**
      * Returns a {@link TargetedEntitySelector} which returns the neighbouring minions of the target minion.
      */
     public static <Actor, Target extends Minion> TargetedEntitySelector<Actor, Target, Minion> targetsNeighbours() {
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             BoardSide board = target.getOwner().getBoard();
             int sourceIndex = board.indexOf(target.getTargetId());
             List<Minion> neighbours = new ArrayList<>(2);
@@ -105,7 +105,7 @@ public final class TargetedEntitySelectors {
      * Returns a {@link TargetedEntitySelector} which returns all minions on the same board side of the given target.
      */
     public static <Actor, Target extends PlayerProperty> TargetedEntitySelector<Actor, Target, Minion> targetsBoard() {
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             return target.getOwner().getBoard().getAllMinions().stream();
         };
     }

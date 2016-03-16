@@ -1,19 +1,19 @@
 package info.hearthsim.brazier.minions;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.events.WorldEventAction;
+import info.hearthsim.brazier.events.GameEventAction;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
 import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.PlayAction;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
+import info.hearthsim.brazier.events.GameEventActionDefs;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -78,7 +78,7 @@ public final class MinionDescr implements HearthStoneEntity {
         return abilities.tryGetAbility();
     }
 
-    public WorldEventAction<? super Minion, ? super Minion> tryGetDeathRattle() {
+    public GameEventAction<? super Minion, ? super Minion> tryGetDeathRattle() {
         return abilities.tryGetDeathRattle();
     }
 
@@ -176,16 +176,16 @@ public final class MinionDescr implements HearthStoneEntity {
             return UndoAction.DO_NOTHING;
         }
 
-        World world = player.getWorld();
+        Game game = player.getGame();
 
         UndoAction.Builder result = new UndoAction.Builder(actions.size());
         for (PlayAction<Minion> action: actions) {
-            result.addUndo(action.doPlay(world, target));
+            result.addUndo(action.doPlay(game, target));
         }
         return result;
     }
 
-    public WorldEventActionDefs<Minion> getEventActionDefs() {
+    public GameEventActionDefs<Minion> getEventActionDefs() {
         return abilities.getEventActionDefs();
     }
 

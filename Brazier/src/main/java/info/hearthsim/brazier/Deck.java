@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
@@ -33,14 +34,7 @@ public final class Deck implements PlayerProperty {
      */
     public List<Card> getCards(Predicate<? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
-
-        List<Card> result = new ArrayList<>();
-        for (Card card: cards) {
-            if (filter.test(card)) {
-                result.add(card);
-            }
-        }
-        return result;
+        return cards.stream().filter(filter).collect(Collectors.toList());
     }
 
     /**
@@ -202,7 +196,7 @@ public final class Deck implements PlayerProperty {
     }
 
     @Override
-    public World getWorld() {
-        return owner.getWorld();
+    public Game getGame() {
+        return owner.getGame();
     }
 }

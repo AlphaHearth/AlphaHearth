@@ -10,7 +10,7 @@ import java.util.Set;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
-public final class Secret implements PlayerProperty, WorldProperty, LabeledEntity, DamageSource {
+public final class Secret implements PlayerProperty, GameProperty, LabeledEntity, DamageSource {
     private Player owner;
     private final CardDescr baseCard;
     private final Ability<? super Secret> ability;
@@ -88,8 +88,8 @@ public final class Secret implements PlayerProperty, WorldProperty, LabeledEntit
     }
 
     @Override
-    public World getWorld() {
-        return owner.getWorld();
+    public Game getGame() {
+        return owner.getGame();
     }
 
     @Override

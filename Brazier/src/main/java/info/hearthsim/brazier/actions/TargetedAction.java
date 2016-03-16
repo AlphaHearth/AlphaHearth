@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Action with target. It is usually used as a functional interface with its sole un-implemented method
- * {@link #alterWorld(World, Actor, Target)}, which alters the given {@link World} with the given {@code actor}
+ * {@link #alterGame(Game, Actor, Target)}, which alters the given {@link Game} with the given {@code actor}
  * and {@code target}.
  * <p>
  * For predefined {@code TargetedAction}s, see {@link TargetedActions}.
@@ -18,20 +19,20 @@ import org.jtrim.utils.ExceptionHelper;
  * @see TargetedActions
  */
 public interface TargetedAction<Actor, Target> {
-    public static final TargetedAction<Object, Object> DO_NOTHING = (world, actor, target) -> UndoAction.DO_NOTHING;
+    public static final TargetedAction<Object, Object> DO_NOTHING = (game, actor, target) -> UndoAction.DO_NOTHING;
 
     /**
-     * Alters the given {@link World} with the given {@code Actor} and {@code Target}.
+     * Alters the given {@link Game} with the given {@code Actor} and {@code Target}.
      *
-     * @param world the given {@code World}.
+     * @param game the given {@code Game}.
      * @param actor the given {@code Actor}.
      * @param target the given {@code Target}.
      */
-    public UndoAction alterWorld(World world, Actor actor, Target target);
+    public UndoAction alterGame(Game game, Actor actor, Target target);
 
     /**
      * Merges the given collection of {@code TargetedAction}s to one which executes the
-     * {@code TargetedAction}s' {@link #alterWorld(World, Actor, Target)} methods
+     * {@code TargetedAction}s' {@link #alterGame(Game, Actor, Target)} methods
      * sequentially.
      *
      * @throws NullPointerException if any of the given actions is {@code null}.
@@ -41,15 +42,15 @@ public interface TargetedAction<Actor, Target> {
         ExceptionHelper.checkNotNullElements(actions, "actions");
 
         if (actions.isEmpty()) {
-            return (world, actor, target) -> UndoAction.DO_NOTHING;
+            return (game, actor, target) -> UndoAction.DO_NOTHING;
         }
 
         List<TargetedAction<? super Actor, ? super Target>> actionsCopy = new ArrayList<>(actions);
 
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             UndoAction.Builder builder = new UndoAction.Builder(actionsCopy.size());
             for (TargetedAction<? super Actor, ? super Target> action: actionsCopy) {
-                builder.addUndo(action.alterWorld(world, actor, target));
+                builder.addUndo(action.alterGame(game, actor, target));
             }
             return builder;
         };

@@ -9,9 +9,9 @@
         "hp": 4,
         "triggers": {
             "start-play-card": {
-                "filter": "WorldEventFilters.EVENT_SOURCE_IS_SPELL",
+                "filter": "GameEventFilters.EVENT_SOURCE_IS_SPELL",
                 "action": {
-                    "class": "WorldEventActions.forEventArgCardTarget",
+                    "class": "GameEventActions.forEventArgCardTarget",
                     "action": {
                         "class": "TargetedActions.actWithTarget",
                         "action": {

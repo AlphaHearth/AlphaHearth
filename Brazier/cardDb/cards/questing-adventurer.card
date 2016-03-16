@@ -9,7 +9,7 @@
         "hp": 2,
         "triggers": {
             "start-play-card": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",
                     "buff": "1/1"

@@ -2,7 +2,7 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.IdentityHashMap;
@@ -32,7 +32,7 @@ public final class TargetedActiveAura<Source, Target> implements ActiveAura {
      *
      * @param source the source of the aura.
      * @param targetProvider the target provider of the aura, which will be used to list out all
-     *                       applicable targets for the aura in the given {@code World}.
+     *                       applicable targets for the aura in the given {@code Game}.
      * @param targetFilter the given filter on the possible targets.
      * @param aura the {@code Aura} representing the actual effect of this {@code TargetedActiveAura}.
      */
@@ -60,13 +60,13 @@ public final class TargetedActiveAura<Source, Target> implements ActiveAura {
      * to rule out all inapplicable targets. The remaining applicable targets will be updated by using the
      * {@code Aura}.
      *
-     * @param world the given {@code World}.
+     * @param game the given {@code Game}.
      */
     @Override
-    public UndoAction updateAura(World world) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+    public UndoAction updateAura(Game game) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
 
-        List<? extends Target> targets = targetProvider.getPossibleTargets(world, source);
+        List<? extends Target> targets = targetProvider.getPossibleTargets(game, source);
 
         Map<Target, UndoableUnregisterAction> newCurrentlyApplied = new IdentityHashMap<>();
 
@@ -76,11 +76,11 @@ public final class TargetedActiveAura<Source, Target> implements ActiveAura {
         Map<Target, UndoableUnregisterAction> currentlyAppliedCopy = new IdentityHashMap<>(currentlyApplied);
         for (Target target: targets) {
             UndoableUnregisterAction ref = currentlyAppliedCopy.remove(target);
-            boolean needAura = targetFilter.isApplicable(world, source, target);
+            boolean needAura = targetFilter.isApplicable(game, source, target);
 
             if (ref == null) {
                 if (needAura) {
-                    UndoableUnregisterAction newRef = aura.applyAura(world, source, target);
+                    UndoableUnregisterAction newRef = aura.applyAura(game, source, target);
                     Objects.requireNonNull(newRef, "Aura.applyAura");
 
                     builder.addUndo(newRef);

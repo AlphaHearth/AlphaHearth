@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * Functional interface with its sole un-implemented method {@link #select(World, Stream)}, which can be used
+ * Functional interface with its sole un-implemented method {@link #select(Game, Stream)}, which can be used
  * in a {@link Stream} pipeline to achieve customized features.
  * <p>
  * For predefined {@code EntityFilter}s, see {@link EntityFilters}.
@@ -19,14 +19,14 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface EntityFilter<Entity> {
     /**
-     * Selects from the given {@link Stream} of entities with the given {@link World}
+     * Selects from the given {@link Stream} of entities with the given {@link Game}
      * and returns the selected results as another {@code Stream} of entities.
      *
-     * @param world the given {@code World}.
+     * @param game the given {@code Game}.
      * @param entities the given {@code Stream} of entities.
      * @return the {@code Stream} of selected entities.
      */
-    public Stream<? extends Entity> select(World world, Stream<? extends Entity> entities);
+    public Stream<? extends Entity> select(Game game, Stream<? extends Entity> entities);
 
     /**
      * Merges the given collection of {@link EntityFilter}s to one which executes their selection
@@ -44,10 +44,10 @@ public interface EntityFilter<Entity> {
 
         List<EntityFilter<Entity>> filtersCopy = new ArrayList<>(filters);
 
-        return (World world, Stream<? extends Entity> entities) -> {
+        return (Game game, Stream<? extends Entity> entities) -> {
             Stream<? extends Entity> currentTargets = entities;
             for (EntityFilter<Entity> filter: filtersCopy) {
-                currentTargets = filter.select(world, currentTargets);
+                currentTargets = filter.select(game, currentTargets);
             }
             return currentTargets;
         };

@@ -9,7 +9,7 @@ import org.junit.Test;
 public final class StealthTest extends BrazierTest {
     private static void expectTargetable(TestAgent script, boolean expectation) {
         script.expectMinion("p1:0", (tiger) -> {
-            Player opponent = tiger.getWorld().getOpponent(tiger.getOwner().getPlayerId());
+            Player opponent = tiger.getGame().getOpponent(tiger.getOwner().getPlayerId());
             PlayerId playerId = opponent.getPlayerId();
 
             Assert.assertEquals("targetable by minion", expectation, tiger.isTargetable(new TargeterDef(playerId, false, true)));

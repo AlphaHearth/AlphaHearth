@@ -1,13 +1,10 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionId;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.BoardSide;
-import info.hearthsim.brazier.Hand;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,9 +44,9 @@ public final class PlayActionRequirements {
      * {@code PlayActionRequirement} which tests if the player does not have minion on board.
      */
     public static final PlayActionRequirement BOARD_IS_EMPTY = (player) -> {
-        World world = player.getWorld();
-        return world.getPlayer1().getBoard().getMinionCount() <= 0
-                && world.getPlayer2().getBoard().getMinionCount() <= 0 ;
+        Game game = player.getGame();
+        return game.getPlayer1().getBoard().getMinionCount() <= 0
+                && game.getPlayer2().getBoard().getMinionCount() <= 0 ;
     };
 
     /**

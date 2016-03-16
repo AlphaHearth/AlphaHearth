@@ -6,9 +6,9 @@
     "manaCost": 1,
     "secret": {
         "minion-killed": {
-            "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+            "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
             "action": {
-                "class": "WorldEventActions.forEventArgMinionTarget",
+                "class": "GameEventActions.forEventArgMinionTarget",
                 "action": {
                     "class": "TargetedActions.resummonMinionWithHp",
                     "hp": 1

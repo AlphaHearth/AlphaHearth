@@ -5,10 +5,10 @@ import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class PlayerAgent {
-    private final WorldPlayAgent playAgent;
+    private final GameAgent playAgent;
     private final PlayerId playerId;
 
-    public PlayerAgent(WorldPlayAgent playAgent, PlayerId playerId) {
+    public PlayerAgent(GameAgent playAgent, PlayerId playerId) {
         ExceptionHelper.checkNotNullArgument(playAgent, "playAgent");
         ExceptionHelper.checkNotNullArgument(playerId, "playerId");
 
@@ -17,7 +17,7 @@ public final class PlayerAgent {
     }
 
     public Player getPlayer() {
-        return playAgent.getWorld().getPlayer(playerId);
+        return playAgent.getGame().getPlayer(playerId);
     }
 
     public UndoAction attack(TargetId attacker, TargetId defender) {

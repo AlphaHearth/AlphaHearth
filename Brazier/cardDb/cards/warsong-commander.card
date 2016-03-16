@@ -9,14 +9,14 @@
         "triggers": {
             "start-summoning": {
                 "filter": [
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "WorldEventFilters.targetAttackIsLess",
+                        "class": "GameEventFilters.targetAttackIsLess",
                         "attack": 4
                     }
                 ],
                 "action": {
-                    "class": "WorldEventActions.forEventArgMinionTarget",
+                    "class": "GameEventActions.forEventArgMinionTarget",
                     "action": "TargetedActions.CHARGE"
                 }
             }

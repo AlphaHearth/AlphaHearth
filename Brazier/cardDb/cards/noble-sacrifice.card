@@ -7,11 +7,11 @@
     "secret": {
         "attack-initiated": {
             "filter": [
-                "WorldEventFilters.ATTACKER_IS_ENEMY",
-                "WorldEventFilters.SELF_BOARD_IS_NOT_FULL"
+                "GameEventFilters.ATTACKER_IS_ENEMY",
+                "GameEventFilters.SELF_BOARD_IS_NOT_FULL"
             ],
             "action": {
-                "class": "WorldEventActions.summonNewTargetForAttack",
+                "class": "GameEventActions.summonNewTargetForAttack",
                 "minion": "Defender"
             }
         }

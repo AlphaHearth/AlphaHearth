@@ -1,15 +1,12 @@
 package info.hearthsim.brazier.minions;
 
-import info.hearthsim.brazier.CharacterAbilities;
-import info.hearthsim.brazier.PreparedResult;
-import info.hearthsim.brazier.Silencable;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.FreezeManager;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.AttackTool;
 
@@ -23,7 +20,7 @@ public final class MinionProperties implements Silencable {
     private final MinionAttackTool attackTool;
     private final MinionBody body;
     private final CharacterAbilities<Minion> abilities;
-    private List<WorldEventAction<? super Minion, ? super Minion>> deathRattles;
+    private List<GameEventAction<? super Minion, ? super Minion>> deathRattles;
     private boolean activated;
 
     public MinionProperties(Minion minion, MinionDescr baseDescr) {
@@ -37,7 +34,7 @@ public final class MinionProperties implements Silencable {
         this.deathRattles = new ArrayList<>();
         this.activated = false;
 
-        WorldEventAction<? super Minion, ? super Minion> baseDeathRattle = baseDescr.tryGetDeathRattle();
+        GameEventAction<? super Minion, ? super Minion> baseDeathRattle = baseDescr.tryGetDeathRattle();
         if (baseDeathRattle != null) {
             this.deathRattles.add(baseDeathRattle);
         }
@@ -122,8 +119,8 @@ public final class MinionProperties implements Silencable {
         return body.applyAuras();
     }
 
-    private World getWorld() {
-        return minion.getWorld();
+    private Game getGame() {
+        return minion.getGame();
     }
 
     public UndoAction triggerDeathRattles() {
@@ -136,10 +133,10 @@ public final class MinionProperties implements Silencable {
         }
 
         UndoAction.Builder result = new UndoAction.Builder();
-        World world = getWorld();
-        for (WorldEventAction<? super Minion, ? super Minion> deathRattle: new ArrayList<>(deathRattles)) {
+        Game game = getGame();
+        for (GameEventAction<? super Minion, ? super Minion> deathRattle: new ArrayList<>(deathRattles)) {
             for (int i = 0; i < numberOfTriggers; i++) {
-                result.addUndo(deathRattle.alterWorld(world, minion, minion));
+                result.addUndo(deathRattle.alterGame(game, minion, minion));
             }
         }
         return result;
@@ -150,7 +147,7 @@ public final class MinionProperties implements Silencable {
             return UndoAction.DO_NOTHING;
         }
 
-        List<WorldEventAction<? super Minion, ? super Minion>> prevDeathRattles = deathRattles;
+        List<GameEventAction<? super Minion, ? super Minion>> prevDeathRattles = deathRattles;
         deathRattles = new ArrayList<>();
         return () -> deathRattles = prevDeathRattles;
     }
@@ -213,7 +210,7 @@ public final class MinionProperties implements Silencable {
         return !deathRattles.isEmpty();
     }
 
-    public UndoAction addDeathRattle(WorldEventAction<? super Minion, ? super Minion> deathRattle) {
+    public UndoAction addDeathRattle(GameEventAction<? super Minion, ? super Minion> deathRattle) {
         ExceptionHelper.checkNotNullArgument(deathRattle, "deathRattle");
 
         deathRattles.add(deathRattle);

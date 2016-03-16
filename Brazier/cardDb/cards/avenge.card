@@ -7,8 +7,8 @@
     "secret": {
         "minion-killed": {
             "filter": [
-                "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
-                "WorldEventFilters.HAS_OTHER_OWNED_BUFF_TARGET"
+                "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                "GameEventFilters.HAS_OTHER_OWNED_BUFF_TARGET"
             ],
             "action": {
                 "class": "TargetlessActions.forTargets",

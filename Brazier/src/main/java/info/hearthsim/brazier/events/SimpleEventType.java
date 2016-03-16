@@ -18,13 +18,13 @@ import org.jtrim.utils.ExceptionHelper;
  * {@code argType} and {@code globalFilter}.
  *
  * <p>The field {@code eventName} and {@code argType} will be given when constructing every instance.
- * {@code globalFilter} is the {@link WorldEventFilter} that should be applied to every event of this type, which
+ * {@code globalFilter} is the {@link GameEventFilter} that should be applied to every event of this type, which
  * is possible to be {@code null} if no such filter is needed.
  */
 // TODO check what greedyEvent means.
 public enum SimpleEventType {
     DRAW_CARD("draw-card", Card.class),
-    START_PLAY_CARD("start-play-card", CardPlayEvent.class, (world, self, arg) -> {
+    START_PLAY_CARD("start-play-card", CardPlayEvent.class, (game, self, arg) -> {
         return self != ((CardPlayEvent) arg).getCard().getMinion();
     }),
     DONE_PLAY_CARD("done-play-card", CardPlayedEvent.class),
@@ -54,13 +54,13 @@ public enum SimpleEventType {
     private final boolean greedyEvent;
     private final String eventName;
     private final Class<?> argType;
-    private final WorldEventFilter<Object, Object> globalFilter;
+    private final GameEventFilter<Object, Object> globalFilter;
 
     private SimpleEventType(String eventName, Class<?> argType) {
         this(false, eventName, argType);
     }
 
-    private SimpleEventType(String eventName, Class<?> argType, WorldEventFilter<Object, Object> globalFilter) {
+    private SimpleEventType(String eventName, Class<?> argType, GameEventFilter<Object, Object> globalFilter) {
         this(false, eventName, argType, globalFilter);
     }
 
@@ -72,26 +72,26 @@ public enum SimpleEventType {
             boolean greedyEvent,
             String eventName,
             Class<?> argType,
-            WorldEventFilter<Object, Object> globalFilter) {
+            GameEventFilter<Object, Object> globalFilter) {
         this.greedyEvent = greedyEvent;
         this.eventName = eventName;
         this.argType = argType;
         this.globalFilter = globalFilter;
     }
 
-    public WorldEventFilter<Object, Object> getGlobalFilter() {
+    public GameEventFilter<Object, Object> getGlobalFilter() {
         return globalFilter;
     }
 
-    public <Self, Arg> WorldEventFilter<Self, Arg> addGlobalFilter(
-            WorldEventFilter<Self, Arg> localFilter) {
+    public <Self, Arg> GameEventFilter<Self, Arg> addGlobalFilter(
+            GameEventFilter<Self, Arg> localFilter) {
         ExceptionHelper.checkNotNullArgument(localFilter, "localFilter");
         if (globalFilter == null) {
             return localFilter;
         }
 
-        return (world, self, arg) -> {
-            return localFilter.applies(world, self, arg) && globalFilter.applies(world, arg, eventName);
+        return (game, self, arg) -> {
+            return localFilter.applies(game, self, arg) && globalFilter.applies(game, arg, eventName);
         };
     }
 

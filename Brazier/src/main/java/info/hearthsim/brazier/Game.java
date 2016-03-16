@@ -7,7 +7,7 @@ import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.weapons.AttackTool;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * An instance of {@code World} is essentially a hearthstone game between two players.
+ * An instance of {@code Game} is essentially a hearthstone game between two players.
  */
-public final class World {
+public final class Game {
     private static final Random RNG = new SecureRandom();
-
-    private static final RandomProvider DEFAULT_RANDOM_PROVIDER = (int bound) -> bound > 1 ? RNG.nextInt(bound) : 0;
+    private static final RandomProvider DEFAULT_RANDOM_PROVIDER =
+        (int bound) -> bound > 1 ? RNG.nextInt(bound) : 0;
 
     private RandomProvider randomProvider;
     private UserAgent userAgent;
@@ -40,20 +40,20 @@ public final class World {
 
     private final ActiveAuraList activeAuras;
 
-    private final WorldEvents events;
+    private final GameEvents events;
 
     private final AtomicLong currentTime;
 
     private Player currentPlayer;
 
     /**
-     * Constructs an instance of {@code World} with the given two players and hearthstone database
+     * Constructs an instance of {@code Game} with the given two players and hearthstone database
      *
      * @param db the hearthstone database
      * @param player1Id the id of player 1
      * @param player2Id the id of player 2
      */
-    public World(HearthStoneDb db, PlayerId player1Id, PlayerId player2Id) {
+    public Game(HearthStoneDb db, PlayerId player1Id, PlayerId player2Id) {
         ExceptionHelper.checkNotNullArgument(db, "db");
 
         this.db = db;
@@ -63,7 +63,7 @@ public final class World {
         this.activeAuras = new ActiveAuraList();
         this.gameResult = null;
 
-        this.events = new WorldEvents(this);
+        this.events = new GameEvents(this);
         this.randomProvider = DEFAULT_RANDOM_PROVIDER;
         this.currentPlayer = player1;
 
@@ -104,7 +104,7 @@ public final class World {
     }
 
     /**
-     * Updates the {@code gameResult} property of this {@code World} based on the
+     * Updates the {@code gameResult} property of this {@code Game} based on the
      * current state of both heroes. If any hero is dead, the property will be updated;
      * otherwise, nothing will be done.
      */
@@ -192,7 +192,7 @@ public final class World {
     }
 
     /**
-     * Returns all {@code Character}s in this {@code World}, including
+     * Returns all {@code Character}s in this {@code Game}, including
      * both {@link Hero}s and all {@link Minion}s.
      */
     public List<Character> getTargets() {
@@ -209,7 +209,7 @@ public final class World {
     }
 
     /**
-     * Returns all {@code Character}s in this {@code World} which satisfy the given {@link Predicate},
+     * Returns all {@code Character}s in this {@code Game} which satisfy the given {@link Predicate},
      * including {@link Hero}s and {@link Minion}s.
      */
     public List<Character> getTargets(Predicate<? super Character> filter) {
@@ -445,7 +445,7 @@ public final class World {
         return new UndoableResult<>(true, builder);
     }
 
-    public WorldEvents getEvents() {
+    public GameEvents getEvents() {
         return events;
     }
 

@@ -8,7 +8,7 @@
         "hp": 2,
         "triggers": {
             "done-summoning": {
-                "filter": "WorldEventFilters.SUMMONED_DEATH_RATTLE",
+                "filter": "GameEventFilters.SUMMONED_DEATH_RATTLE",
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",
                     "buff": "1/0"

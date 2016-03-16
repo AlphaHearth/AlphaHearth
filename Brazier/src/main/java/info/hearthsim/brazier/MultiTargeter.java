@@ -94,7 +94,7 @@ public final class MultiTargeter {
             Function<Character, UndoAction> applier) {
 
         if (atomic) {
-            return player.getWorld().getEvents().doAtomic(() -> forTargetsNonAtomic(player, applier));
+            return player.getGame().getEvents().doAtomic(() -> forTargetsNonAtomic(player, applier));
         }
         else {
             return forTargetsNonAtomic(player, applier);
@@ -107,7 +107,7 @@ public final class MultiTargeter {
         ExceptionHelper.checkNotNullArgument(player, "player");
         ExceptionHelper.checkNotNullArgument(applier, "applier");
 
-        Player opponent = player.getWorld().getOpponent(player.getPlayerId());
+        Player opponent = player.getGame().getOpponent(player.getPlayerId());
 
         UndoAction.Builder result = new UndoAction.Builder();
         if (heroes) {

@@ -9,11 +9,11 @@
         "prepare-damage": {
             "priority": "lowest",
             "filter": [
-                "WorldEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
-                "WorldEventFilters.PREPARED_DAMAGE_IS_LETHAL"
+                "GameEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
+                "GameEventFilters.PREPARED_DAMAGE_IS_LETHAL"
             ],
             "action": [
-                "WorldEventActions.PREVENT_PREPARED_DAMAGE",
+                "GameEventActions.PREVENT_PREPARED_DAMAGE",
                 {
                     "class": "TargetlessActions.forTargets",
                     "selector": "EntitySelectors.friendlyHero",

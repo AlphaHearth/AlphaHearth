@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +10,8 @@ import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Condition for a targeted action, which also acts as a functional interface with its sole un-implemented
- * method {@link #applies(World, Actor, Target)} which checks if the given {@code actor} and {@code target}
- * in the given {@link World} satisfies the condition.
+ * method {@link #applies(Game, Actor, Target)} which checks if the given {@code actor} and {@code target}
+ * in the given {@link Game} satisfies the condition.
  * <p>
  * For predefined {@code TargetedActionCondition}s, see {@link TargetedActionConditions}.
  *
@@ -19,10 +19,10 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface TargetedActionCondition<Actor, Target> {
     /**
-     * Returns if the given {@code actor} and the given {@code target} in the given {@link World}
+     * Returns if the given {@code actor} and the given {@code target} in the given {@link Game}
      * satisfy the condition.
      */
-    public boolean applies(World world, Actor actor, Target target);
+    public boolean applies(Game game, Actor actor, Target target);
 
     /**
      * Merges the given collection of {@link TargetedActionCondition} to one which checks if the
@@ -35,14 +35,14 @@ public interface TargetedActionCondition<Actor, Target> {
         ExceptionHelper.checkNotNullElements(filters, "filters");
 
         if (filters.isEmpty()) {
-            return (world, actor, target) -> true;
+            return (game, actor, target) -> true;
         }
 
         List<TargetedActionCondition<? super Actor, ? super Target>> filtersCopy = new ArrayList<>(filters);
 
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             for (TargetedActionCondition<? super Actor, ? super Target> filter: filtersCopy) {
-                if (!filter.applies(world, actor, target)) {
+                if (!filter.applies(game, actor, target)) {
                     return false;
                 }
             }

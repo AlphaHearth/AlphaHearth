@@ -5,8 +5,8 @@ import info.hearthsim.brazier.abilities.BuffableBoolProperty;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.events.CardPlayedEvent;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.actions.ActionUtils;
@@ -14,7 +14,7 @@ import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.WorldActionList;
+import info.hearthsim.brazier.actions.GameActionList;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.CardPlayEvent;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
@@ -32,7 +32,7 @@ public final class Player implements PlayerProperty {
     public static final int MAX_HAND_SIZE = 10;
     public static final int MAX_BOARD_SIZE = 7;
 
-    private final World world;
+    private final Game game;
     private final PlayerId playerId;
     private Hero hero;
     private final Hand hand;
@@ -57,11 +57,11 @@ public final class Player implements PlayerProperty {
 
     private Weapon weapon;
 
-    public Player(World world, PlayerId playerId) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+    public Player(Game game, PlayerId playerId) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(playerId, "playerId");
 
-        this.world = world;
+        this.game = game;
         this.playerId = playerId;
         this.hero = new Hero(this, 30, 0, Keywords.CLASS_BOSS, Collections.emptySet());
         this.board = new BoardSide(this, MAX_BOARD_SIZE);
@@ -101,14 +101,14 @@ public final class Player implements PlayerProperty {
         result.addUndo(board.refreshStartOfTurn());
         result.addUndo(hero.refresh());
 
-        WorldEvents events = getWorld().getEvents();
+        GameEvents events = getGame().getEvents();
         result.addUndo(events.triggerEvent(SimpleEventType.TURN_STARTS, this));
 
         return result;
     }
 
     public UndoAction endTurn() {
-        WorldEvents events = getWorld().getEvents();
+        GameEvents events = getGame().getEvents();
         UndoAction eventUndo = events.triggerEvent(SimpleEventType.TURN_ENDS, this);
 
         UndoAction refreshHeroUndo = hero.refreshEndOfTurn();
@@ -131,7 +131,7 @@ public final class Player implements PlayerProperty {
     }
 
     public Player getOpponent() {
-        return world.getOpponent(playerId);
+        return game.getOpponent(playerId);
     }
 
     public SecretContainer getSecrets() {
@@ -144,8 +144,8 @@ public final class Player implements PlayerProperty {
     }
 
     @Override
-    public World getWorld() {
-        return world;
+    public Game getGame() {
+        return game;
     }
 
     public int getCardsPlayedThisTurn() {
@@ -191,7 +191,7 @@ public final class Player implements PlayerProperty {
 
         UndoAction.Builder result = new UndoAction.Builder(actions.size());
         for (PlayAction<Card> actionDef: actions) {
-            result.addUndo(actionDef.doPlay(world, arg));
+            result.addUndo(actionDef.doPlay(game, arg));
         }
         return result;
     }
@@ -212,7 +212,7 @@ public final class Player implements PlayerProperty {
         ExceptionHelper.checkNotNullArgument(card, "card");
         ExceptionHelper.checkNotNullArgument(targetRequest, "target");
 
-        Character originalTarget = world.findTarget(targetRequest.getTargetId());
+        Character originalTarget = game.findTarget(targetRequest.getTargetId());
         PlayArg<Card> originalCardPlayArg = new PlayArg<>(card, originalTarget);
 
         // We request the on play actions before doing anything because
@@ -227,7 +227,7 @@ public final class Player implements PlayerProperty {
         cardsPlayedThisTurn++;
         result.addUndo(() -> cardsPlayedThisTurn--);
 
-        WorldEvents events = world.getEvents();
+        GameEvents events = game.getEvents();
 
         CardPlayEvent playEvent = new CardPlayEvent(originalCardPlayArg, manaCost);
 
@@ -421,9 +421,9 @@ public final class Player implements PlayerProperty {
     public UndoAction addCardToHand(Card card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
 
-        UndoAction drawActionsUndo = WorldActionList.executeActionsNow(world, card, card.getCardDescr().getOnDrawActions());
+        UndoAction drawActionsUndo = GameActionList.executeActionsNow(game, card, card.getCardDescr().getOnDrawActions());
 
-        WorldEvents events = world.getEvents();
+        GameEvents events = game.getEvents();
         UndoAction addCardUndo = hand.addCard(card, (addedCard) -> events.triggerEvent(SimpleEventType.DRAW_CARD, addedCard));
 
         return () -> {

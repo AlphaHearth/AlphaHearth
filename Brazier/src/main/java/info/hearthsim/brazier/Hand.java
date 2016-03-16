@@ -97,7 +97,7 @@ public final class Hand implements PlayerProperty {
     }
 
     public Card getRandomCard() {
-        CardRef result = ActionUtils.pickRandom(getWorld(), hand);
+        CardRef result = ActionUtils.pickRandom(getGame(), hand);
         return result != null ? result.card : null;
     }
 
@@ -152,7 +152,7 @@ public final class Hand implements PlayerProperty {
             return -1;
         }
 
-        int chosenIndex = getWorld().getRandomProvider().roll(indexCount);
+        int chosenIndex = getGame().getRandomProvider().roll(indexCount);
         return indexes[chosenIndex];
     }
 

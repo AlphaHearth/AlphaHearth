@@ -9,7 +9,7 @@
         "class": "TargetlessActions.drawCard",
         "costReduction": 4,
         "costReductionFilter": {
-            "class": "WorldEventFilters.eventSourceHasKeyword",
+            "class": "GameEventFilters.eventSourceHasKeyword",
             "keywords": "beast"
         }
     }

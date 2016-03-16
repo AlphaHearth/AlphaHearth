@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.Hero;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.weapons.Weapon;
 
@@ -34,9 +34,9 @@ public final class ManaCostAdjusters {
      * See minion <em>Sea Giant</em>.
      */
     public static final ManaCostAdjuster REDUCE_BY_MINION  = (Card card, int currentManaCost) -> {
-        World world = card.getOwner().getWorld();
-        int manaReduction = world.getPlayer1().getBoard().getMinionCount()
-                + world.getPlayer2().getBoard().getMinionCount();
+        Game game = card.getOwner().getGame();
+        int manaReduction = game.getPlayer1().getBoard().getMinionCount()
+                + game.getPlayer2().getBoard().getMinionCount();
         return currentManaCost - manaReduction;
     };
 
@@ -69,7 +69,7 @@ public final class ManaCostAdjusters {
      */
     public static final ManaCostAdjuster REDUCE_BY_OPPONENTS_HAND_SIZE  = (Card card, int currentManaCost) -> {
         Player owner = card.getOwner();
-        Player opponent = owner.getWorld().getOpponent(owner.getPlayerId());
+        Player opponent = owner.getGame().getOpponent(owner.getPlayerId());
         Hero hero = opponent.getHero();
         int manaReduction = hero.getOwner().getHand().getCardCount();
         return currentManaCost - manaReduction;
@@ -81,9 +81,9 @@ public final class ManaCostAdjusters {
      * See spell <em>Dragon's Breath</em>.
      */
     public static final ManaCostAdjuster REDUCE_BY_DEATH_THIS_TURN  = (Card card, int currentManaCost) -> {
-        World world = card.getWorld();
-        int deathCount = world.getPlayer1().getGraveyard().getNumberOfMinionsDiedThisTurn()
-                + world.getPlayer2().getGraveyard().getNumberOfMinionsDiedThisTurn();
+        Game game = card.getGame();
+        int deathCount = game.getPlayer1().getGraveyard().getNumberOfMinionsDiedThisTurn()
+                + game.getPlayer2().getGraveyard().getNumberOfMinionsDiedThisTurn();
         return currentManaCost - deathCount;
     };
 

@@ -9,7 +9,7 @@
         "triggers": {
             "on-summon": {
                 "filter": {
-                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "class": "GameEventFilters.eventSourceHasKeyword",
                     "keywords": "pirate"
                 },
                 "action": {

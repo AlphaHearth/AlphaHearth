@@ -1,21 +1,15 @@
 package info.hearthsim.brazier.weapons;
 
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.events.GameEventAction;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldActionEvents;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.CharacterAbilities;
-import info.hearthsim.brazier.Damage;
-import info.hearthsim.brazier.DamageSource;
-import info.hearthsim.brazier.DestroyableEntity;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Player;
+import info.hearthsim.brazier.events.GameActionEvents;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,11 +36,11 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
         this.baseDescr = weaponDescr;
         this.attack = new AuraAwareIntProperty(weaponDescr.getAttack());
         this.durability = weaponDescr.getDurability();
-        this.birthDate = owner.getOwner().getWorld().getCurrentTime();
+        this.birthDate = owner.getOwner().getGame().getCurrentTime();
         this.abilities = new CharacterAbilities<>(this);
         this.scheduledToDestroy = new AtomicBoolean(false);
 
-        WorldEventAction<? super Weapon, ? super Weapon> deathRattleAction = baseDescr.tryGetDeathRattle();
+        GameEventAction<? super Weapon, ? super Weapon> deathRattleAction = baseDescr.tryGetDeathRattle();
         this.deathRattle = deathRattleAction != null ? deathRattleToAbility(deathRattleAction) : null;
     }
 
@@ -158,7 +152,7 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
 
     @Override
     public UndoAction destroy() {
-        UndoAction eventUndo = owner.getWorld().getEvents()
+        UndoAction eventUndo = owner.getGame().getEvents()
             .triggerEvent(SimpleEventType.WEAPON_DESTROYED, this);
 
         // TODO: If we want to deactivate the abilities first, we have to
@@ -172,15 +166,15 @@ public final class Weapon implements DestroyableEntity, DamageSource, LabeledEnt
     }
 
     private static Ability<Weapon> deathRattleToAbility(
-            WorldEventAction<? super Weapon, ? super Weapon> deathRattle) {
+            GameEventAction<? super Weapon, ? super Weapon> deathRattle) {
         ExceptionHelper.checkNotNullArgument(deathRattle, "deathRattle");
 
         return (Weapon self) -> {
-            WorldActionEvents<Weapon> listeners = self.getWorld().getEvents()
+            GameActionEvents<Weapon> listeners = self.getGame().getEvents()
                     .simpleListeners(SimpleEventType.WEAPON_DESTROYED);
-            return listeners.addAction((World world, Weapon target) -> {
+            return listeners.addAction((Game game, Weapon target) -> {
                 if (target == self) {
-                    return deathRattle.alterWorld(world, self, target);
+                    return deathRattle.alterGame(game, self, target);
                 }
                 else {
                     return UndoAction.DO_NOTHING;

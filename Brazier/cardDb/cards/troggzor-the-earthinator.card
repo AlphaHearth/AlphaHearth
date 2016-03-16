@@ -9,7 +9,7 @@
         "hp": 6,
         "triggers": {
             "start-play-card": {
-                "filter": "WorldEventFilters.EVENT_SOURCE_IS_SPELL",
+                "filter": "GameEventFilters.EVENT_SOURCE_IS_SPELL",
                 "action": {
                     "class": "TargetlessActions.summonMinionRight",
                     "minion": "Burly Rockjaw Trogg"

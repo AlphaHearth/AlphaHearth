@@ -10,8 +10,8 @@
         "triggers": {
             "minion-damaged": {
                 "filter": [
-                    "WorldEventFilters.TARGET_SELF",
-                    "WorldEventFilters.TARGET_SURVIVES"
+                    "GameEventFilters.TARGET_SELF",
+                    "GameEventFilters.TARGET_SURVIVES"
                 ],
                 "action": {
                     "class": "TargetlessActions.summonMinionRight",

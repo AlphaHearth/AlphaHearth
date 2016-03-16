@@ -10,8 +10,8 @@
         "stealth": true,
         "triggers": {
             "attack-initiated": {
-                "filter": "WorldEventFilters.ATTACKER_IS_SELF",
-                "action": "WorldEventActions.MISS_TARGET_SOMETIMES"
+                "filter": "GameEventFilters.ATTACKER_IS_SELF",
+                "action": "GameEventActions.MISS_TARGET_SOMETIMES"
             }
         }
     }

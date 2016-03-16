@@ -1,13 +1,10 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetId;
-import info.hearthsim.brazier.World;
-import info.hearthsim.brazier.WorldPlayAgent;
+import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.WorldAction;
+import info.hearthsim.brazier.actions.GameAction;
 import org.jtrim.event.CopyOnTriggerListenerManager;
 import org.jtrim.event.EventListeners;
 import org.jtrim.event.ListenerManager;
@@ -15,55 +12,55 @@ import org.jtrim.event.ListenerRef;
 import org.jtrim.property.PropertySource;
 import org.jtrim.utils.ExceptionHelper;
 
-public final class WorldPlayUiAgent {
-    private WorldPlayAgent playAgent;
+public final class GamePlayUiAgent {
+    private GameAgent playAgent;
     private final TargetManager targetManager;
     private final UndoManager undoManager;
-    private final ListenerManager<Runnable> refreshWorldActions;
+    private final ListenerManager<Runnable> refreshGameActions;
 
-    public WorldPlayUiAgent(World world, PlayerId startingPlayer, TargetManager targetManager) {
+    public GamePlayUiAgent(Game game, PlayerId startingPlayer, TargetManager targetManager) {
         ExceptionHelper.checkNotNullArgument(targetManager, "targetManager");
 
-        this.playAgent = new WorldPlayAgent(world, startingPlayer);
+        this.playAgent = new GameAgent(game, startingPlayer);
         this.targetManager = targetManager;
         this.undoManager = new UndoManager();
-        this.refreshWorldActions = new CopyOnTriggerListenerManager<>();
+        this.refreshGameActions = new CopyOnTriggerListenerManager<>();
     }
 
-    public void resetWorld(World world) {
-        resetWorld(world, world.getPlayer1().getPlayerId());
+    public void resetGame(Game game) {
+        resetGame(game, game.getPlayer1().getPlayerId());
     }
 
-    public void resetWorld(World world, PlayerId startingPlayer) {
-        WorldPlayAgent newAgent = new WorldPlayAgent(world, startingPlayer);
+    public void resetGame(Game game, PlayerId startingPlayer) {
+        GameAgent newAgent = new GameAgent(game, startingPlayer);
 
-        WorldPlayAgent prevAgent = playAgent;
+        GameAgent prevAgent = playAgent;
         playAgent = newAgent;
 
         undoManager.addUndo(() -> playAgent = prevAgent);
-        refreshWorld();
+        refreshGame();
     }
 
-    public void alterWorld(WorldAction action) {
-        undoManager.addUndo(action.alterWorld(playAgent.getWorld()));
-        refreshWorld();
+    public void alterGame(GameAction action) {
+        undoManager.addUndo(action.alterGame(playAgent.getGame()));
+        refreshGame();
     }
 
-    public ListenerRef addRefreshWorldAction(Runnable action) {
-        return refreshWorldActions.registerListener(action);
+    public ListenerRef addRefreshGameAction(Runnable action) {
+        return refreshGameActions.registerListener(action);
     }
 
     public void undoLastAction() {
         undoManager.undo();
-        refreshWorld();
+        refreshGame();
     }
 
     public PropertySource<Boolean> hasUndos() {
         return undoManager.hasUndos();
     }
 
-    public World getWorld() {
-        return playAgent.getWorld();
+    public Game getGame() {
+        return playAgent.getGame();
     }
 
     public TargetManager getTargetManager() {
@@ -78,13 +75,13 @@ public final class WorldPlayUiAgent {
         return playAgent.getCurrentPlayerId();
     }
 
-    private void refreshWorld() {
-        EventListeners.dispatchRunnable(refreshWorldActions);
+    private void refreshGame() {
+        EventListeners.dispatchRunnable(refreshGameActions);
     }
 
     public void endTurn() {
         undoManager.addUndo(playAgent.endTurn());
-        refreshWorld();
+        refreshGame();
     }
 
     public void attack(TargetId attacker, TargetId defender) {
@@ -92,7 +89,7 @@ public final class WorldPlayUiAgent {
         undoManager.addUndo(result);
 
         // TODO: Update game over state
-        refreshWorld();
+        refreshGame();
     }
 
     public void playCard(int cardIndex, PlayTargetRequest playTarget) {
@@ -100,7 +97,7 @@ public final class WorldPlayUiAgent {
         undoManager.addUndo(result);
 
         // TODO: Update game over state
-        refreshWorld();
+        refreshGame();
     }
 
     public void playHeroPower(PlayTargetRequest playTarget) {
@@ -108,6 +105,6 @@ public final class WorldPlayUiAgent {
         undoManager.addUndo(result);
 
         // TODO: Update game over state
-        refreshWorld();
+        refreshGame();
     }
 }

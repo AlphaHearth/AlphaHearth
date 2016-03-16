@@ -13,30 +13,30 @@ import java.util.function.Function;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class PlayerUiAgent {
-    private final WorldPlayUiAgent worldAgent;
+    private final GamePlayUiAgent gameAgent;
     private final PlayerId playerId;
 
-    public PlayerUiAgent(WorldPlayUiAgent worldAgent, PlayerId playerId) {
-        ExceptionHelper.checkNotNullArgument(worldAgent, "worldAgent");
+    public PlayerUiAgent(GamePlayUiAgent gameAgent, PlayerId playerId) {
+        ExceptionHelper.checkNotNullArgument(gameAgent, "gameAgent");
         ExceptionHelper.checkNotNullArgument(playerId, "playerId");
 
-        this.worldAgent = worldAgent;
+        this.gameAgent = gameAgent;
         this.playerId = playerId;
     }
 
     public Player getPlayer() {
-        return worldAgent.getWorld().getPlayer(playerId);
+        return gameAgent.getGame().getPlayer(playerId);
     }
 
     public void alterPlayer(Function<? super Player, ? extends UndoAction> task) {
         ExceptionHelper.checkNotNullArgument(task, "task");
-        worldAgent.alterWorld((world) -> {
-            return task.apply(world.getPlayer(playerId));
+        gameAgent.alterGame((game) -> {
+            return task.apply(game.getPlayer(playerId));
         });
     }
 
     public boolean canPlayCard(Card card) {
-        Player player = worldAgent.getWorld().getPlayer(playerId);
+        Player player = gameAgent.getGame().getPlayer(playerId);
         if (player.getMana() < card.getActiveManaCost()) {
             return false;
         }
@@ -45,7 +45,7 @@ public final class PlayerUiAgent {
     }
 
     public void playHeroPower() {
-        Player player = worldAgent.getWorld().getPlayer(playerId);
+        Player player = gameAgent.getGame().getPlayer(playerId);
         HeroPower heroPower = player.getHero().getHeroPower();
 
         if (!heroPower.isPlayable()) {
@@ -54,7 +54,7 @@ public final class PlayerUiAgent {
 
         TargetNeed targetNeed = heroPower.getTargetNeed();
         if (targetNeed.hasTarget()) {
-            TargetManager targetManager = worldAgent.getTargetManager();
+            TargetManager targetManager = gameAgent.getTargetManager();
             TargeterDef targeterDef = new TargeterDef(playerId, true, false);
             PlayerTargetNeed playerTargetNeed = new PlayerTargetNeed(targeterDef, targetNeed);
             targetManager.requestTarget(playerTargetNeed, (targetId) -> {
@@ -71,11 +71,11 @@ public final class PlayerUiAgent {
 
     private void playHeroPowerNow(TargetId targetId) {
         PlayTargetRequest target = new PlayTargetRequest(playerId, -1, targetId);
-        worldAgent.playHeroPower(target);
+        gameAgent.playHeroPower(target);
     }
 
     public void playCard(int cardIndex) {
-        Player player = worldAgent.getWorld().getPlayer(playerId);
+        Player player = gameAgent.getGame().getPlayer(playerId);
         Card card = player.getHand().getCard(cardIndex);
         if (!canPlayCard(card)) {
             throw new IllegalArgumentException("Cannot play the given card.");
@@ -84,7 +84,7 @@ public final class PlayerUiAgent {
         List<CardDescr> chooseOneActions = card.getCardDescr().getChooseOneChoices();
         CardDescr chooseOneChoice;
         if (!chooseOneActions.isEmpty()) {
-            chooseOneChoice = worldAgent.getWorld().getUserAgent().selectCard(true, chooseOneActions);
+            chooseOneChoice = gameAgent.getGame().getUserAgent().selectCard(true, chooseOneActions);
             if (chooseOneChoice == null) {
                 return;
             }
@@ -106,7 +106,7 @@ public final class PlayerUiAgent {
             findTarget(playerTargetNeed, cardIndex, -1, chooseOneChoice);
         }
         else {
-            worldAgent.playCard(cardIndex, new PlayTargetRequest(playerId, -1, null, chooseOneChoice));
+            gameAgent.playCard(cardIndex, new PlayTargetRequest(playerId, -1, null, chooseOneChoice));
         }
     }
 
@@ -126,9 +126,9 @@ public final class PlayerUiAgent {
         return player.getBoard().findMinion((minion) -> targetNeed.isAllowedTarget(minion)) != null;
     }
 
-    private static boolean hasValidTarget(World world, PlayerTargetNeed targetNeed) {
-        return hasValidTarget(world.getPlayer1(), targetNeed)
-                || hasValidTarget(world.getPlayer2(), targetNeed);
+    private static boolean hasValidTarget(Game game, PlayerTargetNeed targetNeed) {
+        return hasValidTarget(game.getPlayer1(), targetNeed)
+                || hasValidTarget(game.getPlayer2(), targetNeed);
     }
 
     private void findMinionTarget(Player player, int cardIndex, Card card, CardDescr chooseOneChoice) {
@@ -136,7 +136,7 @@ public final class PlayerUiAgent {
             return;
         }
 
-        TargetManager targetManager = worldAgent.getTargetManager();
+        TargetManager targetManager = gameAgent.getTargetManager();
         UiMinionIndexNeed minionIndexNeed = new UiMinionIndexNeed(playerId);
         targetManager.requestTarget(minionIndexNeed, (minionIndex) -> {
             if (minionIndex instanceof Integer) {
@@ -145,23 +145,23 @@ public final class PlayerUiAgent {
                 if (targetNeed.hasTarget()) {
                     TargeterDef targeterDef = new TargeterDef(playerId, false, false);
                     PlayerTargetNeed playerTargetNeed = new PlayerTargetNeed(targeterDef, targetNeed);
-                    if (hasValidTarget(player.getWorld(), playerTargetNeed)) {
+                    if (hasValidTarget(player.getGame(), playerTargetNeed)) {
                         findTarget(playerTargetNeed, cardIndex, (int)minionIndex, chooseOneChoice);
                         return;
                     }
                 }
 
-                worldAgent.playCard(cardIndex, new PlayTargetRequest(playerId, (int)minionIndex, null, chooseOneChoice));
+                gameAgent.playCard(cardIndex, new PlayTargetRequest(playerId, (int)minionIndex, null, chooseOneChoice));
             }
         });
     }
 
     private void findTarget(PlayerTargetNeed targetNeed, int cardIndex, int minionIndex, CardDescr chooseOneChoice) {
-        TargetManager targetManager = worldAgent.getTargetManager();
+        TargetManager targetManager = gameAgent.getTargetManager();
         targetManager.requestTarget(targetNeed, (targetId) -> {
             if (targetId instanceof TargetId) {
                 targetManager.clearRequest();
-                worldAgent.playCard(cardIndex,
+                gameAgent.playCard(cardIndex,
                         new PlayTargetRequest(playerId, minionIndex, (TargetId)targetId, chooseOneChoice));
             }
         });
@@ -173,11 +173,11 @@ public final class PlayerUiAgent {
             throw new IllegalArgumentException("Must attack with player: " + playerId.getName());
         }
 
-        TargetManager targetManager = worldAgent.getTargetManager();
+        TargetManager targetManager = gameAgent.getTargetManager();
         TargeterDef targeterDef = new TargeterDef(playerId, attacker instanceof Hero, true);
         targetManager.requestTarget(new AttackTargetNeed(targeterDef), (targetId) -> {
             if (targetId instanceof TargetId) {
-                worldAgent.attack(attacker.getTargetId(), (TargetId)targetId);
+                gameAgent.attack(attacker.getTargetId(), (TargetId)targetId);
             }
         });
     }

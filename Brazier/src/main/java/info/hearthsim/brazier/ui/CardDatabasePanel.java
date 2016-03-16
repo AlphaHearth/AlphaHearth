@@ -32,11 +32,11 @@ public class CardDatabasePanel extends javax.swing.JPanel {
     private static final TaskExecutor BCKG_EXECUTOR = newExecutor("Card-Search");
 
     private final HearthStoneDb db;
-    private final WorldPlayUiAgent uiAgent;
+    private final GamePlayUiAgent uiAgent;
     private final FormattedTableModel<CardDescr> cardsTableModel;
     private final UpdateTaskExecutor searchExecutor;
 
-    public CardDatabasePanel(HearthStoneDb db, WorldPlayUiAgent uiAgent) {
+    public CardDatabasePanel(HearthStoneDb db, GamePlayUiAgent uiAgent) {
         ExceptionHelper.checkNotNullArgument(db, "db");
         ExceptionHelper.checkNotNullArgument(uiAgent, "uiAgent");
 
@@ -81,7 +81,7 @@ public class CardDatabasePanel extends javax.swing.JPanel {
         return ch == '-' || Character.isDigit(ch) || Character.isLetter(ch);
     }
 
-    private static void toWords(String str, Consumer<? super String> worldConsumer) {
+    private static void toWords(String str, Consumer<? super String> wordConsumer) {
         StringBuilder currentWord = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -90,14 +90,14 @@ public class CardDatabasePanel extends javax.swing.JPanel {
             }
             else {
                 if (currentWord.length() > 0) {
-                    worldConsumer.accept(currentWord.toString().toLowerCase(Locale.ROOT));
+                    wordConsumer.accept(currentWord.toString().toLowerCase(Locale.ROOT));
                     currentWord.setLength(0);
                 }
             }
         }
 
         if (currentWord.length() > 0) {
-            worldConsumer.accept(currentWord.toString().toLowerCase(Locale.ROOT));
+            wordConsumer.accept(currentWord.toString().toLowerCase(Locale.ROOT));
         }
     }
 
@@ -277,7 +277,7 @@ public class CardDatabasePanel extends javax.swing.JPanel {
     private void jAddToHandButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAddToHandButtonActionPerformed
         List<CardDescr> cards = getSelectedCards();
         for (CardDescr card: cards) {
-            uiAgent.alterWorld((world) -> {
+            uiAgent.alterGame((game) -> {
                 Player player = uiAgent.getCurrentPlayer();
                 return player.getHand().addCard(card);
             });
@@ -287,7 +287,7 @@ public class CardDatabasePanel extends javax.swing.JPanel {
     private void jAddToDeckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAddToDeckButtonActionPerformed
         List<CardDescr> cards = getSelectedCards();
         for (CardDescr card: cards) {
-            uiAgent.alterWorld((world) -> {
+            uiAgent.alterGame((game) -> {
                 Player player = uiAgent.getCurrentPlayer();
                 return player.getDeck().putOnTop(card);
             });

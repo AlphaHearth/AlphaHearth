@@ -18,10 +18,10 @@ import org.jtrim.utils.ExceptionHelper;
 import static org.jtrim.property.swing.AutoDisplayState.*;
 
 @SuppressWarnings("serial")
-public class WorldPlayPanel extends javax.swing.JPanel {
+public class GamePlayPanel extends javax.swing.JPanel {
     private final HearthStoneDb db;
     private final TargetManager targetManager;
-    private final WorldPlayUiAgent uiAgent;
+    private final GamePlayUiAgent uiAgent;
 
     private final BoardSidePanel board1;
     private final BoardSidePanel board2;
@@ -30,24 +30,24 @@ public class WorldPlayPanel extends javax.swing.JPanel {
     private final PlayerPanel player1;
     private final PlayerPanel player2;
 
-    public WorldPlayPanel(World world, PlayerId startingPlayer) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+    public GamePlayPanel(Game game, PlayerId startingPlayer) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(startingPlayer, "startingPlayer");
 
-        this.db = world.getDb();
+        this.db = game.getDb();
         this.trackRefs = new LinkedList<>();
         this.targetManager = new TargetManager(this);
 
-        uiAgent = new WorldPlayUiAgent(world, startingPlayer, targetManager);
-        uiAgent.addRefreshWorldAction(this::refreshWorld);
+        uiAgent = new GamePlayUiAgent(game, startingPlayer, targetManager);
+        uiAgent.addRefreshGameAction(this::refreshGame);
 
         initComponents();
 
         jLeftControlContainer.setLayout(new SerialLayoutManager(5, false, SerialLayoutManager.Alignment.LEFT));
         jRightControlContainer.setLayout(new SerialLayoutManager(5, false, SerialLayoutManager.Alignment.RIGHT));
 
-        board1 = new BoardSidePanel(world.getPlayer1().getPlayerId(), targetManager);
-        board2 = new BoardSidePanel(world.getPlayer2().getPlayerId(), targetManager);
+        board1 = new BoardSidePanel(game.getPlayer1().getPlayerId(), targetManager);
+        board2 = new BoardSidePanel(game.getPlayer2().getPlayerId(), targetManager);
 
         player1 = new PlayerPanel(db);
         player2 = new PlayerPanel(db);
@@ -59,15 +59,15 @@ public class WorldPlayPanel extends javax.swing.JPanel {
 
         setupEnableDisable();
 
-        refreshWorld();
+        refreshGame();
 
-        setUserAgent(world);
+        setUserAgent(game);
     }
 
-    private void setUserAgent(World world) {
-        world.setUserAgent((boolean allowCancel, List<? extends CardDescr> cards) -> {
+    private void setUserAgent(Game game) {
+        game.setUserAgent((boolean allowCancel, List<? extends CardDescr> cards) -> {
             // Doesn't actually matter which player we use.
-            Player player = world.getCurrentPlayer();
+            Player player = game.getCurrentPlayer();
             return UiUtils.getOnEdt(() -> ChooseCardPanel.selectCard(this, allowCancel, player, cards));
         });
     }
@@ -76,20 +76,20 @@ public class WorldPlayPanel extends javax.swing.JPanel {
         addSwingStateListener(uiAgent.hasUndos(), jUndoButton::setEnabled);
     }
 
-    public final void setWorld(World world, PlayerId startingPlayer) {
-        setUserAgent(world);
-        uiAgent.resetWorld(world, startingPlayer);
+    public final void setGame(Game game, PlayerId startingPlayer) {
+        setUserAgent(game);
+        uiAgent.resetGame(game, startingPlayer);
     }
 
-    private void refreshWorld() {
+    private void refreshGame() {
         targetManager.clearRequest();
 
-        World world = uiAgent.getWorld();
+        Game game = uiAgent.getGame();
         PlayerId currentPlayerId = uiAgent.getCurrentPlayerId();
 
         PlayerUiAgent player1UiAgent;
         PlayerUiAgent player2UiAgent;
-        if (Objects.equals(world.getPlayer1().getPlayerId(), currentPlayerId)) {
+        if (Objects.equals(game.getPlayer1().getPlayerId(), currentPlayerId)) {
             player1UiAgent = new PlayerUiAgent(uiAgent, currentPlayerId);
             player2UiAgent = null;
         }
@@ -98,13 +98,13 @@ public class WorldPlayPanel extends javax.swing.JPanel {
             player2UiAgent = new PlayerUiAgent(uiAgent, currentPlayerId);
         }
 
-        player1.setState(player1UiAgent, world.getPlayer1());
-        player2.setState(player2UiAgent, world.getPlayer2());
+        player1.setState(player1UiAgent, game.getPlayer1());
+        player2.setState(player2UiAgent, game.getPlayer2());
 
-        board1.setBoard(player1UiAgent, world.getPlayer1().getBoard());
-        board2.setBoard(player2UiAgent, world.getPlayer2().getBoard());
+        board1.setBoard(player1UiAgent, game.getPlayer1().getBoard());
+        board2.setBoard(player2UiAgent, game.getPlayer2().getBoard());
 
-        setupHeroTracking(world);
+        setupHeroTracking(game);
     }
 
     private ListenerRef trackForTarget(
@@ -117,19 +117,19 @@ public class WorldPlayPanel extends javax.swing.JPanel {
         return ListenerRegistries.combineListenerRefs(ref1, ref2);
     }
 
-    private void setupHeroTracking(World world) {
+    private void setupHeroTracking(Game game) {
         trackRefs.forEach(ListenerRef::unregister);
         trackRefs.clear();
 
         trackRefs.add(trackForTarget(
                 uiAgent.getTargetManager(),
                 player1,
-                world.getPlayer1().getHero(),
+                game.getPlayer1().getHero(),
                 player1::setHighlight));
         trackRefs.add(trackForTarget(
                 uiAgent.getTargetManager(),
                 player2,
-                world.getPlayer2().getHero(),
+                game.getPlayer2().getHero(),
                 player2::setHighlight));
     }
 
@@ -141,7 +141,7 @@ public class WorldPlayPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jWorldContainer = new javax.swing.JPanel();
+        jGameContainer = new javax.swing.JPanel();
         jPlayer1Panel = new javax.swing.JPanel();
         jPlayer1PlayerPanel = new javax.swing.JPanel();
         jPlayer1BoardPanel = new javax.swing.JPanel();
@@ -154,7 +154,7 @@ public class WorldPlayPanel extends javax.swing.JPanel {
         jLeftControlContainer = new javax.swing.JPanel();
         jUndoButton = new javax.swing.JButton();
         jAddCardButton = new javax.swing.JButton();
-        jResetWorldButton = new javax.swing.JButton();
+        jResetGameButton = new javax.swing.JButton();
 
         jPlayer1PlayerPanel.setLayout(new java.awt.GridLayout(1, 1));
 
@@ -235,13 +235,13 @@ public class WorldPlayPanel extends javax.swing.JPanel {
         });
         jLeftControlContainer.add(jAddCardButton);
 
-        jResetWorldButton.setText("Reset world");
-        jResetWorldButton.addActionListener(new java.awt.event.ActionListener() {
+        jResetGameButton.setText("Reset game");
+        jResetGameButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jResetWorldButtonActionPerformed(evt);
+                jResetGameButtonActionPerformed(evt);
             }
         });
-        jLeftControlContainer.add(jResetWorldButton);
+        jLeftControlContainer.add(jResetGameButton);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -264,17 +264,17 @@ public class WorldPlayPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        javax.swing.GroupLayout jWorldContainerLayout = new javax.swing.GroupLayout(jWorldContainer);
-        jWorldContainer.setLayout(jWorldContainerLayout);
-        jWorldContainerLayout.setHorizontalGroup(
-            jWorldContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout jGameContainerLayout = new javax.swing.GroupLayout(jGameContainer);
+        jGameContainer.setLayout(jGameContainerLayout);
+        jGameContainerLayout.setHorizontalGroup(
+            jGameContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPlayer1Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPlayer2Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jWorldContainerLayout.setVerticalGroup(
-            jWorldContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jWorldContainerLayout.createSequentialGroup()
+        jGameContainerLayout.setVerticalGroup(
+            jGameContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jGameContainerLayout.createSequentialGroup()
                 .addComponent(jPlayer1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -289,14 +289,14 @@ public class WorldPlayPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jWorldContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jGameContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jWorldContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jGameContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -308,14 +308,14 @@ public class WorldPlayPanel extends javax.swing.JPanel {
         uiAgent.undoLastAction();
     }//GEN-LAST:event_jUndoButtonActionPerformed
 
-    private void jResetWorldButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResetWorldButtonActionPerformed
-        World prevWorld = uiAgent.getWorld();
-        PlayerId player1Id = prevWorld.getPlayer1().getPlayerId();
-        PlayerId player2Id = prevWorld.getPlayer2().getPlayerId();
+    private void jResetGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResetGameButtonActionPerformed
+        Game prevGame = uiAgent.getGame();
+        PlayerId player1Id = prevGame.getPlayer1().getPlayerId();
+        PlayerId player2Id = prevGame.getPlayer2().getPlayerId();
 
-        World newWorld = new World(prevWorld.getDb(), player1Id, player2Id);
-        setWorld(newWorld, newWorld.getPlayer1().getPlayerId());
-    }//GEN-LAST:event_jResetWorldButtonActionPerformed
+        Game newGame = new Game(prevGame.getDb(), player1Id, player2Id);
+        setGame(newGame, newGame.getPlayer1().getPlayerId());
+    }//GEN-LAST:event_jResetGameButtonActionPerformed
 
     private void jAddCardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAddCardButtonActionPerformed
         CardDatabasePanel panel = new CardDatabasePanel(db, uiAgent);
@@ -341,9 +341,9 @@ public class WorldPlayPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPlayer2BoardPanel;
     private javax.swing.JPanel jPlayer2Panel;
     private javax.swing.JPanel jPlayer2PlayerPanel;
-    private javax.swing.JButton jResetWorldButton;
+    private javax.swing.JButton jResetGameButton;
     private javax.swing.JPanel jRightControlContainer;
     private javax.swing.JButton jUndoButton;
-    private javax.swing.JPanel jWorldContainer;
+    private javax.swing.JPanel jGameContainer;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,11 +8,11 @@
         "attack-initiated": {
             "lazyFilter": true,
             "filter": [
-                "WorldEventFilters.ATTACKER_IS_ENEMY",
-                "WorldEventFilters.ATTACKER_IS_ALIVE"
+                "GameEventFilters.ATTACKER_IS_ENEMY",
+                "GameEventFilters.ATTACKER_IS_ALIVE"
             ],
             "action": {
-                "class": "WorldEventActions.forAttacker",
+                "class": "GameEventActions.forAttacker",
                 "action": {
                     "class": "TargetedActions.returnMinion",
                     "costReduction": -2

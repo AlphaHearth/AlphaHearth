@@ -9,7 +9,7 @@
         "hp": 6,
         "triggers": {
             "attack-initiated": {
-                "action": "WorldEventActions.MISS_TARGET_SOMETIMES"
+                "action": "GameEventActions.MISS_TARGET_SOMETIMES"
             }
         }
     }

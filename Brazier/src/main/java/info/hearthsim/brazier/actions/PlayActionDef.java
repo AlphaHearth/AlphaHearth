@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.cards.PlayAction;
 import java.util.Collection;
 
@@ -74,14 +74,14 @@ public final class PlayActionDef<Actor> {
 
     /**
      * Plays the {@link PlayAction} defined in this {@code PlayActionDef} with the
-     * given {@link World} and {@link PlayArg}. The method has the same effect as
-     * calling the underlying {@link PlayAction#doPlay(World, PlayArg)} method.
+     * given {@link Game} and {@link PlayArg}. The method has the same effect as
+     * calling the underlying {@link PlayAction#doPlay(Game, PlayArg)} method.
      *
-     * @param world the given {@code World}.
+     * @param game the given {@code Game}.
      * @param arg the given {@code PlayArg}.
      */
-    public UndoAction doPlay(World world, PlayArg<Actor> arg) {
-        return action.doPlay(world, arg);
+    public UndoAction doPlay(Game game, PlayArg<Actor> arg) {
+        return action.doPlay(game, arg);
     }
 
     @Override

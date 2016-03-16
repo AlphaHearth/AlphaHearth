@@ -92,7 +92,7 @@ public final class HeroPower implements PlayerProperty {
     /**
      * Plays the hero power towards the optional target.
      */
-    public UndoAction play(World world, Optional<Character> target) {
+    public UndoAction play(Game game, Optional<Character> target) {
         PlayArg<Card> playArg = new PlayArg<>(getBaseCard(), target);
 
         Player owner = getOwner();
@@ -104,7 +104,7 @@ public final class HeroPower implements PlayerProperty {
         result.addUndo(() -> useCount--);
 
         for (PlayActionDef<Card> action: powerDef.getOnPlayActions()) {
-            result.addUndo(action.doPlay(world, playArg));
+            result.addUndo(action.doPlay(game, playArg));
         }
         return result;
     }

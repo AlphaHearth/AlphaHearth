@@ -10,9 +10,9 @@
         "hp": 8,
         "triggers": {
             "draw-card": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
-                    "class": "WorldEventActions.forEventArgCardTarget",
+                    "class": "GameEventActions.forEventArgCardTarget",
                     "action": "TargetedActions.COPY_TARGET_CARD"
                 }
             }

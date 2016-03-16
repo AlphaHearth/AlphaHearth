@@ -10,9 +10,9 @@
         "triggers": {
             "start-play-card": {
                 "filter": [
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
-                    "WorldEventFilters.TARGET_SELF",
-                    "WorldEventFilters.EVENT_SOURCE_IS_SPELL"
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.TARGET_SELF",
+                    "GameEventFilters.EVENT_SOURCE_IS_SPELL"
                 ],
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",

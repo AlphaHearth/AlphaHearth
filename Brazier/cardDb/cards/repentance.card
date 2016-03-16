@@ -7,14 +7,14 @@
     "secret": {
         "done-play-card": {
             "filter": [
-                "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
                 {
-                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "class": "GameEventFilters.eventSourceHasKeyword",
                     "keywords": "minion"
                 }
             ],
             "action": {
-                "class": "WorldEventActions.withEventArgMinion",
+                "class": "GameEventActions.withEventArgMinion",
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",
                     "buff": {

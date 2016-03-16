@@ -8,8 +8,8 @@
     "secret": {
         "attack-initiated": {
             "filter": [
-                "WorldEventFilters.ATTACK_TARGET_IS_OWNER",
-                "WorldEventFilters.ATTACK_TARGET_IS_MINION"
+                "GameEventFilters.ATTACK_TARGET_IS_OWNER",
+                "GameEventFilters.ATTACK_TARGET_IS_MINION"
             ],
             "action": {
                 "class": "TargetlessActions.summonMinion",

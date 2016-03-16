@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,8 +11,8 @@ import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * Functional interface with sole un-implemented method {@link #select(World, Actor)} which
- * selects {@link Stream} of {@code Selection} from the given {@link World} with the given {@code Actor}.
+ * Functional interface with sole un-implemented method {@link #select(Game, Actor)} which
+ * selects {@link Stream} of {@code Selection} from the given {@link Game} with the given {@code Actor}.
  * <p>
  * For predefined {@code EntitySelector}s, see {@link EntitySelectors}.
  *
@@ -20,17 +20,17 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface EntitySelector<Actor, Selection> {
     /**
-     * Selects {@code Selection} from the given {@link World} with the given {@code Actor} and
+     * Selects {@code Selection} from the given {@link Game} with the given {@code Actor} and
      * returns the selected results as a {@link Stream}.
      */
-    public Stream<? extends Selection> select(World world, Actor actor);
+    public Stream<? extends Selection> select(Game game, Actor actor);
 
     /**
      * Applies the given {@link Function} on the selected {@link Stream} of selections by this selector.
      */
-    public default UndoAction forEach(World world, Actor actor, Function<? super Selection, UndoAction> action) {
+    public default UndoAction forEach(Game game, Actor actor, Function<? super Selection, UndoAction> action) {
         UndoAction.Builder builder = new UndoAction.Builder();
-        select(world, actor).forEach((selection) -> {
+        select(game, actor).forEach((selection) -> {
             builder.addUndo(action.apply(selection));
         });
         return builder;
@@ -40,7 +40,7 @@ public interface EntitySelector<Actor, Selection> {
      * Converts this {@code EntitySelector} to a {@link TargetedEntitySelector}.
      */
     public default TargetedEntitySelector<Actor, Object, Selection> toTargeted() {
-        return (World world, Actor actor, Object target) -> select(world, actor);
+        return (Game game, Actor actor, Object target) -> select(game, actor);
     }
 
     /**
@@ -58,10 +58,10 @@ public interface EntitySelector<Actor, Selection> {
 
         List<EntitySelector<? super Actor, ? extends Selection>> selectorsCopy = new ArrayList<>(selectors);
 
-        return (World world, Actor actor) -> {
+        return (Game game, Actor actor) -> {
             Stream<? extends Selection> result = null;
             for (EntitySelector<? super Actor, ? extends Selection> selector: selectorsCopy) {
-                Stream<? extends Selection> selected = selector.select(world, actor);
+                Stream<? extends Selection> selected = selector.select(game, actor);
                 result = result != null
                         ? Stream.concat(result, selected)
                         : selected;

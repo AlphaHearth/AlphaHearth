@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.minions;
 
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.Damage;
 import info.hearthsim.brazier.Silencable;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
@@ -181,7 +181,7 @@ public final class MinionBody implements Silencable {
         UndoAction hpUndo = hp.setCurrentHp(newHp);
         int damageDone = currentHp - newHp;
 
-        WorldEvents events = owner.getWorld().getEvents();
+        GameEvents events = owner.getGame().getEvents();
         DamageEvent event = new DamageEvent(damage.getSource(), owner, damageDone);
 
         SimpleEventType eventType = damageDone < 0

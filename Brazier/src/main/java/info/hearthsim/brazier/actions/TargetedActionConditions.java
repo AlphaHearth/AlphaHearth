@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.parsing.NamedArg;
 
 import java.util.function.Predicate;
@@ -25,7 +25,7 @@ public final class TargetedActionConditions {
         @NamedArg("filter") Predicate<? super Actor> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             return filter.test(actor);
         };
     }
@@ -42,7 +42,7 @@ public final class TargetedActionConditions {
         @NamedArg("filter") Predicate<? super Target> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             return filter.test(target);
         };
     }
@@ -53,7 +53,7 @@ public final class TargetedActionConditions {
      */
     public static <Actor extends PlayerProperty, Target extends PlayerProperty>
     TargetedActionCondition<Actor, Target> sameOwner() {
-        return (World world, Actor actor, Target target) -> {
+        return (Game game, Actor actor, Target target) -> {
             return actor.getOwner() == target.getOwner();
         };
     }

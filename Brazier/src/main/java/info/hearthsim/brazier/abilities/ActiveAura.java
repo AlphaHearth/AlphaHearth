@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
 /**
@@ -11,9 +11,9 @@ import info.hearthsim.brazier.actions.undo.UndoAction;
  */
 public interface ActiveAura {
     /**
-     * Updates the entities in the given {@link World} with this {@code ActiveAura}.
+     * Updates the entities in the given {@link Game} with this {@code ActiveAura}.
      */
-    public UndoAction updateAura(World world);
+    public UndoAction updateAura(Game game);
 
     /**
      * Deactivates the aura.

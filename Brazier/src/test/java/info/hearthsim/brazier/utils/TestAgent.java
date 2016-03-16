@@ -31,8 +31,8 @@ public final class TestAgent {
     private final HearthStoneDb db;
     private final ScriptedRandomProvider randomProvider;
     private final ScriptedUserAgent userAgent;
-    private final World world;
-    private final WorldPlayAgent playAgent;
+    private final Game game;
+    private final GameAgent playAgent;
 
     public TestAgent() {
         this(true);
@@ -43,19 +43,19 @@ public final class TestAgent {
 
         this.randomProvider = new ScriptedRandomProvider();
         this.userAgent = new ScriptedUserAgent(db);
-        this.world = player1First
-            ? new World(db, PLAYER1_ID, PLAYER2_ID)
-            : new World(db, PLAYER2_ID, PLAYER1_ID);
-        this.world.setRandomProvider(randomProvider);
-        this.world.setUserAgent(userAgent);
-        this.playAgent = new WorldPlayAgent(world);
+        this.game = player1First
+            ? new Game(db, PLAYER1_ID, PLAYER2_ID)
+            : new Game(db, PLAYER2_ID, PLAYER1_ID);
+        this.game.setRandomProvider(randomProvider);
+        this.game.setUserAgent(userAgent);
+        this.playAgent = new GameAgent(game);
     }
 
     /**
      * Applies the given action to the player with the given name.
      */
     public void applyToPlayer(String playerName, Function<? super Player, ? extends UndoAction> action) {
-        Player player = world.getPlayer(parsePlayerName(playerName));
+        Player player = game.getPlayer(parsePlayerName(playerName));
         action.apply(player);
     }
 
@@ -65,7 +65,7 @@ public final class TestAgent {
      */
     public void decreaseManaCostOfHand(String playerName) {
         PlayerId playerId = parsePlayerName(playerName);
-            Hand hand = world.getPlayer(playerId).getHand();
+            Hand hand = game.getPlayer(playerId).getHand();
         hand.forAllCards((card) -> card.decreaseManaCost(1));
     }
 
@@ -78,7 +78,7 @@ public final class TestAgent {
      */
     public void expectPlayer(String playerName, Consumer<? super Player> check) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         check.accept(player);
     }
 
@@ -206,7 +206,7 @@ public final class TestAgent {
         CardDescr cardDescr = db.getCardDb().getById(new CardId(cardName));
 
         expectGameContinues();
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Hand hand = player.getHand();
         hand.addCard(cardDescr);
 
@@ -218,7 +218,7 @@ public final class TestAgent {
      * Expects the game does not end yet.
      */
     public void expectGameContinues() {
-        GameResult gameResult = world.tryGetGameResult();
+        GameResult gameResult = game.tryGetGameResult();
         if (gameResult != null) {
             fail("Unexpected game over: " + gameResult);
         }
@@ -233,7 +233,7 @@ public final class TestAgent {
             expectedDeadPlayerIds.add(parsePlayerName(playerName));
         }
 
-        GameResult gameResult = world.tryGetGameResult();
+        GameResult gameResult = game.tryGetGameResult();
         if (gameResult == null) {
             throw new AssertionError("Expected game over.");
         }
@@ -249,7 +249,7 @@ public final class TestAgent {
         PlayerId playerId = parsePlayerName(playerName);
         List<CardDescr> newCards = parseCards(db, cardNames);
 
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Deck deck = player.getDeck();
 
         deck.setCards(newCards);
@@ -262,7 +262,7 @@ public final class TestAgent {
         PlayerId playerId = parsePlayerName(playerName);
         List<CardDescr> newCards = parseCards(db, cardNames);
 
-        Hand hand = world.getPlayer(playerId).getHand();
+        Hand hand = game.getPlayer(playerId).getHand();
         for (CardDescr card : newCards)
             hand.addCard(card);
     }
@@ -274,7 +274,7 @@ public final class TestAgent {
         PlayerId playerId = parsePlayerName(playerName);
         List<CardDescr> expectedCards = parseCards(db, cardNames);
 
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Deck deck = player.getDeck();
 
         List<Card> deckCards = deck.getCards();
@@ -304,7 +304,7 @@ public final class TestAgent {
         PlayerId playerId = parsePlayerName(playerName);
         String[] secretNamesCopy = secretNames.clone();
 
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         List<Secret> secrets = player.getSecrets().getSecrets();
 
         if (secrets.size() != secretNamesCopy.length) {
@@ -326,7 +326,7 @@ public final class TestAgent {
         PlayerId playerId = parsePlayerName(playerName);
         List<CardDescr> expectedCards = parseCards(db, cardNames);
 
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Hand hand = player.getHand();
 
         List<Card> handCards = hand.getCards();
@@ -341,7 +341,7 @@ public final class TestAgent {
      */
     public void setHeroHp(String playerName, int hp, int armor) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Hero hero = player.getHero();
 
         hero.setCurrentArmor(armor);
@@ -353,7 +353,7 @@ public final class TestAgent {
      */
     public void setMana(String playerName, int mana) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
 
         player.setMana(mana);
     }
@@ -363,7 +363,7 @@ public final class TestAgent {
      */
     public void expectMana(String playerName, int expectedMana) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         assertEquals(expectedMana, player.getMana());
     }
 
@@ -372,7 +372,7 @@ public final class TestAgent {
      */
     public void expectHeroHp(String playerName, int expectedHp, int expectedArmor) {
         PlayerId playerId = parsePlayerName(playerName);
-        Hero hero = world.getPlayer(playerId).getHero();
+        Hero hero = game.getPlayer(playerId).getHero();
         assertEquals("hp", expectedHp, hero.getCurrentHp());
         assertEquals("armor", expectedArmor, hero.getCurrentArmor());
     }
@@ -382,7 +382,7 @@ public final class TestAgent {
      */
     public void expectNoWeapon(String playerName, int attack) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Hero hero = player.getHero();
         assertNull("weapon", player.tryGetWeapon());
         assertEquals("attack", attack, hero.getAttackTool().getAttack());
@@ -393,7 +393,7 @@ public final class TestAgent {
      */
     public void expectWeapon(String playerName, int expectedAttack, int expectedDurability) {
         PlayerId playerId = parsePlayerName(playerName);
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         Hero hero = player.getHero();
         Weapon weapon = player.tryGetWeapon();
         assertNotNull("weapon", weapon);
@@ -416,7 +416,7 @@ public final class TestAgent {
     public void refreshAttack(String playerName) {
         PlayerId playerId = parsePlayerName(playerName);
 
-        Player player = world.getPlayer(playerId);
+        Player player = game.getPlayer(playerId);
         player.getHero().refresh();
         player.getBoard().refreshStartOfTurn();
     }
@@ -444,7 +444,7 @@ public final class TestAgent {
         MinionExpectations[] minionDescrsCopy = minionDescrs.clone();
         ExceptionHelper.checkNotNullElements(minionDescrsCopy, "minionDescrsCopy");
 
-        BoardSide board = world.getPlayer(playerId).getBoard();
+        BoardSide board = game.getPlayer(playerId).getBoard();
         List<Minion> minions = board.getAllMinions();
 
         if (minions.size() != minionDescrsCopy.length) {
@@ -478,7 +478,7 @@ public final class TestAgent {
             throw new IllegalArgumentException("Illegal target ID: " + targetId);
         }
 
-        Player player = world.getPlayer(parsePlayerName(targetIdParts[0]));
+        Player player = game.getPlayer(parsePlayerName(targetIdParts[0]));
         String targetName = targetIdParts[1].trim();
         if (targetName.equalsIgnoreCase("hero")) {
             return player.getHero();

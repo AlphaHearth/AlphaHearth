@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.ArrayList;
@@ -18,10 +18,10 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface PermanentBuff<Target> {
     /**
-     * Adds the permanent buff to the given target in the given world with
+     * Adds the permanent buff to the given target in the given game with
      * the given arguments in {@link BuffArg}.
      */
-    public UndoAction buff(World world, Target target, BuffArg arg);
+    public UndoAction buff(Game game, Target target, BuffArg arg);
 
     /**
      * Merges the given collection of {@link PermanentBuff}s to one which added all of the merged buffs
@@ -34,15 +34,15 @@ public interface PermanentBuff<Target> {
         ExceptionHelper.checkNotNullElements(buffs, "buffs");
 
         if (buffs.isEmpty()) {
-            return (world, actor, arg) -> UndoAction.DO_NOTHING;
+            return (game, actor, arg) -> UndoAction.DO_NOTHING;
         }
 
         List<? extends PermanentBuff<? super Target>> buffsCopy = new ArrayList<>(buffs);
 
-        return (World world, Target target, BuffArg arg) -> {
+        return (Game game, Target target, BuffArg arg) -> {
             UndoAction.Builder result = new UndoAction.Builder(buffsCopy.size());
             for (PermanentBuff<? super Target> buff: buffsCopy) {
-                result.addUndo(buff.buff(world, target, arg));
+                result.addUndo(buff.buff(game, target, arg));
             }
             return result;
         };

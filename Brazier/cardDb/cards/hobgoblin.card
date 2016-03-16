@@ -10,14 +10,14 @@
         "triggers": {
             "start-play-card": {
                 "filter": [
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "WorldEventFilters.cardMinionAttackEquals",
+                        "class": "GameEventFilters.cardMinionAttackEquals",
                         "attack": 1
                     }
                 ],
                 "action": {
-                    "class": "WorldEventActions.forEventArgMinionTarget",
+                    "class": "GameEventActions.forEventArgMinionTarget",
                     "action": {
                         "class": "TargetedActions.buffTarget",
                         "buff": "2/2"

@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.World;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura)} and {@link #updateAllAura(World)}
+ * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura)} and {@link #updateAllAura(Game)}
  * to manage a group of {@code ActiveAura}s.
  */
 public final class ActiveAuraList {
@@ -66,10 +66,10 @@ public final class ActiveAuraList {
     }
 
     /**
-     * Updates all {@code ActiveAura} added to this list with the given world by calling the
-     * {@link ActiveAura#updateAura(World)} method for each of them.
+     * Updates all {@code ActiveAura} added to this list with the given game by calling the
+     * {@link ActiveAura#updateAura(Game)} method for each of them.
      */
-    public UndoAction updateAllAura(World world) {
+    public UndoAction updateAllAura(Game game) {
         if (auras.isEmpty()) {
             return UndoAction.DO_NOTHING;
         }
@@ -78,7 +78,7 @@ public final class ActiveAuraList {
 
         // Copy the list to ensure that it does not change during iteration
         for (AuraWrapper aura: new ArrayList<>(auras)) {
-            builder.addUndo(aura.updateAura(world));
+            builder.addUndo(aura.updateAura(game));
         }
 
         return builder;
@@ -92,8 +92,8 @@ public final class ActiveAuraList {
             this.aura = aura;
         }
 
-        public UndoAction updateAura(World world) {
-            return aura.updateAura(world);
+        public UndoAction updateAura(Game game) {
+            return aura.updateAura(game);
         }
 
         public UndoAction deactivate() {

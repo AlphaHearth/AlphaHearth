@@ -1,14 +1,11 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.events.DamageRequest;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.*;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.HpProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.events.ArmorGainedEvent;
-import info.hearthsim.brazier.events.DamageEvent;
-import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.actions.undo.UndoableIntResult;
 import info.hearthsim.brazier.actions.undo.UndoableResult;
@@ -65,7 +62,7 @@ public final class Hero implements Character {
         this.heroClass = heroClass;
         this.keywords = copySet(keywords);
         this.poisoned = false;
-        this.birthDate = owner.getWorld().getCurrentTime();
+        this.birthDate = owner.getGame().getCurrentTime();
 
         ExceptionHelper.checkNotNullElements(this.keywords, "keywords");
     }
@@ -249,7 +246,7 @@ public final class Hero implements Character {
     public UndoAction armorUp(int armor) {
         if (armor > 0) {
             UndoAction armorUndo = setCurrentArmor(getCurrentArmor() + armor);
-            UndoAction eventUndo = getWorld().getEvents().triggerEvent(
+            UndoAction eventUndo = getGame().getEvents().triggerEvent(
                 SimpleEventType.ARMOR_GAINED,
                 new ArmorGainedEvent(this, armor));
             return () -> {
@@ -270,7 +267,7 @@ public final class Hero implements Character {
         ExceptionHelper.checkNotNullArgument(damageMethod, "damageMethod");
 
         DamageRequest request = new DamageRequest(damage, target);
-        UndoAction eventUndo = target.getWorld().getEvents().triggerEventNow(SimpleEventType.PREPARE_DAMAGE, request);
+        UndoAction eventUndo = target.getGame().getEvents().triggerEventNow(SimpleEventType.PREPARE_DAMAGE, request);
 
         UndoableIntResult applyDamageRef = damageMethod.apply(request.getDamage());
 
@@ -331,7 +328,7 @@ public final class Hero implements Character {
         UndoAction adjustArmorUndo = setCurrentArmor(newArmor);
         UndoAction adjustHpUndo = setCurrentHp(newHp);
 
-        WorldEvents events = getOwner().getWorld().getEvents();
+        GameEvents events = getOwner().getGame().getEvents();
 
         UndoAction eventUndo;
         int damageDealt = originalHp - newHp;

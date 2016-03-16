@@ -19,7 +19,7 @@ public final class AuraTargetProviders {
      * {@code AuraTargetProvider} which returns the source of the aura.
      */
     public static <Self> AuraTargetProvider<Self, Self> selfProvider() {
-        return (world, source) -> {
+        return (game, source) -> {
             return Collections.singletonList(source);
         };
     }
@@ -29,24 +29,24 @@ public final class AuraTargetProviders {
     /**
      * {@code AuraTargetProvider} which returns the cards on the hands of both players.
      */
-    public static final AuraTargetProvider<Object, Card> HAND_PROVIDER = (World world, Object source) -> {
+    public static final AuraTargetProvider<Object, Card> HAND_PROVIDER = (Game game, Object source) -> {
         List<Card> result = new ArrayList<>(2 * Player.MAX_HAND_SIZE);
-        world.getPlayer1().getHand().collectCards(result);
-        world.getPlayer2().getHand().collectCards(result);
+        game.getPlayer1().getHand().collectCards(result);
+        game.getPlayer2().getHand().collectCards(result);
         return result;
     };
 
     /**
      * {@code AuraTargetProvider} which returns the cards on the hands of the aura source's owner.
      */
-    public static final AuraTargetProvider<PlayerProperty, Card> OWN_HAND_PROVIDER = (World world, PlayerProperty source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Card> OWN_HAND_PROVIDER = (Game game, PlayerProperty source) -> {
         return source.getOwner().getHand().getCards();
     };
 
     /**
      * {@code AuraTargetProvider} which returns the cards on the hands of the opponent of the aura source's owner.
      */
-    public static final AuraTargetProvider<PlayerProperty, Card> OPPONENT_HAND_PROVIDER = (World world, PlayerProperty source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Card> OPPONENT_HAND_PROVIDER = (Game game, PlayerProperty source) -> {
         return source.getOwner().getOpponent().getHand().getCards();
     };
 
@@ -55,28 +55,28 @@ public final class AuraTargetProviders {
     /**
      * Returns a {@link AuraTargetProvider} which returns the {@link Hero}es of both players.
      */
-    public static final AuraTargetProvider<Object, Hero> HERO_PROVIDER = (World world, Object source) -> {
-        return Arrays.asList(world.getPlayer1().getHero(), world.getPlayer2().getHero());
+    public static final AuraTargetProvider<Object, Hero> HERO_PROVIDER = (Game game, Object source) -> {
+        return Arrays.asList(game.getPlayer1().getHero(), game.getPlayer2().getHero());
     };
 
     /**
      * Returns a {@link AuraTargetProvider} which returns the {@link Hero} of the aura source's owner.
      */
-    public static final AuraTargetProvider<PlayerProperty, Hero> OWN_HERO_PROVIDER = (World world, PlayerProperty source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Hero> OWN_HERO_PROVIDER = (Game game, PlayerProperty source) -> {
         return Collections.singletonList(source.getOwner().getHero());
     };
 
     /**
      * Returns a {@link AuraTargetProvider} which returns the both {@link Player}s.
      */
-    public static final AuraTargetProvider<Object, Player> PLAYER_PROVIDER = (World world, Object source) -> {
-        return Arrays.asList(world.getPlayer1(), world.getPlayer2());
+    public static final AuraTargetProvider<Object, Player> PLAYER_PROVIDER = (Game game, Object source) -> {
+        return Arrays.asList(game.getPlayer1(), game.getPlayer2());
     };
 
     /**
      * Returns a {@link AuraTargetProvider} which returns the owning {@link Player} of the aura source.
      */
-    public static final AuraTargetProvider<PlayerProperty, Player> OWN_PLAYER_PROVIDER = (World world, PlayerProperty source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Player> OWN_PLAYER_PROVIDER = (Game game, PlayerProperty source) -> {
         return Collections.singletonList(source.getOwner());
     };
 
@@ -85,9 +85,9 @@ public final class AuraTargetProviders {
     /**
      * {@link AuraTargetProvider} which returns the {@link Weapon}(s) equipped by both players.
      */
-    public static final AuraTargetProvider<Object, Weapon> WEAPON_PROVIDER = (World world, Object source) -> {
-        Weapon weapon1 = world.getPlayer1().tryGetWeapon();
-        Weapon weapon2 = world.getPlayer2().tryGetWeapon();
+    public static final AuraTargetProvider<Object, Weapon> WEAPON_PROVIDER = (Game game, Object source) -> {
+        Weapon weapon1 = game.getPlayer1().tryGetWeapon();
+        Weapon weapon2 = game.getPlayer2().tryGetWeapon();
         if (weapon1 == null) {
             return weapon2 != null ? Collections.singletonList(weapon2) : Collections.emptyList();
         }
@@ -99,7 +99,7 @@ public final class AuraTargetProviders {
     /**
      * {@link AuraTargetProvider} which returns the {@link Weapon} equipped by the owner of the aura source.
      */
-    public static final AuraTargetProvider<PlayerProperty, Weapon> OWN_WEAPON_PROVIDER = (World world, PlayerProperty source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Weapon> OWN_WEAPON_PROVIDER = (Game game, PlayerProperty source) -> {
         Weapon weapon = source.getOwner().tryGetWeapon();
         return weapon != null ? Collections.singletonList(weapon) : Collections.emptyList();
     };
@@ -109,10 +109,10 @@ public final class AuraTargetProviders {
     /**
      * {@link AuraTargetProvider} which returns all {@link Minion}s on the board.
      */
-    public static final AuraTargetProvider<Object, Minion> MINION_PROVIDER = (World world, Object source) -> {
+    public static final AuraTargetProvider<Object, Minion> MINION_PROVIDER = (Game game, Object source) -> {
         List<Minion> result = new ArrayList<>(2 * Player.MAX_BOARD_SIZE);
-        world.getPlayer1().getBoard().collectMinions(result, Minion::notScheduledToDestroy);
-        world.getPlayer2().getBoard().collectMinions(result, Minion::notScheduledToDestroy);
+        game.getPlayer1().getBoard().collectMinions(result, Minion::notScheduledToDestroy);
+        game.getPlayer2().getBoard().collectMinions(result, Minion::notScheduledToDestroy);
         BornEntity.sortEntities(result);
         return result;
     };
@@ -120,14 +120,14 @@ public final class AuraTargetProviders {
     /**
      * {@link AuraTargetProvider} which returns all {@link Minion}s on the same board side as the aura source.
      */
-    public static final AuraTargetProvider<PlayerProperty, Minion> SAME_BOARD_MINION_PROVIDER = (world, source) -> {
+    public static final AuraTargetProvider<PlayerProperty, Minion> SAME_BOARD_MINION_PROVIDER = (game, source) -> {
         return source.getOwner().getBoard().getAllMinions();
     };
 
     /**
      * {@link AuraTargetProvider} which returns the {@link Minion}(s) next to the aura source minion.
      */
-    public static final AuraTargetProvider<Minion, Minion> NEIGHBOURS_MINION_PROVIDER = (world, source) -> {
+    public static final AuraTargetProvider<Minion, Minion> NEIGHBOURS_MINION_PROVIDER = (game, source) -> {
         System.out.println("Executed!");
         BoardSide board = source.getOwner().getBoard();
         int sourceIndex = board.indexOf(source.getTargetId());

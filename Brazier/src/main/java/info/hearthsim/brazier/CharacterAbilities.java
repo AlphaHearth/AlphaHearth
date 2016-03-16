@@ -3,7 +3,7 @@ package info.hearthsim.brazier;
 import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
-public final class CharacterAbilities<Self extends WorldProperty> implements Silencable {
+public final class CharacterAbilities<Self extends GameProperty> implements Silencable {
     private final AbilityList<Self> ownedAbilities;
     private final AbilityList<Self> externalAbilities;
 

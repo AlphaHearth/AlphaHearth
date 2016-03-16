@@ -11,10 +11,10 @@
         "triggers": {
             "minion-killed": {
                 "filter": [
-                    "WorldEventFilters.NOT_SELF",
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.NOT_SELF",
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "WorldEventFilters.targetHasKeyword",
+                        "class": "GameEventFilters.targetHasKeyword",
                         "keywords": "mech"
                     }
                 ],

@@ -11,7 +11,7 @@ import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.HpProperty;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.events.WorldActionEvents;
+import info.hearthsim.brazier.events.GameActionEvents;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,20 +69,20 @@ public final class ActionUtils {
 
     /**
      * Returns a {@link Function} of {@link MinionDescr} which stores every minion with all of the given
-     * {@link Keyword}s from the {@link HearthStoneEntityDatabase} of the given {@link World}, and uses the
-     * {@link RandomProvider} from the {@code World} to randomly select a minion from it. {@code null} will be
+     * {@link Keyword}s from the {@link HearthStoneEntityDatabase} of the given {@link Game}, and uses the
+     * {@link RandomProvider} from the {@code Game} to randomly select a minion from it. {@code null} will be
      * returned by the result {@code Function} if no such minion can be found.
      */
-    public static Function<World, MinionDescr> randomMinionProvider(Keyword[] keywords) {
-        Function<World, List<CardDescr>> cardProvider = minionCardProvider(keywords);
-        return (world) -> {
-            List<CardDescr> cards = cardProvider.apply(world);
-            CardDescr card = ActionUtils.pickRandom(world, cards);
+    public static Function<Game, MinionDescr> randomMinionProvider(Keyword[] keywords) {
+        Function<Game, List<CardDescr>> cardProvider = minionCardProvider(keywords);
+        return (game) -> {
+            List<CardDescr> cards = cardProvider.apply(game);
+            CardDescr card = ActionUtils.pickRandom(game, cards);
             return card != null ? card.getMinion() : null;
         };
     }
 
-    private static Function<World, List<CardDescr>> minionCardProvider(Keyword[] keywords) {
+    private static Function<Game, List<CardDescr>> minionCardProvider(Keyword[] keywords) {
         ExceptionHelper.checkNotNullElements(keywords, "keywords");
 
         Keyword[] cardKeywords = new Keyword[keywords.length + 1];
@@ -90,10 +90,10 @@ public final class ActionUtils {
         System.arraycopy(keywords, 0, cardKeywords, 1, keywords.length);
 
         AtomicReference<List<CardDescr>> cache = new AtomicReference<>(null);
-        return (world) -> {
+        return (game) -> {
             List<CardDescr> result = cache.get();
             if (result == null) {
-                result = world.getDb().getCardDb().getByKeywords(cardKeywords);
+                result = game.getDb().getCardDb().getByKeywords(cardKeywords);
                 if (!cache.compareAndSet(null, result)) {
                     result = cache.get();
                 }
@@ -144,27 +144,27 @@ public final class ActionUtils {
     }
 
     /**
-     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link World}.
+     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link Game}.
      */
-    public static Character rollTarget(World world) {
+    public static Character rollTarget(Game game) {
         List<Character> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
-        collectTargets(world.getPlayer1(), result);
-        collectTargets(world.getPlayer2(), result);
+        collectTargets(game.getPlayer1(), result);
+        collectTargets(game.getPlayer2(), result);
 
-        int roll = world.getRandomProvider().roll(result.size());
+        int roll = game.getRandomProvider().roll(result.size());
         return result.get(roll);
     }
 
     /**
-     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link World}
+     * Randomly selects a {@link Character} from all {@code Character}s in the given {@link Game}
      * which satisfy the given {@link Predicate}.
      */
-    public static Character rollTarget(World world, Predicate<? super Character> filter) {
+    public static Character rollTarget(Game game, Predicate<? super Character> filter) {
         List<Character> result = new ArrayList<>(2 * (Player.MAX_BOARD_SIZE + 1));
-        collectTargets(world.getPlayer1(), result, filter);
-        collectTargets(world.getPlayer2(), result, filter);
+        collectTargets(game.getPlayer1(), result, filter);
+        collectTargets(game.getPlayer2(), result, filter);
 
-        int roll = world.getRandomProvider().roll(result.size());
+        int roll = game.getRandomProvider().roll(result.size());
         return result.get(roll);
     }
 
@@ -172,16 +172,16 @@ public final class ActionUtils {
      * Returns a randomly selected living {@link Character} which is on the board side
      * of the given {@link Player}.
      */
-    public static Character rollAlivePlayerTarget(World world, Player player) {
-        return rollPlayerTarget(world, player, (target) -> !target.isDead());
+    public static Character rollAlivePlayerTarget(Game game, Player player) {
+        return rollPlayerTarget(game, player, (target) -> !target.isDead());
     }
 
     /**
      * Returns a randomly selected {@link Character} which is on the board side
      * of the given {@link Player}.
      */
-    public static Character rollPlayerTarget(World world, Player player) {
-        return rollPlayerTarget(world, player, (target) -> true);
+    public static Character rollPlayerTarget(Game game, Player player) {
+        return rollPlayerTarget(game, player, (target) -> true);
     }
 
     /**
@@ -189,14 +189,14 @@ public final class ActionUtils {
      * and satisfies the given {@link Predicate}.
      */
     public static Character rollPlayerTarget(
-        World world,
+        Game game,
         Player player,
         Predicate<? super Character> filter) {
 
         List<Character> result = new ArrayList<>(Player.MAX_BOARD_SIZE + 1);
         collectTargets(player, result, filter);
 
-        int roll = world.getRandomProvider().roll(result.size());
+        int roll = game.getRandomProvider().roll(result.size());
         return result.get(roll);
     }
 
@@ -232,11 +232,11 @@ public final class ActionUtils {
      * the given {@link Predicate} to the given {@link List}.
      */
     public static void collectTargets(
-        World world,
+        Game game,
         List<? super Character> result,
         Predicate<? super Character> filter) {
-        collectTargets(world.getPlayer1(), result, filter);
-        collectTargets(world.getPlayer2(), result, filter);
+        collectTargets(game.getPlayer1(), result, filter);
+        collectTargets(game.getPlayer2(), result, filter);
     }
 
     /**
@@ -264,7 +264,7 @@ public final class ActionUtils {
     public static UndoableResult<Card> pollDeckForCard(
         Player player,
         Predicate<? super Card> cardFilter) {
-        return player.getDeck().tryDrawRandom(player.getWorld().getRandomProvider(), cardFilter);
+        return player.getDeck().tryDrawRandom(player.getGame().getRandomProvider(), cardFilter);
     }
 
     /**
@@ -311,8 +311,8 @@ public final class ActionUtils {
     /**
      * Returns a randomly selected living {@link Minion} which satisfies the given {@link Predicate}.
      */
-    public static Minion rollAliveMinionTarget(World world, Predicate<? super Minion> minionFilter) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+    public static Minion rollAliveMinionTarget(Game game, Predicate<? super Minion> minionFilter) {
+        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(minionFilter, "minionFilter");
 
         List<Minion> result = new ArrayList<>(2 * Player.MAX_BOARD_SIZE);
@@ -320,50 +320,50 @@ public final class ActionUtils {
         Predicate<Minion> includeMinion = (minion) -> !minion.isDead();
         includeMinion = includeMinion.and(minionFilter);
 
-        world.getPlayer1().getBoard().collectMinions(result, includeMinion);
-        world.getPlayer2().getBoard().collectMinions(result, includeMinion);
+        game.getPlayer1().getBoard().collectMinions(result, includeMinion);
+        game.getPlayer2().getBoard().collectMinions(result, includeMinion);
 
         if (result.isEmpty()) {
             return null;
         }
 
-        int roll = world.getRandomProvider().roll(result.size());
+        int roll = game.getRandomProvider().roll(result.size());
         return result.get(roll);
     }
 
     /**
      * Selects a random element from the given {@link List} by using the {@link RandomProvider}
-     * from the given {@link World}.
+     * from the given {@link Game}.
      */
-    // TODO Change the `World` parameter to `RandomProvider`
-    public static <T> T pickRandom(World world, List<? extends T> list) {
+    // TODO Change the `Game` parameter to `RandomProvider`
+    public static <T> T pickRandom(Game game, List<? extends T> list) {
         int size = list.size();
         if (size == 0) {
             return null;
         }
 
-        int index = world.getRandomProvider().roll(size);
+        int index = game.getRandomProvider().roll(size);
         return list.get(index);
     }
 
     /**
      * Selects a random element from the given array by using the {@link RandomProvider} from the given
-     * {@link World}.
+     * {@link Game}.
      */
-    public static <T> T pickRandom(World world, T[] list) {
+    public static <T> T pickRandom(Game game, T[] list) {
         if (list.length == 0) {
             return null;
         }
 
-        int index = world.getRandomProvider().roll(list.length);
+        int index = game.getRandomProvider().roll(list.length);
         return list[index];
     }
 
     /**
      * Selects given number of random elements from the given {@link List} by using the {@link RandomProvider}
-     * from the given {@link World}.
+     * from the given {@link Game}.
      */
-    public static <T> List<T> pickMultipleRandom(World world, int count, List<? extends T> list) {
+    public static <T> List<T> pickMultipleRandom(Game game, int count, List<? extends T> list) {
         int size = list.size();
         if (size == 0 || count <= 0) {
             return Collections.emptyList();
@@ -372,7 +372,7 @@ public final class ActionUtils {
             return Collections.singletonList(list.get(0));
         }
 
-        RandomProvider rng = world.getRandomProvider();
+        RandomProvider rng = game.getRandomProvider();
         if (count == 1) {
             return Collections.singletonList(list.get(rng.roll(size)));
         }
@@ -394,13 +394,13 @@ public final class ActionUtils {
     }
 
     /**
-     * Executes the given {@link UndoableAction} on the end of the current turn of the given {@link World}.
+     * Executes the given {@link UndoableAction} on the end of the current turn of the given {@link Game}.
      */
-    public static UndoAction doOnEndOfTurn(World world, UndoableAction action) {
-        WorldActionEvents<Player> listeners = world.getEvents().turnEndsListeners();
+    public static UndoAction doOnEndOfTurn(Game game, UndoableAction action) {
+        GameActionEvents<Player> listeners = game.getEvents().turnEndsListeners();
 
         AtomicReference<UndoableUnregisterAction> unregisterRef = new AtomicReference<>();
-        UndoableUnregisterAction unregisterAction = listeners.addAction((World eventWorld, Player player) -> {
+        UndoableUnregisterAction unregisterAction = listeners.addAction((Game eventGame, Player player) -> {
             UndoAction unregisterUndo = unregisterRef.get().unregister();
             UndoAction actionUndo = action.doAction();
 
@@ -419,14 +419,14 @@ public final class ActionUtils {
      * end of turn.
      */
     public static <Self> Ability<Self> toSingleTurnAbility(
-        World world,
+        Game game,
         Ability<Self> ability) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
         return (Self self) -> {
             UndoableUnregisterAction unregisterAction = ability.activate(self);
-            UndoAction unregUndo = unregisterAfterTurnEnds(world, unregisterAction);
+            UndoAction unregUndo = unregisterAfterTurnEnds(game, unregisterAction);
 
             return new UndoableUnregisterAction() {
                 @Override
@@ -443,18 +443,18 @@ public final class ActionUtils {
         };
     }
 
-    private static UndoAction unregisterAfterTurnEnds(World world, UndoableUnregisterAction unregisterAction) {
-        WorldActionEvents<Player> turnEndsListeners = world.getEvents().turnEndsListeners();
-        return turnEndsListeners.addAction((World taskWorld, Player object) -> unregisterAction.unregister());
+    private static UndoAction unregisterAfterTurnEnds(Game game, UndoableUnregisterAction unregisterAction) {
+        GameActionEvents<Player> turnEndsListeners = game.getEvents().turnEndsListeners();
+        return turnEndsListeners.addAction((Game taskGame, Player object) -> unregisterAction.unregister());
     }
 
     /**
      * Executes the given {@link UndoableRegistry} and unregisters by using the {@link UndoableUnregisterAction}
-     * it returns at the end of the current turn of the given {@link World}.
+     * it returns at the end of the current turn of the given {@link Game}.
      */
-    public static UndoAction doTemporary(World world, UndoableRegistry registerAction) {
+    public static UndoAction doTemporary(Game game, UndoableRegistry registerAction) {
         UndoableUnregisterAction buffRef = registerAction.register();
-        UndoAction unregUndo = unregisterAfterTurnEnds(world, buffRef);
+        UndoAction unregUndo = unregisterAfterTurnEnds(game, buffRef);
 
         return () -> {
             unregUndo.undo();
@@ -467,16 +467,16 @@ public final class ActionUtils {
      * {@link PlayerProperty}'s owner after it is activated.
      */
     public static <Self> Ability<Self> toUntilTurnStartsAbility(
-        World world,
+        Game game,
         PlayerProperty turnOwner,
         Ability<Self> ability) {
-        ExceptionHelper.checkNotNullArgument(world, "world");
+        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(turnOwner, "turnOwner");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
         return (Self self) -> {
             UndoableUnregisterAction unregisterAction = ability.activate(self);
-            UndoAction unregUndo = unregisterOnNextTurn(world, turnOwner, unregisterAction);
+            UndoAction unregUndo = unregisterOnNextTurn(game, turnOwner, unregisterAction);
 
             return new UndoableUnregisterAction() {
                 @Override
@@ -494,11 +494,11 @@ public final class ActionUtils {
     }
 
     private static UndoAction unregisterOnNextTurn(
-        World world,
+        Game game,
         PlayerProperty turnOwner,
         UndoableUnregisterAction unregisterAction) {
-        WorldActionEvents<Player> turnStartsListeners = world.getEvents().turnStartsListeners();
-        return turnStartsListeners.addAction((World taskWorld, Player actionPlayer) -> {
+        GameActionEvents<Player> turnStartsListeners = game.getEvents().turnStartsListeners();
+        return turnStartsListeners.addAction((Game taskGame, Player actionPlayer) -> {
             if (actionPlayer == turnOwner.getOwner()) {
                 return unregisterAction.unregister();
             } else {
@@ -511,9 +511,9 @@ public final class ActionUtils {
      * Executes the given {@link UndoableRegistry} and unregister it by using the {@link UndoableUnregisterAction}
      * it returns at the start of a new turn of the given {@link PlayerProperty}'s owner.
      */
-    public static UndoAction doUntilNewTurnStart(World world, PlayerProperty turnOwner, UndoableRegistry registerAction) {
+    public static UndoAction doUntilNewTurnStart(Game game, PlayerProperty turnOwner, UndoableRegistry registerAction) {
         UndoableUnregisterAction buffRef = registerAction.register();
-        UndoAction unregUndo = unregisterOnNextTurn(world, turnOwner, buffRef);
+        UndoAction unregUndo = unregisterOnNextTurn(game, turnOwner, buffRef);
 
         return () -> {
             unregUndo.undo();

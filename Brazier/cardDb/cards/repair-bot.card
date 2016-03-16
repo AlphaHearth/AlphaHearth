@@ -10,7 +10,7 @@
         "hp": 4,
         "triggers": {
             "turn-ends": {
-                "filter": "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.forTargets",
                     "selector": {

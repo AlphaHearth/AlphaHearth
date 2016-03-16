@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.World;
-import info.hearthsim.brazier.WorldProperty;
+import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.GameProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 
@@ -69,20 +69,20 @@ public interface Ability <Self> {
      * @param eventType the given type of event.
      * @return the created {@code Ability}.
      */
-    public static <Self extends WorldProperty, EventArg> Ability<Self> onEventAbility(
-        @NamedArg("filter") WorldEventFilter<? super Self, ? super EventArg> filter,
-        @NamedArg("action") WorldEventAction<? super Self, ? super EventArg> action,
+    public static <Self extends GameProperty, EventArg> Ability<Self> onEventAbility(
+        @NamedArg("filter") GameEventFilter<? super Self, ? super EventArg> filter,
+        @NamedArg("action") GameEventAction<? super Self, ? super EventArg> action,
         @NamedArg("event") SimpleEventType eventType) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
         ExceptionHelper.checkNotNullArgument(action, "action");
         ExceptionHelper.checkNotNullArgument(eventType, "eventType");
 
         return (Self self) -> {
-            WorldEvents events = self.getWorld().getEvents();
-            WorldActionEventsRegistry<EventArg> listeners = events.simpleListeners(eventType);
-            return listeners.addAction((World world, EventArg eventArg) -> {
-                if (filter.applies(world, self, eventArg)) {
-                    return action.alterWorld(world, self, eventArg);
+            GameEvents events = self.getGame().getEvents();
+            GameActionEventsRegistry<EventArg> listeners = events.simpleListeners(eventType);
+            return listeners.addAction((Game game, EventArg eventArg) -> {
+                if (filter.applies(game, self, eventArg)) {
+                    return action.alterGame(game, self, eventArg);
                 } else {
                     return UndoAction.DO_NOTHING;
                 }

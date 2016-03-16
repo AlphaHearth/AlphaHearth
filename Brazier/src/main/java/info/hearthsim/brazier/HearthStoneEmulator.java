@@ -6,7 +6,7 @@ import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.minions.MinionId;
-import info.hearthsim.brazier.ui.WorldPlayPanel;
+import info.hearthsim.brazier.ui.GamePlayPanel;
 import info.hearthsim.brazier.weapons.WeaponId;
 
 import java.awt.GridLayout;
@@ -34,20 +34,20 @@ public class HearthStoneEmulator {
     }
 
     private static Card getCard(Player player, String cardName) {
-        HearthStoneDb db = player.getWorld().getDb();
+        HearthStoneDb db = player.getGame().getDb();
         return new Card(player, getCard(db, cardName));
     }
 
     private static void playCard(Player player, String cardName, PlayTargetRequest playTarget) {
         Card card = getCard(player, cardName);
         player.playCard(card, 0, playTarget);
-        player.getWorld().endPhase();
+        player.getGame().endPhase();
     }
 
-    private static void setupInitialWorld(World world) {
-        HearthStoneDb db = world.getDb();
+    private static void setupInitialGame(Game game) {
+        HearthStoneDb db = game.getDb();
 
-        Player player1 = world.getPlayer1();
+        Player player1 = game.getPlayer1();
         player1.getHero().setCurrentHp(29);
         player1.getHero().setCurrentArmor(2);
         player1.summonMinion(db.getMinionDb().getById(new MinionId("Sludge Belcher")));
@@ -60,7 +60,7 @@ public class HearthStoneEmulator {
         player1.setMana(0);
         player1.getDeck().setCards(getRandomCards(db, 10));
 
-        Player player2 = world.getPlayer2();
+        Player player2 = game.getPlayer2();
         player2.getHero().setCurrentHp(26);
         player2.getHero().setCurrentArmor(0);
         BoardSide board2 = player2.getBoard();
@@ -83,7 +83,7 @@ public class HearthStoneEmulator {
 
         player2.getDeck().putOnTop(getCard(db, "Whirlwind"));
 
-        world.endPhase();
+        game.endPhase();
 
         player2.startNewTurn();
 
@@ -94,10 +94,10 @@ public class HearthStoneEmulator {
         player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
     }
 
-    private static void setupInitialWorld2(World world) {
-        HearthStoneDb db = world.getDb();
+    private static void setupInitialGame2(Game game) {
+        HearthStoneDb db = game.getDb();
 
-        Player player1 = world.getPlayer1();
+        Player player1 = game.getPlayer1();
         player1.getHero().setCurrentHp(23);
         player1.getHero().setCurrentArmor(0);
         player1.summonMinion(db.getMinionDb().getById(new MinionId("Grim Patron")));
@@ -110,7 +110,7 @@ public class HearthStoneEmulator {
         player1.getHand().addCard(getCard(db, "Moonfire"));
         player1.getDeck().setCards(getRandomCards(db, 10));
 
-        Player player2 = world.getPlayer2();
+        Player player2 = game.getPlayer2();
         player2.getHero().setCurrentHp(26);
         player2.getHero().setCurrentArmor(0);
         player2.summonMinion(db.getMinionDb().getById(new MinionId("Grim Patron")));
@@ -136,8 +136,8 @@ public class HearthStoneEmulator {
 
         player2.getDeck().putOnTop(getCard(db, "Acolyte of Pain"));
 
-        world.endPhase();
-        world.setCurrentPlayerId(world.getPlayer2().getPlayerId());
+        game.endPhase();
+        game.setCurrentPlayerId(game.getPlayer2().getPlayerId());
         player2.startNewTurn();
 
         player1.getManaResource().setManaCrystals(8);
@@ -150,11 +150,11 @@ public class HearthStoneEmulator {
         player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
     }
 
-    private static void setupInitialWorld3(World world) {
-        HearthStoneDb db = world.getDb();
+    private static void setupInitialGame3(Game game) {
+        HearthStoneDb db = game.getDb();
 
-        Player player1 = world.getPlayer1();
-        world.setCurrentPlayerId(player1.getPlayerId());
+        Player player1 = game.getPlayer1();
+        game.setCurrentPlayerId(player1.getPlayerId());
 
         player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Reinforce")));
 
@@ -165,7 +165,7 @@ public class HearthStoneEmulator {
         player1.getHand().addCard(getCard(db, "Pyroblast"));
         player1.getDeck().setCards(getRandomCards(db, 10));
 
-        Player player2 = world.getPlayer2();
+        Player player2 = game.getPlayer2();
         player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Dagger Mastery")));
 
         playCard(player2, "The Coin",
@@ -200,7 +200,7 @@ public class HearthStoneEmulator {
         player2.getHero().setCurrentHp(1);
         player2.getHero().setCurrentArmor(0);
 
-        world.endTurn();
+        game.endTurn();
 
         player1.getManaResource().setManaCrystals(10);
         player1.setMana(0);
@@ -218,14 +218,14 @@ public class HearthStoneEmulator {
             PlayerId player1 = new PlayerId("Player1");
             PlayerId player2 = new PlayerId("Player2");
 
-            World world = new World(db, player1, player2);
-            setupInitialWorld3(world);
+            Game game = new Game(db, player1, player2);
+            setupInitialGame3(game);
 
-            WorldPlayPanel worldPlayPanel = new WorldPlayPanel(world, player2);
+            GamePlayPanel gamePlayPanel = new GamePlayPanel(game, player2);
 
             JFrame mainFrame = new JFrame("HearthStone Emulator");
             mainFrame.getContentPane().setLayout(new GridLayout(1, 1));
-            mainFrame.getContentPane().add(worldPlayPanel);
+            mainFrame.getContentPane().add(gamePlayPanel);
 
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);

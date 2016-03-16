@@ -6,9 +6,9 @@
     "manaCost": 1,
     "secret": {
         "hero-damaged": {
-            "filter": "WorldEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
+            "filter": "GameEventFilters.DAMAGE_TARGET_IS_OWN_HERO",
             "action": {
-                "class": "WorldEventActions.reflectDamage",
+                "class": "GameEventActions.reflectDamage",
                 "selector": "EntitySelectors.enemyHero"
             }
         }

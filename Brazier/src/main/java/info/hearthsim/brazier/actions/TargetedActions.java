@@ -4,15 +4,12 @@ import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.actions.undo.*;
-import info.hearthsim.brazier.events.WorldEventAction;
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.*;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldActionEvents;
-import info.hearthsim.brazier.events.WorldEventFilter;
 import info.hearthsim.brazier.minions.MinionBody;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionProvider;
@@ -36,7 +33,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Ancestral Healing</em>.
      */
-    public static final TargetedAction<DamageSource, Character> RESTORES_TO_FULL_HEALTH = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> RESTORES_TO_FULL_HEALTH = (game, actor, target) -> {
         HpProperty hp = ActionUtils.tryGetHp(target);
         if (hp == null) {
             return UndoAction.DO_NOTHING;
@@ -54,7 +51,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Feign Death</em>.
      */
-    public static final TargetedAction<Object, Minion> TRIGGER_DEATHRATTLE = (world, actor, target) -> {
+    public static final TargetedAction<Object, Minion> TRIGGER_DEATHRATTLE = (game, actor, target) -> {
         return target.triggerDeathRattles();
     };
 
@@ -63,7 +60,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Assassinate</em>.
      */
-    public static final TargetedAction<Object, Character> KILL_TARGET = (world, actor, target) -> {
+    public static final TargetedAction<Object, Character> KILL_TARGET = (game, actor, target) -> {
         return target.kill();
     };
 
@@ -72,7 +69,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Rusty Horn</em>.
      */
-    public static final TargetedAction<Object, Minion> TAUNT = (World world, Object actor, Minion target) -> {
+    public static final TargetedAction<Object, Minion> TAUNT = (Game game, Object actor, Minion target) -> {
         return target.getBody().setTaunt(true);
     };
 
@@ -81,7 +78,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Argent Protector</em>.
      */
-    public static final TargetedAction<Object, Minion> GIVE_DIVINE_SHIELD = (world, actor, target) -> {
+    public static final TargetedAction<Object, Minion> GIVE_DIVINE_SHIELD = (game, actor, target) -> {
         return target.getProperties().getBody().setDivineShield(true);
     };
 
@@ -90,7 +87,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Charge</em>.
      */
-    public static final TargetedAction<Object, Minion> CHARGE = (world, actor, target) -> {
+    public static final TargetedAction<Object, Minion> CHARGE = (game, actor, target) -> {
         return target.setCharge(true);
     };
 
@@ -99,7 +96,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Master of Disguise</em>.
      */
-    public static final TargetedAction<Object, Minion> STEALTH = (world, actor, target) -> {
+    public static final TargetedAction<Object, Minion> STEALTH = (game, actor, target) -> {
         return target.getBody().setStealth(true);
     };
 
@@ -108,8 +105,8 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Conceal</em>.
      */
-    public static final TargetedAction<Object, Minion> STEALTH_FOR_A_TURN = (world, actor, target) -> {
-        return target.addAndActivateAbility(ActionUtils.toUntilTurnStartsAbility(world, target, (Minion self) -> {
+    public static final TargetedAction<Object, Minion> STEALTH_FOR_A_TURN = (game, actor, target) -> {
+        return target.addAndActivateAbility(ActionUtils.toUntilTurnStartsAbility(game, target, (Minion self) -> {
             return self.getBody().getStealthProperty().setValueTo(true);
         }));
     };
@@ -119,7 +116,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Silence</em>.
      */
-    public static final TargetedAction<Object, Silencable> SILENCE = (world, actor, target) -> {
+    public static final TargetedAction<Object, Silencable> SILENCE = (game, actor, target) -> {
         return target.silence();
     };
 
@@ -128,7 +125,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Frost Nova</em>.
      */
-    public static final TargetedAction<Object, Character> FREEZE_TARGET = (world, actor, target) -> {
+    public static final TargetedAction<Object, Character> FREEZE_TARGET = (game, actor, target) -> {
         return target.getAttackTool().freeze();
     };
 
@@ -144,7 +141,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Mind Control</em>.
      */
-    public static final TargetedAction<PlayerProperty, Minion> TAKE_CONTROL = (world, actor, target) -> {
+    public static final TargetedAction<PlayerProperty, Minion> TAKE_CONTROL = (game, actor, target) -> {
         return actor.getOwner().getBoard().takeOwnership(target);
     };
 
@@ -153,7 +150,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Chromaggus</em>.
      */
-    public static final TargetedAction<PlayerProperty, Card> COPY_TARGET_CARD = (world, self, target) -> {
+    public static final TargetedAction<PlayerProperty, Card> COPY_TARGET_CARD = (game, self, target) -> {
         Hand hand = self.getOwner().getHand();
         return hand.addCard(target.getCardDescr());
     };
@@ -163,7 +160,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Faceless Manipulator</em>.
      */
-    public static TargetedAction<Minion, Minion> COPY_OTHER_MINION = (world, actor, target) -> {
+    public static TargetedAction<Minion, Minion> COPY_OTHER_MINION = (game, actor, target) -> {
         return actor.copyOther(target);
     };
 
@@ -172,13 +169,13 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Malorne</em>.
      */
-    public static final TargetedAction<Object, Minion> SHUFFLE_MINION = (world, actor, minion) -> {
+    public static final TargetedAction<Object, Minion> SHUFFLE_MINION = (game, actor, minion) -> {
         Player owner = minion.getOwner();
         Deck deck = owner.getDeck();
         CardDescr baseCard = minion.getBaseDescr().getBaseCard();
 
         UndoAction removeUndo = owner.getBoard().removeFromBoard(minion.getTargetId());
-        UndoAction shuffleUndo = deck.shuffle(world.getRandomProvider(), baseCard);
+        UndoAction shuffleUndo = deck.shuffle(game.getRandomProvider(), baseCard);
         return () -> {
             shuffleUndo.undo();
             removeUndo.undo();
@@ -191,7 +188,7 @@ public final class TargetedActions {
      * See spell <em>Savagery</em>.
      */
     // TODO The damage of Savagery will be affected by spell power. Check if it is supported by this method.
-    public static final TargetedAction<DamageSource, Character> SAVAGERY = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> SAVAGERY = (game, actor, target) -> {
         int damage = actor.getOwner().getHero().getAttackTool().getAttack();
         return ActionUtils.damageCharacter(actor, damage, target);
     };
@@ -202,7 +199,7 @@ public final class TargetedActions {
      * See spell <em>Shield Slam</em>.
      */
     // TODO The damage of Shield Slam will be affected by spell power. Check if it is supported by this method.
-    public static final TargetedAction<DamageSource, Character> SHIELD_SLAM = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> SHIELD_SLAM = (game, actor, target) -> {
         int damage = actor.getOwner().getHero().getCurrentArmor();
         return ActionUtils.damageCharacter(actor, damage, target);
     };
@@ -212,7 +209,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Shadow Madness</em>.
      */
-    public static final TargetedAction<PlayerProperty, Minion> SHADOW_MADNESS = (world, actor, target) -> {
+    public static final TargetedAction<PlayerProperty, Minion> SHADOW_MADNESS = (game, actor, target) -> {
         return takeControlForThisTurn(actor.getOwner(), target);
     };
 
@@ -222,7 +219,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Holy Wrath</em>.
      */
-    public static final TargetedAction<DamageSource, Character> HOLY_WRATH = (world, actor, target) -> {
+    public static final TargetedAction<DamageSource, Character> HOLY_WRATH = (game, actor, target) -> {
         Player player = actor.getOwner();
 
         UndoableResult<Card> cardRef = player.drawCardToHand();
@@ -249,7 +246,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Crazed Alchemist</em>.
      */
-    public static final TargetedAction<Object, Minion> ATTACK_HP_SWITCH = (World world, Object actor, Minion target) -> {
+    public static final TargetedAction<Object, Minion> ATTACK_HP_SWITCH = (Game game, Object actor, Minion target) -> {
         MinionBody body = target.getBody();
 
         int attack = target.getAttackTool().getAttack();
@@ -271,12 +268,12 @@ public final class TargetedActions {
      * See minion <em>Recombobulator</em>.
      */
     public static final TargetedAction<Object, Minion> RECOMBOBULATE = transformMinion((Minion target) -> {
-        World world = target.getWorld();
+        Game game = target.getGame();
 
         int manaCost = target.getBaseDescr().getBaseCard().getManaCost();
         Keyword manaCostKeyword = Keywords.manaCost(manaCost);
-        List<CardDescr> possibleMinions = world.getDb().getCardDb().getByKeywords(Keywords.MINION, manaCostKeyword);
-        CardDescr selected = ActionUtils.pickRandom(world, possibleMinions);
+        List<CardDescr> possibleMinions = game.getDb().getCardDb().getByKeywords(Keywords.MINION, manaCostKeyword);
+        CardDescr selected = ActionUtils.pickRandom(game, possibleMinions);
         if (selected == null) {
             return null;
         }
@@ -293,7 +290,7 @@ public final class TargetedActions {
      * <p>
      * See minion <em>Vol'jin</em>.
      */
-    public static final TargetedAction<Minion, Minion> SWAP_HP_WITH_TARGET = (World world, Minion actor, Minion target) -> {
+    public static final TargetedAction<Minion, Minion> SWAP_HP_WITH_TARGET = (Game game, Minion actor, Minion target) -> {
         HpProperty targetHpProperty = target.getBody().getHp();
         HpProperty ourHpProperty = actor.getBody().getHp();
 
@@ -313,7 +310,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Flare</em>.
      */
-    public static final TargetedAction<Object, Minion> DESTROY_STEALTH = (world, actor, target) -> {
+    public static final TargetedAction<Object, Minion> DESTROY_STEALTH = (game, actor, target) -> {
         return target.getBody().setStealth(false);
     };
 
@@ -324,8 +321,8 @@ public final class TargetedActions {
     public static <Actor extends PlayerProperty, Target> TargetedAction<Actor, Target> actWithOpponent(
             @NamedArg("action") TargetedAction<? super Player, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (World world, Actor actor, Target target) -> {
-            return action.alterWorld(world, actor.getOwner().getOpponent(), target);
+        return (Game game, Actor actor, Target target) -> {
+            return action.alterGame(game, actor.getOwner().getOpponent(), target);
         };
     }
 
@@ -336,8 +333,8 @@ public final class TargetedActions {
     public static <Target> TargetedAction<Object, Target> actWithTarget(
             @NamedArg("action") TargetedAction<? super Target, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (World world, Object actor, Target target) -> {
-            return action.alterWorld(world, target, target);
+        return (Game game, Object actor, Target target) -> {
+            return action.alterGame(game, target, target);
         };
     }
 
@@ -349,8 +346,8 @@ public final class TargetedActions {
      */
     public static <Target> TargetedAction<Target, Target> withTarget(
         @NamedArg("action") TargetedAction<? super Target, ? super Target> action) {
-        return (World world, Target actor, Target target) -> {
-            return action.alterWorld(world, target, target);
+        return (Game game, Target actor, Target target) -> {
+            return action.alterGame(game, target, target);
         };
     }
 
@@ -363,14 +360,14 @@ public final class TargetedActions {
     public static <Actor extends PlayerProperty> TargetedAction<Actor, Minion> doOnAttack(
             @NamedArg("action") TargetlessAction<? super Actor> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (World world, Actor actor, Minion target) -> {
+        return (Game game, Actor actor, Minion target) -> {
             return target.addAndActivateAbility((Minion self) -> {
-                WorldEvents events = world.getEvents();
-                WorldActionEvents<AttackRequest> listeners = events.simpleListeners(SimpleEventType.ATTACK_INITIATED);
+                GameEvents events = game.getEvents();
+                GameActionEvents<AttackRequest> listeners = events.simpleListeners(SimpleEventType.ATTACK_INITIATED);
 
                 Predicate<AttackRequest> condition = (attackRequest) -> attackRequest.getAttacker() == self;
-                return listeners.addAction(Priorities.LOW_PRIORITY, condition, (attackWorld, attackRequest) -> {
-                    return action.alterWorld(attackWorld, actor);
+                return listeners.addAction(Priorities.LOW_PRIORITY, condition, (attackGame, attackRequest) -> {
+                    return action.alterGame(attackGame, actor);
                 });
             });
         };
@@ -386,9 +383,9 @@ public final class TargetedActions {
             @NamedArg("action") TargetedAction<? super Minion, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Object actor, Target target) -> {
+        return (Game game, Object actor, Target target) -> {
             Minion minion = ActionUtils.tryGetMinion(actor);
-            return minion != null ? action.alterWorld(world, minion, target) : UndoAction.DO_NOTHING;
+            return minion != null ? action.alterGame(game, minion, target) : UndoAction.DO_NOTHING;
         };
     }
 
@@ -396,14 +393,14 @@ public final class TargetedActions {
      * Returns a {@link TargetedAction} which executes the given action, ensuring that it won't be interrupted
      * by event notifications scheduled to any of the event listeners.
      *
-     * @see WorldEvents#doAtomic(UndoableAction)
+     * @see GameEvents#doAtomic(UndoableAction)
      */
     public static <Actor, Target> TargetedAction<Actor, Target> doAtomic(
             @NamedArg("action") TargetedAction<? super Actor, ? super Target> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Actor actor, Target target) -> {
-            return world.getEvents().doAtomic(() -> action.alterWorld(world, actor, target));
+        return (Game game, Actor actor, Target target) -> {
+            return game.getEvents().doAtomic(() -> action.alterGame(game, actor, target));
         };
     }
 
@@ -417,10 +414,10 @@ public final class TargetedActions {
         ExceptionHelper.checkNotNullArgument(selector, "targets");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Actor actor, Target initialTarget) -> {
+        return (Game game, Actor actor, Target initialTarget) -> {
             UndoAction.Builder builder = new UndoAction.Builder();
-            selector.select(world, actor, initialTarget).forEach((FinalTarget target) -> {
-                builder.addUndo(action.alterWorld(world, actor, target));
+            selector.select(game, actor, initialTarget).forEach((FinalTarget target) -> {
+                builder.addUndo(action.alterGame(game, actor, target));
             });
             return builder;
         };
@@ -436,10 +433,10 @@ public final class TargetedActions {
         ExceptionHelper.checkNotNullArgument(actors, "actors");
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Actor initialActor, Target target) -> {
+        return (Game game, Actor initialActor, Target target) -> {
             UndoAction.Builder builder = new UndoAction.Builder();
-            actors.select(world, initialActor, target).forEach((FinalActor actor) -> {
-                builder.addUndo(action.alterWorld(world, actor, target));
+            actors.select(game, initialActor, target).forEach((FinalActor actor) -> {
+                builder.addUndo(action.alterGame(game, actor, target));
             });
             return builder;
         };
@@ -450,7 +447,7 @@ public final class TargetedActions {
      * <p>
      * See spell <em>Betrayal</em> and <em>Lightbomb</em>.
      */
-    public static TargetedAction<Character, Character> DAMAGE_TARGET = (world, actor, target) -> {
+    public static TargetedAction<Character, Character> DAMAGE_TARGET = (game, actor, target) -> {
         int attack = actor.getAttackTool().getAttack();
         return ActionUtils.damageCharacter(actor, attack, target);
     };
@@ -471,8 +468,8 @@ public final class TargetedActions {
     public static TargetedAction<DamageSource, Character> damageTarget(
             @NamedArg("minDamage") int minDamage,
             @NamedArg("maxDamage") int maxDamage) {
-        return (World world, DamageSource actor, Character target) -> {
-            int damage = world.getRandomProvider().roll(minDamage, maxDamage);
+        return (Game game, DamageSource actor, Character target) -> {
+            int damage = game.getRandomProvider().roll(minDamage, maxDamage);
             return ActionUtils.damageCharacter(actor, damage, target);
         };
     }
@@ -499,10 +496,10 @@ public final class TargetedActions {
         ExceptionHelper.checkNotNullArgument(ifAction, "ifAction");
         ExceptionHelper.checkNotNullArgument(elseAction, "elseAction");
 
-        return (World world, Actor actor, Target target) -> {
-            return condition.applies(world, actor, target)
-                    ? ifAction.alterWorld(world, actor, target)
-                    : elseAction.alterWorld(world, actor, target);
+        return (Game game, Actor actor, Target target) -> {
+            return condition.applies(game, actor, target)
+                    ? ifAction.alterGame(game, actor, target)
+                    : elseAction.alterGame(game, actor, target);
         };
     }
 
@@ -512,17 +509,17 @@ public final class TargetedActions {
     public static TargetedAction<Object, Minion> addAbility(
             @NamedArg("ability") Ability<? super Minion> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             return target.addAndActivateAbility(ability);
         };
     }
 
     /**
      * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
-     * executes the given {@link WorldEventAction} on start of turn.
+     * executes the given {@link GameEventAction} on start of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsStartOfTurnAbility(
-            @NamedArg("action") WorldEventAction<? super Minion, ? super Player> action) {
+            @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         return addOnActorsPlayerEventAbility(action, SimpleEventType.TURN_STARTS);
@@ -530,26 +527,26 @@ public final class TargetedActions {
 
     /**
      * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
-     * executes the given {@link WorldEventAction} on end of turn.
+     * executes the given {@link GameEventAction} on end of turn.
      */
     public static TargetedAction<PlayerProperty, Minion> addOnActorsEndOfTurnAbility(
-            @NamedArg("action") WorldEventAction<? super Minion, ? super Player> action) {
+            @NamedArg("action") GameEventAction<? super Minion, ? super Player> action) {
         return addOnActorsPlayerEventAbility(action, SimpleEventType.TURN_ENDS);
     }
 
     /**
      * Returns a {@link TargetedAction} which adds an {@link Ability} to the target minion which
-     * executes the given {@link WorldEventAction} on the given type of event.
+     * executes the given {@link GameEventAction} on the given type of event.
      */
     private static TargetedAction<PlayerProperty, Minion> addOnActorsPlayerEventAbility(
-            WorldEventAction<? super Minion, ? super Player> action,
+            GameEventAction<? super Minion, ? super Player> action,
             SimpleEventType eventType) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         ExceptionHelper.checkNotNullArgument(eventType, "eventType");
 
-        return (World world, PlayerProperty actor, Minion target) -> {
-            WorldEventFilter<Minion, Player> filter
-                    = (filterWorld, owner, eventSource) -> eventSource.getOwner() == actor.getOwner();
+        return (Game game, PlayerProperty actor, Minion target) -> {
+            GameEventFilter<Minion, Player> filter
+                    = (filterGame, owner, eventSource) -> eventSource.getOwner() == actor.getOwner();
             Ability<Minion> ability
                     = Ability.onEventAbility(filter, action, eventType);
             return target.addAndActivateAbility(ability);
@@ -563,8 +560,8 @@ public final class TargetedActions {
     public static <Target> TargetedAction<Object, Target> buffTarget(
             @NamedArg("buff") PermanentBuff<? super Target> buff) {
         ExceptionHelper.checkNotNullArgument(buff, "buff");
-        return (World world, Object actor, Target target) -> {
-            return buff.buff(world, target, BuffArg.NORMAL_BUFF);
+        return (Game game, Object actor, Target target) -> {
+            return buff.buff(game, target, BuffArg.NORMAL_BUFF);
         };
     }
 
@@ -577,20 +574,20 @@ public final class TargetedActions {
     public static <Target> TargetedAction<Object, Target> buffTargetThisTurn(
             @NamedArg("buff") Buff<? super Target> buff) {
         ExceptionHelper.checkNotNullArgument(buff, "buff");
-        return (World world, Object actor, Target target) -> {
-            return ActionUtils.doTemporary(world, () -> buff.buff(world, target, BuffArg.NORMAL_BUFF));
+        return (Game game, Object actor, Target target) -> {
+            return ActionUtils.doTemporary(game, () -> buff.buff(game, target, BuffArg.NORMAL_BUFF));
         };
     }
 
     /**
-     * Returns a {@link TargetedAction} which adds the given {@link WorldEventAction} as
+     * Returns a {@link TargetedAction} which adds the given {@link GameEventAction} as
      * a death rattle effect to the target minion.
      */
     public static TargetedAction<Object, Minion> addDeathRattle(
-            @NamedArg("action") WorldEventAction<? super Minion, ? super Minion> action) {
+            @NamedArg("action") GameEventAction<? super Minion, ? super Minion> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             return target.addDeathRattle(action);
         };
     }
@@ -602,7 +599,7 @@ public final class TargetedActions {
      * See spell <em>Shadowstep</em> and secret <em>Freezing Trap</em>.
      */
     public static TargetedAction<Object, Minion> returnMinion(@NamedArg("costReduction") int costReduction) {
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             Player owner = target.getOwner();
             CardDescr baseCard = target.getBaseDescr().getBaseCard();
 
@@ -629,7 +626,7 @@ public final class TargetedActions {
         List<MinionProvider> minionCopy = new ArrayList<>(Arrays.asList(minion));
 
         return transformMinion((originalMinion) -> {
-            MinionProvider selected = ActionUtils.pickRandom(originalMinion.getWorld(), minionCopy);
+            MinionProvider selected = ActionUtils.pickRandom(originalMinion.getGame(), minionCopy);
             return selected != null ? selected.getMinion() : null;
         });
     }
@@ -641,7 +638,7 @@ public final class TargetedActions {
     public static TargetedAction<Object, Minion> transformMinion(Function<? super Minion, MinionDescr> newMinionGetter) {
         ExceptionHelper.checkNotNullArgument(newMinionGetter, "newMinionGetter");
 
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             MinionDescr newMinion = newMinionGetter.apply(target);
             return target.transformTo(newMinion);
         };
@@ -661,10 +658,10 @@ public final class TargetedActions {
         ExceptionHelper.checkArgumentInRange(minDamage, 0, maxDamage, "minDamage");
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        return (world, actor, target) -> {
+        return (game, actor, target) -> {
             UndoAction.Builder builder = new UndoAction.Builder();
 
-            int damage = world.getRandomProvider().roll(minDamage, maxDamage);
+            int damage = game.getRandomProvider().roll(minDamage, maxDamage);
             UndoableResult<Damage> damageRef = actor.createDamage(damage);
             builder.addUndo(damageRef.getUndoAction());
 
@@ -689,7 +686,7 @@ public final class TargetedActions {
      */
     public static TargetedAction<Object, Character> multiplyHp(@NamedArg("mul") int mul) {
         Function<HpProperty, UndoAction> buffAction = (hp) -> hp.buffHp((mul - 1) * hp.getCurrentHp());
-        return (World world, Object actor, Character target) -> {
+        return (Game game, Object actor, Character target) -> {
             return ActionUtils.adjustHp(target, buffAction);
         };
     }
@@ -701,7 +698,7 @@ public final class TargetedActions {
      * See minion <em>Lorewalker Cho</em>.
      */
     public static TargetedAction<PlayerProperty, Card> copyTargetToHand(@NamedArg("copyCount") int copyCount) {
-        return (World world, PlayerProperty actor, Card target) -> {
+        return (Game game, PlayerProperty actor, Card target) -> {
             CardDescr baseCard = target.getCardDescr();
             Hand hand = actor.getOwner().getHand();
 
@@ -719,7 +716,7 @@ public final class TargetedActions {
      * See minion <em>Emperor Thaurissan</em>.
      */
     public static TargetedAction<Object, Card> decreaseCostOfTarget(@NamedArg("amount") int amount) {
-        return (World world, Object actor, Card target) -> {
+        return (Game game, Object actor, Card target) -> {
             return target.decreaseManaCost(amount);
         };
     }
@@ -737,9 +734,9 @@ public final class TargetedActions {
 
         TargetedAction<? super Actor, ? super Target>[] actionsCopy = actions.clone();
 
-        return (World world, Actor actor, Target target) -> {
-            TargetedAction<? super Actor, ? super Target> selected = ActionUtils.pickRandom(world, actionsCopy);
-            return selected.alterWorld(world, actor, target);
+        return (Game game, Actor actor, Target target) -> {
+            TargetedAction<? super Actor, ? super Target> selected = ActionUtils.pickRandom(game, actionsCopy);
+            return selected.alterGame(game, actor, target);
         };
     }
 
@@ -757,15 +754,15 @@ public final class TargetedActions {
      * Returns a {@link TargetedAction} which buffs the target minion's attack count to the given amount.
      */
     public static TargetedAction<Object, Minion> windFury(@NamedArg("attackCount") int attackCount) {
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             AuraAwareIntProperty maxAttackCount = target.getProperties().getMaxAttackCountProperty();
             return maxAttackCount.addExternalBuff((prev) -> Math.max(prev, attackCount));
         };
     }
 
     private static UndoAction takeControlForThisTurn(Player newOwner, Minion minion) {
-        World world = newOwner.getWorld();
-        return minion.addAndActivateAbility(ActionUtils.toSingleTurnAbility(world, (Minion self) -> {
+        Game game = newOwner.getGame();
+        return minion.addAndActivateAbility(ActionUtils.toSingleTurnAbility(game, (Minion self) -> {
             Player originalOwner = self.getOwner();
             UndoAction takeOwnUndo = newOwner.getBoard().takeOwnership(self);
             UndoAction refreshUndo = self.refreshStartOfTurn();
@@ -800,10 +797,10 @@ public final class TargetedActions {
     public static <Actor extends DamageSource> TargetedAction<Actor, Character> shadowFlameDamage(
             @NamedArg("selector") EntitySelector<Actor, ? extends Character> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
-        return (World world, Actor actor, Character target) -> {
+        return (Game game, Actor actor, Character target) -> {
             int damage = target.getAttackTool().getAttack();
             TargetlessAction<Actor> damageAction = TargetlessActions.damageTarget(selector, damage);
-            return damageAction.alterWorld(world, actor);
+            return damageAction.alterGame(game, actor);
         };
     }
 
@@ -814,7 +811,7 @@ public final class TargetedActions {
      * See secret <em>Redemption</em>.
      */
     public static TargetedAction<Object, Minion> resummonMinionWithHp(@NamedArg("hp") int hp) {
-        return (World world, Object actor, Minion target) -> {
+        return (Game game, Object actor, Minion target) -> {
             Minion newMinion = new Minion(target.getOwner(), target.getBaseDescr());
 
             Player owner = target.getOwner();
@@ -834,12 +831,12 @@ public final class TargetedActions {
      * See spell <em>Reincarnate</em>.
      */
     public static <Actor> TargetedAction<Actor, Minion> reincarnate() {
-        return (World world, Actor actor, Minion target) -> {
+        return (Game game, Actor actor, Minion target) -> {
             Player owner = target.getOwner();
 
             UndoAction.Builder builder = new UndoAction.Builder();
             builder.addUndo(target.kill());
-            builder.addUndo(world.endPhase());
+            builder.addUndo(game.endPhase());
 
             Minion newMinion = new Minion(owner, target.getBaseDescr());
             builder.addUndo(owner.summonMinion(newMinion));

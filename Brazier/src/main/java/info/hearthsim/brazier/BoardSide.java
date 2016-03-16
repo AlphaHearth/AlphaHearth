@@ -1,11 +1,11 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.events.WorldEvents;
+import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.actions.undo.UndoableAction;
-import info.hearthsim.brazier.events.CompletableWorldActionEvents;
+import info.hearthsim.brazier.events.CompletableGameActionEvents;
 import info.hearthsim.brazier.minions.MinionBody;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,7 @@ public final class BoardSide implements PlayerProperty {
     }
 
     /**
-     * Schedules to destroy the minion with the given {@link TargetId}. Method {@link World#resolveDeaths()}
+     * Schedules to destroy the minion with the given {@link TargetId}. Method {@link Game#resolveDeaths()}
      * guarantees the minion scheduled to destroy will be destroyed soon after.
      */
     public void scheduleToDestroy(TargetId minionId) {
@@ -374,8 +374,8 @@ public final class BoardSide implements PlayerProperty {
     }
 
     @Override
-    public World getWorld() {
-        return getOwner().getWorld();
+    public Game getGame() {
+        return getOwner().getGame();
     }
 
     /**
@@ -459,12 +459,12 @@ public final class BoardSide implements PlayerProperty {
         Optional<Character> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        World world = getWorld();
-        WorldEvents events = world.getEvents();
+        Game game = getGame();
+        GameEvents events = game.getEvents();
 
         UndoAction.Builder result = new UndoAction.Builder();
 
-        CompletableWorldActionEvents<Minion> summoningListeners = events.summoningListeners();
+        CompletableGameActionEvents<Minion> summoningListeners = events.summoningListeners();
         UndoableResult<UndoableAction> summoningFinalizer = summoningListeners.triggerEvent(minion);
         result.addUndo(summoningFinalizer.getUndoAction());
 

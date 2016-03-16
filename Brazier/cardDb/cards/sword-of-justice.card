@@ -10,13 +10,13 @@
         "triggers": {
             "done-summoning": {
                 "filter": [
-                    "WorldEventFilters.HAS_SAME_OWNER_PLAYER",
-                    "WorldEventFilters.SOURCE_WEAPON_HAS_CHARGE"
+                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "GameEventFilters.SOURCE_WEAPON_HAS_CHARGE"
                 ],
                 "action": [
                     "TargetlessActions.REDUCE_WEAPON_DURABILITY",
                     {
-                        "class": "WorldEventActions.forEventArgMinionTarget",
+                        "class": "GameEventActions.forEventArgMinionTarget",
                         "action": {
                             "class": "TargetedActions.buffTarget",
                             "buff": "1/1"

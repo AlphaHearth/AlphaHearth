@@ -8,14 +8,14 @@ import info.hearthsim.brazier.cards.CardRarity;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.events.WorldEventFilters;
+import info.hearthsim.brazier.events.GameEventFilters;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.CardId;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.WorldEventActionDefs;
+import info.hearthsim.brazier.events.GameEventActionDefs;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 
 import java.util.Collections;
@@ -43,7 +43,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         this.secretParser = new EventNotificationParser<>(
                 Secret.class,
                 objectParser,
-                WorldEventFilters.NOT_SELF_TURN,
+                GameEventFilters.NOT_SELF_TURN,
                 CardParser::unregisterSecret);
     }
 
@@ -182,9 +182,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         if (weaponElement != null) {
             WeaponDescr weapon = weaponParser.fromJson(weaponElement, name, keywords);
             builder.setWeapon(weapon);
-            PlayAction<Card> playAction = (World world, Card actor, Optional<Character> target) -> {
-                return actor.getOwner().equipWeapon(weapon);
-            };
+            PlayAction<Card> playAction = (game, actor, target) -> actor.getOwner().equipWeapon(weapon);
 
             builder.addOnPlayAction(new PlayActionDef<>(TargetNeeds.NO_NEED, PlayActionRequirement.ALLOWED, playAction));
         }
@@ -195,16 +193,16 @@ public final class CardParser implements EntityParser<CardDescr> {
     }
 
     /**
-     * Removes the given {@link Secret} from the given {@link World} and triggers a
+     * Removes the given {@link Secret} from the given {@link Game} and triggers a
      * {@link SimpleEventType#SECRET_REVEALED SECRET_REVEALED} event.
      *
-     * @param world the given {@code World}.
+     * @param game the given {@code Game}.
      * @param secret the given {@code Secret}.
      * @param eventSource the source of the event.
      */
-    private static UndoAction unregisterSecret(World world, Secret secret, Object eventSource) {
+    private static UndoAction unregisterSecret(Game game, Secret secret, Object eventSource) {
         UndoAction removeUndo = secret.getOwner().getSecrets().removeSecret(secret);
-        UndoAction eventUndo = world.getEvents().triggerEvent(SimpleEventType.SECRET_REVEALED, secret);
+        UndoAction eventUndo = game.getEvents().triggerEvent(SimpleEventType.SECRET_REVEALED, secret);
         return () -> {
             eventUndo.undo();
             removeUndo.undo();
@@ -302,7 +300,7 @@ public final class CardParser implements EntityParser<CardDescr> {
             return false;
         }
 
-        WorldEventActionDefs<Secret> secretActionDef = secretParser.fromJson(secretElement);
+        GameEventActionDefs<Secret> secretActionDef = secretParser.fromJson(secretElement);
 
         builder.addOnPlayAction(new PlayActionDef<>(
             TargetNeeds.NO_NEED,
@@ -324,9 +322,9 @@ public final class CardParser implements EntityParser<CardDescr> {
         };
     }
 
-    private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, WorldEventActionDefs<Secret> secretActionDef) {
+    private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, GameEventActionDefs<Secret> secretActionDef) {
         ExceptionHelper.checkNotNullArgument(secretActionDef, "secretActionDef");
-        return (World world, Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
+        return (Game game, Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
             CardDescr card = cardRef.get();
             Player player = actor.getOwner();
             Secret secret = new Secret(player, card, secretActionDef);

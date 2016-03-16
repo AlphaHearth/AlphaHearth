@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.World;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import java.util.List;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * Functional interface with its sole un-implemented method {@link #applyAura(World, Object, Object)}, which
- * applies the aura on the given source and target in the given world.
+ * Functional interface with its sole un-implemented method {@link #applyAura(Game, Object, Object)}, which
+ * applies the aura on the given source and target in the given {@code Game}.
  * <p>
  * For predefined {@code Aura}s, see {@link Auras}.
  *
@@ -19,9 +19,9 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public interface Aura<Source, Target> {
     /**
-     * Applies the aura on the given source and target in the given world.
+     * Applies the aura on the given source and target in the given game.
      */
-    public UndoableUnregisterAction applyAura(World world, Source source, Target target);
+    public UndoableUnregisterAction applyAura(Game game, Source source, Target target);
 
     /**
      * Merges the given collection of {@link Aura}s together.
@@ -33,15 +33,15 @@ public interface Aura<Source, Target> {
         ExceptionHelper.checkNotNullElements(auras, "auras");
 
         if (auras.isEmpty()) {
-            return (world, source, target) -> UndoableUnregisterAction.DO_NOTHING;
+            return (game, source, target) -> UndoableUnregisterAction.DO_NOTHING;
         }
 
         List<Aura<? super Source, ? super Target>> aurasCopy = new ArrayList<>(auras);
 
-        return (world, source, target) -> {
+        return (game, source, target) -> {
             UndoableUnregisterAction.Builder builder = new UndoableUnregisterAction.Builder(aurasCopy.size());
             for (Aura<? super Source, ? super Target> aura: aurasCopy) {
-                builder.addRef(aura.applyAura(world, source, target));
+                builder.addRef(aura.applyAura(game, source, target));
             }
             return builder;
         };

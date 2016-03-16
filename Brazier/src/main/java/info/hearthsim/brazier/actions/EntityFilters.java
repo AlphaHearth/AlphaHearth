@@ -21,16 +21,16 @@ public final class EntityFilters {
      * Returns an {@link EntityFilter} which returns nothing.
      */
     public static <Entity> EntityFilter<Entity> empty() {
-        return (world, entities) -> Stream.empty();
+        return (game, entities) -> Stream.empty();
     }
 
     /**
      * Returns an {@link EntityFilter} which selects a random entity from the given {@code Stream}.
      */
     public static <Entity> EntityFilter<Entity> random() {
-        return (World world, Stream<? extends Entity> entities) -> {
+        return (Game game, Stream<? extends Entity> entities) -> {
             List<Entity> elements = entities.collect(Collectors.<Entity>toList());
-            Entity result = ActionUtils.pickRandom(world, elements);
+            Entity result = ActionUtils.pickRandom(game, elements);
             if (result == null) {
                 return Stream.empty();
             }
@@ -52,9 +52,9 @@ public final class EntityFilters {
             return random();
         }
 
-        return (World world, Stream<? extends Entity> entities) -> {
+        return (Game game, Stream<? extends Entity> entities) -> {
             List<Entity> elements = entities.collect(Collectors.<Entity>toList());
-            return ActionUtils.pickMultipleRandom(world, count, elements).stream();
+            return ActionUtils.pickMultipleRandom(game, count, elements).stream();
         };
     }
 
@@ -204,7 +204,7 @@ public final class EntityFilters {
     public static <Entity> EntityFilter<Entity> fromPredicate(Predicate<? super Entity> filter) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        return (World world, Stream<? extends Entity> entities) -> {
+        return (Game game, Stream<? extends Entity> entities) -> {
             return entities.filter(filter);
         };
     }

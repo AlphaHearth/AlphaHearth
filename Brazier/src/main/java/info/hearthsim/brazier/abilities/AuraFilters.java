@@ -20,7 +20,7 @@ public final class AuraFilters {
     /**
      * {@code AuraFilter}, which checks if the given source and target of the related aura has same owning player.
      */
-    public static final AuraFilter<PlayerProperty, PlayerProperty> SAME_OWNER = (world, source, target) -> {
+    public static final AuraFilter<PlayerProperty, PlayerProperty> SAME_OWNER = (game, source, target) -> {
         return source.getOwner() == target.getOwner();
     };
 
@@ -28,7 +28,7 @@ public final class AuraFilters {
      * {@code AuraFilter}, which checks if the given source and target of the related aura are different objects and
      * has same owning player.
      */
-    public static final AuraFilter<PlayerProperty, PlayerProperty> SAME_OWNER_OTHERS = (world, source, target) -> {
+    public static final AuraFilter<PlayerProperty, PlayerProperty> SAME_OWNER_OTHERS = (game, source, target) -> {
         return source.getOwner() == target.getOwner() && source != target;
     };
 
@@ -36,21 +36,21 @@ public final class AuraFilters {
      * {@code AuraFilter}, which checks if the owning player of the aura source has not played any minion in this
      * turn yet.
      */
-    public static final AuraFilter<PlayerProperty, Object> NOT_PLAYED_MINION_THIS_TURN = (world, source, target) -> {
+    public static final AuraFilter<PlayerProperty, Object> NOT_PLAYED_MINION_THIS_TURN = (game, source, target) -> {
         return source.getOwner().getMinionsPlayedThisTurn() == 0;
     };
 
     /**
      * {@code AuraFilter}, which checks if the owning player of the aura source has weapon.
      */
-    public static final AuraFilter<PlayerProperty, Object> OWNER_HAS_WEAPON = (world, source, target) -> {
+    public static final AuraFilter<PlayerProperty, Object> OWNER_HAS_WEAPON = (game, source, target) -> {
         return source.getOwner().tryGetWeapon() != null;
     };
 
     /**
      * {@code AuraFilter}, which checks if the source and the target is not the same object.
      */
-    public static final AuraFilter<PlayerProperty, PlayerProperty> NOT_SELF = (world, source, target) -> {
+    public static final AuraFilter<PlayerProperty, PlayerProperty> NOT_SELF = (game, source, target) -> {
         return source != target;
     };
 
@@ -63,7 +63,7 @@ public final class AuraFilters {
         List<Keyword> keywordsCopy = new ArrayList<>(Arrays.asList(keywords));
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (World world, Object source, T target) -> {
+        return (Game game, Object source, T target) -> {
             return target.getKeywords().containsAll(keywordsCopy);
         };
     }
@@ -74,7 +74,7 @@ public final class AuraFilters {
     public static AuraFilter<Object, LabeledEntity> targetDoesntHaveKeyword(@NamedArg("keywords") Keyword... keywords) {
         Predicate<LabeledEntity> targetFilter = ActionUtils.excludedKeywordsFilter(keywords);
 
-        return (World world, Object source, LabeledEntity target) -> {
+        return (Game game, Object source, LabeledEntity target) -> {
             return targetFilter.test(target);
         };
     }
@@ -86,7 +86,7 @@ public final class AuraFilters {
     public static AuraFilter<PlayerProperty, Object> ownBoardHas(@NamedArg("keywords") Keyword... keywords) {
         Predicate<LabeledEntity> minionFilter = ActionUtils.includedKeywordsFilter(keywords);
 
-        return (World world, PlayerProperty source, Object target) -> {
+        return (Game game, PlayerProperty source, Object target) -> {
             BoardSide board = source.getOwner().getBoard();
             return board.findMinion(minionFilter) != null;
         };
@@ -97,7 +97,7 @@ public final class AuraFilters {
      * the given number in the hand.
      */
     public static AuraFilter<PlayerProperty, Object> opponentsHandLarger(@NamedArg("limit") int limit) {
-        return (World world, PlayerProperty source, Object target) -> {
+        return (Game game, PlayerProperty source, Object target) -> {
             return source.getOwner().getOpponent().getHand().getCardCount() > limit;
         };
     }
@@ -107,7 +107,7 @@ public final class AuraFilters {
      */
     public static final AuraFilter<Object, Card> IS_MINION_CARD = AuraFilter.and(
         targetHasKeyword(Keywords.MINION),
-        (world, source, target) -> target.getCardDescr().getMinion() != null
+        (game, source, target) -> target.getCardDescr().getMinion() != null
     );
 
     /**
@@ -176,12 +176,12 @@ public final class AuraFilters {
      * {@link AuraFilter} which checks if the aura source is damaged.
      */
     public static final AuraFilter<Character, Object> SELF_DAMAGED =
-        (world, source, target) -> source.isDamaged();
+        (game, source, target) -> source.isDamaged();
 
     /**
      * {@link AuraFilter} which checks if the target minion is next to the aura source minion.
      */
-    public static final AuraFilter<Minion, Minion> IS_NEXT_MINION = (world, source, target) -> {
+    public static final AuraFilter<Minion, Minion> IS_NEXT_MINION = (game, source, target) -> {
         BoardSide board = source.getOwner().getBoard();
         int sourceIndex = board.indexOf(source.getTargetId());
         int targetIndex = board.indexOf(source.getTargetId());
@@ -194,7 +194,7 @@ public final class AuraFilters {
      */
     public static AuraFilter<Object, Minion> minionTargetNameIs(@NamedArg("name") String name) {
         ExceptionHelper.checkNotNullArgument(name, "name");
-        return (World world, Object owner, Minion target) -> {
+        return (Game game, Object owner, Minion target) -> {
             return name.equals(target.getBaseDescr().getId().getName());
         };
     }

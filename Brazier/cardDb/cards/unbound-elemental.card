@@ -9,7 +9,7 @@
         "triggers": {
             "start-play-card": {
                 "filter": {
-                    "class": "WorldEventFilters.eventSourceHasKeyword",
+                    "class": "GameEventFilters.eventSourceHasKeyword",
                     "keywords": "overload"
                 },
                 "action": {

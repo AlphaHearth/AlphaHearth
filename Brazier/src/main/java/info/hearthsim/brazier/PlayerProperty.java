@@ -5,11 +5,11 @@ package info.hearthsim.brazier;
  * the sole un-implemented method {@link #getOwner()}, which returns
  * the owner {@code Player} instance of this property.
  */
-public interface PlayerProperty extends WorldProperty {
+public interface PlayerProperty extends GameProperty {
     /**
-     * Returns the owner {@code Player} instance of this {@code WorldProperty}
+     * Returns the owner {@code Player} instance of this {@code GameProperty}
      *
-     * @return the owner {@code Player} instance of this {@code WorldProperty}
+     * @return the owner {@code Player} instance of this {@code GameProperty}
      */
     public Player getOwner();
 
@@ -17,13 +17,13 @@ public interface PlayerProperty extends WorldProperty {
      * {@inheritDoc}
      *
      * @implSpec
-     * The default implementation returns the owner {@code World} of the result
+     * The default implementation returns the owner {@code Game} of the result
      * of {@link #getOwner()}.
      *
      * @return {@inheritDoc}
      */
     @Override
-    public default World getWorld() {
-        return getOwner().getWorld();
+    public default Game getGame() {
+        return getOwner().getGame();
     }
 }

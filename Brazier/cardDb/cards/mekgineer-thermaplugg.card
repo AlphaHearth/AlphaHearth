@@ -11,8 +11,8 @@
         "triggers": {
             "minion-killed": {
                 "filter": [
-                    "WorldEventFilters.NOT_SELF",
-                    "WorldEventFilters.HAS_DIFFERENT_OWNER_PLAYER"
+                    "GameEventFilters.NOT_SELF",
+                    "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER"
                 ],
                 "action": {
                     "class": "TargetlessActions.summonMinionRight",

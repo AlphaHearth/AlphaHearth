@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.GameProperty;
 import info.hearthsim.brazier.Priorities;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.events.RegisterId;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import org.jtrim.collections.RefLinkedList;
 import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
@@ -36,7 +35,7 @@ import org.jtrim.utils.ExceptionHelper;
  *     </li>
  * </ul>
  */
-public final class GameActionList <T> {
+public final class GameActionList <T extends GameProperty> {
     private final RefList<ActionWrapper<T>> actions;
 
     /**
@@ -60,7 +59,7 @@ public final class GameActionList <T> {
      *
      * @see Priorities#NORMAL_PRIORITY
      */
-    public RegisterId addAction(GameObjectAction<T> action) {
+    public UndoObjectAction<GameActionList> addAction(GameObjectAction<T> action) {
         return addAction(Priorities.NORMAL_PRIORITY, (arg) -> true, action);
     }
 
@@ -72,10 +71,9 @@ public final class GameActionList <T> {
     }
 
     /**
-     * Inserts the given {@link ActionWrapper} to the list according to its priority and
-     * updates the given {@code ActionWrapper}'s {@code registerId} field.
+     * Inserts the given {@link ActionWrapper} to the list according to its priority.
      */
-    private void insert(ActionWrapper<T> action) {
+    private int insert(ActionWrapper<T> action) {
         int priority = action.priority;
         RefList.ElementRef<ActionWrapper<T>> previousRef = actions.getLastReference();
         while (previousRef != null && getPriority(previousRef) < priority) {
@@ -83,11 +81,8 @@ public final class GameActionList <T> {
         }
 
         if (previousRef != null)
-            previousRef.addAfter(action);
-        else
-            actions.addFirstGetReference(action);
-
-        action.registerId = new RegisterId();
+            return previousRef.addAfter(action).getIndex();
+        return actions.addFirstGetReference(action).getIndex();
     }
 
     /**
@@ -98,67 +93,46 @@ public final class GameActionList <T> {
      *
      * @throws NullPointerException if the given {@code GameObjectAction} is {@code null}.
      */
-    public RegisterId addAction(int priority, Predicate<? super T> condition, GameObjectAction<? super T> action) {
+    public UndoObjectAction<GameActionList> addAction(int priority, Predicate<? super T> condition,
+                                                      GameObjectAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         ActionWrapper<T> wrappedAction = new ActionWrapper<>(priority, condition, action);
         insert(wrappedAction);
 
-        assert wrappedAction.registerId != null;
-        return wrappedAction.registerId;
+        return (gal) -> gal.actions.remove(wrappedAction);
     }
 
     /**
-     * Unregisters the game action with the given {@code RegisterId} from this {@code GameActionList}.
+     * Executes the {@link GameAction}s in this list with the given {@code object}.
      *
-     * @param registerId the given {@code RegisterId}.
-     * @return {@code true} if there is such {@code GameObjectAction}; {@code false} otherwise.
-     */
-    public boolean unregister(RegisterId registerId) {
-        for (int i = 0; i < actions.size(); i++) {
-            ActionWrapper action = actions.get(i);
-            if (action.registerId.equals(registerId)) {
-                actions.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Executes the {@link GameAction}s in this list with the given {@link Game} and {@code object}.
-     *
-     * @param game the given {@link Game}.
      * @param object the given {@code object}.
      * @param greedy whether to execute these actions greedily.
      */
-    public UndoAction executeActionsNow(Game game, T object, boolean greedy) {
-        if (actions.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void executeActionsNow(T object, boolean greedy) {
+        if (actions.isEmpty())
+            return;
 
         if (greedy) {
-            return executeActionsNowGreedily(game, object);
+            executeActionsNowGreedily(object);
         }
         else {
             // We have to first check if the action conditions are met, otherwise
             // two Hobgoblin would be the same as a single hobgoblin (because the first buff
             // would prevent the second to trigger).
             List<GameObjectAction<? super T>> applicableActions = getApplicableActions(object);
-            return executeActionsNow(game, object, applicableActions);
+            executeActionsNow(object, applicableActions);
         }
     }
 
     /**
      * Executes the applicable actions in this list with the given {@link Game} and {@code object} greedily.
      */
-    private UndoAction executeActionsNowGreedily(Game game, T object) {
+    private void executeActionsNowGreedily(T object) {
         List<ActionWrapper<T>> remainingAll = new LinkedList<>(actions);
         List<ActionWrapper<T>> remainingQueue = new ArrayList<>(actions.size());
         List<ActionWrapper<T>> skippedActions = new LinkedList<>();
         List<GameObjectAction<? super T>> toExecute = new ArrayList<>();
-
-        UndoAction.Builder undoBuilder = new UndoAction.Builder(remainingAll.size());
 
         while (!remainingAll.isEmpty()) {
             skippedActions.clear();
@@ -176,9 +150,8 @@ public final class GameActionList <T> {
                 }
                 remainingQueue.clear();
 
-                for (GameObjectAction<? super T> action: toExecute) {
-                    undoBuilder.addUndo(action.alterGame(game, object));
-                }
+                for (GameObjectAction<? super T> action: toExecute)
+                    action.apply(object);
 
                 Iterator<ActionWrapper<T>> skippedActionsItr = skippedActions.iterator();
                 while (skippedActionsItr.hasNext()) {
@@ -194,35 +167,26 @@ public final class GameActionList <T> {
                 }
             }
         }
-
-        return undoBuilder;
     }
 
     /**
      * Executes the given collection of {@code GameObjectAction}s with the given {@code Game} instance
      * and {@code object}, and returns the undo actions corresponding to these {@code GameObjectAction}s.
      *
-     * @param game the given {@code Game} instance.
      * @param object object.
      * @param actions collection of {@code GameObjectAction}s, which will be executed with the given
      *                {@code Game} instance and {@code object}.
      * @param <T> the type param of {@code object}.
-     * @return undo actions corresponding to these {@code GameObjectAction}s.
      */
-    public static <T> UndoAction executeActionsNow(
-        Game game,
+    public static <T> void executeActionsNow(
         T object,
         Collection<? extends GameObjectAction<? super T>> actions) {
 
-        if (actions.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (actions.isEmpty())
+            return;
 
-        UndoAction.Builder result = new UndoAction.Builder();
-        for (GameObjectAction<? super T> action: actions) {
-            result.addUndo(action.alterGame(game, object));
-        }
-        return result;
+        for (GameObjectAction<? super T> action: actions)
+            action.apply(object);
     }
 
     /**
@@ -232,10 +196,10 @@ public final class GameActionList <T> {
     public GameAction snapshotCurrentEvents(T object) {
         List<GameObjectAction<? super T>> snapshot = getApplicableActions(object);
         if (snapshot.isEmpty()) {
-            return (game) -> UndoAction.DO_NOTHING;
+            return GameAction.DO_NOTHING;
         }
 
-        return (game) -> executeActionsNow(game, object, snapshot);
+        return (game) -> executeActionsNow(object, snapshot);
     }
 
     /**
@@ -285,7 +249,6 @@ public final class GameActionList <T> {
      * Wrapper for a {@link GameObjectAction}.
      */
     private static final class ActionWrapper<T> {
-        private RegisterId registerId = null;
         private final int priority;
         private final Predicate<? super T> condition;
         private final GameObjectAction<? super T> wrapped;

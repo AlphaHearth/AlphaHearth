@@ -1,6 +1,7 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.GameProperty;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.cards.PlayAction;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import org.jtrim.utils.ExceptionHelper;
  * Instances of {@code PlayActionDef} must be <b>immutable</b>: no state can be stored.
  */
 // TODO refactor this bizarre PlayAction framework.
-public final class PlayActionDef<Actor> {
+public final class PlayActionDef<Actor extends GameProperty> {
 
     private final TargetNeed targetNeed;
     private final PlayActionRequirement requirement;
@@ -43,7 +44,9 @@ public final class PlayActionDef<Actor> {
         this.action = action;
     }
 
-    public static <Actor> TargetNeed combineNeeds(Player player, Collection<? extends PlayActionDef<Actor>> actions) {
+    public static <Actor extends GameProperty> TargetNeed combineNeeds(
+        Player player, Collection<? extends PlayActionDef<Actor>> actions) {
+
         TargetNeed result = TargetNeeds.NO_NEED;
         for (PlayActionDef<?> action: actions) {
             if (action.getRequirement().meetsRequirement(player)) {
@@ -77,13 +80,12 @@ public final class PlayActionDef<Actor> {
     /**
      * Plays the {@link PlayAction} defined in this {@code PlayActionDef} with the
      * given {@link Game} and {@link PlayArg}. The method has the same effect as
-     * calling the underlying {@link PlayAction#doPlay(Game, PlayArg)} method.
+     * calling the underlying {@link PlayAction#doPlay(PlayArg)} method.
      *
-     * @param game the given {@code Game}.
      * @param arg the given {@code PlayArg}.
      */
-    public UndoAction doPlay(Game game, PlayArg<Actor> arg) {
-        return action.doPlay(game, arg);
+    public void doPlay(PlayArg<Actor> arg) {
+        action.doPlay(arg);
     }
 
     @Override

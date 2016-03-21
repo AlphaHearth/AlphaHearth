@@ -279,7 +279,7 @@ public class CardDatabasePanel extends javax.swing.JPanel {
         for (CardDescr card: cards) {
             uiAgent.alterGame((game) -> {
                 Player player = uiAgent.getCurrentPlayer();
-                return player.getHand().addCard(card);
+                player.getHand().addCard(card);
             });
         }
     }//GEN-LAST:event_jAddToHandButtonActionPerformed
@@ -289,7 +289,7 @@ public class CardDatabasePanel extends javax.swing.JPanel {
         for (CardDescr card: cards) {
             uiAgent.alterGame((game) -> {
                 Player player = uiAgent.getCurrentPlayer();
-                return player.getDeck().putOnTop(card);
+                player.getDeck().putOnTop(card);
             });
         }
     }//GEN-LAST:event_jAddToDeckButtonActionPerformed

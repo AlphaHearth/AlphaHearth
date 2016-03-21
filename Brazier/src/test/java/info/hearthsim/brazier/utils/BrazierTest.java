@@ -4,15 +4,15 @@ import org.junit.After;
 import org.junit.Before;
 
 public abstract class BrazierTest {
-    protected DynamicTestAgent agent;
+    protected TestAgent agent;
 
     @Before
     public void setUp() {
-        agent = new DynamicTestAgent();
+        agent = new TestAgent();
     }
 
     @After
     public void testDynamically() {
-        agent.execScripts();
+         // agent.execScripts();
     }
 }

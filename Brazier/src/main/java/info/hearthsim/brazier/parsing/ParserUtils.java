@@ -4,21 +4,20 @@ import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 import info.hearthsim.brazier.cards.CardProvider;
-import info.hearthsim.brazier.events.GameEventAction;
-import info.hearthsim.brazier.events.GameEventFilter;
+import info.hearthsim.brazier.events.EventAction;
+import info.hearthsim.brazier.events.EventFilter;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.GameEventActionDefs;
+import info.hearthsim.brazier.events.TriggeringAbility;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 import info.hearthsim.brazier.minions.MinionProvider;
 import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.WeaponId;
+import info.hearthsim.brazier.weapons.WeaponName;
 import info.hearthsim.brazier.weapons.WeaponProvider;
 import com.google.gson.*;
 
@@ -77,19 +76,19 @@ public final class ParserUtils {
      */
     private static void addTypeMergers(JsonDeserializer.Builder builder) {
         builder.setTypeMerger(PlayActionRequirement.class, (elements) -> PlayActionRequirement.merge(elements));
-        builder.setTypeMerger(GameEventFilter.class, (gameEventFilters) -> {
+        builder.setTypeMerger(EventFilter.class, (gameEventFilters) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends GameEventFilter<Object, Object>> unsafeElements
-                = (Collection<? extends GameEventFilter<Object, Object>>) gameEventFilters;
-            return GameEventFilter.merge(unsafeElements);
+            Collection<? extends EventFilter<GameProperty, Object>> unsafeElements
+                = (Collection<? extends EventFilter<GameProperty, Object>>) gameEventFilters;
+            return EventFilter.merge(unsafeElements);
         });
-        builder.setTypeMerger(GameEventAction.class, (gameEventActions) -> {
+        builder.setTypeMerger(EventAction.class, (gameEventActions) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends GameEventAction<PlayerProperty, Object>> unsafeElements
-                = (Collection<? extends GameEventAction<PlayerProperty, Object>>) gameEventActions;
-            return GameEventAction.merge(unsafeElements);
+            Collection<? extends EventAction<PlayerProperty, Object>> unsafeElements
+                = (Collection<? extends EventAction<PlayerProperty, Object>>) gameEventActions;
+            return EventAction.merge(unsafeElements);
         });
 
         builder.setTypeMerger(TargetNeed.class, (targetNeeds) -> {
@@ -103,15 +102,15 @@ public final class ParserUtils {
         builder.setTypeMerger(Ability.class, (activatableAbilities) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends Ability<Object>> unsafeElements
-                = (Collection<? extends Ability<Object>>) activatableAbilities;
+            Collection<? extends Ability<Entity>> unsafeElements
+                = (Collection<? extends Ability<Entity>>) activatableAbilities;
             return Ability.merge(unsafeElements);
         });
         builder.setTypeMerger(Aura.class, (auras) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends Aura<? super Object, ? super Object>> unsafeElements =
-                (Collection<? extends Aura<? super Object, ? super Object>>) auras;
+            Collection<? extends Aura<? super Entity, ? super Entity>> unsafeElements =
+                (Collection<? extends Aura<? super Entity, ? super Entity>>) auras;
             return Aura.merge(unsafeElements);
         });
         builder.setTypeMerger(AuraFilter.class, (auraFilters) -> {
@@ -124,8 +123,8 @@ public final class ParserUtils {
         builder.setTypeMerger(GameObjectAction.class, (gameObjectActions) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends GameObjectAction<Object>> unsafeElements
-                = (Collection<? extends GameObjectAction<Object>>) gameObjectActions;
+            Collection<? extends GameObjectAction<GameProperty>> unsafeElements
+                = (Collection<? extends GameObjectAction<GameProperty>>) gameObjectActions;
             return GameObjectAction.merge(unsafeElements);
         });
         builder.setTypeMerger(TargetedAction.class, (targetedActions) -> {
@@ -138,8 +137,8 @@ public final class ParserUtils {
         builder.setTypeMerger(TargetlessAction.class, (targetlessActions) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends TargetlessAction<Object>> unsafeElements
-                = (Collection<? extends TargetlessAction<Object>>) targetlessActions;
+            Collection<? extends TargetlessAction<GameProperty>> unsafeElements
+                = (Collection<? extends TargetlessAction<GameProperty>>) targetlessActions;
             return TargetlessAction.merge(unsafeElements);
         });
         builder.setTypeMerger(EntityFilter.class, (entityFilters) -> {
@@ -166,29 +165,29 @@ public final class ParserUtils {
         builder.setTypeMerger(TargetedEntitySelector.class, (targetedEntitySelectors) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends TargetedEntitySelector<Object, Object, Object>> unsafeElements
-                = (Collection<? extends TargetedEntitySelector<Object, Object, Object>>) targetedEntitySelectors;
+            Collection<? extends TargetedEntitySelector<GameProperty, Object, Object>> unsafeElements
+                = (Collection<? extends TargetedEntitySelector<GameProperty, Object, Object>>) targetedEntitySelectors;
             return TargetedEntitySelector.merge(unsafeElements);
         });
         builder.setTypeMerger(EntitySelector.class, (entitySelectors) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends EntitySelector<Object, Object>> unsafeElements
-                = (Collection<? extends EntitySelector<Object, Object>>) entitySelectors;
+            Collection<? extends EntitySelector<GameProperty, Object>> unsafeElements
+                = (Collection<? extends EntitySelector<GameProperty, Object>>) entitySelectors;
             return EntitySelector.merge(unsafeElements);
         });
         builder.setTypeMerger(Buff.class, (buffs) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends Buff<Object>> unsafeElements
-                = (Collection<? extends Buff<Object>>) buffs;
+            Collection<? extends Buff<Entity>> unsafeElements
+                = (Collection<? extends Buff<Entity>>) buffs;
             return Buff.merge(unsafeElements);
         });
         builder.setTypeMerger(PermanentBuff.class, (permanentBuffs) -> {
             // Unsafe but there is nothing to do.
             @SuppressWarnings("unchecked")
-            Collection<? extends PermanentBuff<Object>> unsafeElements
-                = (Collection<? extends PermanentBuff<Object>>) permanentBuffs;
+            Collection<? extends PermanentBuff<Entity>> unsafeElements
+                = (Collection<? extends PermanentBuff<Entity>>) permanentBuffs;
             return PermanentBuff.merge(unsafeElements);
         });
     }
@@ -197,28 +196,24 @@ public final class ParserUtils {
      * Adds default type converters to the given {@link JsonDeserializer.Builder}.
      */
     private static void addTypeConversions(JsonDeserializer.Builder builder) {
-        builder.addTypeConversion(GameAction.class, GameEventAction.class,
-            (action) -> (game, self, eventSource) -> action.alterGame(game));
-        builder.addTypeConversion(TargetlessAction.class, GameEventAction.class, (action) -> {
+        builder.addTypeConversion(GameAction.class, EventAction.class,
+            (action) -> (self, eventSource) -> action.apply(self.getGame()));
+        builder.addTypeConversion(TargetlessAction.class, EventAction.class, (action) -> {
             // Not truly safe but there is not much to do.
             // The true requirement is that the "Actor" extends the "Self" object of
-            // GameEventAction.
+            // EventAction.
             @SuppressWarnings("unchecked")
             TargetlessAction<PlayerProperty> safeAction = (TargetlessAction<PlayerProperty>) action;
-            return (Game game, PlayerProperty self, Object eventSource) -> {
-                return safeAction.alterGame(game, self);
-            };
+            return (PlayerProperty self, Object eventSource) -> safeAction.apply(self);
         });
 
         builder.addTypeConversion(TargetedAction.class, TargetlessAction.class, (action) -> {
             // Not truly safe but there is not much to do.
             // The true requirement is that the "Actor" extends the "Self" object of
-            // GameEventAction.
+            // EventAction.
             @SuppressWarnings("unchecked")
             TargetedAction<Object, Object> safeAction = (TargetedAction<Object, Object>) action;
-            return (Game game, Object actor) -> {
-                return safeAction.alterGame(game, actor, actor);
-            };
+            return (GameProperty actor) -> safeAction.apply(actor, actor);
         });
 
         builder.addTypeConversion(Predicate.class, EntityFilter.class, (predicate) -> {
@@ -247,9 +242,9 @@ public final class ParserUtils {
         result.setCustomStringParser(WeaponProvider.class, (str) -> toWeaponProvider(dbRef, str));
         result.setCustomStringParser(TargetNeed.class, ParserUtils::toTargetNeed);
         result.setCustomStringParser(Keyword.class, (str) -> Keyword.create(str));
-        result.setCustomStringParser(CardId.class, (str) -> new CardId(str));
-        result.setCustomStringParser(MinionId.class, (str) -> new MinionId(str));
-        result.setCustomStringParser(WeaponId.class, (str) -> new WeaponId(str));
+        result.setCustomStringParser(CardName.class, (str) -> new CardName(str));
+        result.setCustomStringParser(MinionName.class, (str) -> new MinionName(str));
+        result.setCustomStringParser(WeaponName.class, (str) -> new WeaponName(str));
         result.setCustomStringParser(SimpleEventType.class, SimpleEventType::tryParse);
 
         result.setCustomStringParser(Buff.class, (String str) -> {
@@ -291,7 +286,7 @@ public final class ParserUtils {
             CardDescr result = cache.get();
             if (result == null) {
                 HearthStoneDb db = Objects.requireNonNull(dbRef.get(), "HearthStoneDb");
-                result = db.getCardDb().getById(new CardId(cardId));
+                result = db.getCardDb().getById(new CardName(cardId));
                 if (!cache.compareAndSet(null, result)) {
                     result = cache.get();
                 }
@@ -306,7 +301,7 @@ public final class ParserUtils {
             MinionDescr result = cache.get();
             if (result == null) {
                 HearthStoneDb db = Objects.requireNonNull(dbRef.get(), "HearthStoneDb");
-                result = db.getMinionDb().getById(new MinionId(minionId));
+                result = db.getMinionDb().getById(new MinionName(minionId));
                 if (!cache.compareAndSet(null, result)) {
                     result = cache.get();
                 }
@@ -321,7 +316,7 @@ public final class ParserUtils {
             WeaponDescr result = cache.get();
             if (result == null) {
                 HearthStoneDb db = Objects.requireNonNull(dbRef.get(), "HearthStoneDb");
-                result = db.getWeaponDb().getById(new WeaponId(weaponId));
+                result = db.getWeaponDb().getById(new WeaponName(weaponId));
                 if (!cache.compareAndSet(null, result)) {
                     result = cache.get();
                 }
@@ -501,16 +496,24 @@ public final class ParserUtils {
                 : PlayActionRequirement.ALLOWED;
     }
 
-    private static <Self extends PlayerProperty> GameEventActionDefs<Self> parseEventActionDefs(
+    /**
+     * Parses the given triggers Json element to the respective {@link TriggeringAbility}.
+     */
+    private static <Self extends Entity> TriggeringAbility<Self> parseEventActionDefs(
             EventNotificationParser<Self> eventNotificationParser,
             JsonTree triggersElement) throws ObjectParsingException {
         if (triggersElement == null) {
-            return new GameEventActionDefs.Builder<Self>().create();
+            return new TriggeringAbility.Builder<Self>().create();
         }
 
         return eventNotificationParser.fromJson(triggersElement);
     }
 
+    /**
+     * Parses the given {@code ability} Json element to the respective {@link Ability} object.
+     *
+     * @see JsonDeserializer#toJavaObject(JsonTree, Class, TypeChecker)
+     */
     private static <Self> Ability<? super Self> parseAbility(
             Class<Self> selfClass,
             JsonDeserializer objectParser,
@@ -528,30 +531,32 @@ public final class ParserUtils {
         return ability;
     }
 
-    private static <Self extends PlayerProperty> GameEventAction<? super Self, ? super Self> parseDeathRattle(
+    /**
+     * Parses the {@code deathRattle} element of the given entity (minion or weapon) Json element
+     * and converts it to the respective {@link EventAction}.
+     */
+    private static <Self extends Entity> EventAction<? super Self, ? super Self> parseDeathRattle(
             Class<Self> selfClass,
             EventNotificationParser<Self> eventNotificationParser,
-            JsonTree root) throws ObjectParsingException {
+            JsonTree entityElement) throws ObjectParsingException {
 
-        JsonTree deathRattleElement = root.getChild("deathRattle");
+        JsonTree deathRattleElement = entityElement.getChild("deathRattle");
         if (deathRattleElement == null) {
             return null;
         }
 
-        JsonTree deathRattleConditionElement = root.getChild("deathRattleCondition");
-        GameEventFilter<? super Self, ? super Self> deathRattleFilter = deathRattleConditionElement != null
+        JsonTree deathRattleConditionElement = entityElement.getChild("deathRattleCondition");
+        EventFilter<? super Self, ? super Self> deathRattleFilter = deathRattleConditionElement != null
                 ? eventNotificationParser.parseFilter(selfClass, deathRattleConditionElement)
                 : null;
 
-        GameEventAction<? super Self, ? super Self> action
+        EventAction<? super Self, ? super Self> action
                 = eventNotificationParser.parseAction(selfClass, deathRattleElement);
 
         if (deathRattleFilter != null) {
-            return (Game game, Self self, Self eventSource) -> {
-                if (!deathRattleFilter.applies(game, self, eventSource)) {
-                    return UndoAction.DO_NOTHING;
-                }
-                return action.alterGame(game, self, eventSource);
+            return (Self self, Self eventSource) -> {
+                if (deathRattleFilter.applies(self, eventSource))
+                    action.trigger(self, eventSource);
             };
         }
         else {
@@ -559,15 +564,21 @@ public final class ParserUtils {
         }
     }
 
-    public static <Self extends PlayerProperty> LivingEntitiesAbilities<Self> parseAbilities(
+    /**
+     * Parses the given entity (minion or weapon) Json element to the respective
+     * {@link LivingEntitiesAbilities} object.
+     */
+    public static <Self extends Entity> LivingEntitiesAbilities<Self> parseAbilities(
             Class<Self> selfClass,
             JsonDeserializer objectParser,
             EventNotificationParser<Self> eventNotificationParser,
-            JsonTree root) throws ObjectParsingException {
+            JsonTree entityElement) throws ObjectParsingException {
 
-        Ability<? super Self> ability = parseAbility(selfClass, objectParser, root.getChild("ability"));
-        GameEventActionDefs<Self> eventActionDefs = parseEventActionDefs(eventNotificationParser, root.getChild("triggers"));
-        GameEventAction<? super Self, ? super Self> deathRattle = parseDeathRattle(selfClass, eventNotificationParser, root);
+        Ability<? super Self> ability = parseAbility(selfClass, objectParser, entityElement.getChild("ability"));
+        TriggeringAbility<Self> eventActionDefs =
+            parseEventActionDefs(eventNotificationParser, entityElement.getChild("triggers"));
+        EventAction<? super Self, ? super Self> deathRattle =
+            parseDeathRattle(selfClass, eventNotificationParser, entityElement);
 
         return new LivingEntitiesAbilities<>(ability, eventActionDefs, deathRattle);
     }
@@ -595,32 +606,27 @@ public final class ParserUtils {
         };
     }
 
-    private static <Actor, Target> PlayAction<Actor> parseTargetedAction(
+    private static <Actor extends GameProperty, Target> PlayAction<Actor> parseTargetedAction(
             JsonDeserializer objectParser,
             JsonTree actionElement,
             Class<Actor> actorType,
             Class<Target> targetType) throws ObjectParsingException {
         @SuppressWarnings("unchecked")
         TargetedAction<? super Actor, ? super Target> result = objectParser.toJavaObject(
-                actionElement,
-                TargetedAction.class,
-                TypeCheckers.genericTypeChecker(TargetedAction.class, actorType, targetType));
-        return (Game game, Actor actor, Optional<Character> optTarget) -> {
-            if (!optTarget.isPresent()) {
-                return UndoAction.DO_NOTHING;
-            }
+            actionElement,
+            TargetedAction.class,
+            TypeCheckers.genericTypeChecker(TargetedAction.class, actorType, targetType));
+        return (Actor actor, Optional<Character> optTarget) -> {
+            if (!optTarget.isPresent())
+                return;
 
             Character target = optTarget.get();
-            if (targetType.isInstance(target)) {
-                return result.alterGame(game, actor, targetType.cast(target));
-            }
-            else {
-                return UndoAction.DO_NOTHING;
-            }
+            if (targetType.isInstance(target))
+                result.apply(actor, targetType.cast(target));
         };
     }
 
-    private static <Actor> PlayAction<Actor> parseTargetedActionRaw(
+    private static <Actor extends GameProperty> PlayAction<Actor> parseTargetedActionRaw(
             JsonDeserializer objectParser,
             JsonTree actionElement,
             TargetNeed targetNeed,
@@ -634,7 +640,7 @@ public final class ParserUtils {
                         actionElement,
                         TargetlessAction.class,
                         TypeCheckers.genericTypeChecker(TargetlessAction.class, actorType));
-                return (game, actor, target) -> result.alterGame(game, actor);
+                return (actor, target) -> result.apply(actor);
             }
             else {
                 return parseTargetedAction(objectParser, actionElement, actorType, Minion.class);
@@ -650,7 +656,7 @@ public final class ParserUtils {
         }
     }
 
-    public static <Actor> PlayAction<Actor> parseTargetedAction(
+    public static <Actor extends GameProperty> PlayAction<Actor> parseTargetedAction(
             JsonDeserializer objectParser,
             JsonTree actionElement,
             TargetNeed targetNeed,
@@ -676,12 +682,11 @@ public final class ParserUtils {
             JsonTree actionDef,
             Class<Actor> actorType) throws ObjectParsingException {
 
-        TargetNeed targetNeed = ParserUtils.getTargetNeedOfAction(objectParser, actionDef);
-        PlayActionRequirement requirement = ParserUtils.getPlayRequirementOfAction(objectParser, actionDef);
-        PlayAction<Actor> action
-                = parseTargetedAction(objectParser, actionDef, targetNeed, actorType);
+        TargetNeed targetNeed = getTargetNeedOfAction(objectParser, actionDef);
+        PlayActionRequirement requirement = getPlayRequirementOfAction(objectParser, actionDef);
+        PlayAction<Actor> action = parseTargetedAction(objectParser, actionDef, targetNeed, actorType);
 
-        PlayActionRequirement actionCondition = ParserUtils.getActionConditionOfAction(objectParser, actionDef);
+        PlayActionRequirement actionCondition = getActionConditionOfAction(objectParser, actionDef);
         action = addCondition(actionCondition, action);
 
         return new PlayActionDef<>(targetNeed, requirement, action);
@@ -696,26 +701,25 @@ public final class ParserUtils {
             JsonDeserializer objectParser,
             JsonTree actionDefsElement,
             Class<Actor> actorType,
-            Consumer<PlayActionDef<Actor>> actionDefProcessor) throws ObjectParsingException {
+            Consumer<PlayActionDef<Actor>> actionDefConsumer) throws ObjectParsingException {
 
-        if (actionDefsElement == null) {
+        if (actionDefsElement == null)
             return false;
-        }
 
         if (actionDefsElement.isJsonArray()) {
             for (JsonTree singleActionDefElement: actionDefsElement.getChildren()) {
-                actionDefProcessor.accept(parseSinglePlayActionDef(objectParser, singleActionDefElement, actorType));
+                actionDefConsumer.accept(parseSinglePlayActionDef(objectParser, singleActionDefElement, actorType));
             }
             return actionDefsElement.getChildCount() > 0;
         }
         else {
-            actionDefProcessor.accept(parseSinglePlayActionDef(objectParser, actionDefsElement, actorType));
+            actionDefConsumer.accept(parseSinglePlayActionDef(objectParser, actionDefsElement, actorType));
             return true;
         }
     }
 
     /**
-     * Adds the given {@link PlayActionRequirement} to the given {@link PlayAction}.
+     * Adds the given {@link PlayActionRequirement} to the given {@link PlayAction} and returns.
      */
     private static <Actor extends PlayerProperty> PlayAction<Actor> addCondition(
             PlayActionRequirement condition,
@@ -724,13 +728,9 @@ public final class ParserUtils {
             return action;
         }
 
-        return (Game game, Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
-            if (condition.meetsRequirement(actor.getOwner())) {
-                return action.alterGame(game, actor, target);
-            }
-            else {
-                return UndoAction.DO_NOTHING;
-            }
+        return (Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
+            if (condition.meetsRequirement(actor.getOwner()))
+                action.apply(actor, target);
         };
     }
 

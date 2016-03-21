@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.EntityId;
 import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetId;
 import info.hearthsim.brazier.cards.CardDescr;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -14,7 +14,7 @@ public final class PlayTargetRequest {
     private final PlayerId castingPlayerId;
 
     private final int minionLocation;
-    private final TargetId targetId;
+    private final EntityId targetId;
 
     private final CardDescr choseOneChoice;
 
@@ -25,14 +25,14 @@ public final class PlayTargetRequest {
     public PlayTargetRequest(
             PlayerId castingPlayerId,
             int minionLocation,
-            TargetId targetId) {
+            EntityId targetId) {
         this(castingPlayerId, minionLocation, targetId, null);
     }
 
     public PlayTargetRequest(
             PlayerId castingPlayerId,
             int minionLocation,
-            TargetId targetId,
+            EntityId targetId,
             CardDescr choseOneChoice) {
         ExceptionHelper.checkNotNullArgument(castingPlayerId, "castingPlayerId");
 
@@ -50,7 +50,7 @@ public final class PlayTargetRequest {
         return minionLocation;
     }
 
-    public TargetId getTargetId() {
+    public EntityId getEntityId() {
         return targetId;
     }
 

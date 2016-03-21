@@ -13,20 +13,13 @@ import java.util.Optional;
  *
  * @param <Actor> the type of the actor.
  */
-public interface PlayAction<Actor> extends TargetedAction<Actor, Optional<Character>> {
+public interface PlayAction<Actor extends GameProperty> extends TargetedAction<Actor, Optional<Character>> {
+    public static final PlayAction DO_NOTHING = (actor, target) -> {};
+
     /**
      * Executes the {@code PlayAction} with the given {@link Game} and {@link PlayArg}.
      */
-    public default UndoAction doPlay(Game game, PlayArg<Actor> arg) {
-        return alterGame(game, arg.getActor(), arg.getTarget());
-    }
-
-    /**
-     * Returns a {@link PlayAction} which does nothing.
-     */
-    public static <Actor> PlayAction<Actor> doNothing() {
-        return (Game game, Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
-            return UndoAction.DO_NOTHING;
-        };
+    public default void doPlay(PlayArg<Actor> arg) {
+        apply(arg.getActor(), arg.getTarget());
     }
 }

@@ -2,12 +2,10 @@ package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.GameAction;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 
 import java.util.Optional;
 
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -47,8 +45,8 @@ public class GameAgent {
     /**
      * Ends the current turn.
      */
-    public UndoAction endTurn() {
-        return doGameAction(Game::endTurn);
+    public void endTurn() {
+        doGameAction(Game::endTurn);
     }
 
     /**
@@ -56,8 +54,8 @@ public class GameAgent {
      *
      * @param currentPlayerId the {@code PlayerId} of the given player
      */
-    public UndoAction setCurrentPlayerId(PlayerId currentPlayerId) {
-        return game.setCurrentPlayerId(currentPlayerId);
+    public void setCurrentPlayerId(PlayerId currentPlayerId) {
+        game.setCurrentPlayerId(currentPlayerId);
     }
 
     public Player getCurrentPlayer() {
@@ -72,61 +70,52 @@ public class GameAgent {
      * Executes the given {@link GameAction}.
      * @param gameAction the given {@link GameAction}.
      */
-    public UndoAction doGameAction(GameAction gameAction) {
+    public void doGameAction(GameAction gameAction) {
         ExceptionHelper.checkNotNullArgument(gameAction, "gameAction");
 
-        UndoAction action = gameAction.alterGame(game);
-        UndoAction deathResults = game.endPhase();
-        return () -> {
-            deathResults.undo();
-            action.undo();
-        };
+        gameAction.apply(game);
+        game.endPhase();
     }
 
     /**
      * Designates the given attacker to attack the specific target.
      *
-     * @param attacker the {@link TargetId} of the attacker.
-     * @param defender the {@link TargetId} of the target.
+     * @param attacker the {@link EntityId} of the attacker.
+     * @param defender the {@link EntityId} of the target.
      */
-    public UndoAction attack(TargetId attacker, TargetId defender) {
+    public void attack(EntityId attacker, EntityId defender) {
         // TODO: Check if the action is actually a valid move.
-        return doGameAction((currentGame) -> currentGame.attack(attacker, defender));
+        doGameAction((currentGame) -> currentGame.attack(attacker, defender));
     }
 
     /**
      * Plays the designated player's hero power towards the given target.
      */
-    public UndoAction playHeroPower(PlayTargetRequest targetRequest) {
-        return doGameAction((currentGame) -> {
+    public void playHeroPower(PlayTargetRequest targetRequest) {
+        doGameAction((currentGame) -> {
             Player castingPlayer = currentGame.getPlayer(targetRequest.getCastingPlayerId());
-            Character target = currentGame.findTarget(targetRequest.getTargetId());
+            Character target = currentGame.getCharacter(targetRequest.getEntityId());
 
             HeroPower selectedPower = castingPlayer.getHero().getHeroPower();
-            return selectedPower.play(currentGame, Optional.ofNullable(target));
+            selectedPower.play(Optional.ofNullable(target));
         });
     }
 
     /**
      * Plays the designated player's card towards the given target.
      */
-    public UndoAction playCard(int cardIndex, PlayTargetRequest playTarget) {
+    public void playCard(int cardIndex, PlayTargetRequest playTarget) {
         // TODO: Check if the action is actually a valid move.
-        return doGameAction((currentGame) -> {
+        doGameAction((currentGame) -> {
             Player player = currentGame.getPlayer(playTarget.getCastingPlayerId());
             Hand hand = player.getHand();
             int manaCost = hand.getCard(cardIndex).getActiveManaCost();
 
-            UndoableResult<Card> cardRef = hand.removeAtIndex(cardIndex);
-            if (cardRef == null) {
-                return UndoAction.DO_NOTHING;
-            }
+            Card card = hand.removeAtIndex(cardIndex);
+            if (card == null)
+                return;
 
-            UndoAction playUndo = player.playCard(cardRef.getResult(), manaCost, playTarget);
-            return () -> {
-                playUndo.undo();
-                cardRef.undo();
-            };
+            player.playCard(card, manaCost, playTarget);
         });
     }
 

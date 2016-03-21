@@ -1,6 +1,6 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -74,8 +74,8 @@ public final class ResurrectTest extends BrazierTest {
                 resurrected);
     }
 
-    private MinionId runTwoMinionsResurrect(int roll) {
-        List<MinionId> board = RandomTestUtils.boardMinionScript(agent, "p1", (agent) -> {
+    private MinionName runTwoMinionsResurrect(int roll) {
+        List<MinionName> board = RandomTestUtils.boardMinionScript(agent, "p1", (agent) -> {
             agent.setMana("p1", 10);
             agent.setMana("p2", 10);
             agent.deck("p1", YETI, SLUDGE_BELCHER, WHIRLWIND);

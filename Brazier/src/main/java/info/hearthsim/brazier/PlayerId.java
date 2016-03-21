@@ -2,7 +2,7 @@ package info.hearthsim.brazier;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class PlayerId {
+public final class PlayerId extends EntityId {
     private final String name;
 
     public PlayerId(String name) {

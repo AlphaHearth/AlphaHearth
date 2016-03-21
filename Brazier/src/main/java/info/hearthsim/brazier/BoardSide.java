@@ -3,17 +3,13 @@ package info.hearthsim.brazier;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableAction;
-import info.hearthsim.brazier.events.CompletableGameActionEvents;
 import info.hearthsim.brazier.minions.MinionBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class BoardSide implements PlayerProperty {
@@ -39,7 +35,7 @@ public final class BoardSide implements PlayerProperty {
         BoardSide result = new BoardSide(newOwner, this.maxSize);
         for (BoardMinionRef minionRef : minionRefs) {
             BoardMinionRef newMinionRef =
-                new BoardMinionRef(minionRef.minion.copyFor(newOwner), minionRef.needsSpace);
+                new BoardMinionRef(minionRef.minion.copyFor(newOwner.getGame(), newOwner), minionRef.needsSpace);
             result.minionRefs.add(newMinionRef);
         }
         return result;
@@ -58,20 +54,21 @@ public final class BoardSide implements PlayerProperty {
      *
      * @see #completeSummon(Minion)
      */
-    public UndoAction tryAddToBoard(Minion minion, int index) {
-        if (index > minionRefs.size())
-            return tryAddToBoard(minion);
+    public void tryAddToBoard(Minion minion, int index) {
+        if (indexOf(minion.getEntityId()) != -1)
+            return;
+        if (index > minionRefs.size()) {
+            tryAddToBoard(minion);
+            return;
+        }
         if (index < 0)
             index = 0;
         if (isFull())
-            return UndoAction.DO_NOTHING;
+            return;
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         BoardMinionRef minionRef = new BoardMinionRef(minion);
         minionRefs.add(index, minionRef);
-        minion.activatePassiveAbilities();
-
-        return () -> minionRefs.remove(minionRef);
     }
 
     /**
@@ -83,36 +80,34 @@ public final class BoardSide implements PlayerProperty {
      * @param minion the given minion.
      * @see #completeSummon(Minion)
      */
-    public UndoAction tryAddToBoard(Minion minion) {
+    public void tryAddToBoard(Minion minion) {
+        if (indexOf(minion.getEntityId()) != -1)
+            return;
         if (isFull())
-            return UndoAction.DO_NOTHING;
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         BoardMinionRef minionRef = new BoardMinionRef(minion);
         minionRefs.add(minionRef);
         minion.activatePassiveAbilities();
-
-        return () -> minionRefs.remove(minionRef);
     }
 
-    public UndoAction removeFromBoard(TargetId minionId) {
-        int index = -1;
-        for (int i = 0; i < minionRefs.size(); i++)
-            if (minionRefs.get(i).minion.getTargetId() == minionId)
-                index = i;
-        BoardMinionRef removedMinion = minionRefs.remove(index);
-
-        final int finalIndex = index;
-        return () -> minionRefs.add(finalIndex, removedMinion);
+    public void removeFromBoard(EntityId minionId) {
+        for (BoardMinionRef minion : minionRefs) {
+            if (minion.minion.getEntityId() == minionId) {
+                minion.minion.getProperties().deactivateAllAbilities();
+                minionRefs.remove(minion);
+                return;
+            }
+        }
     }
 
     /**
-     * Schedules to destroy the minion with the given {@link TargetId}. Method {@link Game#resolveDeaths()}
+     * Schedules to destroy the minion with the given {@link EntityId}. Method {@link Game#resolveDeaths()}
      * guarantees the minion scheduled to destroy will be destroyed soon after.
      */
-    public void scheduleToDestroy(TargetId minionId) {
+    public void scheduleToDestroy(EntityId minionId) {
         for (BoardMinionRef minionRef : minionRefs) {
-            if (minionRef.minion.getTargetId() == minionId) {
+            if (minionRef.minion.getEntityId() == minionId) {
                 minionRef.needsSpace = false;
                 return;
             }
@@ -125,33 +120,24 @@ public final class BoardSide implements PlayerProperty {
      * @throws IllegalArgumentException if the given old minion is not on this {@code BoardSide}.
      */
     // TODO Use `MinionDescr` as the type of new minion
-    public UndoableResult<Minion> replace(Minion oldMinion, Minion newMinion) {
-        int index = indexOf(oldMinion.getTargetId());
+    public Minion replace(Minion oldMinion, Minion newMinion) {
+        int index = indexOf(oldMinion.getEntityId());
         if (index == -1)
             throw new IllegalArgumentException("The given old minion `" + oldMinion
                 + "` does not belong to this side of board.");
         BoardMinionRef oldMinionRef = minionRefs.get(index);
         minionRefs.set(index, new BoardMinionRef(newMinion));
-        return new UndoableResult<>(oldMinionRef.minion, () -> minionRefs.set(index, oldMinionRef));
+        return oldMinionRef.minion;
     }
 
     /**
      * Refreshes the states of the minions on the board. That is,
      * sleeping minions will be awakened and their number of attacks will reset.
      * This method should be invoked every time a new turn starts.
-     *
-     * @return returns an action which undoes everything this method did, assuming
-     *   the undo action is called in the same state as was before calling this
-     *   {@code refreshStartOfTurn method}. This method never returns {@code null}.
      */
-    public UndoAction refreshStartOfTurn() {
-        UndoAction.Builder builder = new UndoAction.Builder(minionRefs.size());
-
-        for (BoardMinionRef minionRef: minionRefs) {
-            builder.addUndo(minionRef.minion.refreshStartOfTurn());
-        }
-
-        return builder;
+    public void refreshStartOfTurn() {
+        for (BoardMinionRef minionRef: minionRefs)
+            minionRef.minion.refreshStartOfTurn();
     }
 
     /**
@@ -159,14 +145,9 @@ public final class BoardSide implements PlayerProperty {
      * frozen minion will be unfrozen.
      * This method should be invoked every time a turn ends.
      */
-    public UndoAction refreshEndOfTurn() {
-        UndoAction.Builder builder = new UndoAction.Builder(minionRefs.size());
-
-        for (BoardMinionRef minionRef: minionRefs) {
-            builder.addUndo(minionRef.minion.refreshEndOfTurn());
-        }
-
-        return builder;
+    public void refreshEndOfTurn() {
+        for (BoardMinionRef minionRef: minionRefs)
+            minionRef.minion.refreshEndOfTurn();
     }
 
     /**
@@ -175,19 +156,10 @@ public final class BoardSide implements PlayerProperty {
      * auras.
      * <P>
      * This method is idempotent.
-     *
-     * @return an action which undoes everything this method did, assuming
-     *   the undo action is called in the same state as was before calling this
-     *   {@code refresh method}. This method never returns {@code null}.
      */
-    public UndoAction updateAuras() {
-        UndoAction.Builder builder = new UndoAction.Builder(minionRefs.size());
-
-        for (BoardMinionRef minionRef: minionRefs) {
-            builder.addUndo(minionRef.minion.updateAuras());
-        }
-
-        return builder;
+    public void updateAuras() {
+        for (BoardMinionRef minionRef: minionRefs)
+            minionRef.minion.updateAuras();
     }
 
     /**
@@ -234,19 +206,20 @@ public final class BoardSide implements PlayerProperty {
     }
 
     /** Finds the first minion with the given {@code TargetId}. */
-    public Minion findMinion(TargetId targetId) {
-        ExceptionHelper.checkNotNullArgument(targetId, "targetId");
+    public Minion findMinion(EntityId entityId) {
+        if (entityId == null)
+            return null;
 
-        return findMinion((minion) -> targetId.equals(minion.getTargetId()));
+        return findMinion((minion) -> entityId.equals(minion.getEntityId()));
     }
 
     /**
-     * Returns the index of the minion with the given {@link TargetId};
+     * Returns the index of the minion with the given {@link EntityId};
      * returns {@code -1} if no such minion exist.
      */
-    public int indexOf(TargetId targetId) {
-        ExceptionHelper.checkNotNullArgument(targetId, "targetId");
-        return indexOf((minion) -> minion.getTargetId() == targetId);
+    public int indexOf(EntityId entityId) {
+        ExceptionHelper.checkNotNullArgument(entityId, "entityId");
+        return indexOf((minion) -> minion.getEntityId() == entityId);
     }
 
     /**
@@ -324,24 +297,19 @@ public final class BoardSide implements PlayerProperty {
     /**
      * Executes the given function to all minions on the board.
      */
-    public UndoAction forAllMinions(Function<? super Minion, ? extends UndoAction> action) {
+    public void forAllMinions(Consumer<? super Minion> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         int reservationCount = minionRefs.size();
         if (reservationCount == 0) {
-            return UndoAction.DO_NOTHING;
+            return;
         }
 
-        UndoAction.Builder result = new UndoAction.Builder(reservationCount);
-        boolean applied = false;
         for (BoardMinionRef minionRef: minionRefs) {
             Minion minion = minionRef.minion;
-            if (minion != null) {
-                applied = true;
-                result.addUndo(action.apply(minion));
-            }
+            if (minion != null)
+                action.accept(minion);
         }
-        return applied ? result : UndoAction.DO_NOTHING;
     }
 
     /**
@@ -396,48 +364,36 @@ public final class BoardSide implements PlayerProperty {
      *
      * @param minion the given minion.
      */
-    public UndoAction takeOwnership(Minion minion) {
+    public void takeOwnership(Minion minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        if (minion.isDestroyed()) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        // We must not check if it is already on our board because
-        // in this case, HearthStone still tries to put the minion back.
-        // Which might result in the death of the minion due to full board.
+        if (minion.isDestroyed())
+            return;
 
         if (isFull()) {
-            return minion.kill();
+            minion.scheduleToDestroy();
+            minion.destroy();
+            return;
         }
 
-        UndoAction.Builder builder = new UndoAction.Builder();
-
         BoardSide enemyBoard = minion.getOwner().getBoard();
-        builder.addUndo(enemyBoard.removeFromBoard(minion.getTargetId()));
+        enemyBoard.removeFromBoard(minion.getEntityId());
 
-        Player prevOwner = minion.getOwner();
         minion.setOwner(getOwner());
-        builder.addUndo(() -> minion.setOwner(prevOwner));
 
-        UndoAction reserveUndo = tryAddToBoard(minion);
+        tryAddToBoard(minion);
 
-        builder.addUndo(reserveUndo);
-
-        builder.addUndo(minion.refreshStartOfTurn());
-        builder.addUndo(minion.exhaust());
-
-        builder.addUndo(completeSummon(minion));
-
-        return builder;
+        minion.refreshStartOfTurn();
+        minion.exhaust();
+        completeSummon(minion);
     }
 
     /**
      * Completes the action of summoning the given {@code Minion} without triggering any battlecry effect.
      * @param minion the given {@code Minion} which is just summoned.
      */
-    public UndoAction completeSummon(Minion minion) {
-        return completeSummonUnsafe(minion, null);
+    public void completeSummon(Minion minion) {
+        completeSummonUnsafe(minion, null);
     }
 
     /**
@@ -450,11 +406,11 @@ public final class BoardSide implements PlayerProperty {
      *
      * @throws NullPointerException if {@code battleCryTarget} is {@code null}.
      */
-    public UndoAction completeSummon(
+    public void completeSummon(
         Minion minion,
         Optional<Character> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(battleCryTarget, "battleCryTarget");
-        return completeSummonUnsafe(minion, battleCryTarget);
+        completeSummonUnsafe(minion, battleCryTarget);
     }
 
     /**
@@ -467,7 +423,7 @@ public final class BoardSide implements PlayerProperty {
      *                        Pass {@code null} to indicate there is no battlecry effect to be
      *                        triggered.
      */
-    private UndoAction completeSummonUnsafe(
+    private void completeSummonUnsafe(
         Minion minion,
         Optional<Character> battleCryTarget) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
@@ -475,20 +431,19 @@ public final class BoardSide implements PlayerProperty {
         Game game = getGame();
         GameEvents events = game.getEvents();
 
-        UndoAction.Builder result = new UndoAction.Builder();
-
-        CompletableGameActionEvents<Minion> summoningListeners = events.summoningListeners();
-        UndoableResult<UndoableAction> summoningFinalizer = summoningListeners.triggerEvent(minion);
-        result.addUndo(summoningFinalizer.getUndoAction());
+        // CompletableGameActionEvents<Minion> summoningListeners = events.summoningListeners();
+        // UndoableResult<UndoableAction> summoningFinalizer = summoningListeners.triggerEvent(minion);
 
         if (battleCryTarget != null) {
             PlayArg<Minion> battleCryArg = new PlayArg<>(minion, battleCryTarget);
-            result.addUndo(minion.getBaseDescr().executeBattleCriesNow(owner, battleCryArg));
+            minion.getBaseDescr().executeBattleCriesNow(owner, battleCryArg);
         }
 
-        result.addUndo(summoningFinalizer.getResult().doAction());
+        events.summoningListeners().triggerEvent(minion);
 
-        return result;
+        minion.activatePassiveAbilities();
+
+        // summoningFinalizer.getResult().doAction();
     }
 
     /**

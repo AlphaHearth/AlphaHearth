@@ -1,6 +1,5 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.weapons.Weapon;
 
@@ -17,7 +16,7 @@ public interface DestroyableEntity extends BornEntity {
      * health point being below {@code 0}). Once an entity is scheduled to destroy, it will be destroyed
      * soon after by invoking its {@link #destroy()} method.
      */
-    public UndoAction scheduleToDestroy();
+    public void scheduleToDestroy();
 
     /**
      * Returns if this entity has been scheduled to destroy.
@@ -27,5 +26,5 @@ public interface DestroyableEntity extends BornEntity {
     /**
      * Destroys this entity.
      */
-    public UndoAction destroy();
+    public void destroy();
 }

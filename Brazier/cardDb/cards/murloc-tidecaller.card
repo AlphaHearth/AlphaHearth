@@ -10,9 +10,9 @@
         "triggers": {
             "on-summon": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "GameEventFilters.eventSourceHasKeyword",
+                        "class": "EventFilters.eventSourceHasKeyword",
                         "keywords": "murloc"
                     }
                 ],

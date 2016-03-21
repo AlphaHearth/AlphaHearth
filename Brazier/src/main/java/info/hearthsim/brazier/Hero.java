@@ -1,14 +1,11 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.actions.undo.UndoableIntResult;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.weapons.AttackTool;
 import info.hearthsim.brazier.weapons.Weapon;
 
@@ -16,15 +13,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The hero in a game, controlled by the specific player.
  */
-public final class Hero implements Character {
-    private final TargetId heroId;
+public final class Hero implements Character<Hero> {
+    private final EntityId heroId;
     private final Player owner;
     private final long birthDate;
     private HeroPower heroPower;
@@ -52,7 +49,7 @@ public final class Hero implements Character {
         ExceptionHelper.checkArgumentInRange(startingArmor, 0, Integer.MAX_VALUE, "startingArmor");
         ExceptionHelper.checkNotNullArgument(heroClass, "heroClass");
 
-        this.heroId = new TargetId();
+        this.heroId = new EntityId();
         this.heroPower = new HeroPower(this, CardDescr.DO_NOTHING);
         this.owner = owner;
         this.hp = hp;
@@ -90,7 +87,7 @@ public final class Hero implements Character {
     /**
      * Returns a copy of this {@code Hero} with the given new {@link Player owner}.
      */
-    public Hero copyFor(Player newOwner) {
+    public Hero copyFor(Game newGame, Player newOwner) {
         return new Hero(newOwner, this);
     }
 
@@ -111,18 +108,13 @@ public final class Hero implements Character {
      * Refreshes the {@code Hero} at start of turn by refreshing its attack count
      * and hero power.
      */
-    public UndoAction refresh() {
-        UndoAction attackRefreshUndo = attackTool.refreshStartOfTurn();
-        UndoAction heroPowerRefreshUndo = heroPower.refresh();
-
-        return () -> {
-            heroPowerRefreshUndo.undo();
-            attackRefreshUndo.undo();
-        };
+    public void refresh() {
+        attackTool.refreshStartOfTurn();
+        heroPower.refresh();
     }
 
-    public UndoAction updateAuras() {
-        return hp.applyAura();
+    public void updateAuras() {
+        hp.applyAura();
     }
 
     @Override
@@ -130,35 +122,31 @@ public final class Hero implements Character {
         return birthDate;
     }
 
-    public UndoAction refreshEndOfTurn() {
-        return attackTool.refreshEndOfTurn();
+    public void refreshEndOfTurn() {
+        attackTool.refreshEndOfTurn();
     }
 
     @Override
-    public UndoAction kill() {
-        if (poisoned) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void kill() {
+        if (poisoned)
+            return;
 
         poisoned = true;
-        return () -> poisoned = false;
     }
 
     @Override
-    public UndoableResult<Damage> createDamage(int damage) {
-        return new UndoableResult<>(new Damage(this, damage));
+    public Damage createDamage(int damage) {
+        return new Damage(this, damage);
     }
 
     public Keyword getHeroClass() {
         return heroClass;
     }
 
-    public UndoAction setHeroClass(Keyword newClass) {
+    public void setHeroClass(Keyword newClass) {
         ExceptionHelper.checkNotNullArgument(newClass, "newClass");
 
-        Keyword prevClass = heroClass;
         heroClass = newClass;
-        return () -> heroClass = prevClass;
     }
 
     @Override
@@ -205,8 +193,8 @@ public final class Hero implements Character {
         return attackTool.extraAttack;
     }
 
-    public UndoableUnregisterAction addExtraAttackForThisTurn(int amount) {
-        return attackTool.addAttack(amount);
+    public UndoObjectAction<Hero> addExtraAttackForThisTurn(int amount) {
+        return UndoObjectAction.of(this, (h) -> h.attackTool, (at) -> at.addAttack(amount));
     }
 
     @Override
@@ -215,7 +203,7 @@ public final class Hero implements Character {
     }
 
     @Override
-    public TargetId getTargetId() {
+    public EntityId getEntityId() {
         return heroId;
     }
 
@@ -223,13 +211,10 @@ public final class Hero implements Character {
         return heroPower;
     }
 
-    public UndoAction setHeroPower(CardDescr power) {
+    public void setHeroPower(CardDescr power) {
         ExceptionHelper.checkNotNullArgument(power, "power");
 
-        HeroPower prevHeroPower = this.heroPower;
         this.heroPower = new HeroPower(this, power);
-
-        return () -> this.heroPower = prevHeroPower;
     }
 
     public HpProperty getHp() {
@@ -240,61 +225,50 @@ public final class Hero implements Character {
         return hp.getMaxHp();
     }
 
-    public UndoAction setMaxHp(int maxHp) {
-        return hp.setMaxHp(maxHp);
+    public void setMaxHp(int maxHp) {
+        hp.setMaxHp(maxHp);
     }
 
     public int getCurrentHp() {
         return hp.getCurrentHp();
     }
 
-    public UndoAction setCurrentHp(int currentHp) {
-        return hp.setCurrentHp(currentHp);
+    public void setCurrentHp(int currentHp) {
+        hp.setCurrentHp(currentHp);
     }
 
     public int getCurrentArmor() {
         return currentArmor;
     }
 
-    public UndoAction setCurrentArmor(int currentArmor) {
+    public void setCurrentArmor(int currentArmor) {
         ExceptionHelper.checkArgumentInRange(currentArmor, 0, Integer.MAX_VALUE, "currentArmor");
-        int prevValue = this.currentArmor;
         this.currentArmor = currentArmor;
-        return () -> this.currentArmor = prevValue;
     }
 
-    public UndoAction armorUp(int armor) {
+    public void armorUp(int armor) {
         if (armor > 0) {
-            UndoAction armorUndo = setCurrentArmor(getCurrentArmor() + armor);
-            UndoAction eventUndo = getGame().getEvents().triggerEvent(
+            setCurrentArmor(getCurrentArmor() + armor);
+            getGame().getEvents().triggerEvent(
                 SimpleEventType.ARMOR_GAINED,
                 new ArmorGainedEvent(this, armor));
-            return () -> {
-                eventUndo.undo();
-                armorUndo.undo();
-            };
         } else {
-            return setCurrentArmor(Math.max(0, getCurrentArmor() + armor));
+            setCurrentArmor(Math.max(0, getCurrentArmor() + armor));
         }
     }
 
-    public static UndoableIntResult doPreparedDamage(
+    public static int doPreparedDamage(
         Damage damage,
         Character target,
-        Function<Damage, UndoableIntResult> damageMethod) {
+        ToIntFunction<Damage> damageMethod) {
         ExceptionHelper.checkNotNullArgument(damage, "damage");
         ExceptionHelper.checkNotNullArgument(target, "target");
         ExceptionHelper.checkNotNullArgument(damageMethod, "damageMethod");
 
         DamageRequest request = new DamageRequest(damage, target);
-        UndoAction eventUndo = target.getGame().getEvents().triggerEventNow(SimpleEventType.PREPARE_DAMAGE, request);
+        target.getGame().getEvents().triggerEventNow(SimpleEventType.PREPARE_DAMAGE, request);
 
-        UndoableIntResult applyDamageRef = damageMethod.apply(request.getDamage());
-
-        return new UndoableIntResult(applyDamageRef.getResult(), () -> {
-            applyDamageRef.undo();
-            eventUndo.undo();
-        });
+        return damageMethod.applyAsInt(request.getDamage());
     }
 
     @Override
@@ -306,19 +280,19 @@ public final class Hero implements Character {
     }
 
     @Override
-    public UndoableIntResult damage(Damage damage) {
+    public int damage(Damage damage) {
         return doPreparedDamage(damage, this, this::applyDamage);
     }
 
-    private UndoableIntResult applyDamage(Damage damage) {
+    private int applyDamage(Damage damage) {
         int attack = damage.getDamage();
 
-        if (attack == 0) {
-            return UndoableIntResult.ZERO;
-        }
-        if (attack > 0 && immune.getValue()) {
-            return UndoableIntResult.ZERO;
-        }
+        if (attack == 0)
+            return 0;
+
+        if (attack > 0 && immune.getValue())
+            return 0;
+
 
         final int originalArmor = getCurrentArmor();
         final int originalHp = getCurrentHp();
@@ -345,28 +319,21 @@ public final class Hero implements Character {
             }
         }
 
-        UndoAction adjustArmorUndo = setCurrentArmor(newArmor);
-        UndoAction adjustHpUndo = setCurrentHp(newHp);
+        setCurrentArmor(newArmor);
+        setCurrentHp(newHp);
 
         GameEvents events = getOwner().getGame().getEvents();
 
-        UndoAction eventUndo;
         int damageDealt = originalHp - newHp;
         if (damageDealt != 0) {
             SimpleEventType eventType = damageDealt < 0
                 ? SimpleEventType.HERO_HEALED
                 : SimpleEventType.HERO_DAMAGED;
             DamageEvent event = new DamageEvent(damage.getSource(), this, damageDealt);
-            eventUndo = events.triggerEvent(eventType, event);
-        } else {
-            eventUndo = UndoAction.DO_NOTHING;
+            events.triggerEvent(eventType, event);
         }
 
-        return new UndoableIntResult(damageDealt, () -> {
-            eventUndo.undo();
-            adjustHpUndo.undo();
-            adjustArmorUndo.undo();
-        });
+        return damageDealt;
     }
 
     @Override
@@ -410,20 +377,9 @@ public final class Hero implements Character {
             return getOwner().getWeaponAttack() + extraAttack;
         }
 
-        public UndoableUnregisterAction addAttack(int attackAddition) {
+        public UndoObjectAction<HeroAttackTool> addAttack(int attackAddition) {
             extraAttack += attackAddition;
-            return UndoableUnregisterAction.makeIdempotent(new UndoableUnregisterAction() {
-                @Override
-                public UndoAction unregister() {
-                    extraAttack -= attackAddition;
-                    return () -> extraAttack += attackAddition;
-                }
-
-                @Override
-                public void undo() {
-                    extraAttack -= attackAddition;
-                }
-            });
+            return (hat) -> hat.extraAttack -= attackAddition;
         }
 
         private int getMaxAttackCount() {
@@ -453,25 +409,17 @@ public final class Hero implements Character {
         }
 
         @Override
-        public UndoAction incAttackCount() {
+        public void incAttackCount() {
             Weapon currentWeapon = tryGetWeapon();
-            UndoAction decreaseChargesAction;
-            if (currentWeapon != null) {
-                decreaseChargesAction = currentWeapon.decreaseCharges();
-            } else {
-                decreaseChargesAction = UndoAction.DO_NOTHING;
-            }
+            if (currentWeapon != null)
+                currentWeapon.decreaseCharges();
 
             attackCount++;
-            return () -> {
-                attackCount--;
-                decreaseChargesAction.undo();
-            };
         }
 
         @Override
-        public UndoAction freeze() {
-            return freezeManager.freeze();
+        public void freeze() {
+            freezeManager.freeze();
         }
 
         @Override
@@ -480,21 +428,16 @@ public final class Hero implements Character {
         }
 
         @Override
-        public UndoAction refreshStartOfTurn() {
+        public void refreshStartOfTurn() {
             int prevAttackCount = attackCount;
             int prevExtraAttack = extraAttack;
 
             attackCount = 0;
             extraAttack = 0;
-
-            return () -> {
-                attackCount = prevAttackCount;
-                extraAttack = prevExtraAttack;
-            };
         }
 
-        public UndoAction refreshEndOfTurn() {
-            return freezeManager.endTurn(attackCount);
+        public void refreshEndOfTurn() {
+            freezeManager.endTurn(attackCount);
         }
 
         @Override

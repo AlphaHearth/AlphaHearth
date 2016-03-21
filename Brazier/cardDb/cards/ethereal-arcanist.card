@@ -10,8 +10,8 @@
         "triggers": {
             "turn-ends": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
-                    "GameEventFilters.HAS_SECRET"
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.HAS_SECRET"
                 ],
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",

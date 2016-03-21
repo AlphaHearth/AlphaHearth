@@ -2,7 +2,7 @@ package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.Game;
 
@@ -136,13 +136,13 @@ public final class PlayActionRequirements {
      * Returns a {@code PlayActionRequirement} which tests if all of the given minions are not on the player's own
      * board.
      */
-    public static PlayActionRequirement doesntHaveAllOnOwnBoard(@NamedArg("minions") MinionId[] minions) {
-        List<MinionId> minionsCopy = new ArrayList<>(Arrays.asList(minions));
+    public static PlayActionRequirement doesntHaveAllOnOwnBoard(@NamedArg("minions") MinionName[] minions) {
+        List<MinionName> minionsCopy = new ArrayList<>(Arrays.asList(minions));
         ExceptionHelper.checkNotNullElements(minionsCopy, "minions");
 
         return (Player player) -> {
             BoardSide board = player.getBoard();
-            Set<MinionId> remaining = new HashSet<>(minionsCopy);
+            Set<MinionName> remaining = new HashSet<>(minionsCopy);
             for (Minion minion: board.getAllMinions()) {
                 remaining.remove(minion.getBaseDescr().getId());
             }

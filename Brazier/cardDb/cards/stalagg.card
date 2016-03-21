@@ -13,7 +13,7 @@
             "minion": "Thaddius"
         },
         "deathRattleCondition": {
-            "class": "GameEventFilters.minionDiedWithKeyword",
+            "class": "EventFilters.minionDiedWithKeyword",
             "keywords": "feugen"
         }
     }

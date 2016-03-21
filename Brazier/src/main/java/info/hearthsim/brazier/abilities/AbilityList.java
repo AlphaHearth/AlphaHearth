@@ -1,21 +1,19 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.PreparedResult;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
  * {@link List} of {@link Ability}, providing methods {@link #addAndActivateAbility(Ability)}
  * and {@link #deactivate()} to manage a list of {@code Ability}s.
  */
-public final class AbilityList <Self> {
+public final class AbilityList<Self extends Entity> {
     private final Self self;
-    private List<AbilityRef<Self>> abilities;
+    private List<AbilityRef> abilities;
 
     /**
      * Creates an empty {@code AbilityList} for the given object.
@@ -29,31 +27,12 @@ public final class AbilityList <Self> {
 
     /**
      * Creates a copy of this {@code AbilityList} for the given object.
-     *
-     * @param other the given object.
-     * @return {@code PreparedResult} for the new copied {@code AbilityList},
-     *         to which all the abilities are not added until {@link PreparedResult#activate()}
-     *         is called.
      */
-    public PreparedResult<AbilityList<Self>> copyFor(Self other) {
+    public AbilityList<Self> copyFor(Self other) {
         AbilityList<Self> list = new AbilityList<>(other);
+        list.abilities.addAll(abilities);
 
-        List<Ability<? super Self>> initialAbilities = new ArrayList<>(abilities.size());
-        for (AbilityRef<Self> ability: abilities) {
-            initialAbilities.add(ability.ability);
-        }
-
-        return new PreparedResult<>(list, () -> {
-            if (initialAbilities.isEmpty()) {
-                return UndoAction.DO_NOTHING;
-            }
-
-            UndoAction.Builder undos = new UndoAction.Builder(initialAbilities.size());
-            for (Ability<? super Self> ability: initialAbilities) {
-                undos.addUndo(list.addAndActivateAbility(ability));
-            }
-            return undos;
-        });
+        return list;
     }
 
     /**
@@ -62,59 +41,56 @@ public final class AbilityList <Self> {
      *
      * @param ability the given ability.
      */
-    public UndoAction addAndActivateAbility(Ability<? super Self> ability) {
+    public UndoObjectAction<AbilityList> addAndActivateAbility(Ability<? super Self> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
-        UndoableUnregisterAction registerRef = ability.activate(self);
-        AbilityRef<Self> toBeAdded = new AbilityRef<>(ability, registerRef);
+        UndoObjectAction<? super Self> registerRef = ability.activate(self);
+        AbilityRef toBeAdded = new AbilityRef(ability, registerRef);
         abilities.add(toBeAdded);
 
-        return () -> {
-            abilities.remove(toBeAdded);
-            registerRef.undo();
+        return (al) -> {
+            registerRef.undo(self);
+            al.abilities.remove(toBeAdded);
         };
     }
 
     /**
      * Deactivates all the registered abilities.
      */
-    public UndoAction deactivate() {
-        if (abilities.isEmpty()) {
-            return UndoAction.DO_NOTHING;
+    public void deactivate() {
+        if (abilities.isEmpty())
+            return;
+
+        // Some ability may remove itself from the list when it's deactivated.
+        // Using iterator or for-each statement here will result in ConcurrentModificationException.
+        // Traversing the list backwards may be safer.
+        for (int i = abilities.size() - 1; i >= 0; i--) {
+            if (i >= abilities.size())
+                continue;
+            abilities.get(i).deactivate(self);
         }
-
-        List<AbilityRef<Self>> prevAbilities = abilities;
-        abilities = new ArrayList<>();
-
-        UndoAction.Builder result = new UndoAction.Builder();
-        result.addUndo(() -> abilities = prevAbilities);
-
-        for (AbilityRef<Self> ability: prevAbilities) {
-            result.addUndo(ability.deactivate());
-        }
-
-        return result;
+        abilities.clear();
     }
 
     /**
      * Reference to a activated {@link Ability} and its respective unregister (deactivate) action.
      */
-    private static final class AbilityRef <Self> {
+    private final class AbilityRef {
         public final Ability<? super Self> ability;
-        public final UndoableUnregisterAction unregisterAction;
+        public final UndoObjectAction<? super Self> registerRef;
 
         public AbilityRef(
             Ability<? super Self> ability,
-            UndoableUnregisterAction unregisterAction) {
+            UndoObjectAction<? super Self> registerRef) {
             ExceptionHelper.checkNotNullArgument(ability, "ability");
-            ExceptionHelper.checkNotNullArgument(unregisterAction, "unregisterAction");
+            ExceptionHelper.checkNotNullArgument(registerRef, "registerRef");
 
             this.ability = ability;
-            this.unregisterAction = unregisterAction;
+            this.registerRef = registerRef;
         }
 
-        public UndoAction deactivate() {
-            return unregisterAction.unregister();
+        public void deactivate(Self self) {
+            registerRef.undo(self);
         }
     }
 }

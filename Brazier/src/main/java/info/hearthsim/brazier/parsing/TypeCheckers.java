@@ -3,6 +3,7 @@ package info.hearthsim.brazier.parsing;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
 import org.jtrim.utils.ExceptionHelper;
@@ -49,6 +50,27 @@ public final class TypeCheckers {
                 }
                 return;
             }
+        }
+
+        if (destType instanceof WildcardType) {
+            WildcardType wildCardType = (WildcardType) destType;
+            Class<?>[] upperBounds = toClasses(wildCardType.getUpperBounds());
+            if (upperBounds != null) {
+                for (Class<?> bound : upperBounds) {
+                    if (!bound.isAssignableFrom(srcType)) {
+                        throw new ObjectParsingException("Not assignable. From: " + srcType.getName() + ". To: " + destType.getTypeName());
+                    }
+                }
+            }
+            Class<?>[] lowerBounds = toClasses(wildCardType.getLowerBounds());
+            if (lowerBounds != null) {
+                for (Class<?> bound : lowerBounds) {
+                    if (!srcType.isAssignableFrom(bound)) {
+                        throw new ObjectParsingException("Not assignable. From: " + srcType.getName() + ". To: " + destType.getTypeName());
+                    }
+                }
+            }
+            return;
         }
 
         throw new ObjectParsingException("Unsupported declaration type: " + destType.getClass().getName());

@@ -1,7 +1,5 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +31,7 @@ public final class SecretContainer implements PlayerProperty {
     public SecretContainer copyFor(Player newOwner) {
         SecretContainer result = new SecretContainer(newOwner);
         for (Secret secret : secrets)
-            result.addSecret(secret.copyFor(newOwner));
+            result.addSecret(secret.copyFor(newOwner.getGame(), newOwner));
         return result;
     }
 
@@ -50,7 +48,7 @@ public final class SecretContainer implements PlayerProperty {
         return owner;
     }
 
-    public Secret findById(EntityId secretId) {
+    public Secret findById(EntityName secretId) {
         ExceptionHelper.checkNotNullArgument(secretId, "secretId");
 
         for (Secret secret: secrets) {
@@ -61,87 +59,69 @@ public final class SecretContainer implements PlayerProperty {
         return null;
     }
 
-    public UndoAction addSecret(Secret secret) {
+    public Secret findById(EntityId secretId) {
+        ExceptionHelper.checkNotNullArgument(secretId, "secretId");
+
+        for (Secret secret: secrets) {
+            if (secretId == secret.getEntityId()) {
+                return secret;
+            }
+        }
+        return null;
+    }
+
+    public void addSecret(Secret secret) {
         ExceptionHelper.checkNotNullArgument(secret, "secret");
 
-        if (isFull()) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (isFull())
+            return;
 
         secrets.add(secret);
-        UndoAction activateUndo = secret.activate();
-
-        return () -> {
-            activateUndo.undo();
-            secrets.remove(secrets.size() - 1);
-        };
+        secret.activate();
     }
 
-    public UndoAction stealActivatedSecret(SecretContainer other, Secret secret) {
-        UndoAction removeUndo = other.removeSecretLeaveActive(secret);
+    public void stealActivatedSecret(SecretContainer other, Secret secret) {
+        other.removeSecretLeaveActive(secret);
         if (isFull()) {
-            UndoAction deactivateUndo = secret.deactivate();
-            return () -> {
-                deactivateUndo.undo();
-                removeUndo.undo();
-            };
+            secret.deactivate();
+            return;
         }
 
-        UndoAction replaceOwnerUndo = secret.setOwner(owner);
+        secret.setOwner(owner);
         secrets.add(secret);
-
-        return () -> {
-            secrets.remove(secrets.size() - 1);
-            replaceOwnerUndo.undo();
-            removeUndo.undo();
-        };
     }
 
-    private UndoAction removeSecretLeaveActive(Secret secret) {
+    private void removeSecretLeaveActive(Secret secret) {
         ExceptionHelper.checkNotNullArgument(secret, "secret");
 
         int secretCount = secrets.size();
         for (int i = 0; i < secretCount; i++) {
             if (secrets.get(i) == secret) {
                 secrets.remove(i);
-                int origIndex = i;
-                return () -> {
-                    secrets.add(origIndex, secret);
-                };
+                return;
             }
         }
-        return UndoAction.DO_NOTHING;
     }
 
-    public UndoAction removeSecret(Secret secret) {
+    public void removeSecret(Secret secret) {
         ExceptionHelper.checkNotNullArgument(secret, "secret");
         // TODO: Show secret to the opponent
 
-        UndoAction removeUndo = removeSecretLeaveActive(secret);
-        UndoAction deactivateUndo = secret.deactivate();
-        return () -> {
-            deactivateUndo.undo();
-            removeUndo.undo();
-        };
+        removeSecretLeaveActive(secret);
+        secret.deactivate();
     }
 
-    public UndoAction removeAllSecrets() {
-        if (secrets.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void removeAllSecrets() {
+        if (secrets.isEmpty())
+            return;
 
-        UndoAction.Builder result = new UndoAction.Builder(secrets.size() + 1);
-        List<Secret> currentSecrets = new ArrayList<>(secrets);
+        for (Secret secret: secrets)
+            secret.deactivate();
+
         secrets.clear();
-        result.addUndo(() -> secrets.addAll(currentSecrets));
 
-        for (Secret secret: currentSecrets) {
-            result.addUndo(secret.deactivate());
-        }
 
         // TODO: Show secrets to the opponent
-
-        return result;
     }
 
     public boolean hasSecret() {

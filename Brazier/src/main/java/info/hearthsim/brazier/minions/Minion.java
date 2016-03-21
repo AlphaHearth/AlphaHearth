@@ -1,24 +1,13 @@
 package info.hearthsim.brazier.minions;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.Damage;
-import info.hearthsim.brazier.DestroyableEntity;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.PreparedResult;
-import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.TargetId;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.TargeterDef;
-import info.hearthsim.brazier.actions.undo.UndoableIntResult;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.CardRef;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.GameEventAction;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.weapons.AttackTool;
 import java.util.Set;
@@ -26,8 +15,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class Minion implements Character, DestroyableEntity, Silencable, CardRef {
-    private final TargetId minionId;
+public final class Minion implements Character<Minion>, DestroyableEntity, Silencable, CardRef {
+    private final EntityId minionId;
     private Player owner;
     private MinionProperties properties;
 
@@ -47,7 +36,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         ExceptionHelper.checkNotNullArgument(baseDescr, "baseDescr");
 
         this.owner = owner;
-        this.minionId = new TargetId();
+        this.minionId = new EntityId();
         this.properties = new MinionProperties(this, baseDescr);
         this.birthDate = owner.getGame().getCurrentTime();
         this.destroyed = new AtomicBoolean(false);
@@ -56,16 +45,16 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
 
     /**
      * Creates a copy of the given {@code Minion} with the given new {@link Player owner}.
-     * The new copy will have the same {@link TargetId} as the given {@code Minion}.
+     * The new copy will have the same {@link EntityId} as the given {@code Minion}.
      *
-     * @param owner the given new owner.
+     * @param newOwner the given new owner.
      * @param minion the given {@code Minion} to be copied.
      */
-    private Minion(Player owner, Minion minion) {
-        ExceptionHelper.checkNotNullArgument(owner, "owner");
+    private Minion(Player newOwner, Minion minion) {
+        ExceptionHelper.checkNotNullArgument(newOwner, "newOwner");
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
-        this.owner = minion.owner;
+        this.owner = newOwner;
         this.minionId = minion.minionId;
         this.birthDate = minion.birthDate;
         this.destroyed = new AtomicBoolean(minion.destroyed.get());
@@ -74,17 +63,12 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     @Override
-    public UndoAction scheduleToDestroy() {
-        if (!scheduledToDestroy.compareAndSet(false, true)) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void scheduleToDestroy() {
+        if (!scheduledToDestroy.compareAndSet(false, true))
+            return;
 
-        UndoAction deactivateUndo = getProperties().deactivateAllAbilities();
+        getProperties().deactivateAllAbilities();
         getOwner().getBoard().scheduleToDestroy(minionId);
-        return () -> {
-            deactivateUndo.undo();
-            scheduledToDestroy.set(false);
-        };
     }
 
     @Override
@@ -106,15 +90,12 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * and the minion's death-rattle effect should be triggered.
      */
     @Override
-    public UndoAction destroy() {
-        UndoAction.Builder builder = new UndoAction.Builder(2);
+    public void destroy() {
 
         // By now, the `scheduleToDestroy` method has already been invoked,
         // and the `needSpace` of the dead minion has been set to `false`.
-        builder.addUndo(completeKillAndDeactivate(true));
-        builder.addUndo(owner.getBoard().removeFromBoard(minionId));
-
-        return builder;
+        completeKillAndDeactivate(true);
+        owner.getBoard().removeFromBoard(minionId);
     }
 
     /**
@@ -122,20 +103,12 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * All previously-added buffs and abilities on this minion will be removed and a brand-new version
      * of the given minion will spawn on its original location.
      */
-    public UndoAction transformTo(MinionDescr newDescr) {
+    public void transformTo(MinionDescr newDescr) {
         ExceptionHelper.checkNotNullArgument(newDescr, "newDescr");
 
-        UndoAction.Builder builder = new UndoAction.Builder();
-
-        builder.addUndo(properties.deactivateAllAbilities());
-
-        MinionProperties prevProperties = properties;
+        properties.deactivateAllAbilities();
         properties = new MinionProperties(this, newDescr);
-        builder.addUndo(() -> properties = prevProperties);
-
-        builder.addUndo(properties.activatePassiveAbilities());
-
-        return builder;
+        properties.activatePassiveAbilities();
     }
 
     /**
@@ -143,27 +116,20 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * All previously-added buffs and abilities on the given minion will be copied to the transformed minion.
      * The minion will be <em>exhausted</em> when it is transformed.
      */
-    public UndoAction copyOther(Minion other) {
+    public void copyOther(Minion other) {
         ExceptionHelper.checkNotNullArgument(other, "other");
 
-        UndoAction.Builder builder = new UndoAction.Builder();
-
-        builder.addUndo(properties.deactivateAllAbilities());
-
-        properties = other.properties.copyFor(this);
-
-        MinionProperties prevProperties = properties;
-        builder.addUndo(() -> properties = prevProperties);
-        builder.addUndo(properties.exhaust());
-
-        return builder;
+        properties.deactivateAllAbilities();
+        properties = other.properties.copyFor(this, false);
+        properties.activatePassiveAbilities();
+        properties.exhaust();
     }
 
     /**
      * Sets the minion to be exhausted.
      */
-    public UndoAction exhaust() {
-        return properties.exhaust();
+    public void exhaust() {
+        properties.exhaust();
     }
 
     /**
@@ -205,24 +171,24 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     /**
-     * Adds the given {@link GameEventAction} as a death rattle effect to this minion.
+     * Adds the given {@link EventAction} as a death rattle effect to this minion.
      */
-    public UndoAction addDeathRattle(GameEventAction<? super Minion, ? super Minion> deathRattle) {
-        return properties.addDeathRattle(deathRattle);
+    public void addDeathRattle(EventAction<? super Minion, ? super Minion> deathRattle) {
+        properties.addDeathRattle(deathRattle);
     }
 
     /**
      * Adds the given {@link Ability} to this minion and activates it.
      */
-    public UndoAction addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
-        return properties.addAndActivateAbility(abilityRegisterTask);
+    public void addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
+        properties.addAndActivateAbility(abilityRegisterTask);
     }
 
     /**
      * Activates the passive abilities of this minion.
      */
-    public UndoAction activatePassiveAbilities() {
-        return properties.activatePassiveAbilities();
+    public void activatePassiveAbilities() {
+        properties.activatePassiveAbilities();
     }
 
     /**
@@ -235,9 +201,9 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     /**
      * Triggers a {@link SimpleEventType#MINION_KILLED} event for this minion.
      */
-    private UndoAction triggerKilledEvents() {
+    private void triggerKilledEvents() {
         GameEvents events = getOwner().getGame().getEvents();
-        return events.triggerEvent(SimpleEventType.MINION_KILLED, this);
+        events.triggerEvent(SimpleEventType.MINION_KILLED, this);
     }
 
     /**
@@ -254,26 +220,15 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * @param triggerKill whether to trigger {@link SimpleEventType#MINION_KILLED MINION_KILLED} event
      *                    and the minion's deathrattle effect in this action.
      */
-    public UndoAction completeKillAndDeactivate(boolean triggerKill) {
+    public void completeKillAndDeactivate(boolean triggerKill) {
         if (destroyed.compareAndSet(false, true)) {
-            UndoAction eventUndo = triggerKill
-                    ? triggerKilledEvents()
-                    : UndoAction.DO_NOTHING;
+            if (triggerKill)
+                triggerKilledEvents();
 
-            UndoAction deactivateUndo = properties.deactivateAllAbilities();
-            UndoAction deathRattleUndo = triggerKill
-                    ? triggerDeathRattles()
-                    : UndoAction.DO_NOTHING;
+            properties.deactivateAllAbilities();
 
-            return () -> {
-                deathRattleUndo.undo();
-                deactivateUndo.undo();
-                eventUndo.undo();
-                destroyed.set(false);
-            };
-        }
-        else {
-            return UndoAction.DO_NOTHING;
+            if (triggerKill)
+                triggerDeathRattles();
         }
     }
 
@@ -283,18 +238,17 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * <p>
      * See minion <em>Baron Rivendare</em>.
      */
-    public UndoAction triggerDeathRattles() {
-        if (!properties.isDeathRattle()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void triggerDeathRattles() {
+        if (!properties.isDeathRattle())
+            return;
 
         int triggerCount = getOwner().getDeathRattleTriggerCount().getValue();
-        return properties.triggerDeathRattles(triggerCount);
+        properties.triggerDeathRattles(triggerCount);
     }
 
     @Override
-    public UndoAction silence() {
-        return properties.silence();
+    public void silence() {
+        properties.silence();
     }
 
     @Override
@@ -303,8 +257,8 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     @Override
-    public UndoAction kill() {
-        return getBody().poison();
+    public void kill() {
+        getBody().poison();
     }
 
     public void setOwner(Player owner) {
@@ -344,7 +298,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     @Override
-    public TargetId getTargetId() {
+    public EntityId getEntityId() {
         return minionId;
     }
 
@@ -356,17 +310,17 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         return properties.getBody();
     }
 
-    public UndoAction setCharge(boolean newCharge) {
-        return properties.setCharge(newCharge);
+    public void setCharge(boolean newCharge) {
+        properties.setCharge(newCharge);
     }
 
     @Override
-    public UndoableResult<Damage> createDamage(int damage) {
+    public Damage createDamage(int damage) {
         int preparedDamage = damage;
         if (damage < 0 && getOwner().getDamagingHealAura().getValue()) {
             preparedDamage = -damage;
         }
-        return new UndoableResult<>(new Damage(this, preparedDamage), getBody().setStealth(false));
+        return new Damage(this, preparedDamage);
     }
 
     @Override
@@ -375,7 +329,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
     }
 
     @Override
-    public UndoableIntResult damage(Damage damage) {
+    public int damage(Damage damage) {
         return Hero.doPreparedDamage(damage, this, (appliedDamage) -> getBody().damage(appliedDamage));
     }
 
@@ -383,26 +337,26 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
      * Refreshes the state of the minion at start of turn. That is,
      * sleeping minion will be awakened and the number of attacks will reset.
      */
-    public UndoAction refreshStartOfTurn() {
-        return properties.refreshStartOfTurn();
+    public void refreshStartOfTurn() {
+        properties.refreshStartOfTurn();
     }
 
     /**
      * Refreshes the state of the minion at end of turn. That is,
      * frozen minion will be unfrozen.
      */
-    public UndoAction refreshEndOfTurn() {
-        return properties.refreshEndOfTurn();
+    public void refreshEndOfTurn() {
+        properties.refreshEndOfTurn();
     }
 
-    public UndoAction updateAuras() {
-        return properties.updateAuras();
+    public void updateAuras() {
+        properties.updateAuras();
     }
 
     /**
      * Returns a copy of this {@code Minion} with the given new {@link Player owner}.
      */
-    public Minion copyFor(Player newOwner) {
+    public Minion copyFor(Game newGame, Player newOwner) {
         return new Minion(newOwner, this);
     }
 
@@ -412,7 +366,7 @@ public final class Minion implements Character, DestroyableEntity, Silencable, C
         AttackTool attackTool = getAttackTool();
         int attack = attackTool.getAttack();
 
-        MinionId id = body.getBaseStats().getId();
+        MinionName id = body.getBaseStats().getId();
         int currentHp = body.getCurrentHp();
 
         StringBuilder result = new StringBuilder(64);

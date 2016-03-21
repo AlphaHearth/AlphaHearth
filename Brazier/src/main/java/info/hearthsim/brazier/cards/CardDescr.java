@@ -6,7 +6,7 @@ import info.hearthsim.brazier.actions.ManaCostAdjuster;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.TargetNeed;
 import info.hearthsim.brazier.actions.TargetlessAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.HearthStoneEntity;
@@ -35,9 +35,9 @@ import org.jtrim.utils.ExceptionHelper;
  */
 public final class CardDescr implements HearthStoneEntity {
     public static final CardDescr DO_NOTHING =
-        new Builder(new CardId(""), CardType.UNKNOWN, 0).create();
+        new Builder(new CardName(""), CardType.UNKNOWN, 0).create();
 
-    private final CardId cardId;
+    private final CardName cardId;
     private final int manaCost;
     private final String name;
     private final String description;
@@ -105,7 +105,7 @@ public final class CardDescr implements HearthStoneEntity {
     }
 
     @Override
-    public CardId getId() {
+    public CardName getId() {
         return cardId;
     }
 
@@ -122,7 +122,7 @@ public final class CardDescr implements HearthStoneEntity {
     public Ability<? super Card> getInHandAbility() {
         return inHandAbility != null
                 ? inHandAbility
-                : (card) -> UndoableUnregisterAction.DO_NOTHING;
+                : (card) -> UndoObjectAction.DO_NOTHING;
     }
 
     public TargetNeed getCombinedTargetNeed(Player player) {
@@ -228,7 +228,7 @@ public final class CardDescr implements HearthStoneEntity {
     }
 
     public static final class Builder {
-        private final CardId cardId;
+        private final CardName cardId;
         private final CardType cardType;
         private final int manaCost;
         private int overload;
@@ -248,7 +248,7 @@ public final class CardDescr implements HearthStoneEntity {
         private MinionDescr minion;
         private WeaponDescr weapon;
 
-        public Builder(CardId cardId, CardType cardType, int manaCost) {
+        public Builder(CardName cardId, CardType cardType, int manaCost) {
             ExceptionHelper.checkNotNullArgument(cardId, "cardId");
             ExceptionHelper.checkNotNullArgument(cardType, "cardType");
 

@@ -1,14 +1,18 @@
-package info.hearthsim.brazier.weapons;
+package info.hearthsim.brazier.cards;
 
-import info.hearthsim.brazier.EntityId;
+import info.hearthsim.brazier.EntityName;
+
 import java.util.Objects;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class WeaponId implements EntityId {
+/**
+ * The id of a card, which is essentially the name of the card.
+ */
+public final class CardName implements EntityName {
     private final String name;
 
-    public WeaponId(String name) {
+    public CardName(String name) {
         ExceptionHelper.checkNotNullArgument(name, "name");
         this.name = name;
     }
@@ -30,7 +34,7 @@ public final class WeaponId implements EntityId {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
 
-        final WeaponId other = (WeaponId)obj;
+        final CardName other = (CardName) obj;
         return Objects.equals(this.name, other.name);
     }
 

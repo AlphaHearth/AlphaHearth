@@ -10,7 +10,7 @@
         "triggers": {
             "turn-ends": {
                 "filter": {
-                    "class": "GameEventFilters.ownBoardSizeIsLess",
+                    "class": "EventFilters.ownBoardSizeIsLess",
                     "minionCount": 2
                 },
                 "action": "TargetlessActions.SELF_DESTRUCT"

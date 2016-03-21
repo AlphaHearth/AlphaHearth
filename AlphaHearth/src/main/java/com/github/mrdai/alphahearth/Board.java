@@ -63,7 +63,7 @@ public class Board {
                 addAndCache(selectedMove, heroPowerPlaying, cachedBoard, availableMoves, cachedBoards);
             } else {
                 currentGame.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
-                    SingleMove heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getTargetId());
+                    SingleMove heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getEntityId());
                     addAndCache(selectedMove, heroPowerPlaying, cachedBoard, availableMoves, cachedBoards);
                 });
             }
@@ -75,17 +75,17 @@ public class Board {
                 if (enemyMinions.hasNonStealthTaunt()) {
                     enemyMinions.getMinions((minion) -> minion.getBody().isTaunt() && !minion.getBody().isStealth())
                         .forEach((target) -> {
-                            SingleMove directAttacking = new DirectAttacking(attacker.getTargetId(), target.getTargetId());
+                            SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
                             addAndCache(selectedMove, directAttacking, cachedBoard, availableMoves, cachedBoards);
                         });
                 } else {
                     if (!enemyHero.isImmune()) {
-                        SingleMove directAttacking = new DirectAttacking(attacker.getTargetId(), enemyHero.getTargetId());
+                        SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), enemyHero.getEntityId());
                         addAndCache(selectedMove, directAttacking, cachedBoard, availableMoves, cachedBoards);
                     }
                     enemyMinions.getMinions((minion) -> !minion.getBody().isStealth() && !minion.getBody().isImmune())
                         .forEach((target) -> {
-                            SingleMove directAttacking = new DirectAttacking(attacker.getTargetId(), target.getTargetId());
+                            SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
                             addAndCache(selectedMove, directAttacking, cachedBoard, availableMoves, cachedBoards);
                         });
                 }
@@ -108,7 +108,7 @@ public class Board {
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
-                                SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getTargetId());
+                                SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getEntityId());
                                 addAndCache(selectedMove, cardPlaying, cachedBoard, availableMoves, cachedBoards);
                             }
                         }
@@ -123,7 +123,7 @@ public class Board {
                 if (card.getTargetNeed().hasTarget()) { // Spell or Weapon card with target
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
-                            SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getTargetId());
+                            SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getEntityId());
                             addAndCache(selectedMove, cardPlaying, cachedBoard, availableMoves, cachedBoards);
                         }
                     }

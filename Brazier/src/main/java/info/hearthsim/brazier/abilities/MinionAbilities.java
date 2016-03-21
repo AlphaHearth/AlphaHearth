@@ -1,6 +1,8 @@
 package info.hearthsim.brazier.abilities;
 
+import info.hearthsim.brazier.Entity;
 import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 
@@ -17,10 +19,9 @@ public final class MinionAbilities {
      * <p>
      * See minion <em>Malygos</em>.
      */
-    public static Ability<PlayerProperty> spellPower(@NamedArg("spellPower") int spellPower) {
-        return (PlayerProperty self) -> {
-            AuraAwareIntProperty playersSpellPower = self.getOwner().getSpellPower();
-            return playersSpellPower.addExternalBuff(spellPower);
+    public static Ability<Entity> spellPower(@NamedArg("spellPower") int spellPower) {
+        return (Entity self) -> {
+            return UndoObjectAction.of(self, (e) -> e.getOwner().getSpellPower(), (sp) -> sp.addBuff(spellPower));
         };
     }
 
@@ -30,10 +31,10 @@ public final class MinionAbilities {
      * <p>
      * See minion <em>Prophet Velen</em>.
      */
-    public static Ability<PlayerProperty> spellMultiplier(@NamedArg("mul") int mul) {
-        return (PlayerProperty self) -> {
-            AuraAwareIntProperty playersSpellPower = self.getOwner().getHeroDamageMultiplier();
-            return playersSpellPower.addExternalBuff((prev) -> prev * mul);
+    public static Ability<Entity> spellMultiplier(@NamedArg("mul") int mul) {
+        return (Entity self) -> {
+            return UndoObjectAction.of(self, (e) -> e.getOwner().getSpellPower(),
+                (sp) -> sp.addExternalBuff((prev) -> prev * mul));
         };
     }
 

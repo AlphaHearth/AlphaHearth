@@ -10,5 +10,5 @@ import info.hearthsim.brazier.weapons.WeaponDescr;
  * {@link WeaponDescr WeaponDescr}.
  */
 public interface HearthStoneEntity extends LabeledEntity {
-    public EntityId getId();
+    public EntityName getId();
 }

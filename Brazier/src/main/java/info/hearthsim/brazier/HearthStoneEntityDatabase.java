@@ -14,7 +14,7 @@ import org.jtrim.utils.ExceptionHelper;
 public final class HearthStoneEntityDatabase<EntityType extends HearthStoneEntity> {
     public static final class Builder<EntityType extends HearthStoneEntity> {
         private final List<EntityType> entities;
-        private final Set<EntityId> addedIds;
+        private final Set<EntityName> addedIds;
 
         public Builder() {
             this.entities = new LinkedList<>();
@@ -38,7 +38,7 @@ public final class HearthStoneEntityDatabase<EntityType extends HearthStoneEntit
     }
 
     private final List<EntityType> entities;
-    private final Map<EntityId, EntityType> entitiesById;
+    private final Map<EntityName, EntityType> entitiesById;
 
     private final ConcurrentMap<Keywords, List<EntityType>> entitiesByKeyword;
 
@@ -52,8 +52,8 @@ public final class HearthStoneEntityDatabase<EntityType extends HearthStoneEntit
         return new Builder<EntityType>().create();
     }
 
-    private static <EntityType extends HearthStoneEntity> Map<EntityId, EntityType> toById(List<EntityType> entities) {
-        Map<EntityId, EntityType> result = CollectionsEx.newHashMap(entities.size());
+    private static <EntityType extends HearthStoneEntity> Map<EntityName, EntityType> toById(List<EntityType> entities) {
+        Map<EntityName, EntityType> result = CollectionsEx.newHashMap(entities.size());
         for (EntityType entity: entities) {
             if (result.put(entity.getId(), entity) != null) {
                 throw new IllegalArgumentException("Found entities with the same ID: " + entity.getId());
@@ -72,11 +72,11 @@ public final class HearthStoneEntityDatabase<EntityType extends HearthStoneEntit
         return result;
     }
 
-    public EntityType tryGetById(EntityId id) {
+    public EntityType tryGetById(EntityName id) {
         return entitiesById.get(id);
     }
 
-    public EntityType getById(EntityId id) {
+    public EntityType getById(EntityName id) {
         EntityType result = tryGetById(id);
         if (result == null) {
             throw new IllegalArgumentException("No such entity: " + id);

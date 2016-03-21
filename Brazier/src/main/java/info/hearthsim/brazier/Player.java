@@ -1,10 +1,9 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.abilities.BuffableBoolProperty;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.events.CardPlayedEvent;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.minions.Minion;
@@ -13,11 +12,9 @@ import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.actions.GameActionList;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.CardPlayEvent;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 import info.hearthsim.brazier.weapons.Weapon;
 
@@ -27,7 +24,7 @@ import java.util.List;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class Player implements PlayerProperty {
+public final class Player implements Entity<Player>, PlayerProperty {
     public static final int MAX_MANA = 10;
     public static final int MAX_HAND_SIZE = 10;
     public static final int MAX_BOARD_SIZE = 7;
@@ -44,7 +41,7 @@ public final class Player implements PlayerProperty {
     private final AuraAwareIntProperty deathRattleTriggerCount;
     private final AuraAwareIntProperty spellPower;
     private final AuraAwareIntProperty heroDamageMultiplier;
-    private final BuffableBoolProperty damagingHealAura;
+    private final AuraAwareBoolProperty damagingHealAura;
 
     private final ManaResource manaResource;
 
@@ -70,7 +67,7 @@ public final class Player implements PlayerProperty {
         this.fatigue = 0;
         this.spellPower = new AuraAwareIntProperty(0);
         this.heroDamageMultiplier = new AuraAwareIntProperty(1);
-        this.damagingHealAura = new BuffableBoolProperty(() -> false);
+        this.damagingHealAura = new AuraAwareBoolProperty(false);
         this.cardsPlayedThisTurn = 0;
         this.minionsPlayedThisTurn = 0;
         this.secrets = new SecretContainer(this);
@@ -87,12 +84,12 @@ public final class Player implements PlayerProperty {
 
         this.game = game;
         this.playerId = other.playerId;
-        this.hero = other.hero.copyFor(this);
+        this.spellPower = other.spellPower.copy();
+        this.hero = other.hero.copyFor(game, this);
         this.board = other.board.copyFor(this);
         this.hand = other.hand.copyFor(this);
         this.manaResource = other.manaResource.copy();
         this.fatigue = other.fatigue;
-        this.spellPower = other.spellPower.copy();
         this.heroDamageMultiplier = other.heroDamageMultiplier.copy();
         this.damagingHealAura = other.damagingHealAura.copy();
         this.cardsPlayedThisTurn = other.cardsPlayedThisTurn;
@@ -101,7 +98,7 @@ public final class Player implements PlayerProperty {
         this.deathRattleTriggerCount = other.deathRattleTriggerCount;
         this.auraFlags = other.auraFlags.copy();
         if (other.weapon != null)
-            this.weapon = other.weapon.copyFor(this);
+            this.weapon = other.weapon.copyFor(game, this);
         this.graveyard = other.graveyard.copyFor(this);
         this.deck = other.deck.copyFor(this);
     }
@@ -113,53 +110,41 @@ public final class Player implements PlayerProperty {
         return new Player(game, this);
     }
 
+    /**
+     * Returns a copy of this {@code Player} for the given new {@code Game}.
+     * The given {@code Player} will not be used.
+     */
+    public Player copyFor(Game game, Player player) {
+        return new Player(game, this);
+    }
+
     public FlagContainer getAuraFlags() {
         return auraFlags;
     }
 
-    public UndoAction startNewTurn() {
-        UndoAction.Builder result = new UndoAction.Builder();
-
-        int origCardsPlayedThisTurn = cardsPlayedThisTurn;
+    public void startNewTurn() {
         cardsPlayedThisTurn = 0;
-        result.addUndo(() -> cardsPlayedThisTurn = origCardsPlayedThisTurn);
-
-        int origMinionsPlayedThisTurn = minionsPlayedThisTurn;
         minionsPlayedThisTurn = 0;
-        result.addUndo(() -> minionsPlayedThisTurn = origMinionsPlayedThisTurn);
 
-        result.addUndo(manaResource.refresh());
-        result.addUndo(drawCardToHand());
-        result.addUndo(board.refreshStartOfTurn());
-        result.addUndo(hero.refresh());
+        manaResource.refresh();
+        drawCardToHand();
+        board.refreshStartOfTurn();
+        hero.refresh();
 
-        GameEvents events = getGame().getEvents();
-        result.addUndo(events.triggerEvent(SimpleEventType.TURN_STARTS, this));
-
-        return result;
+        getGame().getEvents().triggerEvent(SimpleEventType.TURN_STARTS, this);
     }
 
-    public UndoAction endTurn() {
-        GameEvents events = getGame().getEvents();
-        UndoAction eventUndo = events.triggerEvent(SimpleEventType.TURN_ENDS, this);
+    public void endTurn() {
+        getGame().getEvents().triggerEvent(SimpleEventType.TURN_ENDS, this);
 
-        UndoAction refreshHeroUndo = hero.refreshEndOfTurn();
-        UndoAction boardRefreshUndo = board.refreshEndOfTurn();
+        hero.refreshEndOfTurn();
+        board.refreshEndOfTurn();
         graveyard.refreshEndOfTurn();
-        return () -> {
-            boardRefreshUndo.undo();
-            refreshHeroUndo.undo();
-            eventUndo.undo();
-        };
     }
 
-    public UndoAction updateAuras() {
-        UndoAction heroUndo = hero.updateAuras();
-        UndoAction boardUndo = board.updateAuras();
-        return () -> {
-            boardUndo.undo();
-            heroUndo.undo();
-        };
+    public void updateAuras() {
+        hero.updateAuras();
+        board.updateAuras();
     }
 
     public Player getOpponent() {
@@ -189,9 +174,9 @@ public final class Player implements PlayerProperty {
     }
 
     private void getOnPlayActions(
-            CardDescr cardDescr,
-            List<PlayAction<Card>> result) {
-        for (PlayActionDef<Card> actionDef: cardDescr.getOnPlayActions()) {
+        CardDescr cardDescr,
+        List<PlayAction<Card>> result) {
+        for (PlayActionDef<Card> actionDef : cardDescr.getOnPlayActions()) {
             if (actionDef.getRequirement().meetsRequirement(this)) {
                 result.add(actionDef.getAction());
             }
@@ -199,13 +184,13 @@ public final class Player implements PlayerProperty {
     }
 
     private List<PlayAction<Card>> getOnPlayActions(
-            PlayArg<Card> arg,
-            CardDescr chooseOneChoice) {
+        PlayArg<Card> arg,
+        CardDescr chooseOneChoice) {
 
         CardDescr cardDescr = arg.getActor().getCardDescr();
 
         int playActionCount = cardDescr.getOnPlayActions().size()
-                + (chooseOneChoice != null ? chooseOneChoice.getOnPlayActions().size() : 0);
+            + (chooseOneChoice != null ? chooseOneChoice.getOnPlayActions().size() : 0);
 
         List<PlayAction<Card>> result = new ArrayList<>(playActionCount);
         getOnPlayActions(cardDescr, result);
@@ -216,35 +201,31 @@ public final class Player implements PlayerProperty {
         return result;
     }
 
-    private UndoAction executeCardPlayActions(PlayArg<Card> arg, List<? extends PlayAction<Card>> actions) {
-        if (actions.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+    private void executeCardPlayActions(PlayArg<Card> arg, List<? extends PlayAction<Card>> actions) {
+        if (actions.isEmpty())
+            return;
 
-        UndoAction.Builder result = new UndoAction.Builder(actions.size());
-        for (PlayAction<Card> actionDef: actions) {
-            result.addUndo(actionDef.doPlay(game, arg));
-        }
-        return result;
+        for (PlayAction<Card> actionDef : actions)
+            actionDef.doPlay(arg);
     }
 
-    public UndoAction playCardEffect(Card card) {
-        return playCard(card, 0, new PlayTargetRequest(playerId), false);
+    public void playCardEffect(Card card) {
+        playCard(card, 0, new PlayTargetRequest(playerId), false);
     }
 
-    public UndoAction playCardEffect(Card card, PlayTargetRequest targetRequest) {
-        return playCard(card, 0, targetRequest, false);
+    public void playCardEffect(Card card, PlayTargetRequest targetRequest) {
+        playCard(card, 0, targetRequest, false);
     }
 
-    public UndoAction playCard(Card card, int manaCost, PlayTargetRequest targetRequest) {
-        return playCard(card, manaCost, targetRequest, true);
+    public void playCard(Card card, int manaCost, PlayTargetRequest targetRequest) {
+        playCard(card, manaCost, targetRequest, true);
     }
 
-    private UndoAction playCard(Card card, int manaCost, PlayTargetRequest targetRequest, boolean playCardEvents) {
+    private void playCard(Card card, int manaCost, PlayTargetRequest targetRequest, boolean playCardEvents) {
         ExceptionHelper.checkNotNullArgument(card, "card");
         ExceptionHelper.checkNotNullArgument(targetRequest, "target");
 
-        Character originalTarget = game.findTarget(targetRequest.getTargetId());
+        Character originalTarget = game.getCharacter(targetRequest.getEntityId());
         PlayArg<Card> originalCardPlayArg = new PlayArg<>(card, originalTarget);
 
         // We request the on play actions before doing anything because
@@ -253,11 +234,9 @@ public final class Player implements PlayerProperty {
         // action under these circumstances (when its requirement is not met).
         List<PlayAction<Card>> onPlayActions = getOnPlayActions(originalCardPlayArg, targetRequest.getChoseOneChoice());
 
-        UndoAction.Builder result = new UndoAction.Builder();
-        result.addUndo(manaResource.spendMana(manaCost, card.getCardDescr().getOverload()));
+        manaResource.spendMana(manaCost, card.getCardDescr().getOverload());
 
         cardsPlayedThisTurn++;
-        result.addUndo(() -> cardsPlayedThisTurn--);
 
         GameEvents events = game.getEvents();
 
@@ -266,40 +245,23 @@ public final class Player implements PlayerProperty {
         Minion minion = card.getMinion();
         if (minion != null) {
             minionsPlayedThisTurn++;
-            result.addUndo(() -> minionsPlayedThisTurn--);
-
             int minionLocation = targetRequest.getMinionLocation();
 
-            UndoAction reserveUndo
-                    = board.tryAddToBoard(minion, minionLocation);
-            // reserveUndo shouldn't be null if we were allowed to play this card.
-            if (reserveUndo != null) {
-                result.addUndo(reserveUndo::undo);
-            }
+            board.tryAddToBoard(minion, minionLocation);
+            PlayArg<Card> cardPlayArg = playEvent.getCardPlayArg();
+            board.completeSummon(minion, cardPlayArg.getTarget());
+            executeCardPlayActions(cardPlayArg, onPlayActions);
 
-            if (playCardEvents) {
-                result.addUndo(events.triggerEventNow(SimpleEventType.START_PLAY_CARD, playEvent));
-            }
-
-            if (!playEvent.isVetoedPlay() && reserveUndo != null) {
-                PlayArg<Card> cardPlayArg = playEvent.getCardPlayArg();
-                result.addUndo(board.completeSummon(minion, cardPlayArg.getTarget()));
-                result.addUndo(executeCardPlayActions(cardPlayArg, onPlayActions));
-            }
-        }
-        else {
-            result.addUndo(events.triggerEventNow(SimpleEventType.START_PLAY_CARD, playEvent));
+            if (playCardEvents)
+                events.triggerEventNow(SimpleEventType.PLAY_CARD, playEvent);
+        } else {
+            events.triggerEventNow(SimpleEventType.PLAY_CARD, playEvent);
+            // A spell card may get countered or misdirected.
             if (!playEvent.isVetoedPlay()) {
                 PlayArg<Card> cardPlayArg = playEvent.getCardPlayArg();
-                result.addUndo(executeCardPlayActions(cardPlayArg, onPlayActions));
+                executeCardPlayActions(cardPlayArg, onPlayActions);
             }
         }
-
-        if (playCardEvents && !playEvent.isVetoedPlay()) {
-            result.addUndo(events.triggerEvent(SimpleEventType.DONE_PLAY_CARD, new CardPlayedEvent(card, manaCost)));
-        }
-
-        return result;
     }
 
     public int getWeaponAttack() {
@@ -310,103 +272,71 @@ public final class Player implements PlayerProperty {
         return weapon;
     }
 
-    public UndoableResult<Weapon> removeDeadWeapon() {
+    public Weapon removeDeadWeapon() {
         Weapon weaponInHand = tryGetWeapon();
         if (weaponInHand == null || weaponInHand.getDurability() > 0) {
-            return new UndoableResult<>(null);
+            return null;
         }
 
         weapon = null;
-        return new UndoableResult<>(weaponInHand, () -> {
-            weapon = weaponInHand;
-        });
+        return weaponInHand;
     }
 
-    public UndoAction destroyWeapon() {
-        if (tryGetWeapon() == null) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void destroyWeapon() {
+        if (tryGetWeapon() == null)
+            return;
 
-        return equipWeapon(null);
+        equipWeapon(null);
     }
 
-    public UndoAction equipWeapon(WeaponDescr newWeaponDescr) {
+    public void equipWeapon(WeaponDescr newWeaponDescr) {
         Weapon currentWeapon = tryGetWeapon();
 
         Weapon newWeapon = newWeaponDescr != null
-                ? new Weapon(this, newWeaponDescr)
-                : null;
+            ? new Weapon(this, newWeaponDescr)
+            : null;
         this.weapon = newWeapon;
-        UndoAction abilityActivateUndo = newWeapon != null
-                ? newWeapon.activatePassiveAbilities()
-                : UndoAction.DO_NOTHING;
+        if (newWeapon != null)
+            newWeapon.activatePassiveAbilities();
 
-        UndoAction weaponKillUndo;
-        if (currentWeapon != null) {
-            weaponKillUndo = currentWeapon.destroy();
-        }
-        else {
-            weaponKillUndo = UndoAction.DO_NOTHING;
-        }
-
-        return () -> {
-            weaponKillUndo.undo();
-            abilityActivateUndo.undo();
-            this.weapon = currentWeapon;
-        };
+        if (currentWeapon != null)
+            currentWeapon.destroy();
     }
 
     /**
      * Summons a certain minion to the player's board.
      */
-    public UndoAction summonMinion(MinionDescr minionDescr) {
-        return summonMinion(new Minion(this, minionDescr));
+    public void summonMinion(MinionDescr minionDescr) {
+        summonMinion(new Minion(this, minionDescr));
     }
 
     /**
      * Summons a certain minion to the given location of the player's board.
      */
-    public UndoAction summonMinion(MinionDescr minionDescr, int index) {
-        return summonMinion(new Minion(this, minionDescr), index);
+    public void summonMinion(MinionDescr minionDescr, int index) {
+        summonMinion(new Minion(this, minionDescr), index);
     }
 
     /**
      * Summons a certain minion to the player's board.
      */
-    public UndoAction summonMinion(Minion minion) {
-        UndoAction reservationUndo = board.tryAddToBoard(minion);
-        if (reservationUndo == null) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        UndoAction summonUndo = board.completeSummon(minion);
-        return () -> {
-            summonUndo.undo();
-            reservationUndo.undo();
-        };
+    public void summonMinion(Minion minion) {
+        board.tryAddToBoard(minion);
+        board.completeSummon(minion);
     }
 
     /**
      * Summons a certain minion to the given location of the player's board.
      */
-    public UndoAction summonMinion(Minion minion, int index) {
-        UndoAction reservationUndo = board.tryAddToBoard(minion, index);
-        if (reservationUndo == null) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        UndoAction summonUndo = board.completeSummon(minion);
-        return () -> {
-            summonUndo.undo();
-            reservationUndo.undo();
-        };
+    public void summonMinion(Minion minion, int index) {
+        board.tryAddToBoard(minion, index);
+        board.completeSummon(minion);
     }
 
     private int prepareHeroDamage(int base) {
         if (base < 0 && damagingHealAura.getValue()) {
             return -base;
-        }
-        else {
+        } else {
             return base;
         }
     }
@@ -418,8 +348,8 @@ public final class Player implements PlayerProperty {
     public Damage getSpellDamage(int baseDamage) {
         int preparedDamage = prepareHeroDamage(baseDamage);
         return new Damage(hero, adjustHeroDamage(preparedDamage >= 0
-                ? preparedDamage + spellPower.getValue()
-                : preparedDamage));
+            ? preparedDamage + spellPower.getValue()
+            : preparedDamage));
     }
 
     public Damage getBasicDamage(int baseDamage) {
@@ -431,37 +361,28 @@ public final class Player implements PlayerProperty {
      * Deals fatigue damage to the hero. Every time this method is invoked, the fatigue damage
      * increases by {@code 1}.
      */
-    private UndoAction doFatigueDamage() {
+    private void doFatigueDamage() {
         fatigue++;
-        UndoAction damageUndo = ActionUtils.damageCharacter(hero, fatigue, hero);
-        return () -> {
-            damageUndo.undo();
-            fatigue--;
-        };
+        ActionUtils.damageCharacter(hero, fatigue, hero);
     }
 
     /**
      * Adds a certain card to the player's hand.
      */
-    public UndoAction addCardToHand(CardDescr card) {
-        return addCardToHand(new Card(this, card));
+    public void addCardToHand(CardDescr card) {
+        addCardToHand(new Card(this, card));
     }
 
     /**
      * Adds a certain card to the player's hand.
      */
-    public UndoAction addCardToHand(Card card) {
+    public void addCardToHand(Card card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
 
-        UndoAction drawActionsUndo = GameActionList.executeActionsNow(game, card, card.getCardDescr().getOnDrawActions());
+        GameActionList.executeActionsNow(card, card.getCardDescr().getOnDrawActions());
 
         GameEvents events = game.getEvents();
-        UndoAction addCardUndo = hand.addCard(card, (addedCard) -> events.triggerEvent(SimpleEventType.DRAW_CARD, addedCard));
-
-        return () -> {
-            addCardUndo.undo();
-            drawActionsUndo.undo();
-        };
+        hand.addCard(card, (addedCard) -> events.triggerEvent(SimpleEventType.DRAW_CARD, addedCard));
     }
 
     /**
@@ -474,11 +395,11 @@ public final class Player implements PlayerProperty {
      * @see #doFatigueDamage()
      * @see #drawCardToHand()
      */
-    public UndoableResult<Card> drawFromDeck() {
-        UndoableResult<Card> drawnCard = deck.tryDrawOneCard();
+    public Card drawFromDeck() {
+        Card drawnCard = deck.tryDrawOneCard();
         if (drawnCard == null) {
-            UndoAction fatigueUndo = doFatigueDamage();
-            return new UndoableResult<>(null, fatigueUndo);
+            doFatigueDamage();
+            return null;
         }
         return drawnCard;
     }
@@ -489,19 +410,14 @@ public final class Player implements PlayerProperty {
      *
      * @see #doFatigueDamage()
      */
-    public UndoableResult<Card> drawCardToHand() {
-        UndoableResult<Card> cardRef = drawFromDeck();
-        Card card = cardRef.getResult();
+    public Card drawCardToHand() {
+        Card card = drawFromDeck();
         if (card == null) {
-            return cardRef;
+            return null;
         }
+        addCardToHand(card);
 
-        UndoAction addCardUndo = addCardToHand(card);
-
-        return new UndoableResult<>(card, () -> {
-            addCardUndo.undo();
-            cardRef.undo();
-        });
+        return card;
     }
 
     public Hand getHand() {
@@ -517,15 +433,12 @@ public final class Player implements PlayerProperty {
      *
      * @throws IllegalArgumentException if the given hero already belong to other player.
      */
-    public UndoAction setHero(Hero newHero) {
+    public void setHero(Hero newHero) {
         ExceptionHelper.checkNotNullArgument(newHero, "newHero");
         if (newHero.getOwner() != this) {
             throw new IllegalArgumentException("Hero belongs to another player.");
         }
-
-        Hero prevHero = hero;
         hero = newHero;
-        return () -> hero = prevHero;
     }
 
     public Hero getHero() {
@@ -556,12 +469,12 @@ public final class Player implements PlayerProperty {
         return deathRattleTriggerCount;
     }
 
-    public BuffableBoolProperty getDamagingHealAura() {
+    public AuraAwareBoolProperty getDamagingHealAura() {
         return damagingHealAura;
     }
 
-    public UndoAction setMana(int mana) {
-        return manaResource.setMana(mana);
+    public void setMana(int mana) {
+        manaResource.setMana(mana);
     }
 
     public Deck getDeck() {
@@ -570,5 +483,10 @@ public final class Player implements PlayerProperty {
 
     public Graveyard getGraveyard() {
         return graveyard;
+    }
+
+    @Override
+    public EntityId getEntityId() {
+        return playerId;
     }
 }

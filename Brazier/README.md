@@ -17,3 +17,4 @@ More works are remained to be done in this module, which include:
 - [ ] Several methods in `ActionUtils` with `Game` as its parameter only use its `RandomProvider`. Consider using `RandomProvider` as parameter directly.
 - [ ] Refactor the strange `PlayAction` framework, which now consists of `PlayActionDef`, `PlayActionRequirement` and `PlayAction`.
 - [ ] Add exception framework to the project, which throws exception when invalid action is requested, e.g. `BoardFullException`.
+- [ ] Refactor the whole card parsing framework, use other JVM language like Groovy or Scala to define different cards, instead of using Json and generate different card instances dynamically. The framework used by now is hard to debug, as it uses to many functional interfaces as callback methods, which is not greatly supported by IntelliJ debug tool.

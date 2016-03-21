@@ -13,6 +13,8 @@ import java.util.function.Consumer;
  * @see TestAgent
  */
 public class DynamicTestAgent extends TestAgent {
+    private static final StackTraceElement[] EMPTY_STACK = new StackTraceElement[0];
+
     private final List<ScriptWrapper> scripts = new ArrayList<>();
 
     public DynamicTestAgent() {
@@ -40,11 +42,12 @@ public class DynamicTestAgent extends TestAgent {
     public void execScripts() {
         if (scripts.isEmpty())
             return;
-        execScript(scripts.get(0));
+        // execScript(scripts.get(0));
         // The first element is ignored,
         // as such scene has already been tested statically.
         Game currentGame = super.getGame();
-        for (int p1 = 1; p1 < scripts.size(); p1++) {
+        for (int p1 = 0; p1 < scripts.size(); p1++) {
+            StackTraceElement branchPoint = scripts.get(p1).invokePoint;
             Game copiedGame = currentGame.copy();
             super.setGame(copiedGame);
             for (int p2 = p1; p2 < scripts.size(); p2++) {
@@ -52,10 +55,14 @@ public class DynamicTestAgent extends TestAgent {
                 try {
                     script.exec();
                 } catch (Throwable thr) {
-                    throw new AssertionError("Error occurred in iter #" + p1
+                    AssertionError err = new AssertionError("Error occurred in iter #" + p1
                         + " when executing script from "
-                        + printInvokePoint(script.invokePoint),
+                        + printInvokePoint(script.invokePoint)
+                        + ", branched before "
+                        + printInvokePoint(branchPoint),
                         thr);
+                    err.setStackTrace(EMPTY_STACK);
+                    throw err;
                 }
             }
             super.setGame(currentGame);
@@ -71,8 +78,10 @@ public class DynamicTestAgent extends TestAgent {
         try {
             script.exec();
         } catch (Throwable thr) {
-            throw new AssertionError("Error occurred when executing script from "
+            Error err = new AssertionError("Error occurred when executing script from "
                 + printInvokePoint(script.invokePoint), thr);
+            err.setStackTrace(EMPTY_STACK);
+            throw err;
         }
     }
 
@@ -323,9 +332,15 @@ public class DynamicTestAgent extends TestAgent {
 
         ScriptWrapper(Script script) {
             this.script = script;
-            StackTraceElement[] stackTrace = (new Throwable()).getStackTrace();
+            Throwable thr = new Throwable();
+            StackTraceElement[] stackTrace = thr.getStackTrace();
             for (StackTraceElement element : stackTrace) {
                 if (!element.getClassName().startsWith("info.hearthsim.brazier.utils")) {
+                    if (!element.getClassName().startsWith("info.hearthsim.brazier")) {
+                        RuntimeException ex = new IllegalStateException("Adding dynamic script from other project!", thr);
+                        ex.setStackTrace(EMPTY_STACK);
+                        throw ex;
+                    }
                     this.invokePoint = element;
                     break;
                 }

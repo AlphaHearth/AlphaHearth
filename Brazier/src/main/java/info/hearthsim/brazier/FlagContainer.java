@@ -1,26 +1,27 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import info.hearthsim.brazier.events.RegisterId;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Container of flags, which can be used to registered any thing.
  */
 public final class FlagContainer {
-    private final Map<Object, Integer> flags;
-
-    public FlagContainer() {
-        this.flags = new HashMap<>();
-    }
+    private final Set<Object> flags = new HashSet<>();
 
     /**
      * Returns a copy of this {@code FlagContainer}.
      */
     public FlagContainer copy() {
         FlagContainer result = new FlagContainer();
-        result.flags.putAll(flags);
+        result.flags.addAll(flags);
         return result;
     }
 
@@ -29,7 +30,7 @@ public final class FlagContainer {
      */
     public boolean hasFlag(Object flag) {
         ExceptionHelper.checkNotNullArgument(flag, "flag");
-        return flags.containsKey(flag);
+        return flags.contains(flag);
     }
 
     /**
@@ -38,26 +39,9 @@ public final class FlagContainer {
      * @param flag the given flag.
      * @return an {@link UndoableUnregisterAction} which can be used to unregister the given flag.
      */
-    public UndoableUnregisterAction registerFlag(Object flag) {
+    public UndoObjectAction<FlagContainer> registerFlag(Object flag) {
         ExceptionHelper.checkNotNullArgument(flag, "flag");
-
-        int newValue = flags.compute(flag, (key, prevValue) -> prevValue != null ? prevValue + 1 : 1);
-        int prevValue = newValue - 1;
-
-        return UndoableUnregisterAction.makeIdempotent(() -> {
-            Integer currentValue;
-            if (prevValue > 0) {
-                currentValue = flags.put(flag, prevValue);
-            } else {
-                currentValue = flags.remove(flag);
-            }
-            return () -> {
-                if (currentValue != null) {
-                    flags.put(flag, currentValue);
-                } else {
-                    flags.remove(flag);
-                }
-            };
-        });
+        flags.add(flag);
+        return (fc) -> fc.flags.remove(flag);
     }
 }

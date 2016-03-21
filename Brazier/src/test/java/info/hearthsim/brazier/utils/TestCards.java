@@ -1,8 +1,6 @@
 package info.hearthsim.brazier.utils;
 
-import info.hearthsim.brazier.minions.MinionId;
-import info.hearthsim.brazier.utils.MinionExpectations;
-import info.hearthsim.brazier.utils.MinionFlags;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -106,14 +104,14 @@ public final class TestCards {
     public static final String YETI = "Chillwind Yeti";
 
     public static MinionExpectations expectedMinion(String name, int attack, int hp) {
-        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionId(name));
+        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionName(name));
         result.setAttack(attack);
         result.setHp(hp);
         return result.create();
     }
 
     public static MinionExpectations expectedMinion(String name, int attack, int hp, boolean canAttackWith) {
-        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionId(name));
+        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionName(name));
         result.setAttack(attack);
         result.setHp(hp);
         result.setCanAttackWith(canAttackWith);
@@ -126,7 +124,7 @@ public final class TestCards {
             int hp,
             MinionFlags... flags) {
 
-        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionId(name));
+        MinionExpectations.Builder result = new MinionExpectations.Builder(new MinionName(name));
         result.setFlags(new HashSet<>(Arrays.asList(flags)));
         result.setAttack(attack);
         result.setHp(hp);

@@ -1,17 +1,15 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Actions in which the given actor alters the given {@code Game} in some way. Usually used
- * as a functional interface with its sole un-implemented method {@link #alterGame(Game, Actor)}.
+ * as a functional interface with its sole un-implemented method {@link #apply(Actor)}.
  * <p>
  * Instances of {@code TargetlessAction} must be <b>immutable</b>: no state can be stored. Using
  * the interface as a functional interface and implementing it with lambda expression is highly
@@ -22,23 +20,22 @@ import org.jtrim.utils.ExceptionHelper;
  * @see TargetlessActions
  */
 @FunctionalInterface
-public interface TargetlessAction<Actor> extends GameObjectAction<Actor> {
-    public static final TargetlessAction<Object> DO_NOTHING = (game, actor) -> UndoAction.DO_NOTHING;
+public interface TargetlessAction<Actor extends GameProperty> extends GameObjectAction<Actor> {
+    public static final TargetlessAction DO_NOTHING = (actor) -> {};
 
     /**
-     * Alters the given {@link Game} with the given {@code Actor}.
+     * Alters the game with the given {@code Actor}.
      *
-     * @param game the given {@code Game}.
      * @param actor the given {@code Actor}.
      */
-    @Override    // Override to provide customized JavaDoc
-    public UndoAction alterGame(Game game, Actor actor);
+    @Override
+    public void apply(Actor actor);
 
     /**
      * Converts this {@code TargetlessAction} to a {@link TargetedAction}.
      */
     public default TargetedAction<Actor, Object> toTargetedAction() {
-        return (Game game, Actor actor, Object target) -> alterGame(game, actor);
+        return (Actor actor, Object target) -> apply(actor);
     }
 
     /**
@@ -47,22 +44,19 @@ public interface TargetlessAction<Actor> extends GameObjectAction<Actor> {
      *
      * @throws NullPointerException if any of the given actions is {@code null}.
      */
-    public static <Actor> TargetlessAction<Actor> merge(
+    public static <Actor extends GameProperty> TargetlessAction<Actor> merge(
             Collection<? extends TargetlessAction<? super Actor>> actions) {
         ExceptionHelper.checkNotNullElements(actions, "actions");
 
-        if (actions.isEmpty()) {
-            return (game, actor) -> UndoAction.DO_NOTHING;
-        }
+        if (actions.isEmpty())
+            return TargetlessAction.DO_NOTHING;
 
         List<TargetlessAction<? super Actor>> actionsCopy = new ArrayList<>(actions);
 
-        return (Game game, Actor actor) -> {
-            UndoAction.Builder result = new UndoAction.Builder(actionsCopy.size());
+        return (Actor actor) -> {
             for (TargetlessAction<? super Actor> action: actionsCopy) {
-                result.addUndo(action.alterGame(game, actor));
+                action.apply(actor);
             }
-            return result;
         };
     }
 }

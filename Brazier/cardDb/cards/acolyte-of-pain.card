@@ -8,7 +8,7 @@
         "hp": 3,
         "triggers": {
             "minion-damaged": {
-                "filter": "GameEventFilters.TARGET_SELF",
+                "filter": "EventFilters.TARGET_SELF",
                 "action": "TargetlessActions.DRAW_FOR_SELF"
             }
         }

@@ -1,7 +1,7 @@
 package com.github.mrdai.alphahearth.move;
 
+import info.hearthsim.brazier.EntityId;
 import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetId;
 
 /**
  * Move designating the current player playing its hero power with a potential target.
@@ -9,13 +9,13 @@ import info.hearthsim.brazier.TargetId;
 public class HeroPowerPlaying implements SingleMove {
 
     private final PlayerId playerId;
-    private final TargetId target;
+    private final EntityId target;
 
     public HeroPowerPlaying(PlayerId playerId) {
         this(playerId, null);
     }
 
-    public HeroPowerPlaying(PlayerId playerId, TargetId target) {
+    public HeroPowerPlaying(PlayerId playerId, EntityId target) {
         this.playerId = playerId;
         this.target = target;
     }
@@ -23,7 +23,7 @@ public class HeroPowerPlaying implements SingleMove {
     /**
      * Returns the target; returns {@code null} if there is no target.
      */
-    public TargetId getTarget() {
+    public EntityId getTarget() {
         return target;
     }
 

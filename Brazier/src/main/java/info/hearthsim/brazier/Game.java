@@ -3,13 +3,12 @@ package info.hearthsim.brazier;
 import info.hearthsim.brazier.abilities.ActiveAura;
 import info.hearthsim.brazier.abilities.ActiveAuraList;
 import info.hearthsim.brazier.actions.AttackRequest;
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.weapons.AttackTool;
 import info.hearthsim.brazier.weapons.Weapon;
 import java.security.SecureRandom;
@@ -26,7 +25,7 @@ import org.jtrim.utils.ExceptionHelper;
 /**
  * An instance of {@code Game} is essentially a hearthstone game between two players.
  */
-public final class Game {
+public final class Game implements GameProperty {
     private static final Random RNG = new SecureRandom();
     private static final RandomProvider DEFAULT_RANDOM_PROVIDER =
         (int bound) -> bound > 1 ? RNG.nextInt(bound) : 0;
@@ -60,16 +59,15 @@ public final class Game {
         this.currentTime = new AtomicLong(Long.MIN_VALUE);
         this.player1 = new Player(this, player1Id);
         this.player2 = new Player(this, player2Id);
-        this.activeAuras = new ActiveAuraList();
+        this.activeAuras = new ActiveAuraList(this);
         this.gameResult = null;
 
         this.events = new GameEvents(this);
         this.randomProvider = DEFAULT_RANDOM_PROVIDER;
         this.currentPlayer = player1;
 
-        this.userAgent = (boolean allowCancel, List<? extends CardDescr> cards) -> {
-            return cards.get(randomProvider.roll(cards.size()));
-        };
+        this.userAgent = (boolean allowCancel, List<? extends CardDescr> cards) ->
+            cards.get(randomProvider.roll(cards.size()));
     }
 
     /**
@@ -80,12 +78,11 @@ public final class Game {
 
         this.db = other.db;
         this.currentTime = new AtomicLong(other.currentTime.longValue());
+        this.events = other.events.copyFor(this);
         this.player1 = other.player1.copyFor(this);
         this.player2 = other.player2.copyFor(this);
-        this.activeAuras = other.activeAuras.copy();
+        this.activeAuras = other.activeAuras.copyFor(this);
         this.gameResult = other.gameResult;
-
-        this.events = other.events.copyFor(this);
 
         this.randomProvider = other.randomProvider;
         PlayerId curPlayerId = other.currentPlayer.getPlayerId();
@@ -103,7 +100,9 @@ public final class Game {
      * Returns a copy of this {@code Game}.
      */
     public Game copy() {
-        return new Game(this);
+        Game copiedGame = new Game(this);
+        copiedGame.updateAllAuras();
+        return copiedGame;
     }
 
     public HearthStoneDb getDb() {
@@ -142,17 +141,14 @@ public final class Game {
      * current state of both heroes. If any hero is dead, the property will be updated;
      * otherwise, nothing will be done.
      */
-    private UndoAction updateGameOverState() {
-        if (gameResult != null) {
-            // Once the game is over, we cannot change the result.
-            return UndoAction.DO_NOTHING;
-        }
+    private void updateGameOverState() {
+        if (gameResult != null)
+            return;
 
         boolean player1Dead = player1.getHero().isDead();
         boolean player2Dead = player2.getHero().isDead();
-        if (!player1Dead && !player2Dead) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (!player1Dead && !player2Dead)
+            return;
 
         List<PlayerId> deadPlayers = new ArrayList<>(2);
         if (player1Dead) {
@@ -163,66 +159,131 @@ public final class Game {
         }
 
         this.gameResult = new GameResult(deadPlayers);
-        return () -> gameResult = null;
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public UndoAction setCurrentPlayerId(PlayerId newPlayerId) {
+    public void setCurrentPlayerId(PlayerId newPlayerId) {
         ExceptionHelper.checkNotNullArgument(newPlayerId, "newPlayerId");
 
-        Player prevPlayer = currentPlayer;
         currentPlayer = getPlayer(newPlayerId);
-        return () -> currentPlayer = prevPlayer;
     }
 
     /**
      * Ends the current turn.
      */
-    public UndoAction endTurn() {
-        UndoAction.Builder result = new UndoAction.Builder();
-
-        result.addUndo(currentPlayer.endTurn());
-
-        Player nextPlayer = getOpponent(currentPlayer.getPlayerId());
-        Player origCurrentPlayer = currentPlayer;
-        currentPlayer = nextPlayer;
-        result.addUndo(() -> currentPlayer = origCurrentPlayer);
-
-        result.addUndo(nextPlayer.startNewTurn());
-
-        return result;
+    public void endTurn() {
+        currentPlayer.endTurn();
+        updateAllAuras();
+        currentPlayer = getOpponent(currentPlayer.getPlayerId());
+        currentPlayer.startNewTurn();
     }
 
-    /**
-     * Returns the {@code Character} with the given {@code TargetId}.
-     *
-     * @param target the {@code TargetId} of the wanted target.
-     * @return the {@code Character}.
-     */
-    public Character findTarget(TargetId target) {
-        if (target == null) {
-            return null;
-        }
+    public Hero getHero(EntityId id) {
+        Hero hero = player1.getHero();
+        if (hero.getEntityId() == id)
+            return hero;
 
-        Hero hero1 = player1.getHero();
-        if (target.equals(hero1.getTargetId())) {
-            return hero1;
-        }
+        hero = player2.getHero();
+        if (hero.getEntityId() == id)
+            return hero;
 
-        Hero hero2 = player2.getHero();
-        if (target.equals(hero2.getTargetId())) {
-            return hero2;
-        }
+        return null;
+    }
 
-        Minion result = player1.getBoard().findMinion(target);
+    public Minion getMinion(EntityId id) {
+        Minion result = getLivingMinion(id);
         if (result != null) {
             return result;
         }
 
-        return player2.getBoard().findMinion(target);
+        return getDeadMinion(id);
+    }
+
+    public Minion getLivingMinion(EntityId id) {
+        Minion result = player1.getBoard().findMinion(id);
+        if (result != null) {
+            return result;
+        }
+
+        return player2.getBoard().findMinion(id);
+    }
+
+    public Minion getDeadMinion(EntityId id) {
+        Minion result = player1.getGraveyard().findMinion(id);
+        if (result != null) {
+            return result;
+        }
+
+        return player2.getGraveyard().findMinion(id);
+    }
+
+    public Character getCharacter(EntityId id) {
+        Character result = getHero(id);
+        if (result != null)
+            return result;
+
+        return getMinion(id);
+    }
+
+    public Weapon getWeapon(EntityId id) {
+        Weapon weapon = player1.tryGetWeapon();
+        if (weapon != null && weapon.getEntityId() == id)
+            return weapon;
+        weapon = player2.tryGetWeapon();
+        if (weapon != null && weapon.getEntityId() == id)
+            return weapon;
+        return null;
+    }
+
+    public Card getCard(EntityId id) {
+        Card result = player1.getHand().findCard((card) -> card.getEntityId() == id);
+        if (result != null)
+            return result;
+        result = player2.getHand().findCard((card) -> card.getEntityId() == id);
+        if (result != null)
+            return result;
+        List<Card> deckResult = player1.getDeck().getCards((card) -> card.getEntityId() == id);
+        if (!deckResult.isEmpty())
+            return deckResult.get(0);
+        deckResult = player2.getDeck().getCards((card) -> card.getEntityId() == id);
+        if (!deckResult.isEmpty())
+            return deckResult.get(0);
+        return null;
+    }
+
+    public Secret getSecret(EntityId id) {
+        Secret result = player1.getSecrets().findById(id);
+        if (result != null)
+            return result;
+        result = player2.getSecrets().findById(id);
+        if (result != null)
+            return result;
+        return null;
+    }
+
+    /**
+     * Returns the {@code Entity} with the given {@code EntityId}.
+     */
+    public Entity findEntity(EntityId id) {
+        Entity result = getCharacter(id);
+        if (result != null)
+            return result;
+
+        result = getSecret(id);
+        if (result != null)
+            return result;
+
+        result = getWeapon(id);
+        if (result != null)
+            return result;
+
+        result = getCard(id);
+        if (result != null)
+            return result;
+        return null;
     }
 
     /**
@@ -256,41 +317,36 @@ public final class Game {
      * Returns if the given target is still on the board.
      */
     private boolean isTargetExist(Character character) {
-        return findTarget(character.getTargetId()) != null;
+        Hero hero = getHero(character.getEntityId());
+        Minion minion = getLivingMinion(character.getEntityId());
+        return hero != null || minion != null;
     }
 
-    public UndoAction attack(TargetId attackerId, TargetId defenderId) {
+    public void attack(EntityId attackerId, EntityId defenderId) {
         ExceptionHelper.checkNotNullArgument(attackerId, "attackerId");
         ExceptionHelper.checkNotNullArgument(defenderId, "defenderId");
 
-        Character attacker = findTarget(attackerId);
-        if (attacker == null) {
-            return UndoAction.DO_NOTHING;
-        }
+        Character attacker = getCharacter(attackerId);
+        if (attacker == null)
+            return;
 
-        Character defender = findTarget(defenderId);
-        if (defender == null) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        UndoAction.Builder result = new UndoAction.Builder();
+        Character defender = getCharacter(defenderId);
+        if (defender == null)
+            return;
 
         AttackRequest attackRequest = new AttackRequest(attacker, defender);
-        result.addUndo(events.triggerEventNow(SimpleEventType.ATTACK_INITIATED, attackRequest));
+        events.triggerEventNow(SimpleEventType.ATTACK_INITIATED, attackRequest);
 
-        result.addUndo(resolveDeaths());
-        if (isGameOver()) {
-            return result;
-        }
+        resolveDeaths();
+        if (isGameOver())
+            return;
 
         Character newDefender = attackRequest.getTarget();
-        if (newDefender == null) {
-            return result;
-        }
+        if (newDefender == null)
+            return;
 
-        if (!isTargetExist(attacker) || !isTargetExist(newDefender)) {
-            return result;
-        }
+        if (!isTargetExist(attacker) || !isTargetExist(newDefender))
+            return;
 
         // We request all this info prior attacking, because we do not want
         // damage triggers to alter these values.
@@ -299,85 +355,60 @@ public final class Game {
         boolean swipLeft = attackTool.attacksLeft();
         boolean swipeRight = attackTool.attacksRight();
 
-        UndoAction attackUndo = events.doAtomic(() -> resolveAttackNonAtomic(attacker, newDefender));
-        result.addUndo(attackUndo);
+        events.doAtomic(() -> resolveAttackNonAtomic(attacker, newDefender));
 
-        if (swipLeft || swipeRight) {
-            result.addUndo(doSwipeAttack(attack, swipLeft, swipeRight, attacker, newDefender));
-        }
-
-        return result;
+        if (swipLeft || swipeRight)
+            doSwipeAttack(attack, swipLeft, swipeRight, attacker, newDefender);
     }
 
-    private static UndoAction doSwipeAttack(
+    private static void doSwipeAttack(
             int attack,
             boolean swipeLeft,
             boolean swipeRight,
             Character attacker,
             Character target) {
-        if (!(target instanceof Minion)) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (!(target instanceof Minion))
+            return;
+
         Minion minionTarget = (Minion) target;
         BoardSide targetBoard = minionTarget.getOwner().getBoard();
-        int targetLoc = targetBoard.indexOf(minionTarget.getTargetId());
+        int targetLoc = targetBoard.indexOf(minionTarget.getEntityId());
 
-        UndoAction.Builder builder = new UndoAction.Builder();
-        UndoableResult<Damage> damageRef = attacker.createDamage(attack);
-        builder.addUndo(damageRef.getUndoAction());
+        Damage damage = attacker.createDamage(attack);
 
         if (swipeLeft && targetLoc > 0)
-            builder.addUndo(targetBoard.getMinion(targetLoc - 1).damage(damageRef.getResult()));
+            targetBoard.getMinion(targetLoc - 1).damage(damage);
 
         if (swipeRight && targetLoc < targetBoard.getMaxSize() - 1)
-            builder.addUndo(targetBoard.getMinion(targetLoc + 1).damage(damageRef.getResult()));
-
-        return builder;
+            targetBoard.getMinion(targetLoc + 1).damage(damage);
     }
 
-    private static UndoAction dealDamage(AttackTool weapon, Character attacker, Character target) {
-        UndoableResult<Damage> damageRef = attacker.createDamage(weapon.getAttack());
-        UndoAction damageUndo = target.damage(damageRef.getResult());
-        UndoAction swingDecUndo = weapon.incAttackCount();
-        return () -> {
-            swingDecUndo.undo();
-            damageUndo.undo();
-            damageRef.undo();
-        };
+    private static void dealDamage(AttackTool weapon, Character attacker, Character target) {
+        Damage damage = attacker.createDamage(weapon.getAttack());
+        target.damage(damage);
+        weapon.incAttackCount();
     }
 
-    private UndoAction resolveAttackNonAtomic(Character attacker, Character defender) {
+    private void resolveAttackNonAtomic(Character attacker, Character defender) {
         AttackTool attackerWeapon = attacker.getAttackTool();
         if (!attackerWeapon.canAttackWith()) {
             throw new IllegalArgumentException("Attacker is not allowed to attack with its weapon.");
         }
 
-        UndoAction attackUndo = dealDamage(attackerWeapon, attacker, defender);
-
         AttackTool defenderWeapon = defender.getAttackTool();
-        UndoAction defendUndo;
         if (attackerWeapon.canTargetRetaliate()
                 && defenderWeapon.canRetaliateWith()) {
-            defendUndo = dealDamage(defenderWeapon, defender, attacker);
+            dealDamage(defenderWeapon, defender, attacker);
         }
-        else {
-            defendUndo = UndoAction.DO_NOTHING;
-        }
-
-        return () -> {
-            defendUndo.undo();
-            attackUndo.undo();
-        };
+        dealDamage(attackerWeapon, attacker, defender);
     }
 
-    private UndoableResult<List<Weapon>> removeDeadWeapons() {
-        UndoableResult<Weapon> deadWeaponResult1 = player1.removeDeadWeapon();
-        UndoableResult<Weapon> deadWeaponResult2 = player2.removeDeadWeapon();
+    private List<Weapon> removeDeadWeapons() {
+        Weapon deadWeapon1 = player1.removeDeadWeapon();
+        Weapon deadWeapon2 = player2.removeDeadWeapon();
 
-        Weapon deadWeapon1 = deadWeaponResult1.getResult();
-        Weapon deadWeapon2 = deadWeaponResult2.getResult();
         if (deadWeapon1 == null && deadWeapon2 == null) {
-            return new UndoableResult<>(Collections.emptyList(), UndoAction.DO_NOTHING);
+            return Collections.emptyList();
         }
 
         List<Weapon> result = new ArrayList<>(2);
@@ -388,95 +419,71 @@ public final class Game {
             result.add(deadWeapon2);
         }
 
-        return new UndoableResult<>(result, () -> {
-            deadWeaponResult2.undo();
-            deadWeaponResult1.undo();
-        });
-    }
-
-    public UndoableUnregisterAction addAura(ActiveAura aura) {
-        return activeAuras.addAura(aura);
-    }
-
-    private UndoAction updateAllAuras() {
-        UndoAction.Builder result = new UndoAction.Builder();
-        result.addUndo(activeAuras.updateAllAura(this));
-        result.addUndo(player1.updateAuras());
-        result.addUndo(player2.updateAuras());
         return result;
     }
 
-    public UndoAction endPhase() {
-        UndoableResult<Boolean> deathResults = resolveDeaths();
-        if (!deathResults.getResult()) {
-            return deathResults;
-        }
+    public UndoObjectAction<Game> addAura(ActiveAura aura) {
+        UndoObjectAction<ActiveAuraList> undoRef = activeAuras.addAura(aura);
+        return (game) -> undoRef.undo(game.activeAuras);
+    }
 
-        UndoAction.Builder builder = new UndoAction.Builder();
-        builder.addUndo(deathResults.getUndoAction());
+    private void updateAllAuras() {
+        activeAuras.updateAllAura();
+        player1.updateAuras();
+        player2.updateAuras();
+    }
+
+    public void endPhase() {
+        boolean deathResults = resolveDeaths();
+        if (!deathResults)
+            return;
 
         do {
             deathResults = resolveDeaths();
-            builder.addUndo(deathResults.getUndoAction());
-        } while (deathResults.getResult() && !isGameOver());
-
-        return new UndoableResult<>(true, builder);
+        } while (deathResults && !isGameOver());
     }
 
-    private UndoableResult<Boolean> resolveDeaths() {
-        UndoAction auraUndo = updateAllAuras();
-        UndoableResult<Boolean> deathResolution = resolveDeathsWithoutAura();
-        return new UndoableResult<>(deathResolution.getResult(), () -> {
-            deathResolution.undo();
-            auraUndo.undo();
-        });
+    private boolean resolveDeaths() {
+        updateAllAuras();
+        return resolveDeathsWithoutAura();
     }
 
-    private UndoableResult<Boolean> resolveDeathsWithoutAura() {
-        UndoAction.Builder builder = new UndoAction.Builder();
+    private boolean resolveDeathsWithoutAura() {
+        updateGameOverState();
 
-        builder.addUndo(updateGameOverState());
-
-        if (isGameOver()) {
+        if (isGameOver())
             // We could finish the death-rattles but why would we?
-            return new UndoableResult<>(false, builder);
-        }
+            return false;
 
         List<Minion> deadMinions = new ArrayList<>();
         player1.getBoard().collectMinions(deadMinions, Minion::isDead);
         player2.getBoard().collectMinions(deadMinions, Minion::isDead);
 
-        UndoableResult<List<Weapon>> deadWeaponsResult = removeDeadWeapons();
-        builder.addUndo(deadWeaponsResult.getUndoAction());
+        List<Weapon> deadWeapons = removeDeadWeapons();
 
-        List<Weapon> deadWeapons = deadWeaponsResult.getResult();
-
-        if (deadWeapons.isEmpty() && deadMinions.isEmpty()) {
-            return new UndoableResult<>(false, builder);
-        }
+        if (deadWeapons.isEmpty() && deadMinions.isEmpty())
+            return false;
 
         List<DestroyableEntity> deadEntities = new ArrayList<>(deadWeapons.size() + deadMinions.size());
         for (Minion minion: deadMinions) {
             Graveyard graveyard = minion.getOwner().getGraveyard();
-            builder.addUndo(graveyard.addDeadMinion(minion));
+            graveyard.addDeadMinion(minion);
 
             deadEntities.add(minion);
         }
 
-        for (Weapon weapon: deadWeapons) {
+        for (Weapon weapon: deadWeapons)
             deadEntities.add(weapon);
-        }
 
         BornEntity.sortEntities(deadEntities);
 
-        for (DestroyableEntity dead: deadEntities) {
-            builder.addUndo(dead.scheduleToDestroy());
-        }
-        for (DestroyableEntity dead: deadEntities) {
-            builder.addUndo(dead.destroy());
-        }
+        for (DestroyableEntity dead: deadEntities)
+            dead.scheduleToDestroy();
 
-        return new UndoableResult<>(true, builder);
+        for (DestroyableEntity dead: deadEntities)
+            dead.destroy();
+
+        return true;
     }
 
     public GameEvents getEvents() {
@@ -542,5 +549,10 @@ public final class Game {
 
     public Player getPlayer2() {
         return player2;
+    }
+
+    @Override
+    public Game getGame() {
+        return this;
     }
 }

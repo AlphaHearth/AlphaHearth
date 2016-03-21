@@ -9,8 +9,11 @@
         "attack": 7,
         "hp": 5,
         "triggers": {
-            "start-play-card": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+            "play-card": {
+                "filter": [
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.NOT_SELF_CARD"
+                ],
                 "action": {
                     "class": "TargetlessActions.summonMinionRight",
                     "minion": "Flame of Azzinoth"

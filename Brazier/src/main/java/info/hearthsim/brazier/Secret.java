@@ -1,26 +1,26 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.cards.CardDescr;
 
 import java.util.Set;
 
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
-public final class Secret implements PlayerProperty, GameProperty, LabeledEntity, DamageSource {
+public final class Secret implements Entity<Secret>, LabeledEntity, DamageSource {
+    private final EntityId secretId;
     private Player owner;
     private final CardDescr baseCard;
-    private final Ability<? super Secret> ability;
-    private UndoableUnregisterAction ref;
+    private final Ability<Secret> ability;
+    private UndoObjectAction<Secret> ref;
 
-    public Secret(Player owner, CardDescr baseCard, Ability<? super Secret> ability) {
+    public Secret(Player owner, CardDescr baseCard, Ability<Secret> ability) {
         ExceptionHelper.checkNotNullArgument(owner, "owner");
         ExceptionHelper.checkNotNullArgument(baseCard, "baseCard");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
+        this.secretId = new EntityId();
         this.owner = owner;
         this.baseCard = baseCard;
         this.ability = ability;
@@ -31,6 +31,7 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
      * Creates a copy for the given {@code Secret} for the given owner.
      */
     private Secret(Player newOwner, Secret other) {
+        this.secretId = other.secretId;
         this.owner = newOwner;
         this.baseCard = other.baseCard;
         this.ability = other.ability;
@@ -40,21 +41,19 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
     /**
      * Returns a copy of this {@code Secret} with the given new owner.
      */
-    public Secret copyFor(Player newOwner) {
+    public Secret copyFor(Game newGame, Player newOwner) {
         return new Secret(newOwner, this);
     }
 
     @Override
-    public UndoableResult<Damage> createDamage(int damage) {
-        return new UndoableResult<>(getOwner().getSpellDamage(damage));
+    public Damage createDamage(int damage) {
+        return getOwner().getSpellDamage(damage);
     }
 
-    public UndoAction setOwner(Player newOwner) {
+    public void setOwner(Player newOwner) {
         ExceptionHelper.checkNotNullArgument(newOwner, "newOwner");
 
-        Player prevOwner = owner;
         owner = newOwner;
-        return () -> owner = prevOwner;
     }
 
     public CardDescr getBaseCard() {
@@ -66,36 +65,23 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
         return baseCard.getKeywords();
     }
 
-    public EntityId getSecretId() {
+    public EntityName getSecretId() {
         return baseCard.getId();
     }
 
-    public UndoAction activate() {
-        if (ref != null) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void activate() {
+        if (ref != null)
+            return;
 
-        UndoableUnregisterAction newRef = ability.activate(this);
-        ref = newRef;
-        return () -> {
-            newRef.unregister();
-            ref = null;
-        };
+        ref = ability.activate(this);
     }
 
-    public UndoAction deactivate() {
-        if (ref == null) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void deactivate() {
+        if (ref == null)
+            return;
 
-        UndoableUnregisterAction prevRef = ref;
-
-        UndoAction unregisterUndo = ref.unregister();
+        ref.undo(this);
         ref = null;
-        return () -> {
-            unregisterUndo.undo();
-            ref = prevRef;
-        };
     }
 
     @Override
@@ -111,5 +97,10 @@ public final class Secret implements PlayerProperty, GameProperty, LabeledEntity
     @Override
     public String toString() {
         return "Secret: " + getSecretId().getName();
+    }
+
+    @Override
+    public EntityId getEntityId() {
+        return secretId;
     }
 }

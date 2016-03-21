@@ -1,6 +1,8 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 
@@ -10,23 +12,25 @@ import java.util.List;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura)} and {@link #updateAllAura(Game)}
+ * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura)} and {@link #updateAllAura()}
  * to manage a group of {@code ActiveAura}s.
  */
-public final class ActiveAuraList {
+public final class ActiveAuraList implements GameProperty {
+    private final Game game;
     private final List<AuraWrapper> auras;
 
-    public ActiveAuraList() {
+    public ActiveAuraList(Game game) {
+        this.game = game;
         this.auras = new ArrayList<>();
     }
 
     /**
      * Returns a copy of this {@code ActiveAuraList}.
      */
-    public ActiveAuraList copy() {
-        ActiveAuraList result = new ActiveAuraList();
+    public ActiveAuraList copyFor(Game newGame) {
+        ActiveAuraList result = new ActiveAuraList(newGame);
         for (AuraWrapper aura : auras)
-            result.addAura(aura.aura);
+            result.addAura(aura.aura.copyFor(newGame));
         return result;
     }
 
@@ -46,32 +50,15 @@ public final class ActiveAuraList {
     /**
      * Adds (registers) a new {@code ActiveAura} to this {@code ActiveAuraList}.
      */
-    public UndoableUnregisterAction addAura(ActiveAura aura) {
+    public UndoObjectAction<ActiveAuraList> addAura(ActiveAura aura) {
         // We wrap "aura" to ensure that we remove the one
         // added by this method call in the returned reference.
         AuraWrapper auraWrapper = new AuraWrapper(aura);
         auras.add(auraWrapper);
 
-        return UndoableUnregisterAction.makeIdempotent(new UndoableUnregisterAction() {
-            @Override
-            public UndoAction unregister() {
-                int prevIndex = removeAndGetIndex(auras, auraWrapper);
-                UndoAction deactivateUndo = auraWrapper.deactivate();
-
-                if (prevIndex >= 0) {
-                    return () -> {
-                        deactivateUndo.undo();
-                        auras.add(prevIndex, auraWrapper);
-                    };
-                } else {
-                    return deactivateUndo;
-                }
-            }
-
-            @Override
-            public void undo() {
-                removeAndGetIndex(auras, auraWrapper);
-            }
+        return UndoObjectAction.toIdempotent((aal) -> {
+            auraWrapper.deactivate(aal);
+            aal.removeAndGetIndex(aal.auras, auraWrapper);
         });
     }
 
@@ -79,19 +66,18 @@ public final class ActiveAuraList {
      * Updates all {@code ActiveAura} added to this list with the given game by calling the
      * {@link ActiveAura#applyAura(Game)} method for each of them.
      */
-    public UndoAction updateAllAura(Game game) {
-        if (auras.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        UndoAction.Builder builder = new UndoAction.Builder(auras.size());
+    public void updateAllAura() {
+        if (auras.isEmpty())
+            return;
 
         // Copy the list to ensure that it does not change during iteration
-        for (AuraWrapper aura: new ArrayList<>(auras)) {
-            builder.addUndo(aura.updateAura(game));
-        }
+        for (AuraWrapper aura: new ArrayList<>(auras))
+            aura.updateAura(this);
+    }
 
-        return builder;
+    @Override
+    public Game getGame() {
+        return game;
     }
 
     private static final class AuraWrapper {
@@ -102,12 +88,12 @@ public final class ActiveAuraList {
             this.aura = aura;
         }
 
-        public UndoAction updateAura(Game game) {
-            return aura.applyAura(game);
+        public void updateAura(ActiveAuraList list) {
+            aura.applyAura(list.getGame());
         }
 
-        public UndoAction deactivate() {
-            return aura.deactivate();
+        public void deactivate(ActiveAuraList list) {
+            aura.deactivate(list.getGame());
         }
     }
 }

@@ -1,17 +1,15 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.ActionUtils;
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class Hand implements PlayerProperty {
@@ -38,7 +36,7 @@ public final class Hand implements PlayerProperty {
     public Hand copyFor(Player newOwner) {
         Hand result = new Hand(newOwner, this.maxSize);
         for (CardRef card : this.hand)
-            result.hand.add(new CardRef(card.card.copyFor(newOwner)));
+            result.hand.add(new CardRef(card.card.copyFor(newOwner.getGame(), newOwner)));
         return result;
     }
 
@@ -88,22 +86,20 @@ public final class Hand implements PlayerProperty {
         }
     }
 
-    public UndoAction forAllCards(Function<? super Card, ? extends UndoAction> action) {
-        return forCards(action, (card) -> true);
+    public void forAllCards(Consumer<? super Card> action) {
+        forCards(action, (card) -> true);
     }
 
-    public UndoAction forCards(Function<? super Card, ? extends UndoAction> action, Predicate<? super Card> filter) {
+    public void forCards(Consumer<? super Card> action, Predicate<? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
-        UndoAction.Builder result = new UndoAction.Builder(hand.size());
         for (CardRef cardRef: hand) {
             Card card = cardRef.card;
             if (filter.test(card)) {
-                result.addUndo(action.apply(card));
+                action.accept(card);
             }
         }
-        return result;
     }
 
     public Card getRandomCard() {
@@ -123,21 +119,16 @@ public final class Hand implements PlayerProperty {
         return null;
     }
 
-    public UndoAction discardAll() {
-        if (hand.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void discardAll() {
+        if (hand.isEmpty())
+            return;
 
-        UndoAction.Builder result = new UndoAction.Builder(hand.size() + 1);
+
+        for (CardRef cardRef: hand) {
+            cardRef.deactivate();
+        }
         // TODO: Show cards to opponent
-        List<CardRef> prevHand = hand;
-        hand = new ArrayList<>(Player.MAX_HAND_SIZE);
-        result.addUndo(() -> hand = prevHand);
-
-        for (CardRef cardRef: prevHand) {
-            result.addUndo(cardRef.deactivate());
-        }
-        return result;
+        hand.clear();
     }
 
     /**
@@ -166,44 +157,36 @@ public final class Hand implements PlayerProperty {
         return indexes[chosenIndex];
     }
 
-    public UndoableResult<Card> replaceAtIndex(int cardIndex, CardDescr newCard) {
+    public Card replaceAtIndex(int cardIndex, CardDescr newCard) {
         CardRef result = hand.remove(cardIndex);
-        UndoAction deactivateUndo = result.deactivate();
+        result.deactivate();
 
         CardRef newCardRef = new CardRef(owner, newCard);
         hand.add(cardIndex, newCardRef);
-        UndoAction activateUndo = newCardRef.activate();
+        newCardRef.activate();
 
-        return new UndoableResult<>(result.card, () -> {
-            activateUndo.undo();
-            hand.remove(cardIndex);
-            deactivateUndo.undo();
-            hand.add(cardIndex, result);
-        });
+        return result.card;
     }
 
-    public UndoableResult<Card> removeAtIndex(int cardIndex) {
+    public Card removeAtIndex(int cardIndex) {
         CardRef result = hand.remove(cardIndex);
-        UndoAction deactivateUndo = result.deactivate();
-        return new UndoableResult<>(result.card, () -> {
-            deactivateUndo.undo();
-            hand.add(cardIndex, result);
-        });
+        result.deactivate();
+        return result.card;
     }
 
-    public UndoAction addCard(CardDescr newCard) {
-        return addCard(new Card(owner, newCard));
+    public void addCard(CardDescr newCard) {
+        addCard(new Card(owner, newCard));
     }
 
-    public UndoAction addCard(Card newCard) {
-        return addCard(newCard, (card) -> UndoAction.DO_NOTHING);
+    public void addCard(Card newCard) {
+        addCard(newCard, (card) -> {});
     }
 
-    public UndoAction addCard(CardDescr newCard, Function<Card, UndoAction> onAddEvent) {
-        return addCard(new Card(owner, newCard), onAddEvent);
+    public void addCard(CardDescr newCard, Consumer<Card> onAddEvent) {
+        addCard(new Card(owner, newCard), onAddEvent);
     }
 
-    public UndoAction addCard(Card newCard, Function<Card, UndoAction> onAddEvent) {
+    public void addCard(Card newCard, Consumer<Card> onAddEvent) {
         ExceptionHelper.checkNotNullArgument(newCard, "newCard");
         ExceptionHelper.checkNotNullArgument(onAddEvent, "onAddEvent");
 
@@ -212,23 +195,18 @@ public final class Hand implements PlayerProperty {
         }
 
         if (hand.size() >= maxSize) {
-            return UndoAction.DO_NOTHING;
+            return;
         }
 
         CardRef newCardRef = new CardRef(newCard);
         hand.add(newCardRef);
-        UndoAction activateUndo = newCardRef.activate();
-        UndoAction eventUndo = onAddEvent.apply(newCard);
-        return () -> {
-            eventUndo.undo();
-            activateUndo.undo();
-            hand.remove(hand.size() - 1);
-        };
+        newCardRef.activate();
+        onAddEvent.accept(newCard);
     }
 
     private static final class CardRef {
         private final Card card;
-        private UndoableUnregisterAction abilityRef;
+        private UndoObjectAction<? super Card> unregisterRef;
 
         public CardRef(Player owner, CardDescr cardDescr) {
             this(new Card(owner, cardDescr));
@@ -237,16 +215,15 @@ public final class Hand implements PlayerProperty {
         public CardRef(Card card) {
             ExceptionHelper.checkNotNullArgument(card, "card");
             this.card = card;
-            this.abilityRef = UndoableUnregisterAction.DO_NOTHING;
+            this.unregisterRef = UndoObjectAction.DO_NOTHING;
         }
 
-        public UndoAction activate() {
-            abilityRef = card.getCardDescr().getInHandAbility().activate(card);
-            return abilityRef;
+        public void activate() {
+            unregisterRef = card.getCardDescr().getInHandAbility().activate(card);
         }
 
-        public UndoAction deactivate() {
-            return abilityRef.unregister();
+        public void deactivate() {
+            unregisterRef.undo(card);
         }
     }
 }

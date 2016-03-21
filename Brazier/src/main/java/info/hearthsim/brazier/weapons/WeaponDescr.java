@@ -4,8 +4,8 @@ import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
-import info.hearthsim.brazier.events.GameEventAction;
-import info.hearthsim.brazier.events.GameEventActionDefs;
+import info.hearthsim.brazier.events.EventAction;
+import info.hearthsim.brazier.events.TriggeringAbility;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.Set;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class WeaponDescr implements HearthStoneEntity {
-    private final WeaponId id;
+    private final WeaponName id;
     private final int attack;
     private final int durability;
 
@@ -50,7 +50,7 @@ public final class WeaponDescr implements HearthStoneEntity {
     }
 
     @Override
-    public WeaponId getId() {
+    public WeaponName getId() {
         return id;
     }
 
@@ -79,11 +79,11 @@ public final class WeaponDescr implements HearthStoneEntity {
         return canTargetRetaliate;
     }
 
-    public GameEventActionDefs<Weapon> getEventActionDefs() {
-        return abilities.getEventActionDefs();
+    public TriggeringAbility<Weapon> getEventActionDefs() {
+        return abilities.getTriggers();
     }
 
-    public GameEventAction<? super Weapon, ? super Weapon> tryGetDeathRattle() {
+    public EventAction<? super Weapon, ? super Weapon> tryGetDeathRattle() {
         return abilities.tryGetDeathRattle();
     }
 
@@ -92,7 +92,7 @@ public final class WeaponDescr implements HearthStoneEntity {
     }
 
     public static final class Builder {
-        private final WeaponId id;
+        private final WeaponName id;
         private final int attack;
         private final int durability;
 
@@ -104,7 +104,7 @@ public final class WeaponDescr implements HearthStoneEntity {
 
         private LivingEntitiesAbilities<Weapon> abilities;
 
-        public Builder(WeaponId id, int attack, int durability) {
+        public Builder(WeaponName id, int attack, int durability) {
             ExceptionHelper.checkNotNullArgument(id, "id");
 
             this.id = id;

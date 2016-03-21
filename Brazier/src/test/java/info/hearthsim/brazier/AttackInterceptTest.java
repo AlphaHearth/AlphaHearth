@@ -11,6 +11,7 @@ public final class AttackInterceptTest extends BrazierTest {
         agent.setMana("p2", 10);
 
         agent.playMinionCard("p1", TestCards.EXPLOSIVE_TRAP, 0);
+        // FIXME: Failed to deep copy registered Secret in GameEvents
 
         agent.setCurrentPlayer("p2");
         agent.playMinionCard("p2", TestCards.STONETUSK_BOAR, 0);

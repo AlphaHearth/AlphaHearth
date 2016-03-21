@@ -1,13 +1,13 @@
 package com.github.mrdai.alphahearth.move;
 
-import info.hearthsim.brazier.TargetId;
+import info.hearthsim.brazier.EntityId;
 import org.jtrim.utils.ExceptionHelper;
 
 public class DirectAttacking implements SingleMove {
-    private final TargetId attacker;
-    private final TargetId target;
+    private final EntityId attacker;
+    private final EntityId target;
 
-    public DirectAttacking(TargetId attacker, TargetId target) {
+    public DirectAttacking(EntityId attacker, EntityId target) {
         ExceptionHelper.checkNotNullArgument(attacker, "attacker");
         ExceptionHelper.checkNotNullArgument(target, "target");
 
@@ -15,11 +15,11 @@ public class DirectAttacking implements SingleMove {
         this.target = target;
     }
 
-    public TargetId getTarget() {
+    public EntityId getTarget() {
         return target;
     }
 
-    public TargetId getAttacker() {
+    public EntityId getAttacker() {
         return attacker;
     }
 }

@@ -1,8 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,11 +32,15 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     }
 
     private AuraAwarePropertyBase(AuraAwarePropertyBase<T> other) {
+        this(other, false);
+    }
+
+    private AuraAwarePropertyBase(AuraAwarePropertyBase<T> other, boolean copyExternal) {
         this.buffCombiner = other.buffCombiner;
         this.buffRefs = new ArrayList<>(other.buffRefs.size());
         this.combinedView = other.buffCombiner.viewCombinedBuffs(Collections.unmodifiableList(this.buffRefs));
         for (BuffRef<T> buffRef: other.buffRefs) {
-            if (!buffRef.external) {
+            if (copyExternal || !buffRef.external) {
                 this.buffRefs.add(buffRef);
             }
         }
@@ -46,7 +49,7 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     /**
      * Added the given buff to this {@code AuraAwarePropertyBase}.
      */
-    public UndoableUnregisterAction addRemovableBuff(BuffArg buffArg, T toAdd) {
+    public UndoObjectAction<AuraAwarePropertyBase> addRemovableBuff(BuffArg buffArg, T toAdd) {
         int priority = buffArg.getPriority();
         boolean external = buffArg.isExternal();
 
@@ -54,28 +57,7 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
 
         BuffRef<T> buffRef = new BuffRef<>(priority, external, toAdd);
         buffRefs.add(buffPos, buffRef);
-        return UndoableUnregisterAction.makeIdempotent(new UndoableUnregisterAction() {
-            @Override
-            public UndoAction unregister() {
-                for (int i = buffRefs.size() - 1; i >= 0; i--) {
-                    BuffRef<T> candidate = buffRefs.get(i);
-                    if (candidate == buffRef) {
-                        int candidateIndex = i;
-                        buffRefs.remove(candidateIndex);
-                        return () -> buffRefs.add(candidateIndex, candidate);
-                    }
-                }
-                return UndoAction.DO_NOTHING;
-            }
-
-            @Override
-            public void undo() {
-                BuffRef<?> removed = buffRefs.remove(buffPos);
-                if (removed != buffRef) {
-                    throw new IllegalStateException("Undo was called in an illegal state.");
-                }
-            }
-        });
+        return (aapb) -> aapb.buffRefs.remove(buffRef);
     }
 
     private int findInsertPos(int priority) {
@@ -92,7 +74,7 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
      * Returns a new copy of this {@code AuraAwarePropertyBase}.
      */
     public AuraAwarePropertyBase<T> clone() {
-        return new AuraAwarePropertyBase<>(this);
+        return new AuraAwarePropertyBase<>(this, false);
     }
 
     /**
@@ -108,10 +90,9 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     }
 
     @Override
-    public UndoAction silence() {
-        if (!hasNonExternalBuff()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void silence() {
+        if (!hasNonExternalBuff())
+            return;
 
         List<BuffRef<T>> prevRefs = new ArrayList<>(buffRefs);
         buffRefs.clear();
@@ -120,10 +101,6 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
                 buffRefs.add(buffRef);
             }
         }
-        return () -> {
-            buffRefs.clear();
-            buffRefs.addAll(prevRefs);
-        };
     }
 
     public T getCombinedView() {

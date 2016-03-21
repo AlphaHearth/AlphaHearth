@@ -1,13 +1,10 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.events.RegisterId;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.events.GameActionEvents;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.actions.undo.UndoableIntResult;
-import info.hearthsim.brazier.actions.undo.UndoableRegistry;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.HpProperty;
 import info.hearthsim.brazier.cards.Card;
@@ -19,11 +16,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableAction;
 import info.hearthsim.brazier.*;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -47,12 +44,14 @@ public final class ActionUtils {
     /**
      * Adjusts the {@link HpProperty} of the given {@link Character} with the given {@link Function}.
      */
-    public static UndoAction adjustHp(Character character, Function<HpProperty, UndoAction> action) {
+    public static UndoObjectAction<Character> adjustHp(Character character,
+                                                       Function<HpProperty, UndoObjectAction<HpProperty>> action) {
         HpProperty hp = tryGetHp(character);
         if (hp == null) {
-            return UndoAction.DO_NOTHING;
+            return UndoObjectAction.DO_NOTHING;
         }
-        return action.apply(hp);
+        UndoObjectAction<HpProperty> undoRef = action.apply(hp);
+        return (c) -> undoRef.undo(tryGetHp(c));
     }
 
     /**
@@ -111,8 +110,8 @@ public final class ActionUtils {
      * @param damage the amount of damage.
      * @param target the given {@link Character target}.
      */
-    public static UndoAction attackWithHero(Player player, boolean spell, int damage, Character target) {
-        return attackWithHero(player.getHero(), spell, damage, target);
+    public static void attackWithHero(Player player, boolean spell, int damage, Character target) {
+        attackWithHero(player.getHero(), spell, damage, target);
     }
 
     /**
@@ -123,25 +122,22 @@ public final class ActionUtils {
      * @param damage the amount of damage.
      * @param target the given {@link Character target}.
      */
-    public static UndoAction attackWithHero(Hero hero, boolean spell, int damage, Character target) {
+    public static void attackWithHero(Hero hero, boolean spell, int damage, Character target) {
         if (!spell) {
-            return damageCharacter(hero, damage, target);
+            damageCharacter(hero, damage, target);
+            return;
         }
 
         Damage appliedDamage = hero.getOwner().getSpellDamage(damage);
-        return target.damage(appliedDamage);
+        target.damage(appliedDamage);
     }
 
     /**
      * Deals given amount of damage to the given {@link Character} with the given {@link DamageSource}.
      */
-    public static UndoAction damageCharacter(DamageSource damageSource, int damage, Character target) {
-        UndoableResult<Damage> damageRef = damageSource.createDamage(damage);
-        UndoableIntResult damageUndo = target.damage(damageRef.getResult());
-        return () -> {
-            damageUndo.undo();
-            damageRef.undo();
-        };
+    public static void damageCharacter(DamageSource damageSource, int damage, Character target) {
+        Damage d = damageSource.createDamage(damage);
+        target.damage(d);
     }
 
     /**
@@ -262,7 +258,7 @@ public final class ActionUtils {
      * Tries to draw a card randomly from the given {@link Player}'s deck which satisfies the given predicate.
      * Returns {@code null} if no such card exist.
      */
-    public static UndoableResult<Card> pollDeckForCard(
+    public static Card pollDeckForCard(
         Player player,
         Predicate<? super Card> cardFilter) {
         return player.getDeck().tryDrawRandom(player.getGame().getRandomProvider(), cardFilter);
@@ -395,70 +391,59 @@ public final class ActionUtils {
     }
 
     /**
-     * Executes the given {@link UndoableAction} on the end of the current turn of the given {@link Game}.
+     * Executes the given {@code action} on the end of the current turn of the given {@link Game}.
      */
-    public static UndoAction doOnEndOfTurn(Game game, UndoableAction action) {
+    public static void doOnEndOfTurn(Game game, Consumer<Player> action) {
         GameActionEvents<Player> listeners = game.getEvents().turnEndsListeners();
 
-        AtomicReference<RegisterId> idRef = new AtomicReference<>();
-        RegisterId id = listeners.addAction((Game eventGame, Player player) -> {
-            listeners.unregister(idRef.get());
-            action.doAction();
-
-            return UndoAction.DO_NOTHING;
+        AtomicReference<UndoObjectAction<GameActionEvents>> undoRef = new AtomicReference<>();
+        UndoObjectAction<GameActionEvents> undo = listeners.register((Player player) -> {
+            undoRef.get().undo(player.getGame().getEvents().turnEndsListeners());
+            action.accept(player);
         });
-        idRef.set(id);
-
-        return () -> listeners.unregister(id);
+        undoRef.set(undo);
     }
 
     /**
      * Converts the given {@link Ability} to a single-turn ability, which will be unregistered at
      * end of turn.
      */
-    public static <Self> Ability<Self> toSingleTurnAbility(
-        Game game,
+    public static <Self extends GameProperty> Ability<Self> toSingleTurnAbility(
         Ability<Self> ability) {
-        ExceptionHelper.checkNotNullArgument(game, "game");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
         return (Self self) -> {
-            UndoableUnregisterAction unregisterAction = ability.activate(self);
-            UndoAction unregUndo = unregisterAfterTurnEnds(game, unregisterAction);
+            UndoObjectAction<Self> unregisterAction = ability.activate(self);
+            UndoObjectAction<Self> unregUndo = unregisterAfterTurnEnds(self, unregisterAction);
 
-            return new UndoableUnregisterAction() {
-                @Override
-                public UndoAction unregister() {
-                    return unregisterAction.unregister();
-                }
-
-                @Override
-                public void undo() {
-                    unregUndo.undo();
-                    unregisterAction.undo();
-                }
+            return (s) -> {
+                unregUndo.undo(s);
+                unregisterAction.undo(s);
             };
         };
     }
 
-    private static UndoAction unregisterAfterTurnEnds(Game game, UndoableUnregisterAction unregisterAction) {
-        GameActionEvents<Player> turnEndsListeners = game.getEvents().turnEndsListeners();
-        RegisterId id =
-            turnEndsListeners.addAction((Game taskGame, Player object) -> unregisterAction.unregister());
-        return () -> turnEndsListeners.unregister(id);
+    private static <Self extends GameProperty> UndoObjectAction<Self>
+        unregisterAfterTurnEnds(Self self, UndoObjectAction<? super Self> unregisterAction) {
+        UndoObjectAction<GameActionEvents> undoRef =
+            self.getGame().getEvents().turnEndsListeners()
+                .register((ignored) -> unregisterAction.undo(self));
+        return (s) -> undoRef.undo(s.getGame().getEvents().turnEndsListeners());
     }
 
     /**
-     * Executes the given {@link UndoableRegistry} and unregisters by using the {@link UndoableUnregisterAction}
+     * Executes the given register action and unregisters it by using the {@code UndoObjectAction}
      * it returns at the end of the current turn of the given {@link Game}.
      */
-    public static UndoAction doTemporary(Game game, UndoableRegistry registerAction) {
-        UndoableUnregisterAction buffRef = registerAction.register();
-        UndoAction unregUndo = unregisterAfterTurnEnds(game, buffRef);
+    public static <Self extends Entity> UndoObjectAction<Self>
+        doTemporary(Self self, Supplier<UndoObjectAction<Self>> registerAction) {
 
-        return () -> {
-            unregUndo.undo();
-            buffRef.undo();
+        UndoObjectAction<? super Self> buffRef = registerAction.get();
+        UndoObjectAction<? super Self> unregUndo = unregisterAfterTurnEnds(self, buffRef);
+
+        return (s) -> {
+            unregUndo.undo(s);
+            buffRef.undo(s);
         };
     }
 
@@ -466,59 +451,47 @@ public final class ActionUtils {
      * Returns an {@link Ability}, which will be unregistered at the start of a new turn of the given
      * {@link PlayerProperty}'s owner after it is activated.
      */
-    public static <Self> Ability<Self> toUntilTurnStartsAbility(
-        Game game,
-        PlayerProperty turnOwner,
+    public static <Self extends Entity> Ability<Self> toUntilTurnStartsAbility(
+        PlayerId turnOwnerId,
         Ability<Self> ability) {
-        ExceptionHelper.checkNotNullArgument(game, "game");
-        ExceptionHelper.checkNotNullArgument(turnOwner, "turnOwner");
+        ExceptionHelper.checkNotNullArgument(turnOwnerId, "turnOwnerId");
         ExceptionHelper.checkNotNullArgument(ability, "ability");
 
         return (Self self) -> {
-            UndoableUnregisterAction unregisterAction = ability.activate(self);
-            UndoAction unregUndo = unregisterOnNextTurn(game, turnOwner, unregisterAction);
+            UndoObjectAction<Self> unregisterAction = ability.activate(self);
+            UndoObjectAction<Self> unregUndo = unregisterOnNextTurn(turnOwnerId, unregisterAction);
 
-            return new UndoableUnregisterAction() {
-                @Override
-                public UndoAction unregister() {
-                    return unregisterAction.unregister();
-                }
-
-                @Override
-                public void undo() {
-                    unregUndo.undo();
-                    unregisterAction.undo();
-                }
+            return (s) -> {
+                unregUndo.undo(s);
+                unregisterAction.undo(s);
             };
         };
     }
 
-    private static UndoAction unregisterOnNextTurn(
-        Game game,
-        PlayerProperty turnOwner,
-        UndoableUnregisterAction unregisterAction) {
-        GameActionEvents<Player> turnStartsListeners = game.getEvents().turnStartsListeners();
-        RegisterId id = turnStartsListeners.addAction((Game taskGame, Player actionPlayer) -> {
-            if (actionPlayer == turnOwner.getOwner()) {
-                return unregisterAction.unregister();
-            } else {
-                return UndoAction.DO_NOTHING;
-            }
-        });
-        return () -> turnStartsListeners.unregister(id);
+    public static <Self extends GameProperty> UndoObjectAction<Self> unregisterOnNextTurn(
+        PlayerId turnOwnerId,
+        UndoObjectAction<Self> unregisterAction) {
+        return (self) -> {
+            self.getGame().getEvents().turnStartsListeners().register((actionPlayer) -> {
+               if (actionPlayer.getPlayerId() == turnOwnerId)
+                   unregisterAction.undo(self);
+            });
+        };
     }
 
     /**
-     * Executes the given {@link UndoableRegistry} and unregister it by using the {@link UndoableUnregisterAction}
+     * Executes the given register action and unregisters it by using the {@code UndoObjectAction}
      * it returns at the start of a new turn of the given {@link PlayerProperty}'s owner.
      */
-    public static UndoAction doUntilNewTurnStart(Game game, PlayerProperty turnOwner, UndoableRegistry registerAction) {
-        UndoableUnregisterAction buffRef = registerAction.register();
-        UndoAction unregUndo = unregisterOnNextTurn(game, turnOwner, buffRef);
+    public static <Self extends GameProperty> UndoObjectAction<Self>
+        doUntilNewTurnStart(PlayerId turnOwnerId, Supplier<UndoObjectAction<Self>> registerAction) {
 
-        return () -> {
-            unregUndo.undo();
-            buffRef.undo();
+        UndoObjectAction<Self> buffRef = registerAction.get();
+        UndoObjectAction<Self> unregUndo = unregisterOnNextTurn(turnOwnerId, buffRef);
+
+        return (self) -> {
+            unregUndo.undo(self);
+            buffRef.undo(self);
         };
     }
 

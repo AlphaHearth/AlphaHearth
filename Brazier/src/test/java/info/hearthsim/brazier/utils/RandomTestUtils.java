@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,25 +34,25 @@ public final class RandomTestUtils {
         return resultRef.get();
     }
 
-    public static MinionId singleMinionScript(TestAgent agent, String minionLocation,
+    public static MinionName singleMinionScript(TestAgent agent, String minionLocation,
                                               Consumer<TestAgent> scriptConfig) {
         return singleMinionScript(agent, minionLocation,
             (minion) -> minion.getBaseDescr().getId(),
             scriptConfig);
     }
 
-    public static List<MinionId> boardMinionScript(TestAgent agent, String playerName,
+    public static List<MinionName> boardMinionScript(TestAgent agent, String playerName,
                                                    Consumer<TestAgent> scriptConfig) {
-        AtomicReference<List<MinionId>> resultRef = new AtomicReference<>(null);
+        AtomicReference<List<MinionName>> resultRef = new AtomicReference<>(null);
 
         scriptConfig.accept(agent);
 
         agent.expectPlayer(playerName, (player) -> {
-            List<MinionId> minions = player.getBoard().getAllMinions().stream()
+            List<MinionName> minions = player.getBoard().getAllMinions().stream()
                 .map((minion) -> minion.getBaseDescr().getId())
                 .collect(Collectors.toList());
 
-            List<MinionId> prevRef = resultRef.get();
+            List<MinionName> prevRef = resultRef.get();
             if (prevRef != null) {
                 assertEquals("Expected same minion for all runs.", prevRef, minions);
             } else {

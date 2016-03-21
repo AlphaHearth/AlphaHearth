@@ -128,9 +128,11 @@ public final class AuraTargetProviders {
      * {@link AuraTargetProvider} which returns the {@link Minion}(s) next to the aura source minion.
      */
     public static final AuraTargetProvider<Minion, Minion> NEIGHBOURS_MINION_PROVIDER = (game, source) -> {
-        System.out.println("Executed!");
-        BoardSide board = source.getOwner().getBoard();
-        int sourceIndex = board.indexOf(source.getTargetId());
+        BoardSide board = game.getPlayer(source.getOwner().getPlayerId()).getBoard();
+        int sourceIndex = board.indexOf(source.getEntityId());
+        if (sourceIndex == -1)
+            return Collections.emptyList();
+
         List<Minion> neighbours = new ArrayList<>(2);
 
         Minion left = board.getMinion(sourceIndex - 1);

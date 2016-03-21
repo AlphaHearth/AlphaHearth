@@ -7,15 +7,13 @@ import info.hearthsim.brazier.cards.CardProvider;
 import info.hearthsim.brazier.cards.CardRarity;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.events.GameEventFilters;
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.events.EventFilters;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.GameEventActionDefs;
+import info.hearthsim.brazier.events.TriggeringAbility;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 
 import java.util.Collections;
@@ -43,7 +41,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         this.secretParser = new EventNotificationParser<>(
                 Secret.class,
                 objectParser,
-                GameEventFilters.NOT_SELF_TURN,
+                EventFilters.NOT_SELF_TURN,
                 CardParser::unregisterSecret);
     }
 
@@ -86,7 +84,7 @@ public final class CardParser implements EntityParser<CardDescr> {
             cardType = CardType.WEAPON;
         }
 
-        CardId cardId = new CardId(name);
+        CardName cardId = new CardName(name);
         CardDescr.Builder builder = new CardDescr.Builder(cardId, cardType, manaCost);
 
         keywords.add(cardType.getKeyword());
@@ -182,7 +180,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         if (weaponElement != null) {
             WeaponDescr weapon = weaponParser.fromJson(weaponElement, name, keywords);
             builder.setWeapon(weapon);
-            PlayAction<Card> playAction = (game, actor, target) -> actor.getOwner().equipWeapon(weapon);
+            PlayAction<Card> playAction = (actor, target) -> actor.getOwner().equipWeapon(weapon);
 
             builder.addOnPlayAction(new PlayActionDef<>(TargetNeeds.NO_NEED, PlayActionRequirement.ALLOWED, playAction));
         }
@@ -196,17 +194,12 @@ public final class CardParser implements EntityParser<CardDescr> {
      * Removes the given {@link Secret} from the given {@link Game} and triggers a
      * {@link SimpleEventType#SECRET_REVEALED SECRET_REVEALED} event.
      *
-     * @param game the given {@code Game}.
      * @param secret the given {@code Secret}.
      * @param eventSource the source of the event.
      */
-    private static UndoAction unregisterSecret(Game game, Secret secret, Object eventSource) {
-        UndoAction removeUndo = secret.getOwner().getSecrets().removeSecret(secret);
-        UndoAction eventUndo = game.getEvents().triggerEvent(SimpleEventType.SECRET_REVEALED, secret);
-        return () -> {
-            eventUndo.undo();
-            removeUndo.undo();
-        };
+    private static void unregisterSecret(Secret secret, Object eventSource) {
+        secret.getOwner().getSecrets().removeSecret(secret);
+        secret.getGame().getEvents().triggerEvent(SimpleEventType.SECRET_REVEALED, secret);
     }
 
     private void parseAbility(
@@ -283,7 +276,7 @@ public final class CardParser implements EntityParser<CardDescr> {
      * to an {@link EventNotificationParser}.
      *
      * @param secretElement the {@code Secret}'s {@link JsonTree}.
-     * @param secretId the {@link EntityId} of the {@code Secret}.
+     * @param secretId the {@link EntityName} of the {@code Secret}.
      * @param cardRef a {@link Supplier} which returns the {@link CardDescr}.
      * @param builder the {@link CardDescr.Builder CardDescr.Builder} of the
      *                current {@code Secret} card.
@@ -292,7 +285,7 @@ public final class CardParser implements EntityParser<CardDescr> {
      */
     private boolean parseSecretPlayAction(
         JsonTree secretElement,
-        EntityId secretId,
+        EntityName secretId,
         Supplier<CardDescr> cardRef,
         CardDescr.Builder builder) throws ObjectParsingException {
 
@@ -300,7 +293,7 @@ public final class CardParser implements EntityParser<CardDescr> {
             return false;
         }
 
-        GameEventActionDefs<Secret> secretActionDef = secretParser.fromJson(secretElement);
+        TriggeringAbility<Secret> secretActionDef = secretParser.fromJson(secretElement);
 
         builder.addOnPlayAction(new PlayActionDef<>(
             TargetNeeds.NO_NEED,
@@ -312,23 +305,23 @@ public final class CardParser implements EntityParser<CardDescr> {
     /**
      * Returns the {@link PlayActionRequirement} for playing the {@code Secret} with the given id.
      *
-     * @param secretId the given {@link EntityId} of the {@code Secret}.
+     * @param secretId the given {@link EntityName} of the {@code Secret}.
      * @return the {@link PlayActionRequirement} for playing the {@code Secret}.
      */
-    private PlayActionRequirement secretRequirement(EntityId secretId) {
+    private PlayActionRequirement secretRequirement(EntityName secretId) {
         return (Player player) -> {
             SecretContainer secrets = player.getSecrets();
             return !secrets.isFull() && secrets.findById(secretId) == null;
         };
     }
 
-    private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, GameEventActionDefs<Secret> secretActionDef) {
+    private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, TriggeringAbility<Secret> secretActionDef) {
         ExceptionHelper.checkNotNullArgument(secretActionDef, "secretActionDef");
-        return (Game game, Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
+        return (Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
             CardDescr card = cardRef.get();
             Player player = actor.getOwner();
             Secret secret = new Secret(player, card, secretActionDef);
-            return player.getSecrets().addSecret(secret);
+            player.getSecrets().addSecret(secret);
         };
     }
 }

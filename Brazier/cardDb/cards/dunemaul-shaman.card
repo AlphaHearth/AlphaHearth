@@ -11,8 +11,8 @@
         "maxAttackCount": 2,
         "triggers": {
             "attack-initiated": {
-                "filter": "GameEventFilters.ATTACKER_IS_SELF",
-                "action": "GameEventActions.MISS_TARGET_SOMETIMES"
+                "filter": "EventFilters.ATTACKER_IS_SELF",
+                "action": "EventActions.MISS_TARGET_SOMETIMES"
             }
         }
     }

@@ -1,19 +1,17 @@
 package info.hearthsim.brazier.minions;
 
-import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.HearthStoneEntity;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
 import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
 import info.hearthsim.brazier.actions.PlayActionDef;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.cards.PlayAction;
-import info.hearthsim.brazier.events.GameEventActionDefs;
+import info.hearthsim.brazier.events.TriggeringAbility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,7 +32,7 @@ import org.jtrim.utils.ExceptionHelper;
  * {@code MinionDescr} must have different names.
  */
 public final class MinionDescr implements HearthStoneEntity {
-    private final MinionId minionId;
+    private final MinionName minionId;
     private final String displayName;
     private final Supplier<CardDescr> baseCardRef;
     private final int attack;
@@ -78,7 +76,7 @@ public final class MinionDescr implements HearthStoneEntity {
         return abilities.tryGetAbility();
     }
 
-    public GameEventAction<? super Minion, ? super Minion> tryGetDeathRattle() {
+    public EventAction<? super Minion, ? super Minion> tryGetDeathRattle() {
         return abilities.tryGetDeathRattle();
     }
 
@@ -111,7 +109,7 @@ public final class MinionDescr implements HearthStoneEntity {
     }
 
     @Override
-    public MinionId getId() {
+    public MinionName getId() {
         return minionId;
     }
 
@@ -156,13 +154,12 @@ public final class MinionDescr implements HearthStoneEntity {
         return battleCries;
     }
 
-    public UndoAction executeBattleCriesNow(Player player, PlayArg<Minion> target) {
+    public void executeBattleCriesNow(Player player, PlayArg<Minion> target) {
         ExceptionHelper.checkNotNullArgument(player, "player");
         ExceptionHelper.checkNotNullArgument(target, "target");
 
-        if (battleCries.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (battleCries.isEmpty())
+            return;
 
         List<PlayAction<Minion>> actions
                 = new ArrayList<>(battleCries.size());
@@ -172,21 +169,15 @@ public final class MinionDescr implements HearthStoneEntity {
             }
         }
 
-        if (actions.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+        if (actions.isEmpty())
+            return;
 
-        Game game = player.getGame();
-
-        UndoAction.Builder result = new UndoAction.Builder(actions.size());
-        for (PlayAction<Minion> action: actions) {
-            result.addUndo(action.doPlay(game, target));
-        }
-        return result;
+        for (PlayAction<Minion> action: actions)
+            action.doPlay(target);
     }
 
-    public GameEventActionDefs<Minion> getEventActionDefs() {
-        return abilities.getEventActionDefs();
+    public TriggeringAbility<Minion> getEventActionDefs() {
+        return abilities.getTriggers();
     }
 
     private static final class CachedSupplier<T> implements Supplier<T> {
@@ -212,7 +203,7 @@ public final class MinionDescr implements HearthStoneEntity {
     }
 
     public static final class Builder {
-        private final MinionId minionId;
+        private final MinionName minionId;
         private String displayName;
         private final int attack;
         private final int hp;
@@ -233,7 +224,7 @@ public final class MinionDescr implements HearthStoneEntity {
 
         private OwnedIntPropertyBuff<? super Minion> attackFinalizer;
 
-        public Builder(MinionId minionId, int attack, int hp, Supplier<? extends CardDescr> baseCardRef) {
+        public Builder(MinionName minionId, int attack, int hp, Supplier<? extends CardDescr> baseCardRef) {
             ExceptionHelper.checkNotNullArgument(minionId, "minionId");
             ExceptionHelper.checkNotNullArgument(baseCardRef, "baseCardRef");
 

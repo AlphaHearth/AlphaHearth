@@ -1,7 +1,5 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
-
 /**
  * Util class used to manage minion's freezing. Freezing and unfreezing a minion
  * can be achieved by invoking methods of this class.
@@ -43,43 +41,25 @@ public final class FreezeManager implements Silencable {
      *
      * @param numberOfAttacks the number of attack the minion dealt in this turn.
      */
-    public UndoAction endTurn(int numberOfAttacks) {
-        if (numberOfAttacks > 0 || !frozen) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void endTurn(int numberOfAttacks) {
+        if (numberOfAttacks > 0 || !frozen)
+            return;
 
         frozen = false;
-        return () -> frozen = true;
     }
 
     /**
      * Freezes the minion.
      */
-    public UndoAction freeze() {
-        if (frozen) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        return setFrozen(true);
+    public void freeze() {
+        frozen = true;
     }
 
     /**
      * The minion is silenced and unfrozen.
      */
     @Override
-    public UndoAction silence() {
-        return setFrozen(false);
-    }
-
-    /**
-     * Sets the minion's {@code frozen} flag to a given value.
-     */
-    private UndoAction setFrozen(boolean newValue) {
-        if (frozen == newValue) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        frozen = newValue;
-        return () -> frozen = !newValue;
+    public void silence() {
+        frozen = false;
     }
 }

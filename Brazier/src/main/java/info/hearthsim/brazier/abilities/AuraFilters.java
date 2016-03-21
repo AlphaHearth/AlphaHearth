@@ -183,8 +183,8 @@ public final class AuraFilters {
      */
     public static final AuraFilter<Minion, Minion> IS_NEXT_MINION = (game, source, target) -> {
         BoardSide board = source.getOwner().getBoard();
-        int sourceIndex = board.indexOf(source.getTargetId());
-        int targetIndex = board.indexOf(source.getTargetId());
+        int sourceIndex = board.indexOf(source.getEntityId());
+        int targetIndex = board.indexOf(source.getEntityId());
 
         return targetIndex != -1 && Math.abs(targetIndex - sourceIndex) == 1;
     };

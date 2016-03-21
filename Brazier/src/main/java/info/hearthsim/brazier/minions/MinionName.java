@@ -1,18 +1,18 @@
-package info.hearthsim.brazier.cards;
+package info.hearthsim.brazier.minions;
 
-import info.hearthsim.brazier.EntityId;
+import info.hearthsim.brazier.EntityName;
 
 import java.util.Objects;
 
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * The id of a card, which is essentially the name of the card.
+ * The id of a minion, which is essentially the name of the minion.
  */
-public final class CardId implements EntityId {
+public final class MinionName implements EntityName {
     private final String name;
 
-    public CardId(String name) {
+    public MinionName(String name) {
         ExceptionHelper.checkNotNullArgument(name, "name");
         this.name = name;
     }
@@ -34,7 +34,7 @@ public final class CardId implements EntityId {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
 
-        final CardId other = (CardId) obj;
+        final MinionName other = (MinionName)obj;
         return Objects.equals(this.name, other.name);
     }
 

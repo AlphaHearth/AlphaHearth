@@ -16,7 +16,7 @@
                 "ability": {
                     "class": "Ability.onEventAbility",
                     "event": "turn-ends",
-                    "filter": "GameEventFilters.SELF_TURN",
+                    "filter": "EventFilters.SELF_TURN",
                     "action": "TargetlessActions.SELF_DESTRUCT"
                 }
             }

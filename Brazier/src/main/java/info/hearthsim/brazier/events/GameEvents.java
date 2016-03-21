@@ -1,36 +1,28 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.actions.Action;
 import info.hearthsim.brazier.actions.GameActionList;
-import info.hearthsim.brazier.actions.GameObjectAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableAction;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 
 import org.jtrim.utils.ExceptionHelper;
 
-public final class GameEvents {
+public final class GameEvents implements GameProperty {
     private final Game game;
 
-    private final Map<SimpleEventType, EventContainer<?>> simpleListeners;
-    private final CompletableEventContainer<Minion> summoningListeners;
+    private final Map<SimpleEventType, GameActionEvents> simpleListeners;
+    // private final CompletableEventContainer<Minion> summoningListeners;
 
     /**
-     * Used in {@link #doAtomic(UndoableAction)} to collect all suspended event notifications.
+     * Used in {@link #doAtomic(Action)} to collect all suspended event notifications.
      */
-    private final AtomicReference<GameActionList<Void>> pauseCollectorRef;
-
-    // These listeners containers are just convenience methods to access
-    // summoningListeners
-    private final GameActionEventsRegistry<Minion> startSummoningListeners;
-    private final GameActionEventsRegistry<Minion> doneSummoningListeners;
+    private final AtomicReference<GameActionList<Game>> pauseCollectorRef;
 
     public GameEvents(Game game) {
         ExceptionHelper.checkNotNullArgument(game, "game");
@@ -39,49 +31,7 @@ public final class GameEvents {
         this.pauseCollectorRef = new AtomicReference<>(null);
 
         this.simpleListeners = new EnumMap<>(SimpleEventType.class);
-        this.summoningListeners = createCompletableGameActionEvents();
-
-        this.startSummoningListeners = new GameActionEventsRegistry<Minion>() {
-            @Override
-            public RegisterId addAction(
-                int priority,
-                Predicate<? super Minion> condition,
-                GameObjectAction<? super Minion> action) {
-                return summoningListeners.addAction(priority, (Game eventGame, Minion minion) -> {
-                    if (!condition.test(minion)) {
-                        return CompleteGameObjectAction.doNothing(UndoAction.DO_NOTHING);
-                    }
-
-                    UndoAction actionUndo = action.alterGame(game, minion);
-                    return CompleteGameObjectAction.doNothing(actionUndo);
-                });
-            }
-
-            @Override
-            public boolean unregister(RegisterId registerId) {
-                return summoningListeners.unregister(registerId);
-            }
-        };
-
-        this.doneSummoningListeners = new GameActionEventsRegistry<Minion>() {
-            @Override
-            public RegisterId addAction(
-                int priority,
-                Predicate<? super Minion> condition,
-                GameObjectAction<? super Minion> action) {
-                return summoningListeners.addAction(priority, (Game eventGame, Minion minion) -> {
-                    if (!condition.test(minion)) {
-                        return CompleteGameObjectAction.doNothing(UndoAction.DO_NOTHING);
-                    }
-                    return CompleteGameObjectAction.nothingToUndo(action);
-                });
-            }
-
-            @Override
-            public boolean unregister(RegisterId registerId) {
-                return summoningListeners.unregister(registerId);
-            }
-        };
+        // this.summoningListeners = createCompletableGameActionEvents();
     }
 
     private GameEvents(Game game, GameEvents other) {
@@ -89,20 +39,17 @@ public final class GameEvents {
         ExceptionHelper.checkNotNullArgument(other, "other");
 
         this.game = game;
-        GameActionList<Void> otherCollector = other.pauseCollectorRef.get();
+        GameActionList<Game> otherCollector = other.pauseCollectorRef.get();
         if (otherCollector != null)
             this.pauseCollectorRef = new AtomicReference<>(otherCollector.copy());
         else
             this.pauseCollectorRef = new AtomicReference<>(null);
 
         this.simpleListeners = new EnumMap<>(SimpleEventType.class);
-        for (Map.Entry<SimpleEventType, EventContainer<?>> entry : other.simpleListeners.entrySet())
+        for (Map.Entry<SimpleEventType, GameActionEvents> entry : other.simpleListeners.entrySet())
             this.simpleListeners.put(entry.getKey(),
-                createEventContainer(entry.getKey(), entry.getValue().actionList.copy()));
-        this.summoningListeners = createCompletableGameActionEvents(other.summoningListeners.wrapped.copyFor(game));
-
-        this.startSummoningListeners = other.startSummoningListeners;
-        this.doneSummoningListeners = other.doneSummoningListeners;
+                createEventContainer(entry.getKey(), entry.getValue().getActionList().copy()));
+        // this.summoningListeners = createCompletableGameActionEvents(other.summoningListeners.wrapped.copyFor(game));
     }
 
     /**
@@ -116,11 +63,11 @@ public final class GameEvents {
      * Returns simple listener registered in this {@code GameEvents} which listens to the given type of event;
      * {@code null} if no such listener exists.
      */
-    private <T> EventContainer<T> tryGetSimpleListeners(SimpleEventType eventType) {
+    private <T extends GameProperty> GameActionEvents<T> tryGetSimpleListeners(SimpleEventType eventType) {
         ExceptionHelper.checkNotNullArgument(eventType, "eventType");
 
         @SuppressWarnings("unchecked")
-        EventContainer<T> result = (EventContainer<T>) simpleListeners.get(eventType);
+        GameActionEvents<T> result = (GameActionEvents<T>) simpleListeners.get(eventType);
         return result;
     }
 
@@ -133,8 +80,8 @@ public final class GameEvents {
      * @throws IllegalArgumentException if the given {@code argType} does not match the argument type of the given
      *                                  {@code SimpleEventType}.
      */
-    public <T> GameActionEvents<T> simpleListeners(SimpleEventType eventType) {
-        EventContainer<T> result = tryGetSimpleListeners(eventType);
+    public <T extends GameProperty> GameActionEvents<T> simpleListeners(SimpleEventType eventType) {
+        GameActionEvents<T> result = tryGetSimpleListeners(eventType);
         if (result == null) {
             result = createEventContainer(eventType);
             simpleListeners.put(eventType, result);
@@ -146,15 +93,15 @@ public final class GameEvents {
     /**
      * Triggers a given type of event with the given argument instantly.
      */
-    public <T> UndoAction triggerEventNow(SimpleEventType eventType, T arg) {
-        return triggerEvent(eventType, arg, false);
+    public <T extends GameProperty> void triggerEventNow(SimpleEventType eventType, T arg) {
+        triggerEvent(eventType, arg, false);
     }
 
-    public <T> UndoAction triggerEvent(SimpleEventType eventType, T arg) {
-        return triggerEvent(eventType, arg, true);
+    public <T extends GameProperty> void triggerEvent(SimpleEventType eventType, T arg) {
+        triggerEvent(eventType, arg, true);
     }
 
-    private <T> UndoAction triggerEvent(SimpleEventType eventType, T arg, boolean delayable) {
+    private <T extends GameProperty> void triggerEvent(SimpleEventType eventType, T arg, boolean delayable) {
         Class<?> expectedArgType = eventType.getArgumentType();
         if (!expectedArgType.isInstance(arg)) {
             throw new IllegalArgumentException("The requested listener has a different argument type."
@@ -164,22 +111,12 @@ public final class GameEvents {
 
         @SuppressWarnings("unchecked")
         GameActionEvents<T> listeners = tryGetSimpleListeners(eventType);
-        if (listeners == null) {
-            return UndoAction.DO_NOTHING;
-        }
-        return listeners.triggerEvent(delayable, arg);
+        if (listeners != null)
+            listeners.triggerEvent(delayable, arg);
     }
 
-    public CompletableGameActionEvents<Minion> summoningListeners() {
-        return summoningListeners;
-    }
-
-    public GameActionEventsRegistry<Minion> startSummoningListeners() {
-        return startSummoningListeners;
-    }
-
-    public GameActionEventsRegistry<Minion> doneSummoningListeners() {
-        return doneSummoningListeners;
+    public GameActionEvents<Minion> summoningListeners() {
+        return simpleListeners(SimpleEventType.MINION_SUMMONED);
     }
 
     public GameActionEvents<Player> turnStartsListeners() {
@@ -202,30 +139,23 @@ public final class GameEvents {
      * <B>Warning</B>: This method is <B>not</B> thread-safe.
      *
      * @param action the action to be executed. This argument cannot be {@code null}.
-     * @return the action which might be used to undo what this call did including the actions
-     * done by the caused events. This method may never return {@code null}.
      */
-    public UndoAction doAtomic(UndoableAction action) {
+    public void doAtomic(Action action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
         if (pauseCollectorRef.get() != null) {
             // A caller already ensures this call to be atomic
-            return action.doAction();
+            action.act();
         } else {
-            GameActionList<Void> currentCollector = new GameActionList<>();
-            UndoAction actionUndo;
+            GameActionList<Game> currentCollector = new GameActionList<>();
             try {
                 pauseCollectorRef.compareAndSet(null, currentCollector);
-                actionUndo = action.doAction();
+                action.act();
             } finally {
                 pauseCollectorRef.compareAndSet(currentCollector, null);
             }
 
-            UndoAction eventUndo = currentCollector.executeActionsNow(game, null, false);
-            return () -> {
-                eventUndo.undo();
-                actionUndo.undo();
-            };
+            currentCollector.executeActionsNow(game, false);
         }
     }
 
@@ -233,7 +163,7 @@ public final class GameEvents {
      * Creates and returns a new {@link GameActionEvents} for the given type of event.
      * It uses an underlying {@link GameActionList} as its implementation.
      */
-    private <T> EventContainer<T> createEventContainer(SimpleEventType eventType) {
+    private <T extends GameProperty> GameActionEvents<T> createEventContainer(SimpleEventType eventType) {
         return createEventContainer(eventType, new GameActionList<>());
     }
 
@@ -241,53 +171,23 @@ public final class GameEvents {
      * Creates and returns a new {@link GameActionEvents} for the given type of event,
      * using the given {@link GameActionList} as its underlying implementation.
      */
-    private <T> EventContainer<T> createEventContainer(SimpleEventType eventType, GameActionList<T> actionList) {
+    private <T extends GameProperty> GameActionEvents<T> createEventContainer(SimpleEventType eventType,
+                                                                              GameActionList<T> actionList) {
         boolean greedyEvent = eventType.isGreedyEvent();
-        return new EventContainer<>(greedyEvent, actionList);
+        return new GameActionEvents<>(greedyEvent, actionList, pauseCollectorRef);
     }
 
-    private final class EventContainer<T> implements GameActionEvents<T> {
-        private final boolean greedyEvent;
-        private final GameActionList<T> actionList;
-
-        EventContainer(boolean greedyEvent, GameActionList<T> actionList) {
-            this.greedyEvent = greedyEvent;
-            this.actionList = actionList;
-        }
-
-        @Override
-        public RegisterId addAction(
-        int priority,
-        Predicate<? super T> condition,
-        GameObjectAction<? super T> action) {
-            return actionList.addAction(priority, condition, action);
-        }
-
-        @Override
-        public boolean unregister(RegisterId registerId) {
-            return actionList.unregister(registerId);
-        }
-
-        @Override
-        public UndoAction triggerEvent(boolean delayable, T object) {
-            GameActionList<Void> pauseCollector = pauseCollectorRef.get();
-            if (pauseCollector != null && delayable) {
-                // We do not support greediness for delayable events.
-                pauseCollector.addAction(actionList.snapshotCurrentEvents(object));
-                return UndoAction.DO_NOTHING;
-            } else {
-                return actionList.executeActionsNow(game, object, greedyEvent);
-            }
-        }
+    @Override
+    public Game getGame() {
+        return game;
     }
-
+/*
     private <T> CompletableEventContainer<T> createCompletableGameActionEvents() {
-        return new CompletableEventContainer<>(new DefaultCompletableGameActionEvents<>(game));
+        return createCompletableGameActionEvents(new DefaultCompletableGameActionEvents<>(game));
     }
 
-    private <T> CompletableEventContainer<T> createCompletableGameActionEvents(
-        DefaultCompletableGameActionEvents<T> wrapped
-    ) {
+    private <T> CompletableEventContainer<T>
+        createCompletableGameActionEvents(DefaultCompletableGameActionEvents<T> wrapped) {
         return new CompletableEventContainer<>(wrapped);
     }
 
@@ -299,18 +199,14 @@ public final class GameEvents {
         }
 
         @Override
-        public RegisterId addAction(int priority, CompletableGameObjectAction<? super T> action) {
-            return wrapped.addAction(priority, action);
-        }
-
-        @Override
-        public boolean unregister(RegisterId registerId) {
-            return wrapped.unregister(registerId);
+        public UndoObjectAction<CompletableGameActionEventsRegistry>
+            register(int priority, CompletableGameObjectAction<? super T> action) {
+            return wrapped.register(priority, action);
         }
 
         @Override
         public UndoableResult<UndoableAction> triggerEvent(boolean delayable, T object) {
-            GameActionList<Void> pauseCollector = pauseCollectorRef.get();
+            GameActionList<Game> pauseCollector = pauseCollectorRef.get();
             if (pauseCollector != null && delayable) {
                 // If the returned finalizer has been called, then
                 // we have to call the finalizer immediately after triggering
@@ -320,7 +216,7 @@ public final class GameEvents {
 
                 AtomicReference<UndoableAction> finalizerRef = new AtomicReference<>(null);
 
-                GameObjectAction<Void> delayedAction = (Game actionGame, Void ignored) -> {
+                GameAction delayedAction = (Game actionGame) -> {
                     UndoableResult<UndoableAction> triggerResult = wrapped.triggerEvent(object);
 
                     UndoAction finalizeUndo;
@@ -350,5 +246,5 @@ public final class GameEvents {
                 return wrapped.triggerEvent(object);
             }
         }
-    }
+    }*/
 }

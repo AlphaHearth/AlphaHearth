@@ -8,16 +8,16 @@
         "attack": 2,
         "hp": 3,
         "triggers": {
-            "start-play-card": {
+            "play-card": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "GameEventFilters.cardMinionAttackEquals",
+                        "class": "EventFilters.cardMinionAttackEquals",
                         "attack": 1
                     }
                 ],
                 "action": {
-                    "class": "GameEventActions.forEventArgMinionTarget",
+                    "class": "EventActions.forEventArgMinionTarget",
                     "action": {
                         "class": "TargetedActions.buffTarget",
                         "buff": "2/2"

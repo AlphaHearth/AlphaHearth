@@ -5,17 +5,17 @@
     "type": "spell",
     "manaCost": 3,
     "secret": {
-        "done-play-card": {
+        "play-card": {
             "filter": [
-                "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
-                "GameEventFilters.SELF_BOARD_IS_NOT_FULL",
+                "EventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                "EventFilters.SELF_BOARD_IS_NOT_FULL",
                 {
-                    "class": "GameEventFilters.eventSourceHasKeyword",
+                    "class": "EventFilters.eventSourceHasKeyword",
                     "keywords": "minion"
                 }
             ],
             "action": {
-                "class": "GameEventActions.withEventArgMinion",
+                "class": "EventActions.withEventArgMinion",
                 "action": "TargetlessActions.SUMMON_COPY_FOR_OPPONENT"
             }
         }

@@ -8,7 +8,7 @@
         "hp": 5,
         "triggers": {
             "minion-damaged": {
-                "filter": "GameEventFilters.TARGET_SELF",
+                "filter": "EventFilters.TARGET_SELF",
                 "action": {
                     "class": "TargetlessActions.damageTarget",
                     "selector": "EntitySelectors.enemyHero",

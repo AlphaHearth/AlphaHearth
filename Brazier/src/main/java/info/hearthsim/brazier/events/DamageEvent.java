@@ -7,9 +7,9 @@ import org.jtrim.utils.ExceptionHelper;
 /**
  * The event of dealing specific damage on a {@link Character} by a {@link DamageSource}.
  */
-public final class DamageEvent implements TargetRef {
+public final class DamageEvent implements TargetRef, PlayerProperty {
     private final DamageSource damageSource;
-    private final info.hearthsim.brazier.Character target;
+    private final Character target;
     private final int damageDealt;
 
     public DamageEvent(
@@ -35,5 +35,10 @@ public final class DamageEvent implements TargetRef {
 
     public int getDamageDealt() {
         return damageDealt;
+    }
+
+    @Override
+    public Player getOwner() {
+        return damageSource.getOwner();
     }
 }

@@ -8,7 +8,7 @@ import info.hearthsim.brazier.Keywords;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.jtrim.utils.ExceptionHelper;
 @SuppressWarnings("serial")
 public class HeroEditorPanel extends javax.swing.JPanel {
     private final PlayerUiAgent agent;
-    private final CardId currentPowerId;
+    private final CardName currentPowerId;
 
     public HeroEditorPanel(HearthStoneDb db, PlayerUiAgent agent) {
         ExceptionHelper.checkNotNullArgument(db, "db");
@@ -68,7 +68,7 @@ public class HeroEditorPanel extends javax.swing.JPanel {
         }
     }
 
-    private void setupHeroPowerCombo(HearthStoneDb db, CardId defaultSelection) {
+    private void setupHeroPowerCombo(HearthStoneDb db, CardName defaultSelection) {
         HeroPowerItem[] powerItems = getPowerItems(db);
         HeroPowerItem selected = null;
         for (HeroPowerItem item: powerItems) {
@@ -356,28 +356,23 @@ public class HeroEditorPanel extends javax.swing.JPanel {
         CardDescr heroPower = tryGetNewHeroPower();
 
         agent.alterPlayer((player) -> {
-            UndoAction.Builder result = new UndoAction.Builder();
 
             Hero hero = player.getHero();
-            result.addUndo(hero.addExtraAttackForThisTurn(bonusAttack - hero.getExtraAttackForThisTurn()));
-            result.addUndo(hero.setCurrentHp(hp));
-            result.addUndo(hero.setCurrentArmor(armor));
-            result.addUndo(hero.setMaxHp(maxHp));
+            hero.addExtraAttackForThisTurn(bonusAttack - hero.getExtraAttackForThisTurn());
+            hero.setCurrentHp(hp);
+            hero.setCurrentArmor(armor);
+            hero.setMaxHp(maxHp);
 
             ManaResource manaResource = player.getManaResource();
-            result.addUndo(manaResource.setMana(mana));
-            result.addUndo(manaResource.setManaCrystals(manaCrystals));
-            result.addUndo(manaResource.setOverloadedMana(overload));
-            result.addUndo(manaResource.setNextTurnOverload(overloadNextTurn));
+            manaResource.setMana(mana);
+            manaResource.setManaCrystals(manaCrystals);
+            manaResource.setOverloadedMana(overload);
+            manaResource.setNextTurnOverload(overloadNextTurn);
 
-            if (heroClass != null) {
-                result.addUndo(hero.setHeroClass(heroClass));
-            }
-            if (heroPower != null) {
-                result.addUndo(hero.setHeroPower(heroPower));
-            }
-
-            return result;
+            if (heroClass != null)
+                hero.setHeroClass(heroClass);
+            if (heroPower != null)
+                hero.setHeroPower(heroPower);
         });
 
         SwingUtilities.getWindowAncestor(this).dispose();

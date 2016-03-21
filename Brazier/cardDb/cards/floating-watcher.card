@@ -10,8 +10,8 @@
         "triggers": {
             "hero-damaged": {
                 "filter": [
-                    "GameEventFilters.TARGET_HAS_SAME_OWNER_PLAYER",
-                    "GameEventFilters.SELF_TURN"
+                    "EventFilters.TARGET_HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.SELF_TURN"
                 ],
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",

@@ -8,15 +8,15 @@
         "attack": 1,
         "durability": 5,
         "triggers": {
-            "done-summoning": {
+            "on-summon": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
-                    "GameEventFilters.SOURCE_WEAPON_HAS_CHARGE"
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.SOURCE_WEAPON_HAS_CHARGE"
                 ],
                 "action": [
                     "TargetlessActions.REDUCE_WEAPON_DURABILITY",
                     {
-                        "class": "GameEventActions.forEventArgMinionTarget",
+                        "class": "EventActions.forEventArgMinionTarget",
                         "action": {
                             "class": "TargetedActions.buffTarget",
                             "buff": "1/1"

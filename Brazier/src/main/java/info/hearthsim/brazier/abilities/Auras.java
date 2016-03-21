@@ -2,8 +2,11 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.ActionUtils;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.actions.undo.UndoableAction;
+import info.hearthsim.brazier.actions.undo.UnregisterAction;
 import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.events.RegisterId;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.weapons.Weapon;
@@ -15,33 +18,16 @@ import java.util.function.Predicate;
  * Predefined {@link Aura}s.
  */
 public final class Auras {
-    /**
-     * Returns a {@link Buff} {@link Aura}, which adds the given buff to all minions affected by the aura.
-     */
-    public static <Source, Target> Aura<Source, Target> buffAura(
-            @NamedArg("buff") Buff<Target> buff) {
-        return buffAura(Priorities.HIGH_PRIORITY, buff);
-    }
-
-    /**
-     * Returns a {@link Buff} {@link Aura}, which adds the given buff to all minions affected by the aura.
-     */
-    public static <Source, Target> Aura<Source, Target> buffAura(
-            @NamedArg("priority") int priority,
-            @NamedArg("buff") Buff<? super Target> buff) {
-        ExceptionHelper.checkNotNullArgument(buff, "buff");
-        BuffArg buffArg = BuffArg.externalBuff(priority);
-        return (game, source, target) -> buff.buff(game, target, buffArg);
-    }
 
     /* Auras for Cards */
 
     /**
      * Returns a {@code Aura} which increases the target {@code Card}'s mana cost with the given amount.
      */
-    public static Aura<Object, Card> increaseManaCost(@NamedArg("amount") int amount) {
-        return (Game game, Object source, Card target) -> {
-            return target.getRawManaCost().addExternalBuff(amount);
+    public static Aura<Entity, Card> increaseManaCost(@NamedArg("amount") int amount) {
+        return (Entity source, Card card) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef = card.getRawManaCost().addExternalBuff(amount);
+            return (c) -> undoRef.undo(c.getRawManaCost());
         };
     }
 
@@ -49,7 +35,7 @@ public final class Auras {
      * Returns a {@code Aura} which decreases the target {@code Card}'s mana cost with the given amount,
      * without making the mana cost less than {@code 0}.
      */
-    public static Aura<Object, Card> decreaseManaCost(@NamedArg("amount") int amount) {
+    public static Aura<Entity, Card> decreaseManaCost(@NamedArg("amount") int amount) {
         return decreaseManaCostWithLimit(amount, 0);
     }
 
@@ -57,23 +43,24 @@ public final class Auras {
      * Returns a {@code Aura} which decreases the target {@code Card}'s mana cost with the given amount,
      * without making the mana cost less than the given limit.
      */
-    public static Aura<Object, Card> decreaseManaCostWithLimit(
+    public static Aura<Entity, Card> decreaseManaCostWithLimit(
         @NamedArg("amount") int amount,
         @NamedArg("limit") int limit) {
         BuffArg buffArg = new BuffArg(Priorities.LOWEST_PRIORITY, true);
-        return (Game game, Object source, Card target) -> {
-            return target.getRawManaCost().addBuff(
-                buffArg,
+        return (Entity source, Card card) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef = card.getRawManaCost().addBuff(buffArg,
                 (prevValue) -> Math.max(limit, prevValue - amount));
+            return (c) -> undoRef.undo(c.getRawManaCost());
         };
     }
 
     /**
      * Returns a {@code Aura} which sets the target {@code Card}'s mana cost to the given amount.
      */
-    public static Aura<Object, Card> setManaCost(@NamedArg("manaCost") int manaCost) {
-        return (Game game, Object source, Card target) -> {
-            return target.getRawManaCost().addExternalBuff((prevValue) -> 0);
+    public static Aura<Entity, Card> setManaCost(@NamedArg("manaCost") int manaCost) {
+        return (Entity source, Card target) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef = target.getRawManaCost().addExternalBuff((prevValue) -> 0);
+            return (c) -> undoRef.undo(c.getRawManaCost());
         };
     }
 
@@ -82,145 +69,163 @@ public final class Auras {
     /**
      * {@link Aura} which grants the target hero immunity.
      */
-    public static final Aura<Object, Hero> GRANT_HERO_IMMUNITY = (game, source, target) -> {
-        return target.getImmuneProperty().setValueTo(true);
+    public static final Aura<Entity, Hero> GRANT_HERO_IMMUNITY = (source, hero) -> {
+        UndoObjectAction<AuraAwareBoolProperty> undoRef = hero.getImmuneProperty().setValueTo(true);
+        return (h) -> undoRef.undo(h.getImmuneProperty());
     };
 
     /**
      * {@link Aura} which makes the target player's minions trigger their death rattles twice when they are dead.
      */
-    public static final Aura<Object, Player> DUPLICATE_DEATH_RATTLE = (game, source, target) -> {
-        return target.getDeathRattleTriggerCount().addExternalBuff((int prev) -> Math.max(prev, 2));
+    public static final Aura<Entity, Player> DUPLICATE_DEATH_RATTLE = (source, player) -> {
+        UndoObjectAction<AuraAwareIntProperty> undoRef = player.getDeathRattleTriggerCount().addExternalBuff((int prev) -> Math.max(prev, 2));
+        return (p) -> undoRef.undo(p.getDeathRattleTriggerCount());
     };
 
     /**
      * {@link Aura} which makes the target player's healing to damage with same amount.
      */
-    public static final Aura<Object, Player> DAMAGING_HEAL = (game, source, target) -> {
-        return target.getDamagingHealAura().addBuff(true);
+    public static final Aura<Entity, Player> DAMAGING_HEAL = (source, player) -> {
+        UndoObjectAction<AuraAwareBoolProperty> undoRef = player.getDamagingHealAura().setValueTo(true);
+        return (p) -> undoRef.undo(p.getDamagingHealAura());
     };
 
     /**
      * Returns an {@link Aura} which adds the given {@link Keyword} to the target player.
      */
-    public static Aura<Object, Player> playerFlag(@NamedArg("flag") Keyword flag) {
+    public static Aura<Entity, Player> playerFlag(@NamedArg("flag") Keyword flag) {
         ExceptionHelper.checkNotNullArgument(flag, "flag");
 
-        return (Game game, Object source, Player target) -> {
-            return target.getAuraFlags().registerFlag(flag);
+        return (Entity source, Player player) -> {
+            UndoObjectAction<FlagContainer> undoRef = player.getAuraFlags().registerFlag(flag);
+            return (p) -> undoRef.undo(p.getAuraFlags());
         };
     }
 
     /**
      * Returns an {@link Aura} which increase the target {@link Weapon}'s attack with the given amount.
      */
-    public static Aura<Object, Weapon> weaponAttackBuff(@NamedArg("attack") int attack) {
-        return (Game game, Object source, Weapon target) -> {
-            return target.getBuffableAttack().addExternalBuff(attack);
+    public static Aura<Entity, Weapon> weaponAttackBuff(@NamedArg("attack") int attack) {
+        return (Entity source, Weapon weapon) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef = weapon.getBuffableAttack().addExternalBuff(attack);
+            return (w) -> undoRef.undo(w.getBuffableAttack());
         };
     }
 
     /* Auras for Minions */
 
 
-
     /**
      * {@link Aura} which makes the target {@link Minion} cannot be targeted by spell and hero power.
      */
-    public static final Aura<Object, Minion> UNTARGETABLE = (Game game, Object source, Minion target) -> {
-        return target.getProperties().getBody().getUntargetableProperty().setValueToExternal(true);
+    public static final Aura<Entity, Minion> UNTARGETABLE = (Entity source, Minion minion) -> {
+        UndoObjectAction<AuraAwareBoolProperty> undoRef =
+            minion.getProperties().getBody().getUntargetableProperty().setValueToExternal(true);
+        return (m) -> undoRef.undo(m.getProperties().getBody().getUntargetableProperty());
     };
 
     /**
      * {@link Aura} which grants the target {@link Minion} immunity.
      */
-    public static final Aura<Object, Minion> GRANT_MINION_IMMUNITY = (game, source, target) -> {
-        return target.getBody().getImmuneProperty().setValueToExternal(true);
+    public static final Aura<Entity, Minion> GRANT_MINION_IMMUNITY = (source, minion) -> {
+        UndoObjectAction<AuraAwareBoolProperty> undoRef =
+            minion.getBody().getImmuneProperty().setValueToExternal(true);
+        return (m) -> undoRef.undo(m.getProperties().getBody().getImmuneProperty());
     };
 
     /**
      * {@link Aura} which grants the target {@link Minion} charge.
      */
-    public static final Aura<Object, Minion> CHARGE = (game, source, target) -> {
-        return target.getProperties().getChargeProperty().setValueToExternal(true);
+    public static final Aura<Entity, Minion> CHARGE = (source, target) -> {
+        UndoObjectAction<AuraAwareBoolProperty> undoRef =
+            target.getProperties().getChargeProperty().setValueToExternal(true);
+        return (m) -> undoRef.undo(m.getProperties().getChargeProperty());
     };
 
     /**
      * {@link Aura} which grants the target {@link Minion} wind fury.
      */
-    public static final Aura<Object, Minion> WIND_FURY = windFury(2);
+    public static final Aura<Entity, Minion> WIND_FURY = windFury(2);
 
     /**
      * Returns an {@link Aura} which increase the target {@link Minion}'s attack with the given amount
      * with each {@link Minion}s with all the given {@link Keyword}s on board.
      */
-    public static Aura<Object, Minion> attackForOtherMinionsBuff(
+    public static Aura<Entity, Minion> attackForOtherMinionsBuff(
         @NamedArg("attack") int attack,
         @NamedArg("keywords") Keyword[] keywords) {
         Predicate<LabeledEntity> keywordFilter = ActionUtils.includedKeywordsFilter(keywords);
-        return (Game game, Object source, Minion target) -> {
-            Predicate<Minion> filter = (minion) -> {
-                return target != minion && keywordFilter.test(minion);
+        return (Entity source, Minion minion) -> {
+            Predicate<Minion> filter = (m) -> {
+                return minion != m && keywordFilter.test(m);
             };
 
-            int count1 = game.getPlayer1().getBoard().countMinions(filter);
-            int count2 = game.getPlayer2().getBoard().countMinions(filter);
+            int count1 = source.getGame().getPlayer1().getBoard().countMinions(filter);
+            int count2 = source.getGame().getPlayer2().getBoard().countMinions(filter);
 
             int buff = attack * (count1 + count2);
-            return target.getBuffableAttack().addExternalBuff(buff);
+            UndoObjectAction<AuraAwareIntProperty> undoRef = minion.getBuffableAttack().addExternalBuff(buff);
+            return (m) -> undoRef.undo(m.getBuffableAttack());
         };
     }
 
     /**
      * Returns an {@link Aura} which increases the target {@link Minion}'s attack with the given amount.
      */
-    public static Aura<Object, Minion> minionAttackBuff(@NamedArg("attack") int attack) {
-        return (Game game, Object source, Minion target) -> {
-            return target.getBuffableAttack().addExternalBuff(attack);
+    public static Aura<Entity, Minion> minionAttackBuff(@NamedArg("attack") int attack) {
+        return (Entity source, Minion minion) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef = minion.getBuffableAttack().addExternalBuff(attack);
+            return (m) -> undoRef.undo(m.getBuffableAttack());
         };
     }
 
     /**
      * Returns an {@link Aura} which increases the target {@link Minion}'s hp with the given amount.
      */
-    public static Aura<Object, Minion> minionHpBuff(@NamedArg("hp") int hp) {
-        return (Game game, Object source, Minion target) -> {
-            return target.getBody().getHp().addAuraBuff(hp);
+    public static Aura<Entity, Minion> minionHpBuff(@NamedArg("hp") int hp) {
+        return (Entity source, Minion minion) -> {
+            UndoObjectAction<HpProperty> undoRef = minion.getBody().getHp().addAuraBuff(hp);
+            return (m) -> undoRef.undo(m.getBody().getHp());
         };
     }
 
     /**
      * Returns an {@link Aura} which increases the target {@link Minion}'s attack and hp with the given amount.
      */
-    public static Aura<Object, Minion> minionBodyBuff(
+    public static Aura<Entity, Minion> minionBodyBuff(
         @NamedArg("attack") int attack,
         @NamedArg("hp") int hp) {
-        return (Game game, Object source, Minion target) -> {
-            UndoableUnregisterAction.Builder result = new UndoableUnregisterAction.Builder(2);
+        return (Entity source, Minion minion) -> {
 
-            result.addRef(target.getBuffableAttack().addExternalBuff(attack));
-            result.addRef(target.getBody().getHp().addAuraBuff(hp));
+            UndoObjectAction<AuraAwareIntProperty> attackUndo = minion.getBuffableAttack().addExternalBuff(attack);
+            UndoObjectAction<HpProperty> hpUndo = minion.getBody().getHp().addAuraBuff(hp);
 
-            return result;
+            return (m) -> {
+                attackUndo.undo(m.getBuffableAttack());
+                hpUndo.undo(m.getBody().getHp());
+            };
         };
     }
 
     /**
      * Returns an {@link Aura} which makes the target {@link Minion}'s hp cannot be less than the given amount.
      */
-    public static Aura<Object, Minion> minionMinHp(@NamedArg("hp") int hp) {
-        return (Game game, Object source, Minion target) -> {
-            return target.getBody().getMinHpProperty().addExternalBuff((prev) -> Math.max(prev, hp));
+    public static Aura<Entity, Minion> minionMinHp(@NamedArg("hp") int hp) {
+        return (Entity source, Minion target) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef =
+                target.getBody().getMinHpProperty().addExternalBuff((prev) -> Math.max(prev, hp));
+            return (m) -> undoRef.undo(m.getBody().getMinHpProperty());
         };
     }
 
     /**
      * Returns an {@link Aura} which makes the target {@link Minion} can attack given number of times in each turn.
      */
-    public static Aura<Object, Minion> windFury(@NamedArg("attackCount") int attackCount) {
-        return (Game game, Object source, Minion target) -> {
-            AuraAwareIntProperty maxAttackCount = target.getProperties().getMaxAttackCountProperty();
-            return maxAttackCount.addExternalBuff((prev) -> Math.max(prev, attackCount));
+    public static Aura<Entity, Minion> windFury(@NamedArg("attackCount") int attackCount) {
+        return (Entity source, Minion target) -> {
+            UndoObjectAction<AuraAwareIntProperty> undoRef =
+                target.getProperties().getMaxAttackCountProperty().addExternalBuff((prev) -> Math.max(prev, attackCount));
+            return (m) -> undoRef.undo(m.getProperties().getMaxAttackCountProperty());
         };
     }
 

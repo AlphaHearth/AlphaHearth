@@ -1,6 +1,6 @@
 {
     "name": "Shadowform",
-    "description": "Deal 2 damage.",
+    "description": "Your Hero Power becomes 'Deal 2 damage'. If already in Shadowform: 3 damage.",
     "class": "priest",
     "type": "spell",
     "rarity": "epic",

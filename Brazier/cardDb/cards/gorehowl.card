@@ -10,9 +10,9 @@
         "triggers": {
             "attack-initiated": {
                 "filter": [
-                    "GameEventFilters.ATTACKER_IS_OWNER",
-                    "GameEventFilters.ATTACKER_IS_HERO",
-                    "GameEventFilters.ATTACK_TARGET_IS_MINION"
+                    "EventFilters.ATTACKER_IS_OWNER",
+                    "EventFilters.ATTACKER_IS_HERO",
+                    "EventFilters.ATTACK_TARGET_IS_MINION"
                 ],
                 "action": {
                     "class": "TargetlessActions.forTargets",

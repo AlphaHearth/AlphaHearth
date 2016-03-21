@@ -1,18 +1,14 @@
-package info.hearthsim.brazier.minions;
+package info.hearthsim.brazier.weapons;
 
-import info.hearthsim.brazier.EntityId;
-
+import info.hearthsim.brazier.EntityName;
 import java.util.Objects;
 
 import org.jtrim.utils.ExceptionHelper;
 
-/**
- * The id of a minion, which is essentially the name of the minion.
- */
-public final class MinionId implements EntityId {
+public final class WeaponName implements EntityName {
     private final String name;
 
-    public MinionId(String name) {
+    public WeaponName(String name) {
         ExceptionHelper.checkNotNullArgument(name, "name");
         this.name = name;
     }
@@ -34,7 +30,7 @@ public final class MinionId implements EntityId {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
 
-        final MinionId other = (MinionId)obj;
+        final WeaponName other = (WeaponName)obj;
         return Objects.equals(this.name, other.name);
     }
 

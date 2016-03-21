@@ -7,9 +7,9 @@
         "attack": 2,
         "hp": 4,
         "triggers": {
-            "start-play-card": {
+            "play-card": {
                 "filter": {
-                    "class": "GameEventFilters.eventSourceHasKeyword",
+                    "class": "EventFilters.eventSourceHasKeyword",
                     "keywords": "overload"
                 },
                 "action": {

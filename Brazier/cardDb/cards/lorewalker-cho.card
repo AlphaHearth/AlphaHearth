@@ -8,10 +8,10 @@
         "attack": 0,
         "hp": 4,
         "triggers": {
-            "start-play-card": {
-                "filter": "GameEventFilters.EVENT_SOURCE_IS_SPELL",
+            "play-card": {
+                "filter": "EventFilters.EVENT_SOURCE_IS_SPELL",
                 "action": {
-                    "class": "GameEventActions.forEventArgCardTarget",
+                    "class": "EventActions.forEventArgCardTarget",
                     "action": {
                         "class": "TargetedActions.actWithTarget",
                         "action": {

@@ -6,7 +6,7 @@
     "manaCost": 2,
     "secret": {
         "attack-initiated": {
-            "filter": "GameEventFilters.ATTACK_TARGET_IS_OWN_HERO",
+            "filter": "EventFilters.ATTACK_TARGET_IS_OWN_HERO",
             "action": {
                 "class": "TargetlessActions.damageTarget",
                 "selector": "EntitySelectors.enemyLivingTargets",

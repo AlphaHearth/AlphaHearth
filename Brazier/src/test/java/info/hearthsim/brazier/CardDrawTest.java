@@ -153,6 +153,7 @@ public final class CardDrawTest extends BrazierTest {
 
         agent.expectBoard("p1",
             TestCards.expectedMinion(TestCards.STARVING_BUZZARD, 3, 2));
+        agent.expectHand("p1");
 
         agent.playMinionCard("p1", TestCards.BLUEGILL_WARRIOR, 1);
 

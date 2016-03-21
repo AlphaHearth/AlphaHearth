@@ -4,6 +4,9 @@ import info.hearthsim.brazier.Character;
 
 import java.util.function.Predicate;
 
+import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.Player;
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -11,7 +14,7 @@ import org.jtrim.utils.ExceptionHelper;
  * Container class for a request of attack, which has fields {@code attacker} and {@code target},
  * represented as {@link Character}s.
  */
-public final class AttackRequest {
+public final class AttackRequest implements PlayerProperty {
     private final Character attacker;
     private Character target;
 
@@ -58,5 +61,10 @@ public final class AttackRequest {
         Character prevTarget = target;
         target = newTarget;
         return () -> target = prevTarget;
+    }
+
+    @Override
+    public Player getOwner() {
+        return attacker.getOwner();
     }
 }

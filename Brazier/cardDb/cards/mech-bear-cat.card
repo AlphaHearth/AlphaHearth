@@ -10,7 +10,7 @@
         "hp": 6,
         "triggers": {
             "minion-damaged": {
-                "filter": "GameEventFilters.TARGET_SELF",
+                "filter": "EventFilters.TARGET_SELF",
                 "action": {
                     "class": "TargetlessActions.addSelectedCard",
                     "card": {

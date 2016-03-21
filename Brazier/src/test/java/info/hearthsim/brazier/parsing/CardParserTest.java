@@ -4,7 +4,7 @@ import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.Keywords;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 import info.hearthsim.brazier.cards.CardType;
 
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class CardParserTest {
     }
 
     private static CardDescr getCard(String cardName) {
-        CardDescr result = TestDb.getTestDb().getCardDb().getById(new CardId(cardName));
+        CardDescr result = TestDb.getTestDb().getCardDb().getById(new CardName(cardName));
         assertEquals(cardName, result.getId().getName());
         return result;
     }

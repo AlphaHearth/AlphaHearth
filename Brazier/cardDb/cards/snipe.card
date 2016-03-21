@@ -5,16 +5,16 @@
     "type": "spell",
     "manaCost": 2,
     "secret": {
-        "done-play-card": {
+        "play-card": {
             "filter": [
-                "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                "EventFilters.HAS_DIFFERENT_OWNER_PLAYER",
                 {
-                    "class": "GameEventFilters.eventSourceHasKeyword",
+                    "class": "EventFilters.eventSourceHasKeyword",
                     "keywords": "minion"
                 }
             ],
             "action": {
-                "class": "GameEventActions.forEventArgMinionTarget",
+                "class": "EventActions.forEventArgMinionTarget",
                 "action": {
                     "class": "TargetedActions.damageTarget",
                     "damage": 4

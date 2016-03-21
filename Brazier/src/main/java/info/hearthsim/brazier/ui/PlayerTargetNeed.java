@@ -84,7 +84,7 @@ public final class PlayerTargetNeed {
                         boolean allowed = ((PlayerTargetNeed)conditionObj).isAllowedTarget(target);
                         if (allowed) {
                             highlightSetter.accept(false);
-                            condition.getCallback().accept(target.getTargetId());
+                            condition.getCallback().accept(target.getEntityId());
                         }
                     }
                 }

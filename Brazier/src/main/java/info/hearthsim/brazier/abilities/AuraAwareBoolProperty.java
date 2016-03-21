@@ -1,8 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 
 /**
  * Aura-aware boolean property, implemented by using an underlying {@link AuraAwarePropertyBase},
@@ -41,7 +40,7 @@ public final class AuraAwareBoolProperty implements Silencable {
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty} which sets the buffed value to the given value.
      */
-    public UndoableUnregisterAction setValueTo(boolean newValue) {
+    public UndoObjectAction<AuraAwareBoolProperty> setValueTo(boolean newValue) {
         return addRemovableBuff((prev) -> newValue);
     }
 
@@ -49,44 +48,45 @@ public final class AuraAwareBoolProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareBoolProperty} which sets the buffed value to
      * the given value.
      */
-    public UndoableUnregisterAction setValueToExternal(boolean newValue) {
+    public UndoObjectAction<AuraAwareBoolProperty> setValueToExternal(boolean newValue) {
         return addRemovableBuff(BuffArg.NORMAL_AURA_BUFF, (prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoableUnregisterAction addRemovableBuff(BoolPropertyBuff toAdd) {
+    public UndoObjectAction<AuraAwareBoolProperty> addRemovableBuff(BoolPropertyBuff toAdd) {
         return addRemovableBuff(BuffArg.NORMAL_BUFF, toAdd);
     }
 
     /**
      * Adds a new removable external buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoableUnregisterAction addExternalBuff(BoolPropertyBuff toAdd) {
+    public UndoObjectAction<AuraAwareBoolProperty> addExternalBuff(BoolPropertyBuff toAdd) {
         return addRemovableBuff(BuffArg.NORMAL_AURA_BUFF, toAdd);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty} which sets the buffed value to the given value.
      */
-    public UndoableUnregisterAction setValueTo(BuffArg buffArg, boolean newValue) {
+    public UndoObjectAction<AuraAwareBoolProperty> setValueTo(BuffArg buffArg, boolean newValue) {
         return addRemovableBuff(buffArg, (prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoableUnregisterAction addRemovableBuff(BuffArg buffArg, BoolPropertyBuff toAdd) {
-        return impl.addRemovableBuff(buffArg, toAdd);
+    public UndoObjectAction<AuraAwareBoolProperty> addRemovableBuff(BuffArg buffArg, BoolPropertyBuff toAdd) {
+        UndoObjectAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(buffArg, toAdd);
+        return (aabp) -> undoRef.undo(aabp.impl);
     }
 
     /**
      * Silences the property by removing all added buffs.
      */
     @Override
-    public UndoAction silence() {
-        return impl.silence();
+    public void silence() {
+        impl.silence();
     }
 
     /**

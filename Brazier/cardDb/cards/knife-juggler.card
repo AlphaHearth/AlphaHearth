@@ -8,8 +8,8 @@
         "attack": 3,
         "hp": 2,
         "triggers": {
-            "done-summoning": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+            "on-summon": {
+                "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.forTargets",
                     "selector": {

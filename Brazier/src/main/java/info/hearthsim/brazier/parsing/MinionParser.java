@@ -5,7 +5,7 @@ import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.Keywords;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -43,7 +43,7 @@ public final class MinionParser {
         int attack = ParserUtils.getIntField(minionRoot, "attack");
         int hp = ParserUtils.getIntField(minionRoot, "hp");
 
-        MinionId minionId = new MinionId(name);
+        MinionName minionId = new MinionName(name);
 
         MinionDescr.Builder builder = new MinionDescr.Builder(minionId, attack, hp, cardRef);
 

@@ -10,8 +10,8 @@
             "attack-initiated": {
                 "priority": "low",
                 "filter": [
-                    "GameEventFilters.ATTACKER_IS_OWNER",
-                    "GameEventFilters.ATTACKER_IS_HERO"
+                    "EventFilters.ATTACKER_IS_OWNER",
+                    "EventFilters.ATTACKER_IS_HERO"
                 ],
                 "action": {
                     "class": "TargetlessActions.damageTarget",

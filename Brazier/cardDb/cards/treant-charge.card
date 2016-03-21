@@ -11,7 +11,7 @@
         "hp": 2,
         "triggers": {
             "turn-ends": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": "TargetlessActions.SELF_DESTRUCT"
             }
         }

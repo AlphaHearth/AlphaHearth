@@ -10,10 +10,10 @@
         "triggers": {
             "minion-killed": {
                 "filter": [
-                    "GameEventFilters.NOT_SELF",
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.NOT_SELF",
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "GameEventFilters.targetHasKeyword",
+                        "class": "EventFilters.targetHasKeyword",
                         "keywords": "beast"
                     }
                 ],

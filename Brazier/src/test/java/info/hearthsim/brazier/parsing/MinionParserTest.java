@@ -2,7 +2,7 @@ package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class MinionParserTest {
     }
 
     private static MinionDescr getMinion(String minionName) {
-        MinionDescr result = TestDb.getTestDb().getMinionDb().getById(new MinionId(minionName));
+        MinionDescr result = TestDb.getTestDb().getMinionDb().getById(new MinionName(minionName));
         assertEquals(minionName, result.getId().getName());
         return result;
     }

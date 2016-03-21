@@ -1,19 +1,13 @@
 package info.hearthsim.brazier.cards;
 
-import info.hearthsim.brazier.DamageSource;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.actions.undo.UndoableResult;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.ManaCostAdjuster;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.Damage;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.List;
 import java.util.Set;
@@ -39,7 +33,8 @@ import org.jtrim.utils.ExceptionHelper;
  *     </li>
  * </ul>
  */
-public final class Card implements PlayerProperty, LabeledEntity, CardRef, DamageSource {
+public final class Card implements Entity<Card>, PlayerProperty, LabeledEntity, CardRef, DamageSource {
+    private final EntityId cardId;
     private final Player owner;
     private final CardDescr cardDescr;
     private final Minion minion;
@@ -56,6 +51,7 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
         ExceptionHelper.checkNotNullArgument(cardDescr, "cardDescr");
         ExceptionHelper.checkNotNullArgument(owner, "owner");
 
+        this.cardId = new EntityId();
         this.owner = owner;
         this.cardDescr = cardDescr;
         this.manaCost = new AuraAwareIntProperty(cardDescr.getManaCost());
@@ -75,10 +71,14 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
         ExceptionHelper.checkNotNullArgument(card, "card");
         ExceptionHelper.checkNotNullArgument(owner, "owner");
 
+        this.cardId = card.cardId;
         this.owner = owner;
         this.cardDescr = card.cardDescr;
         this.manaCost = card.manaCost.copy();
-        this.minion = card.minion.copyFor(owner);
+        if (card.minion == null)
+            this.minion = null;
+        else
+            this.minion = card.minion.copyFor(owner.getGame(), owner);
     }
 
     public Minion getMinion() {
@@ -108,16 +108,16 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
     }
 
     @Override
-    public UndoableResult<Damage> createDamage(int damage) {
+    public Damage createDamage(int damage) {
         if (minion != null) {
             return minion.createDamage(damage);
         }
 
         if (cardDescr.getCardType() == CardType.SPELL) {
-            return new UndoableResult<>(getOwner().getSpellDamage(damage));
+            return getOwner().getSpellDamage(damage);
         }
 
-        return new UndoableResult<>(new Damage(this, damage));
+        return new Damage(this, damage);
     }
 
     public TargetNeed getTargetNeed() {
@@ -142,8 +142,8 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
     /**
      * Adds a buff to this {@code Card} which decreases its mana cost with the given amount.
      */
-    public UndoAction decreaseManaCost(int amount) {
-        return manaCost.addBuff(-amount);
+    public UndoObjectAction<Card> decreaseManaCost(int amount) {
+        return UndoObjectAction.of(this, (c) -> c.manaCost, (mc) -> mc.addBuff(-amount));
     }
 
     /**
@@ -171,12 +171,17 @@ public final class Card implements PlayerProperty, LabeledEntity, CardRef, Damag
     /**
      * Returns a copy of this {@code Card} with the given new {@link Player owner}.
      */
-    public Card copyFor(Player newOwner) {
+    public Card copyFor(Game newGame, Player newOwner) {
         return new Card(newOwner, this);
     }
 
     @Override
     public String toString() {
         return cardDescr.toString();
+    }
+
+    @Override
+    public EntityId getEntityId() {
+        return cardId;
     }
 }

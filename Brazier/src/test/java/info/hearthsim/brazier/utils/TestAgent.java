@@ -3,12 +3,11 @@ package info.hearthsim.brazier.utils;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.TestDb;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 import info.hearthsim.brazier.weapons.Weapon;
 
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.jtrim.utils.ExceptionHelper;
 
@@ -160,9 +158,8 @@ public class TestAgent {
      * Adds the designated card to the player's hand and play it.
      */
     private void playCard(PlayerId playerId, String cardName, int minionPos, String target) {
-        CardDescr cardDescr = db.getCardDb().getById(new CardId(cardName));
+        CardDescr cardDescr = db.getCardDb().getById(new CardName(cardName));
 
-        expectGameContinues();
         Player player = game.getPlayer(playerId);
         Hand hand = player.getHand();
         hand.addCard(cardDescr);
@@ -199,9 +196,9 @@ public class TestAgent {
     /**
      * Applies the given action to the player with the given name.
      */
-    public void applyToPlayer(String playerName, Function<? super Player, ? extends UndoAction> action) {
+    public void applyToPlayer(String playerName, Consumer<? super Player> action) {
         Player player = game.getPlayer(parsePlayerName(playerName));
-        action.apply(player);
+        action.accept(player);
     }
 
     /**
@@ -270,8 +267,8 @@ public class TestAgent {
 
     /** Attacks the target with the given name with the attacker with the given name. */
     public void attack(String attacker, String target) {
-        TargetId attackerId = findTargetId(attacker);
-        TargetId targetId = findTargetId(target);
+        EntityId attackerId = findTargetId(attacker);
+        EntityId targetId = findTargetId(target);
 
         gameAgent.attack(attackerId, targetId);
     }
@@ -297,9 +294,9 @@ public class TestAgent {
         return minion;
     }
 
-    public TargetId findTargetId(String targetId) {
+    public EntityId findTargetId(String targetId) {
         Character target = findTarget(targetId);
-        return target != null ? target.getTargetId() : null;
+        return target != null ? target.getEntityId() : null;
     }
 
     public PlayTargetRequest toPlayTarget(PlayerId player, int minionPos, String targetId) {
@@ -531,7 +528,7 @@ public class TestAgent {
         }
 
         public CardDescr getChoice(HearthStoneDb db) {
-            return db.getCardDb().getById(new CardId(cardNames[choiceIndex]));
+            return db.getCardDb().getById(new CardName(cardNames[choiceIndex]));
         }
 
         @Override

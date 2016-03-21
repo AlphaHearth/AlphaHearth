@@ -3,7 +3,7 @@ package info.hearthsim.brazier.utils;
 import info.hearthsim.brazier.HearthStoneDb;
 import info.hearthsim.brazier.PlayerId;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public final class TestUtils {
     public static List<CardDescr> parseCards(HearthStoneDb db, String... cardNames) {
         List<CardDescr> result = new ArrayList<>(cardNames.length);
         for (String cardName : cardNames) {
-            result.add(db.getCardDb().getById(new CardId(cardName)));
+            result.add(db.getCardDb().getById(new CardName(cardName)));
         }
         return result;
     }

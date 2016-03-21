@@ -3,6 +3,9 @@ package info.hearthsim.brazier.actions;
 import info.hearthsim.brazier.Character;
 
 import java.util.Optional;
+
+import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -15,11 +18,11 @@ import org.jtrim.utils.ExceptionHelper;
  *     </li>
  * </ul>
  */
-public final class PlayArg<Actor> {
+public final class PlayArg<Actor extends GameProperty> implements GameProperty {
     private final Actor actor;
     private final Optional<Character> target;
 
-    public PlayArg(Actor actor, info.hearthsim.brazier.Character target) {
+    public PlayArg(Actor actor, Character target) {
         this(actor, Optional.ofNullable(target));
     }
 
@@ -51,5 +54,10 @@ public final class PlayArg<Actor> {
      */
     public Optional<Character> getTarget() {
         return target;
+    }
+
+    @Override
+    public Game getGame() {
+        return actor.getGame();
     }
 }

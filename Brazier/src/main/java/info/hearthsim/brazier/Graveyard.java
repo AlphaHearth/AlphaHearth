@@ -28,9 +28,9 @@ public final class Graveyard {
     public Graveyard copyFor(Player newOwner) {
         Graveyard result = new Graveyard();
         for (Minion minion : deadMinions)
-            result.deadMinions.add(minion.copyFor(newOwner));
+            result.deadMinions.add(minion.copyFor(newOwner.getGame(), newOwner));
         for (Minion minion : minionsDiedThisTurn) // FIXME: Redundant copies of minions are made here
-            result.minionsDiedThisTurn.add(minion.copyFor(newOwner));
+            result.minionsDiedThisTurn.add(minion.copyFor(newOwner.getGame(), newOwner));
         return result;
     }
 
@@ -41,6 +41,13 @@ public final class Graveyard {
             }
         }
         return true;
+    }
+
+    public Minion findMinion(EntityId id) {
+        for (Minion minion : deadMinions)
+            if (minion.getEntityId() == id)
+                return minion;
+        return null;
     }
 
     /**

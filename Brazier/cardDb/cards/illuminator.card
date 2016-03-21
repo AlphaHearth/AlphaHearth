@@ -10,8 +10,8 @@
         "triggers": {
             "turn-ends": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
-                    "GameEventFilters.OWNER_HAS_SECRET"
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.OWNER_HAS_SECRET"
                 ],
                 "action": {
                     "class": "TargetlessActions.damageTarget",

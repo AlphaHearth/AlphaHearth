@@ -4,10 +4,10 @@ import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.ui.UiUtils;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.cards.CardName;
+import info.hearthsim.brazier.minions.MinionName;
 import info.hearthsim.brazier.ui.GamePlayPanel;
-import info.hearthsim.brazier.weapons.WeaponId;
+import info.hearthsim.brazier.weapons.WeaponName;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class HearthStoneEmulator {
     }
 
     private static CardDescr getCard(HearthStoneDb db, String cardName) {
-        return db.getCardDb().getById(new CardId(cardName));
+        return db.getCardDb().getById(new CardName(cardName));
     }
 
     private static Card getCard(Player player, String cardName) {
@@ -50,8 +50,8 @@ public class HearthStoneEmulator {
         Player player1 = game.getPlayer1();
         player1.getHero().setCurrentHp(29);
         player1.getHero().setCurrentArmor(2);
-        player1.summonMinion(db.getMinionDb().getById(new MinionId("Sludge Belcher")));
-        player1.equipWeapon(db.getWeaponDb().getById(new WeaponId("Fiery War Axe")));
+        player1.summonMinion(db.getMinionDb().getById(new MinionName("Sludge Belcher")));
+        player1.equipWeapon(db.getWeaponDb().getById(new WeaponName("Fiery War Axe")));
         player1.getHero().getAttackTool().incAttackCount();
 
         player1.getHand().addCard(getCard(db, "Moonfire"));
@@ -64,7 +64,7 @@ public class HearthStoneEmulator {
         player2.getHero().setCurrentHp(26);
         player2.getHero().setCurrentArmor(0);
         BoardSide board2 = player2.getBoard();
-        player2.summonMinion(db.getMinionDb().getById(new MinionId("Grim Patron")));
+        player2.summonMinion(db.getMinionDb().getById(new MinionName("Grim Patron")));
         board2.getAllMinions().get(0).getBody().damage(player1.getSpellDamage(1));
         board2.getAllMinions().get(1).getBody().damage(player1.getSpellDamage(1));
         board2.getAllMinions().get(2).getBody().damage(player1.getSpellDamage(3));
@@ -90,8 +90,8 @@ public class HearthStoneEmulator {
         player2.getManaResource().setManaCrystals(8);
         player2.setMana(8);
 
-        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
-        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
+        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Armor Up!")));
+        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Armor Up!")));
     }
 
     private static void setupInitialGame2(Game game) {
@@ -100,7 +100,7 @@ public class HearthStoneEmulator {
         Player player1 = game.getPlayer1();
         player1.getHero().setCurrentHp(23);
         player1.getHero().setCurrentArmor(0);
-        player1.summonMinion(db.getMinionDb().getById(new MinionId("Grim Patron")));
+        player1.summonMinion(db.getMinionDb().getById(new MinionName("Grim Patron")));
 
         BoardSide board1 = player1.getBoard();
         board1.getAllMinions().get(0).getBody().damage(player1.getBasicDamage(1));
@@ -113,7 +113,7 @@ public class HearthStoneEmulator {
         Player player2 = game.getPlayer2();
         player2.getHero().setCurrentHp(26);
         player2.getHero().setCurrentArmor(0);
-        player2.summonMinion(db.getMinionDb().getById(new MinionId("Grim Patron")));
+        player2.summonMinion(db.getMinionDb().getById(new MinionName("Grim Patron")));
 
         BoardSide board2 = player2.getBoard();
         board2.getAllMinions().get(0).getBody().damage(player1.getBasicDamage(1));
@@ -121,7 +121,7 @@ public class HearthStoneEmulator {
         board2.getAllMinions().get(2).getBody().damage(player1.getBasicDamage(1));
         board2.getAllMinions().get(3).getBody().damage(player1.getBasicDamage(2));
         board2.getAllMinions().get(4).getBody().damage(player1.getBasicDamage(3));
-        player2.summonMinion(db.getMinionDb().getById(new MinionId("Treant")));
+        player2.summonMinion(db.getMinionDb().getById(new MinionName("Treant")));
 
         player2.getDeck().setCards(getRandomCards(db, 10));
 
@@ -146,8 +146,8 @@ public class HearthStoneEmulator {
         player2.getManaResource().setManaCrystals(8);
         player2.setMana(8);
 
-        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
-        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Armor Up!")));
+        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Armor Up!")));
+        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Armor Up!")));
     }
 
     private static void setupInitialGame3(Game game) {
@@ -156,27 +156,27 @@ public class HearthStoneEmulator {
         Player player1 = game.getPlayer1();
         game.setCurrentPlayerId(player1.getPlayerId());
 
-        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Reinforce")));
+        player1.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Reinforce")));
 
-        player1.summonMinion(db.getMinionDb().getById(new MinionId("Tirion Fordring")));
-        player1.summonMinion(db.getMinionDb().getById(new MinionId("Tirion Fordring")));
-        player1.summonMinion(db.getMinionDb().getById(new MinionId("Tirion Fordring")));
+        player1.summonMinion(db.getMinionDb().getById(new MinionName("Tirion Fordring")));
+        player1.summonMinion(db.getMinionDb().getById(new MinionName("Tirion Fordring")));
+        player1.summonMinion(db.getMinionDb().getById(new MinionName("Tirion Fordring")));
 
         player1.getHand().addCard(getCard(db, "Pyroblast"));
         player1.getDeck().setCards(getRandomCards(db, 10));
 
         Player player2 = game.getPlayer2();
-        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardId("Dagger Mastery")));
+        player2.getHero().setHeroPower(db.getHeroPowerDb().getById(new CardName("Dagger Mastery")));
 
         playCard(player2, "The Coin",
                 new PlayTargetRequest(player2.getPlayerId()));
         playCard(player2, "Defias Ringleader",
                 new PlayTargetRequest(player2.getPlayerId(), 0, null));
         playCard(player2, "SI:7 Agent",
-                new PlayTargetRequest(player2.getPlayerId(), 0, player2.getBoard().getAllMinions().get(0).getTargetId()));
+                new PlayTargetRequest(player2.getPlayerId(), 0, player2.getBoard().getAllMinions().get(0).getEntityId()));
         playCard(player2, "Ancient Mage",
                 new PlayTargetRequest(player2.getPlayerId(), 1, null));
-        player2.summonMinion(db.getMinionDb().getById(new MinionId("Sylvanas Windrunner")));
+        player2.summonMinion(db.getMinionDb().getById(new MinionName("Sylvanas Windrunner")));
 
         player2.getDeck().setCards(getRandomCards(db, 10));
 

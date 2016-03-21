@@ -10,9 +10,9 @@
         "stealth": true,
         "triggers": {
             "minion-damaged": {
-                "filter": "GameEventFilters.DAMAGE_SOURCE_SELF",
+                "filter": "EventFilters.DAMAGE_SOURCE_SELF",
                 "action": {
-                    "class": "GameEventActions.forDamageTarget",
+                    "class": "EventActions.forDamageTarget",
                     "action": "TargetedActions.KILL_TARGET"
                 }
             }

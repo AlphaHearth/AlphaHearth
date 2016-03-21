@@ -4,10 +4,8 @@ import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.Damage;
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoableIntResult;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.events.DamageEvent;
 import info.hearthsim.brazier.events.SimpleEventType;
 import org.jtrim.utils.ExceptionHelper;
@@ -73,13 +71,9 @@ public final class MinionBody implements Silencable {
         return new MinionBody(minion, this);
     }
 
-    public UndoAction poison() {
-        if (poisoned) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        poisoned = true;
-        return () -> poisoned = false;
+    public void poison() {
+        if (!poisoned)
+            poisoned = true;
     }
 
     public AuraAwareBoolProperty getUntargetableProperty() {
@@ -138,47 +132,35 @@ public final class MinionBody implements Silencable {
         return immune.getValue();
     }
 
-    public UndoAction setDivineShield(boolean newValue) {
-        if (divineShield == newValue) {
-            return UndoAction.DO_NOTHING;
-        }
-        boolean prevValue = divineShield;
+    public void setDivineShield(boolean newValue) {
         divineShield = newValue;
-        return () -> divineShield = prevValue;
     }
 
-    public UndoAction setStealth(boolean newValue) {
-        return stealth.setValueTo(newValue);
+    public void setStealth(boolean newValue) {
+        stealth.setValueTo(newValue);
     }
 
-    public UndoAction setTaunt(boolean newValue) {
-        if (newValue == taunt) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        boolean prevValue = taunt;
+    public void setTaunt(boolean newValue) {
         taunt = newValue;
-        return () -> taunt = prevValue;
     }
 
-    public UndoableIntResult damage(Damage damage) {
+    public int damage(Damage damage) {
         int attack = damage.getDamage();
-        if (attack == 0) {
-            return UndoableIntResult.ZERO;
-        }
-        if (attack > 0 && immune.getValue()) {
-            return UndoableIntResult.ZERO;
-        }
+        if (attack == 0)
+            return 0;
+
+        if (attack > 0 && immune.getValue())
+            return 0;
 
         if (divineShield && attack > 0) {
             divineShield = false;
-            return new UndoableIntResult(0, () -> divineShield = true);
+            return 0;
         }
 
         int currentHp = hp.getCurrentHp();
         int newHp = currentHp - attack;
         newHp = Math.max(minHp.getValue(), Math.min(newHp, hp.getMaxHp()));
-        UndoAction hpUndo = hp.setCurrentHp(newHp);
+        hp.setCurrentHp(newHp);
         int damageDone = currentHp - newHp;
 
         GameEvents events = owner.getGame().getEvents();
@@ -187,33 +169,19 @@ public final class MinionBody implements Silencable {
         SimpleEventType eventType = damageDone < 0
                 ? SimpleEventType.MINION_HEALED
                 : SimpleEventType.MINION_DAMAGED;
-        UndoAction eventUndo = events.triggerEvent(eventType, event);
+        events.triggerEvent(eventType, event);
 
-        return new UndoableIntResult(event.getDamageDealt(), () -> {
-            eventUndo.undo();
-            hpUndo.undo();
-        });
+        return event.getDamageDealt();
     }
 
     @Override
-    public UndoAction silence() {
-        final boolean prevDivineShield = divineShield;
-        final boolean prevTaunt = taunt;
-
-        UndoAction stealthSilenceUndo = stealth.silence();
-        UndoAction silenceUntargetableUndo = untargetable.silence();
+    public void silence() {
+        stealth.silence();
+        untargetable.silence();
         taunt = false;
         divineShield = false;
 
-        UndoAction hpSilenceUndo = hp.silence();
-
-        return () -> {
-            hpSilenceUndo.undo();
-            divineShield = prevDivineShield;
-            taunt = prevTaunt;
-            silenceUntargetableUndo.undo();
-            stealthSilenceUndo.undo();
-        };
+        hp.silence();
     }
 
     public boolean isLethalDamage(int damage) {
@@ -223,7 +191,7 @@ public final class MinionBody implements Silencable {
         return damage >= getCurrentHp();
     }
 
-    public UndoAction applyAuras() {
-        return hp.applyAura();
+    public void applyAuras() {
+        hp.applyAura();
     }
 }

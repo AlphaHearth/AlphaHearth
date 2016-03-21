@@ -2,7 +2,7 @@ package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.WeaponId;
+import info.hearthsim.brazier.weapons.WeaponName;
 import info.hearthsim.brazier.weapons.Weapon;
 
 import java.util.Collections;
@@ -37,7 +37,7 @@ public final class WeaponParser implements EntityParser<WeaponDescr> {
         int attack = ParserUtils.getIntField(root, "attack");
         int durability = ParserUtils.getIntField(root, "durability");
 
-        WeaponDescr.Builder builder = new WeaponDescr.Builder(new WeaponId(name), attack, durability);
+        WeaponDescr.Builder builder = new WeaponDescr.Builder(new WeaponName(name), attack, durability);
 
         keywords.forEach(builder::addKeyword);
 

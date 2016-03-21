@@ -1,19 +1,19 @@
 package com.github.mrdai.alphahearth.move;
 
+import info.hearthsim.brazier.EntityId;
 import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.TargetId;
 
 public class CardPlaying implements SingleMove {
     private final PlayerId playerId;
     private final int cardIndex;
     private final int minionLocation;
-    private final TargetId target;
+    private final EntityId target;
 
     public CardPlaying(PlayerId playerId, int cardIndex) {
         this(playerId, cardIndex, -1, null);
     }
 
-    public CardPlaying(PlayerId playerId, int cardIndex, TargetId target) {
+    public CardPlaying(PlayerId playerId, int cardIndex, EntityId target) {
         this(playerId, cardIndex, -1, target);
     }
 
@@ -21,7 +21,7 @@ public class CardPlaying implements SingleMove {
         this(playerId, cardIndex, minionLocation, null);
     }
 
-    public CardPlaying(PlayerId playerId, int cardIndex, int minionLocation, TargetId target) {
+    public CardPlaying(PlayerId playerId, int cardIndex, int minionLocation, EntityId target) {
         this.playerId = playerId;
         this.cardIndex = cardIndex;
         this.minionLocation = minionLocation;
@@ -38,7 +38,7 @@ public class CardPlaying implements SingleMove {
     /**
      * Returns the target; returns {@code null} if there is no target.
      */
-    public TargetId getTarget() {
+    public EntityId getTarget() {
         return target;
     }
 

@@ -3,12 +3,11 @@ package info.hearthsim.brazier.ui;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import org.jtrim.utils.ExceptionHelper;
 
@@ -28,11 +27,9 @@ public final class PlayerUiAgent {
         return gameAgent.getGame().getPlayer(playerId);
     }
 
-    public void alterPlayer(Function<? super Player, ? extends UndoAction> task) {
+    public void alterPlayer(Consumer<? super Player> task) {
         ExceptionHelper.checkNotNullArgument(task, "task");
-        gameAgent.alterGame((game) -> {
-            return task.apply(game.getPlayer(playerId));
-        });
+        gameAgent.alterGame((game) -> task.accept(game.getPlayer(playerId)));
     }
 
     public boolean canPlayCard(Card card) {
@@ -58,9 +55,9 @@ public final class PlayerUiAgent {
             TargeterDef targeterDef = new TargeterDef(playerId, true, false);
             PlayerTargetNeed playerTargetNeed = new PlayerTargetNeed(targeterDef, targetNeed);
             targetManager.requestTarget(playerTargetNeed, (targetId) -> {
-                if (targetId instanceof TargetId) {
+                if (targetId instanceof EntityId) {
                     targetManager.clearRequest();
-                    playHeroPowerNow((TargetId)targetId);
+                    playHeroPowerNow((EntityId)targetId);
                 }
             });
         }
@@ -69,7 +66,7 @@ public final class PlayerUiAgent {
         }
     }
 
-    private void playHeroPowerNow(TargetId targetId) {
+    private void playHeroPowerNow(EntityId targetId) {
         PlayTargetRequest target = new PlayTargetRequest(playerId, -1, targetId);
         gameAgent.playHeroPower(target);
     }
@@ -159,10 +156,10 @@ public final class PlayerUiAgent {
     private void findTarget(PlayerTargetNeed targetNeed, int cardIndex, int minionIndex, CardDescr chooseOneChoice) {
         TargetManager targetManager = gameAgent.getTargetManager();
         targetManager.requestTarget(targetNeed, (targetId) -> {
-            if (targetId instanceof TargetId) {
+            if (targetId instanceof EntityId) {
                 targetManager.clearRequest();
                 gameAgent.playCard(cardIndex,
-                        new PlayTargetRequest(playerId, minionIndex, (TargetId)targetId, chooseOneChoice));
+                        new PlayTargetRequest(playerId, minionIndex, (EntityId)targetId, chooseOneChoice));
             }
         });
     }
@@ -176,8 +173,8 @@ public final class PlayerUiAgent {
         TargetManager targetManager = gameAgent.getTargetManager();
         TargeterDef targeterDef = new TargeterDef(playerId, attacker instanceof Hero, true);
         targetManager.requestTarget(new AttackTargetNeed(targeterDef), (targetId) -> {
-            if (targetId instanceof TargetId) {
-                gameAgent.attack(attacker.getTargetId(), (TargetId)targetId);
+            if (targetId instanceof EntityId) {
+                gameAgent.attack(attacker.getEntityId(), (EntityId) targetId);
             }
         });
     }

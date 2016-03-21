@@ -1,19 +1,17 @@
 package info.hearthsim.brazier.weapons;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
-
 public interface AttackTool {
     /**
      * Refreshes the character's attack state at start of turn: that is,
      * exhausted character's attack count will be reset.
      */
-    public UndoAction refreshStartOfTurn();
+    public void refreshStartOfTurn();
 
     /**
      * Refreshes the character's attack state at end of turn: that is,
      * frozen character will be unfrozen.
      */
-    public UndoAction refreshEndOfTurn();
+    public void refreshEndOfTurn();
 
     /**
      * Gets the attack point of this entity.
@@ -48,12 +46,12 @@ public interface AttackTool {
     /**
      * Increases the attack count of this entity.
      */
-    public UndoAction incAttackCount();
+    public void incAttackCount();
 
     /**
      * Freezes the entity.
      */
-    public UndoAction freeze();
+    public void freeze();
 
     /**
      * Returns if the entity is frozen.

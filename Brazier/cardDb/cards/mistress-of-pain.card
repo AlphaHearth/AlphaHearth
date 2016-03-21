@@ -10,12 +10,12 @@
         "hp": 4,
         "triggers": {
             "minion-damaged": {
-                "filter": "GameEventFilters.DAMAGE_SOURCE_SELF",
-                "action": "GameEventActions.LIFE_STEAL_FOR_HERO"
+                "filter": "EventFilters.DAMAGE_SOURCE_SELF",
+                "action": "EventActions.LIFE_STEAL_FOR_HERO"
             },
             "hero-damaged": {
-                "filter": "GameEventFilters.DAMAGE_SOURCE_SELF",
-                "action": "GameEventActions.LIFE_STEAL_FOR_HERO"
+                "filter": "EventFilters.DAMAGE_SOURCE_SELF",
+                "action": "EventActions.LIFE_STEAL_FOR_HERO"
             }
         }
     }

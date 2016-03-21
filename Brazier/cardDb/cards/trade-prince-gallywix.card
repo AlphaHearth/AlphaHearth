@@ -8,17 +8,17 @@
         "attack": 5,
         "hp": 8,
         "triggers": {
-            "start-play-card": {
+            "play-card": {
                 "filter": [
-                    "GameEventFilters.EVENT_SOURCE_IS_SPELL",
-                    "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER",
+                    "EventFilters.EVENT_SOURCE_IS_SPELL",
+                    "EventFilters.HAS_DIFFERENT_OWNER_PLAYER",
                     {
-                        "class": "GameEventFilters.eventSourceDoesNotHaveKeyword",
+                        "class": "EventFilters.eventSourceDoesNotHaveKeyword",
                         "keywords": "gallywix-spell"
                     }
                 ],
                 "action": {
-                    "class": "GameEventActions.forEventArgCardTarget",
+                    "class": "EventActions.forEventArgCardTarget",
                     "action": {
                         "class": "TargetedActions.actWithTarget",
                         "action": [

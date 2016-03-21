@@ -1,33 +1,34 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.events.GameEventAction;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.events.GameEventActionDefs;
+import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.events.EventAction;
+import info.hearthsim.brazier.events.TriggeringAbility;
 import org.jtrim.utils.ExceptionHelper;
 
-// TODO understand this class.
-public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
+/**
+ * Abilities of a living entity, including its {@link Ability}, {@code trigger} (as a {@link TriggeringAbility})
+ * and death rattle effect (as a {@link EventAction}).
+ */
+public final class LivingEntitiesAbilities<Self extends Entity> {
     private final Ability<? super Self> ability;
-    private final GameEventActionDefs<Self> eventActionDefs;
-    private final GameEventAction<? super Self, ? super Self> deathRattle;
+    private final TriggeringAbility<Self> triggers;
+    private final EventAction<? super Self, ? super Self> deathRattle;
 
     public LivingEntitiesAbilities(
             Ability<? super Self> ability,
-            GameEventActionDefs<Self> eventActionDefs,
-            GameEventAction<? super Self, ? super Self> deathRattle) {
-        ExceptionHelper.checkNotNullArgument(eventActionDefs, "eventActionDefs");
+            TriggeringAbility<Self> triggers,
+            EventAction<? super Self, ? super Self> deathRattle) {
+        ExceptionHelper.checkNotNullArgument(triggers, "triggers");
 
         this.ability = ability;
-        this.eventActionDefs = eventActionDefs;
+        this.triggers = triggers;
         this.deathRattle = deathRattle;
     }
 
-    public static <Self extends PlayerProperty> LivingEntitiesAbilities<Self> noAbilities() {
+    public static <Self extends Entity> LivingEntitiesAbilities<Self> noAbilities() {
         return new LivingEntitiesAbilities<>(
             null,
-            new GameEventActionDefs.Builder<Self>().create(),
+            new TriggeringAbility.Builder<Self>().create(),
             null);
     }
 
@@ -36,22 +37,22 @@ public final class LivingEntitiesAbilities<Self extends PlayerProperty> {
     }
 
     public Ability<? super Self> getAbility() {
-        return ability != null
-                ? ability
-                : (self) -> UndoableUnregisterAction.DO_NOTHING;
+        if (ability == null)
+            return Ability.DO_NOTHING;
+        return ability;
     }
 
-    public GameEventActionDefs<Self> getEventActionDefs() {
-        return eventActionDefs;
+    public TriggeringAbility<Self> getTriggers() {
+        return triggers;
     }
 
-    public GameEventAction<? super Self, ? super Self> tryGetDeathRattle() {
+    public EventAction<? super Self, ? super Self> tryGetDeathRattle() {
         return deathRattle;
     }
 
-    public GameEventAction<? super Self, ? super Self> getDeathRattle() {
+    public EventAction<? super Self, ? super Self> getDeathRattle() {
         return deathRattle != null
                 ? deathRattle
-                : (game, self, eventSource) -> UndoAction.DO_NOTHING;
+                : (self, eventSource) -> {};
     }
 }

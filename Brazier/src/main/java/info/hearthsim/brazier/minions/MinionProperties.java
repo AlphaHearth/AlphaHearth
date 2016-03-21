@@ -1,13 +1,9 @@
 package info.hearthsim.brazier.minions;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
-import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.abilities.OwnedIntPropertyBuff;
-import info.hearthsim.brazier.events.GameEventAction;
+import info.hearthsim.brazier.abilities.*;
+import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.AttackTool;
 
 import java.util.ArrayList;
@@ -19,8 +15,8 @@ public final class MinionProperties implements Silencable {
     private final Minion minion;
     private final MinionAttackTool attackTool;
     private final MinionBody body;
-    private final CharacterAbilities<Minion> abilities;
-    private List<GameEventAction<? super Minion, ? super Minion>> deathRattles;
+    private final AbilityList<Minion> abilities;
+    private List<EventAction<? super Minion, ? super Minion>> deathRattles;
     private boolean activated;
 
     public MinionProperties(Minion minion, MinionDescr baseDescr) {
@@ -30,20 +26,20 @@ public final class MinionProperties implements Silencable {
         this.minion = minion;
         this.attackTool = new MinionAttackTool(baseDescr);
         this.body = new MinionBody(minion, baseDescr);
-        this.abilities = new CharacterAbilities<>(minion);
+        this.abilities = new AbilityList<>(minion);
         this.deathRattles = new ArrayList<>();
         this.activated = false;
 
-        GameEventAction<? super Minion, ? super Minion> baseDeathRattle = baseDescr.tryGetDeathRattle();
+        EventAction<? super Minion, ? super Minion> baseDeathRattle = baseDescr.tryGetDeathRattle();
         if (baseDeathRattle != null) {
             this.deathRattles.add(baseDeathRattle);
         }
     }
 
     private MinionProperties(
-            Minion minion,
-            MinionProperties baseProperties,
-            CharacterAbilities<Minion> abilities) {
+        Minion minion,
+        MinionProperties baseProperties,
+        AbilityList<Minion> abilities) {
 
         ExceptionHelper.checkNotNullArgument(minion, "minion");
         ExceptionHelper.checkNotNullArgument(baseProperties, "baseProperties");
@@ -61,102 +57,95 @@ public final class MinionProperties implements Silencable {
      * Returns a copy of this {@code MinionProperties} for the given new minion.
      */
     public MinionProperties copyFor(Minion newMinion) {
-        PreparedResult<CharacterAbilities<Minion>> newAbilities = abilities.copyFor(newMinion);
-        MinionProperties result = new MinionProperties(newMinion, this, newAbilities.getResult());
-        newAbilities.activate();
-        result.activated = true;
+        return copyFor(newMinion, true);
+    }
+
+    /**
+     * Returns a copy of this {@code MinionProperties} for the given new minion.
+     * The given {@code boolean} field {@code copyActivated} determines if to copy
+     * the {@code activated} field of the given minion's properties.
+     */
+    public MinionProperties copyFor(Minion newMinion, boolean copyActivated) {
+        AbilityList<Minion> newAbilities;
+        if (copyActivated)
+            newAbilities = abilities.copyFor(newMinion);
+        else
+            newAbilities = new AbilityList<>(newMinion);
+        MinionProperties result = new MinionProperties(newMinion, this, newAbilities);
+        if (copyActivated)
+            result.activated = activated;
         return result;
     }
 
     /**
      * Sets the minion to be exhausted.
      */
-    public UndoAction exhaust() {
-        if (attackTool.exhausted) {
-            return UndoAction.DO_NOTHING;
-        }
-
+    public void exhaust() {
         attackTool.exhausted = true;
-        return () -> attackTool.exhausted = false;
     }
 
-    public UndoAction activatePassiveAbilities() {
-        UndoAction.Builder result = new UndoAction.Builder();
-        if (activated) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void activatePassiveAbilities() {
+        if (activated)
+            return;
 
         activated = true;
-        result.addUndo(() -> activated = false);
 
         MinionDescr baseStats = body.getBaseStats();
-        result.addUndo(addAndActivateAbility(baseStats.getEventActionDefs()));
+        addAndActivateAbility(baseStats.getEventActionDefs());
 
         Ability<? super Minion> ability = baseStats.tryGetAbility();
-        if (ability != null) {
-            result.addUndo(addAndActivateAbility(ability));
-        }
-
-        return result;
+        if (ability != null)
+            addAndActivateAbility(ability);
     }
 
-    public UndoAction deactivateAllAbilities() {
-        return abilities.deactivateAll();
+    public void deactivateAllAbilities() {
+        if (!activated)
+            return;
+        activated = false;
+        abilities.deactivate();
     }
 
-    public UndoAction refreshStartOfTurn() {
-        return attackTool.refreshStartOfTurn();
+    public void refreshStartOfTurn() {
+        attackTool.refreshStartOfTurn();
     }
 
-    public UndoAction refreshEndOfTurn() {
-        return attackTool.refreshEndOfTurn();
+    public void refreshEndOfTurn() {
+        attackTool.refreshEndOfTurn();
     }
 
-    public UndoAction updateAuras() {
-        return body.applyAuras();
+    public void updateAuras() {
+        body.applyAuras();
     }
 
     private Game getGame() {
         return minion.getGame();
     }
 
-    public UndoAction triggerDeathRattles() {
-        return triggerDeathRattles(1);
+    public void triggerDeathRattles() {
+        triggerDeathRattles(1);
     }
 
-    public UndoAction triggerDeathRattles(int numberOfTriggers) {
-        if (deathRattles.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void triggerDeathRattles(int numberOfTriggers) {
+        if (deathRattles.isEmpty())
+            return;
 
-        UndoAction.Builder result = new UndoAction.Builder();
         Game game = getGame();
-        for (GameEventAction<? super Minion, ? super Minion> deathRattle: new ArrayList<>(deathRattles)) {
-            for (int i = 0; i < numberOfTriggers; i++) {
-                result.addUndo(deathRattle.alterGame(game, minion, minion));
-            }
+        for (EventAction<? super Minion, ? super Minion> deathRattle : new ArrayList<>(deathRattles)) {
+            for (int i = 0; i < numberOfTriggers; i++)
+                deathRattle.trigger(minion, minion);
         }
-        return result;
     }
 
-    private UndoAction removeDeathRattles() {
-        if (deathRattles.isEmpty()) {
-            return UndoAction.DO_NOTHING;
-        }
-
-        List<GameEventAction<? super Minion, ? super Minion>> prevDeathRattles = deathRattles;
-        deathRattles = new ArrayList<>();
-        return () -> deathRattles = prevDeathRattles;
+    private void removeDeathRattles() {
+        deathRattles.clear();
     }
 
     @Override
-    public UndoAction silence() {
-        UndoAction.Builder result = new UndoAction.Builder();
-        result.addUndo(abilities.silence());
-        result.addUndo(attackTool.silence());
-        result.addUndo(body.silence());
-        result.addUndo(removeDeathRattles());
-        return result;
+    public void silence() {
+        abilities.deactivate();
+        attackTool.silence();
+        body.silence();
+        removeDeathRattles();
     }
 
     public boolean isFrozen() {
@@ -179,20 +168,19 @@ public final class MinionProperties implements Silencable {
         return body;
     }
 
-    public UndoAction addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
-        if (minion.isDestroyed()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
+        if (minion.isDestroyed())
+            return;
 
-        return abilities.getOwned().addAndActivateAbility(abilityRegisterTask);
+        abilities.addAndActivateAbility(abilityRegisterTask);
     }
 
-    public UndoAction setAttackFinalizer(OwnedIntPropertyBuff<? super Minion> newAttackFinalizer) {
-        return attackTool.setAttackFinalizer(newAttackFinalizer);
+    public void setAttackFinalizer(OwnedIntPropertyBuff<? super Minion> newAttackFinalizer) {
+        attackTool.setAttackFinalizer(newAttackFinalizer);
     }
 
-    public UndoAction setCharge(boolean newCharge) {
-        return attackTool.setCharge(newCharge);
+    public void setCharge(boolean newCharge) {
+        attackTool.setCharge(newCharge);
     }
 
     public AuraAwareIntProperty getMaxAttackCountProperty() {
@@ -207,13 +195,10 @@ public final class MinionProperties implements Silencable {
         return !deathRattles.isEmpty();
     }
 
-    public UndoAction addDeathRattle(GameEventAction<? super Minion, ? super Minion> deathRattle) {
+    public void addDeathRattle(EventAction<? super Minion, ? super Minion> deathRattle) {
         ExceptionHelper.checkNotNullArgument(deathRattle, "deathRattle");
 
         deathRattles.add(deathRattle);
-        return () -> {
-            deathRattles.remove(deathRattles.size() - 1);
-        };
     }
 
     private final class MinionAttackTool implements AttackTool {
@@ -255,79 +240,50 @@ public final class MinionProperties implements Silencable {
             this.attackFinalizer = base.attackFinalizer;
         }
 
-        public UndoAction setAttackFinalizer(OwnedIntPropertyBuff<? super Minion> newAttackFinalizer) {
+        public void setAttackFinalizer(OwnedIntPropertyBuff<? super Minion> newAttackFinalizer) {
             ExceptionHelper.checkNotNullArgument(newAttackFinalizer, "newAttackFinalizer");
-            OwnedIntPropertyBuff<? super Minion> prevAttackFinalizer = attackFinalizer;
             attackFinalizer = newAttackFinalizer;
-            return () -> attackFinalizer = prevAttackFinalizer;
         }
 
-        public UndoAction setCharge(boolean newCharge) {
-            return charge.setValueTo(newCharge);
+        public void setCharge(boolean newCharge) {
+            charge.setValueTo(newCharge);
         }
 
-        private UndoAction removeSwipeAttack() {
-            if (!attackLeft && !attackRight) {
-                return UndoAction.DO_NOTHING;
-            }
-
-            boolean prevAttackLeft = attackLeft;
-            boolean prevAttackRight = attackRight;
+        private void removeSwipeAttack() {
+            if (!attackLeft && !attackRight)
+                return;
 
             attackLeft = false;
             attackRight = false;
-
-            return () -> {
-                attackLeft = prevAttackLeft;
-                attackRight = prevAttackRight;
-            };
         }
 
-        public UndoAction silence() {
-            UndoAction.Builder result = new UndoAction.Builder();
-
-            if (!canAttack) {
+        public void silence() {
+            if (!canAttack)
                 canAttack = true;
-                result.addUndo(() -> canAttack = false);
-            }
 
-            OwnedIntPropertyBuff<? super Minion> prevAttackFinalizer = attackFinalizer;
-            if (prevAttackFinalizer != OwnedIntPropertyBuff.IDENTITY) {
-                attackFinalizer = OwnedIntPropertyBuff.IDENTITY;
-                result.addUndo(() -> attackFinalizer = prevAttackFinalizer);
-            }
+            attackFinalizer = OwnedIntPropertyBuff.IDENTITY;
 
-            result.addUndo(removeSwipeAttack());
-            result.addUndo(maxAttackCount.silence());
-            result.addUndo(freezeManager.silence());
-            result.addUndo(attack.silence());
-            result.addUndo(charge.silence());
-
-            return result;
+            removeSwipeAttack();
+            maxAttackCount.silence();
+            freezeManager.silence();
+            attack.silence();
+            charge.silence();
         }
 
         @Override
-        public UndoAction refreshStartOfTurn() {
-            boolean prevExhausted = exhausted;
-            int prevAttackCount = attackCount;
-
+        public void refreshStartOfTurn() {
             attackCount = 0;
             exhausted = false;
-
-            return () -> {
-                attackCount = prevAttackCount;
-                exhausted = prevExhausted;
-            };
         }
 
         @Override
-        public UndoAction refreshEndOfTurn() {
-            return freezeManager.endTurn(attackCount);
+        public void refreshEndOfTurn() {
+            freezeManager.endTurn(attackCount);
         }
 
         @Override
-        public UndoAction freeze() {
-            return freezeManager.freeze();
+        public void freeze() {
+            freezeManager.freeze();
         }
 
         @Override
@@ -369,9 +325,9 @@ public final class MinionProperties implements Silencable {
         }
 
         @Override
-        public UndoAction incAttackCount() {
+        public void incAttackCount() {
+            body.setStealth(false);
             attackCount++;
-            return () -> attackCount--;
         }
 
         @Override

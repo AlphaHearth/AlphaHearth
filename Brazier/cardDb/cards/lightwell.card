@@ -9,7 +9,7 @@
         "hp": 5,
         "triggers": {
             "turn-starts": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.forTargets",
                     "selector": {

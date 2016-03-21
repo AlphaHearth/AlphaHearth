@@ -47,7 +47,7 @@ public final class AttackTargetNeed {
                     if (conditionObj instanceof AttackTargetNeed) {
                         if (isAllowedTarget((AttackTargetNeed)conditionObj)) {
                             highlightSetter.accept(false);
-                            condition.getCallback().accept(target.getTargetId());
+                            condition.getCallback().accept(target.getEntityId());
                         }
                     }
                 }

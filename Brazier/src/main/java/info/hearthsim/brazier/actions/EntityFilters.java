@@ -3,7 +3,7 @@ package info.hearthsim.brazier.actions;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 import info.hearthsim.brazier.parsing.NamedArg;
 import java.util.List;
 import java.util.function.Predicate;
@@ -185,7 +185,7 @@ public final class EntityFilters {
     /**
      * Returns a {@link Predicate} of {@link Minion} which checks if the given minion has the given name.
      */
-    public static <Entity extends Minion> Predicate<Entity> minionNameIs(@NamedArg("name") MinionId name) {
+    public static <Entity extends Minion> Predicate<Entity> minionNameIs(@NamedArg("name") MinionName name) {
         ExceptionHelper.checkNotNullArgument(name, "name");
         return (target) -> name.equals(target.getBaseDescr().getId());
     }

@@ -7,10 +7,10 @@
         "attack": 3,
         "hp": 5,
         "triggers": {
-            "start-play-card": {
+            "play-card": {
                 "filter": [
-                    "GameEventFilters.EVENT_SOURCE_IS_SPELL",
-                    "GameEventFilters.HAS_DIFFERENT_OWNER_PLAYER"
+                    "EventFilters.EVENT_SOURCE_IS_SPELL",
+                    "EventFilters.HAS_DIFFERENT_OWNER_PLAYER"
                 ],
                 "action": {
                     "class": "TargetlessActions.buffSelfMinion",

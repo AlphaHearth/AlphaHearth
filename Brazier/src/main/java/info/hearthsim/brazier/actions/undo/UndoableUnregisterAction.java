@@ -7,7 +7,7 @@ import org.jtrim.utils.ExceptionHelper;
  * An action of unregister, which can be undone. In this sense, an {@code UndoableUnregisterAction}
  * is also an {@code UndoableAction}. {@code UndoableUnregisterAction} can also act as an
  * {@code UndoAction} of an {@link UndoableRegistry}, whose {@link #undo()} method can be used to
- * unregister the entity registered in the {@code UndoableRegistry}
+ * unregister the entity registered in the {@code UndoableRegistry}.
  *
  * @see UndoableRegistry
  */

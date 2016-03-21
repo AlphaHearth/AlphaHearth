@@ -9,10 +9,10 @@
         "triggers": {
             "attack-initiated": {
                 "filter": [
-                    "GameEventFilters.ATTACKER_IS_OWNER",
-                    "GameEventFilters.ATTACKER_IS_HERO"
+                    "EventFilters.ATTACKER_IS_OWNER",
+                    "EventFilters.ATTACKER_IS_HERO"
                 ],
-                "action": "GameEventActions.MISS_TARGET_SOMETIMES"
+                "action": "EventActions.MISS_TARGET_SOMETIMES"
             }
         }
     }

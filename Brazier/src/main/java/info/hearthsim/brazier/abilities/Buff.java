@@ -1,6 +1,9 @@
 package info.hearthsim.brazier.abilities;
 
+import info.hearthsim.brazier.Entity;
 import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.actions.undo.UnregisterAction;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 
 import java.util.ArrayList;
@@ -16,16 +19,14 @@ import org.jtrim.utils.ExceptionHelper;
  *
  * @see Buffs
  */
-public interface Buff<Target> {
+public interface Buff<Target extends Entity> {
     /**
      * Adds the temporary buff to the given target in the given game with the given arguments in {@link BuffArg}.
      */
-    public UndoableUnregisterAction buff(Game game, Target target, BuffArg arg);
+    public UndoObjectAction<Target> buff(Target target, BuffArg arg);
 
     public default PermanentBuff<Target> toPermanent() {
-        return (Game game, Target target, BuffArg arg) -> {
-            return buff(game, target, arg);
-        };
+        return this::buff;
     }
 
     /**
@@ -34,20 +35,20 @@ public interface Buff<Target> {
      *
      * @throws NullPointerException if any of the given buffs is {@code null}.
      */
-    public static <Target> Buff<Target> merge(
+    public static <Target extends Entity> Buff<Target> merge(
             Collection<? extends Buff<? super Target>> buffs) {
         ExceptionHelper.checkNotNullElements(buffs, "buffs");
 
         if (buffs.isEmpty()) {
-            return (game, actor, arg) -> UndoableUnregisterAction.DO_NOTHING;
+            return (actor, arg) -> UndoObjectAction.DO_NOTHING;
         }
 
         List<? extends Buff<? super Target>> buffsCopy = new ArrayList<>(buffs);
 
-        return (Game game, Target target, BuffArg arg) -> {
-            UndoableUnregisterAction.Builder result = new UndoableUnregisterAction.Builder(buffsCopy.size());
+        return (Target target, BuffArg arg) -> {
+            UndoObjectAction.Builder<Target> result = new UndoObjectAction.Builder<>(buffsCopy.size());
             for (Buff<? super Target> buff: buffsCopy) {
-                result.addRef(buff.buff(game, target, arg));
+                result.add(buff.buff(target, arg));
             }
             return result;
         };

@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -13,14 +13,14 @@ import static org.junit.Assert.fail;
 
 public final class MinionExpectations {
     public static final class Builder {
-        private final MinionId id;
+        private final MinionName id;
         private Integer attack;
         private Integer hp;
         private Boolean canAttackWith;
 
         private Set<MinionFlags> flags;
 
-        public Builder(MinionId id) {
+        public Builder(MinionName id) {
             ExceptionHelper.checkNotNullArgument(id, "id");
             this.id = id;
         }
@@ -50,7 +50,7 @@ public final class MinionExpectations {
         }
     }
 
-    private final MinionId id;
+    private final MinionName id;
     private final Integer attack;
     private final Integer hp;
     private final Boolean canAttackWith;

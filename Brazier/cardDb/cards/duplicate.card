@@ -6,9 +6,9 @@
     "manaCost": 3,
     "secret": {
         "minion-killed": {
-            "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+            "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
             "action": {
-                "class": "GameEventActions.forEventArgCardTarget",
+                "class": "EventActions.forEventArgCardTarget",
                 "action": {
                     "class": "TargetedActions.copyTargetToHand",
                     "copyCount": 2

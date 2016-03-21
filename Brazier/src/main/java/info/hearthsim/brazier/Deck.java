@@ -1,6 +1,5 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import info.hearthsim.brazier.actions.undo.UndoableResult;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class Deck implements PlayerProperty {
@@ -34,7 +32,7 @@ public final class Deck implements PlayerProperty {
     public Deck copyFor(Player newOwner) {
         Deck result = new Deck(newOwner);
         for (Card card : cards)
-            result.cards.add(card.copyFor(newOwner));
+            result.cards.add(card.copyFor(newOwner.getGame(), newOwner));
         return result;
     }
 
@@ -57,27 +55,14 @@ public final class Deck implements PlayerProperty {
     /**
      * Clears the deck and adds the given collection of cards to the deck.
      */
-    public UndoAction setCards(Collection<? extends CardDescr> newCards) {
+    public void setCards(Collection<? extends CardDescr> newCards) {
         ExceptionHelper.checkNotNullElements(newCards, "newCards");
-
-        List<Card> prevDeck;
-        if (!cards.isEmpty()) {
-            prevDeck = new ArrayList<>(cards);
-        }
-        else {
-            prevDeck = Collections.emptyList();
-        }
 
         cards.clear();
         for (CardDescr card: newCards) {
             Objects.requireNonNull(card, "newCards[?]");
             cards.add(new Card(owner, card));
         }
-
-        return () -> {
-            cards.clear();
-            cards.addAll(prevDeck);
-        };
     }
 
     /**
@@ -103,14 +88,11 @@ public final class Deck implements PlayerProperty {
      * @return {@code UndoableResult} with the drawn card and the {@code UndoAction} to undo the action;
      *         {@code null} if there is no card left in the deck.
      */
-    public UndoableResult<Card> tryDrawOneCard() {
-        if (cards.isEmpty()) {
+    public Card tryDrawOneCard() {
+        if (cards.isEmpty())
             return null;
-        }
-        else {
-            Card result = cards.remove(cards.size() - 1);
-            return new UndoableResult<>(result, () -> cards.add(result));
-        }
+
+        return cards.remove(cards.size() - 1);
     }
 
     /**
@@ -125,19 +107,18 @@ public final class Deck implements PlayerProperty {
     /**
      * Puts the given card on the top of the deck.
      */
-    public UndoAction putOnTop(CardDescr card) {
-        return putOnTop(new Card(owner, card));
+    public void putOnTop(CardDescr card) {
+        putOnTop(new Card(owner, card));
     }
 
     /**
      * Puts the given card on the top of the deck.
      */
-    public UndoAction putOnTop(Card card) {
+    public void putOnTop(Card card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
         checkOwner(card);
 
         cards.add(card);
-        return () -> cards.remove(cards.size() - 1);
     }
 
     /**
@@ -146,8 +127,8 @@ public final class Deck implements PlayerProperty {
      * @param randomProvider the given {@code RandomProvider}.
      * @param card the given card.
      */
-    public UndoAction shuffle(RandomProvider randomProvider, CardDescr card) {
-        return shuffle(randomProvider, new Card(owner, card));
+    public void shuffle(RandomProvider randomProvider, CardDescr card) {
+        shuffle(randomProvider, new Card(owner, card));
     }
 
     /**
@@ -156,14 +137,13 @@ public final class Deck implements PlayerProperty {
      * @param randomProvider the given {@code RandomProvider}.
      * @param card the given card.
      */
-    public UndoAction shuffle(RandomProvider randomProvider, Card card) {
+    public void shuffle(RandomProvider randomProvider, Card card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
         checkOwner(card);
 
         int pos = randomProvider.roll(cards.size() + 1);
 
         cards.add(pos, card);
-        return () -> cards.remove(pos);
     }
 
     /**
@@ -175,7 +155,7 @@ public final class Deck implements PlayerProperty {
      * @return {@code UndoableResult} with the drawn card and the {@code UndoAction} to undo the action;
      *         {@code null} if there is no card left in the deck.
      */
-    public UndoableResult<Card> tryDrawRandom(RandomProvider randomProvider, Predicate<? super Card> filter) {
+    public Card tryDrawRandom(RandomProvider randomProvider, Predicate<? super Card> filter) {
         ExceptionHelper.checkNotNullArgument(randomProvider, "randomProvider");
         ExceptionHelper.checkNotNullArgument(filter, "filter");
 
@@ -196,8 +176,7 @@ public final class Deck implements PlayerProperty {
         }
 
         int selectedIndex = indexes[randomProvider.roll(cardCount)];
-        Card removedCard = cards.remove(selectedIndex);
-        return new UndoableResult<>(removedCard, () -> cards.add(selectedIndex, removedCard));
+        return cards.remove(selectedIndex);
     }
 
     @Override

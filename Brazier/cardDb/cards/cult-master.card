@@ -8,7 +8,7 @@
         "hp": 2,
         "triggers": {
             "minion-killed": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": "TargetlessActions.DRAW_FOR_SELF"
             }
         }

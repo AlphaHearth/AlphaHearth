@@ -8,7 +8,7 @@
         "hp": 4,
         "triggers": {
             "turn-starts": {
-                "filter": "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                "filter": "EventFilters.HAS_SAME_OWNER_PLAYER",
                 "action": {
                     "class": "TargetlessActions.forSelf",
                     "action": "TargetedActions.RESTORES_TO_FULL_HEALTH"

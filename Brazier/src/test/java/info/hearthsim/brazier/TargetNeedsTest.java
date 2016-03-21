@@ -5,7 +5,7 @@ import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.TestDb;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public final class TargetNeedsTest extends BrazierTest {
     }
 
     private static CardDescr getCard(String cardId) {
-        return TestDb.getTestDb().getCardDb().getById(new CardId(cardId));
+        return TestDb.getTestDb().getCardDb().getById(new CardName(cardId));
     }
 
     @Test

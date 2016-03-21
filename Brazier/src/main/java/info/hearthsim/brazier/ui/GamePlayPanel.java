@@ -57,7 +57,7 @@ public class GamePlayPanel extends javax.swing.JPanel {
         jPlayer1PlayerPanel.add(player1);
         jPlayer2PlayerPanel.add(player2);
 
-        setupEnableDisable();
+        // setupEnableDisable();
 
         refreshGame();
 
@@ -70,10 +70,6 @@ public class GamePlayPanel extends javax.swing.JPanel {
             Player player = game.getCurrentPlayer();
             return UiUtils.getOnEdt(() -> ChooseCardPanel.selectCard(this, allowCancel, player, cards));
         });
-    }
-
-    private void setupEnableDisable() {
-        addSwingStateListener(uiAgent.hasUndos(), jUndoButton::setEnabled);
     }
 
     public final void setGame(Game game, PlayerId startingPlayer) {
@@ -305,7 +301,7 @@ public class GamePlayPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jEndTurnButtonActionPerformed
 
     private void jUndoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUndoButtonActionPerformed
-        uiAgent.undoLastAction();
+        // uiAgent.undoLastAction();
     }//GEN-LAST:event_jUndoButtonActionPerformed
 
     private void jResetGameButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResetGameButtonActionPerformed

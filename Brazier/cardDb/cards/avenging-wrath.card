@@ -6,7 +6,7 @@
     "rarity": "epic",
     "manaCost": 6,
     "playActions": {
-        "class": "TargetlessActions.dealMissleDamage",
-        "missleCount": 8
+        "class": "TargetlessActions.dealMissileDamage",
+        "missileCount": 8
     }
 }

@@ -9,7 +9,10 @@
         "hp": 1,
         "deathRattle": {
             "class": "TargetlessActions.damageTarget",
-            "selector": "EntitySelectors.allMinions",
+            "selector": {
+                "class": "EntitySelectors.notSelf",
+                "selector": "EntitySelectors.allMinions"
+            },
             "damage": 2
         }
     }

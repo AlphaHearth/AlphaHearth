@@ -1,8 +1,10 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
+import info.hearthsim.brazier.actions.undo.UndoObjectAction;
 import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
 import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.events.RegisterId;
 
 /**
  * Aura-aware int property, implemented by using an underlying {@link AuraAwarePropertyBase}.
@@ -59,21 +61,21 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which sets its buffed value to the
      * given value.
      */
-    public UndoableUnregisterAction setValueTo(int newValue) {
+    public UndoObjectAction<AuraAwareIntProperty> setValueTo(int newValue) {
         return addBuff((prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which adds the property with the given value.
      */
-    public UndoableUnregisterAction addBuff(int toAdd) {
+    public UndoObjectAction<AuraAwareIntProperty> addBuff(int toAdd) {
         return addBuff((prev) -> prev + toAdd);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which adds the property with the given value.
      */
-    public UndoableUnregisterAction addBuff(IntPropertyBuff toAdd) {
+    public UndoObjectAction<AuraAwareIntProperty> addBuff(IntPropertyBuff toAdd) {
         return addBuff(BuffArg.NORMAL_BUFF, toAdd);
     }
 
@@ -81,7 +83,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoableUnregisterAction addExternalBuff(int toAdd) {
+    public UndoObjectAction<AuraAwareIntProperty> addExternalBuff(int toAdd) {
         return addExternalBuff((prev) -> prev + toAdd);
     }
 
@@ -89,7 +91,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoableUnregisterAction addExternalBuff(IntPropertyBuff toAdd) {
+    public UndoObjectAction<AuraAwareIntProperty> addExternalBuff(IntPropertyBuff toAdd) {
         return addBuff(BuffArg.NORMAL_AURA_BUFF, toAdd);
     }
 
@@ -97,7 +99,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoableUnregisterAction setValueTo(BuffArg arg, int newValue) {
+    public UndoObjectAction<AuraAwareIntProperty> setValueTo(BuffArg arg, int newValue) {
         return addBuff(arg, (prev) -> newValue);
     }
 
@@ -105,7 +107,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} with the given {@code priority},
      * {@code external} (contained in a {@code BuffArg}) and value to add.
      */
-    public UndoableUnregisterAction addBuff(BuffArg arg, int toAdd) {
+    public UndoObjectAction<AuraAwareIntProperty> addBuff(BuffArg arg, int toAdd) {
         return addBuff(arg, (prev) -> prev + toAdd);
     }
 
@@ -113,16 +115,17 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} with the given {@code priority},
      * {@code external} (contained in a {@code BuffArg}) and value to add.
      */
-    public UndoableUnregisterAction addBuff(BuffArg arg, IntPropertyBuff toAdd) {
-        return impl.addRemovableBuff(arg, toAdd);
+    public UndoObjectAction<AuraAwareIntProperty> addBuff(BuffArg arg, IntPropertyBuff toAdd) {
+        UndoObjectAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(arg, toAdd);
+        return (aaip) -> undoRef.undo(aaip.impl);
     }
 
     /**
      * Silences the property by removing all added buffs.
      */
     @Override
-    public UndoAction silence() {
-        return impl.silence();
+    public void silence() {
+        impl.silence();
     }
 
     /**

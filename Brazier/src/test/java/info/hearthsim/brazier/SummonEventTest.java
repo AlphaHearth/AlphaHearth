@@ -1,12 +1,11 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.minions.MinionId;
+import info.hearthsim.brazier.minions.MinionName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -44,23 +43,23 @@ public final class SummonEventTest extends BrazierTest {
         });
     }
 
-    private MinionId singleMinionScript(String minionLocation, Consumer<TestAgent> scriptConfig) {
-        List<Set<MinionId>> results = new LinkedList<>();
+    private MinionName singleMinionScript(String minionLocation, Consumer<TestAgent> scriptConfig) {
+        List<Set<MinionName>> results = new LinkedList<>();
 
         scriptConfig.accept(agent);
 
         agent.expectMinion(minionLocation,
             (minion) -> results.add(Collections.singleton(minion.getBaseDescr().getId())));
 
-        Set<MinionId> firstResult = results.remove(0);
-        for (Set<MinionId> result : results) {
+        Set<MinionName> firstResult = results.remove(0);
+        for (Set<MinionName> result : results) {
             assertEquals("board result", firstResult, result);
         }
 
         return firstResult.iterator().next();
     }
 
-    private MinionId testAlarmOBot(int roll) {
+    private MinionName testAlarmOBot(int roll) {
         return singleMinionScript("p1:0", (script) -> {
             script.setMana("p1", 10);
             script.setMana("p2", 10);
@@ -90,7 +89,7 @@ public final class SummonEventTest extends BrazierTest {
             script.endTurn();
 
             script.expectPlayer("p1", (player) -> {
-                MinionId minionId = player.getBoard().getAllMinions().get(0).getBaseDescr().getId();
+                MinionName minionId = player.getBoard().getAllMinions().get(0).getBaseDescr().getId();
 
                 List<String> expectedCards;
                 if (YETI.equals(minionId.getName())) {
@@ -109,10 +108,10 @@ public final class SummonEventTest extends BrazierTest {
         });
     }
 
-    private Set<MinionId> minionIds(String... names) {
-        Set<MinionId> result = CollectionsEx.newHashSet(names.length);
+    private Set<MinionName> minionIds(String... names) {
+        Set<MinionName> result = CollectionsEx.newHashSet(names.length);
         for (String name : names) {
-            result.add(new MinionId(name));
+            result.add(new MinionName(name));
         }
         return result;
     }

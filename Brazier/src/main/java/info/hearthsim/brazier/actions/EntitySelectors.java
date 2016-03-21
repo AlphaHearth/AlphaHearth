@@ -25,15 +25,15 @@ public final class EntitySelectors {
     /**
      * Returns a {@link EntitySelector} which returns nothing.
      */
-    public static <Actor, Selection> EntitySelector<Actor, Selection> empty() {
-        return (Game game, Actor actor) -> Stream.empty();
+    public static <Actor extends GameProperty, Selection> EntitySelector<Actor, Selection> empty() {
+        return (Actor actor) -> Stream.empty();
     }
 
     /**
      * Returns a {@link EntitySelector} which returns the given actor.
      */
-    public static <Actor, Target> EntitySelector<Actor, Actor> self() {
-        return (Game game, Actor actor) -> Stream.of(actor);
+    public static <Actor extends GameProperty, Target> EntitySelector<Actor, Actor> self() {
+        return (Actor actor) -> Stream.of(actor);
     }
 
     /**
@@ -48,12 +48,12 @@ public final class EntitySelectors {
         Keyword[] keywordsCopy = keywords.clone();
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (Game game, Actor actor) -> {
+        return (Actor actor) -> {
             Keyword[] allKeywords = new Keyword[keywordsCopy.length + 1];
             allKeywords[0] = actor.getOwner().getOpponent().getHero().getHeroClass();
             System.arraycopy(keywordsCopy, 0, allKeywords, 1, keywordsCopy.length);
 
-            List<CardDescr> cards = game.getDb().getCardDb().getByKeywords(allKeywords);
+            List<CardDescr> cards = actor.getGame().getDb().getCardDb().getByKeywords(allKeywords);
             if (fallbackCard != null && cards.isEmpty()) {
                 return Stream.of(fallbackCard.getCard());
             }
@@ -65,13 +65,13 @@ public final class EntitySelectors {
     /**
      * Returns a {@link EntitySelector} which returns {@link CardDescr}s with all of the given {@link Keyword}s.
      */
-    public static <Actor> EntitySelector<Actor, CardDescr> cardsWithKeywords(
+    public static <Actor extends GameProperty> EntitySelector<Actor, CardDescr> cardsWithKeywords(
             @NamedArg("keywords") Keyword... keywords) {
         Keyword[] keywordsCopy = keywords.clone();
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (Game game, Actor actor) -> {
-            List<CardDescr> cards = game.getDb().getCardDb().getByKeywords(keywordsCopy);
+        return (Actor actor) -> {
+            List<CardDescr> cards = actor.getGame().getDb().getCardDb().getByKeywords(keywordsCopy);
             return cards.stream();
         };
     }
@@ -79,13 +79,13 @@ public final class EntitySelectors {
     /**
      * Returns a {@link EntitySelector} which returns {@link MinionDescr}s with all of the given {@link Keyword}s.
      */
-    public static <Actor> EntitySelector<Actor, MinionDescr> minionsWithKeywords(
+    public static <Actor extends GameProperty> EntitySelector<Actor, MinionDescr> minionsWithKeywords(
             @NamedArg("keywords") Keyword... keywords) {
         Keyword[] keywordsCopy = keywords.clone();
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (Game game, Actor actor) -> {
-            List<MinionDescr> cards = game.getDb().getMinionDb().getByKeywords(keywordsCopy);
+        return (Actor actor) -> {
+            List<MinionDescr> cards = actor.getGame().getDb().getMinionDb().getByKeywords(keywordsCopy);
             return cards.stream();
         };
     }
@@ -93,13 +93,13 @@ public final class EntitySelectors {
     /**
      * Returns a {@link EntitySelector} which returns {@link WeaponDescr}s with all of the given {@link Keyword}s.
      */
-    public static <Actor> EntitySelector<Actor, WeaponDescr> weaponsWithKeywords(
+    public static <Actor extends GameProperty> EntitySelector<Actor, WeaponDescr> weaponsWithKeywords(
             @NamedArg("keywords") Keyword... keywords) {
         Keyword[] keywordsCopy = keywords.clone();
         ExceptionHelper.checkNotNullElements(keywordsCopy, "keywords");
 
-        return (Game game, Actor actor) -> {
-            List<WeaponDescr> cards = game.getDb().getWeaponDb().getByKeywords(keywordsCopy);
+        return (Actor actor) -> {
+            List<WeaponDescr> cards = actor.getGame().getDb().getWeaponDb().getByKeywords(keywordsCopy);
             return cards.stream();
         };
     }
@@ -108,14 +108,14 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the selected results from the given {@code EntitySelector},
      * sorted according to the given {@link Comparator}.
      */
-    public static <Actor, Selection> EntitySelector<Actor, Selection> sorted(
+    public static <Actor extends GameProperty, Selection> EntitySelector<Actor, Selection> sorted(
             EntitySelector<? super Actor, ? extends Selection> selector,
             Comparator<? super Selection> cmp) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
         ExceptionHelper.checkNotNullArgument(cmp, "cmp");
 
-        return (Game game, Actor actor) -> {
-            Stream<? extends Selection> selection = selector.select(game, actor);
+        return (Actor actor) -> {
+            Stream<? extends Selection> selection = selector.select(actor);
             return selection.sorted(cmp);
         };
     }
@@ -124,15 +124,15 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the results selected by the given {@code EntitySelector}
      * which also pass the given {@link EntityFilter}.
      */
-    public static <Actor, Selection> EntitySelector<Actor, Selection> filtered(
+    public static <Actor extends GameProperty, Selection> EntitySelector<Actor, Selection> filtered(
             @NamedArg("filter") EntityFilter<Selection> filter,
             @NamedArg("selector") EntitySelector<? super Actor, ? extends Selection> selector) {
         ExceptionHelper.checkNotNullArgument(filter, "filter");
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
-        return (Game game, Actor actor) -> {
-            Stream<? extends Selection> selection = selector.select(game, actor);
-            return filter.select(game, selection);
+        return (Actor actor) -> {
+            Stream<? extends Selection> selection = selector.select(actor);
+            return filter.select(actor.getGame(), selection);
         };
     }
 
@@ -140,12 +140,12 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the results selected by the given {@code EntitySelector}
      * which are also not the actor itself.
      */
-    public static <Actor, Selection> EntitySelector<Actor, Selection> notSelf(
+    public static <Actor extends GameProperty, Selection> EntitySelector<Actor, Selection> notSelf(
             @NamedArg("selector") EntitySelector<? super Actor, ? extends Selection> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
 
-        return (Game game, Actor actor) -> {
-            Stream<? extends Selection> selection = selector.select(game, actor);
+        return (Actor actor) -> {
+            Stream<? extends Selection> selection = selector.select(actor);
             return selection.filter((entity) -> entity != actor);
         };
     }
@@ -157,8 +157,8 @@ public final class EntitySelectors {
     public static <Actor extends PlayerProperty, Selection> EntitySelector<Actor, Selection> fromOpponent(
             @NamedArg("selector") EntitySelector<? super Player, ? extends Selection> selector) {
         ExceptionHelper.checkNotNullArgument(selector, "selector");
-        return (Game game, Actor actor) -> {
-            return selector.select(game, actor.getOwner().getOpponent());
+        return (Actor actor) -> {
+            return selector.select(actor.getOwner().getOpponent());
         };
     }
 
@@ -166,7 +166,7 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the {@link Minion} of the given actor {@link Card}.
      */
     public static EntitySelector<Card, Minion> cardsMinion() {
-        return (Game game, Card card) -> {
+        return (Card card) -> {
             Minion minion = card.getMinion();
             return minion != null ? Stream.of(minion) : Stream.empty();
         };
@@ -176,21 +176,21 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the {@link Hero} of the actor's owner.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Hero> friendlyHero() {
-        return (Game game, Actor actor) -> Stream.of(actor.getOwner().getHero());
+        return (Actor actor) -> Stream.of(actor.getOwner().getHero());
     }
 
     /**
      * Returns a {@link EntitySelector} which returns the {@link Card}s in the hands of the actor's owner.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Card> friendlyHand() {
-        return (Game game, Actor actor) -> actor.getOwner().getHand().getCards().stream();
+        return (Actor actor) -> actor.getOwner().getHand().getCards().stream();
     }
 
     /**
      * Returns a {@link EntitySelector} which returns the {@link Card}s in the deck of the actor's owner.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Card> friendlyDeck() {
-        return (Game game, Actor actor) -> actor.getOwner().getDeck().getCards().stream();
+        return (Actor actor) -> actor.getOwner().getDeck().getCards().stream();
     }
 
     /**
@@ -220,8 +220,8 @@ public final class EntitySelectors {
      */
     public static <Actor extends Minion> EntitySelector<Actor, Minion> neighbours() {
         TargetedEntitySelector<Actor, Minion, Minion> targetedSelector = TargetedEntitySelectors.targetsNeighbours();
-        return (Game game, Actor actor) -> {
-            return targetedSelector.select(game, actor, actor);
+        return (Actor actor) -> {
+            return targetedSelector.select(actor, actor);
         };
     }
 
@@ -229,7 +229,7 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the {@link Weapon} of the actor's owner.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Weapon> friendlyWeapon() {
-        return (Game game, Actor actor) -> {
+        return (Actor actor) -> {
             Weapon weapon = actor.getOwner().tryGetWeapon();
             return weapon != null ? Stream.of(weapon) : Stream.empty();
         };
@@ -239,7 +239,7 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns the {@link Weapon} of the actor's opponent.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Weapon> enemyWeapon() {
-        return (Game game, Actor actor) -> {
+        return (Actor actor) -> {
             Weapon weapon = actor.getOwner().getOpponent().tryGetWeapon();
             return weapon != null ? Stream.of(weapon) : Stream.empty();
         };
@@ -272,7 +272,7 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns all the friendly {@link Minion}s.
      */
     public static <Actor extends PlayerProperty> EntitySelector<Actor, Minion> friendlyMinions() {
-        return (Game game, Actor actor) -> actor.getOwner().getBoard().getAllMinions().stream();
+        return (Actor actor) -> actor.getOwner().getBoard().getAllMinions().stream();
     }
 
     /**

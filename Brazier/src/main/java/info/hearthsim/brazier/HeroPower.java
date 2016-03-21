@@ -5,10 +5,9 @@ import info.hearthsim.brazier.actions.PlayActionRequirement;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.cards.CardType;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardId;
+import info.hearthsim.brazier.cards.CardName;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,7 +45,7 @@ public final class HeroPower implements PlayerProperty {
         Card card = baseCardRef.get();
         if (card == null) {
             String name = "Power:" + powerDef.getId().getName();
-            CardId id = new CardId(name);
+            CardName id = new CardName(name);
             CardDescr.Builder result = new CardDescr.Builder(id, CardType.UNKNOWN, powerDef.getManaCost());
             card = new Card(hero.getOwner(), result.create());
 
@@ -101,29 +100,23 @@ public final class HeroPower implements PlayerProperty {
     /**
      * Plays the hero power towards the optional target.
      */
-    public UndoAction play(Game game, Optional<Character> target) {
+    public void play(Optional<Character> target) {
         PlayArg<Card> playArg = new PlayArg<>(getBaseCard(), target);
 
         Player owner = getOwner();
 
-        UndoAction.Builder result = new UndoAction.Builder();
-        result.addUndo(owner.getManaResource().spendMana(powerDef.getManaCost(), 0));
+        owner.getManaResource().spendMana(powerDef.getManaCost(), 0);
 
         useCount++;
-        result.addUndo(() -> useCount--);
 
-        for (PlayActionDef<Card> action: powerDef.getOnPlayActions()) {
-            result.addUndo(action.doPlay(game, playArg));
-        }
-        return result;
+        for (PlayActionDef<Card> action: powerDef.getOnPlayActions())
+            action.doPlay(playArg);
     }
 
     /**
      * Refreshes the hero power's use count.
      */
-    public UndoAction refresh() {
-        int prevUseCount = useCount;
+    public void refresh() {
         useCount = 0;
-        return () -> useCount = prevUseCount;
     }
 }

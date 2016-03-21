@@ -7,16 +7,16 @@
         "attack": 2,
         "hp": 3,
         "triggers": {
-            "start-summoning": {
+            "on-summon": {
                 "filter": [
-                    "GameEventFilters.HAS_SAME_OWNER_PLAYER",
+                    "EventFilters.HAS_SAME_OWNER_PLAYER",
                     {
-                        "class": "GameEventFilters.targetAttackIsLess",
+                        "class": "EventFilters.targetAttackIsLess",
                         "attack": 4
                     }
                 ],
                 "action": {
-                    "class": "GameEventActions.forEventArgMinionTarget",
+                    "class": "EventActions.forEventArgMinionTarget",
                     "action": "TargetedActions.CHARGE"
                 }
             }

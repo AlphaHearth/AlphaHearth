@@ -3,7 +3,7 @@ package info.hearthsim.brazier.abilities;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.ActionUtils;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.weapons.Weapon;
@@ -21,15 +21,15 @@ public final class Buffs {
     public static Buff<Character> IMMUNE = (Character target, BuffArg arg) -> {
         if (target instanceof Minion) {
             Minion minion = (Minion) target;
-            UndoObjectAction<AuraAwareBoolProperty> undoRef =
+            UndoAction<AuraAwareBoolProperty> undoRef =
                 minion.getProperties().getBody().getImmuneProperty().setValueTo(arg, true);
             return (c) -> undoRef.undo(((Minion) c).getProperties().getBody().getImmuneProperty());
         } else if (target instanceof Hero) {
             Hero hero = (Hero) target;
-            UndoObjectAction<AuraAwareBoolProperty> undoRef = hero.getImmuneProperty().setValueTo(true);
+            UndoAction<AuraAwareBoolProperty> undoRef = hero.getImmuneProperty().setValueTo(true);
             return (c) -> undoRef.undo(((Hero) c).getImmuneProperty());
         } else {
-            return UndoObjectAction.DO_NOTHING;
+            return UndoAction.DO_NOTHING;
         }
     };
 
@@ -37,7 +37,7 @@ public final class Buffs {
      * {@link Buff} that doubles the target {@link Minion}'s attack.
      */
     public static final Buff<Minion> DOUBLE_ATTACK = (minion, arg) -> {
-        UndoObjectAction<AuraAwareIntProperty> undoRef =
+        UndoAction<AuraAwareIntProperty> undoRef =
             minion.getProperties().getBuffableAttack().addBuff(arg, (prev) -> 2 * prev);
         return (m) -> undoRef.undo(m.getProperties().getBuffableAttack());
     };
@@ -66,7 +66,7 @@ public final class Buffs {
      */
     public static final PermanentBuff<Minion> INNER_FIRE = (target, arg) -> {
         int hp = target.getBody().getCurrentHp();
-        return UndoObjectAction.of(target, (m) -> m.getProperties().getBuffableAttack(),
+        return UndoAction.of(target, (m) -> m.getProperties().getBuffableAttack(),
             (ba) -> ba.setValueTo(arg, hp));
     };
 
@@ -80,8 +80,8 @@ public final class Buffs {
         BoardSide opponentBoard = target.getOwner().getOpponent().getBoard();
         int buff = opponentBoard.countMinions((opponentMinion) -> opponentMinion.getProperties().isDeathRattle());
 
-        UndoObjectAction<AuraAwareIntProperty> attackBuffUndo = target.getBuffableAttack().addBuff(arg, buff);
-        UndoObjectAction<HpProperty> hpBuffUndo = target.getBody().getHp().buffHp(arg, buff);
+        UndoAction<AuraAwareIntProperty> attackBuffUndo = target.getBuffableAttack().addBuff(arg, buff);
+        UndoAction<HpProperty> hpBuffUndo = target.getBody().getHp().buffHp(arg, buff);
         return (m) -> {
             attackBuffUndo.undo(m.getBuffableAttack());
             hpBuffUndo.undo(m.getBody().getHp());
@@ -100,10 +100,10 @@ public final class Buffs {
      */
     public static PermanentBuff<Minion> setAttack(@NamedArg("attack") int attack) {
         return (Minion target, BuffArg arg) ->
-            UndoObjectAction.of(target, Minion::getBuffableAttack, (ba) -> ba.setValueTo(arg, attack));
+            UndoAction.of(target, Minion::getBuffableAttack, (ba) -> ba.setValueTo(arg, attack));
     }
 
-    private static PermanentBuff<Character> adjustHp(Function<HpProperty, UndoObjectAction<HpProperty>> action) {
+    private static PermanentBuff<Character> adjustHp(Function<HpProperty, UndoAction<HpProperty>> action) {
         return (Character target, BuffArg arg) -> {
             arg.checkNormalBuff();
             return ActionUtils.adjustHp(target, action);
@@ -145,7 +145,7 @@ public final class Buffs {
         @NamedArg("maxAttack") int maxAttack) {
         return (Minion target, BuffArg arg) -> {
             int buff = target.getGame().getRandomProvider().roll(minAttack, maxAttack);
-            return UndoObjectAction.of(target, Minion::getBuffableAttack, (ba) -> ba.addBuff(arg, buff));
+            return UndoAction.of(target, Minion::getBuffableAttack, (ba) -> ba.addBuff(arg, buff));
         };
     }
 
@@ -173,47 +173,47 @@ public final class Buffs {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Character> UndoObjectAction<T> buff(T target, BuffArg arg, int attack, int hp) {
+    private static <T extends Character> UndoAction<T> buff(T target, BuffArg arg, int attack, int hp) {
         if (target instanceof Minion) {
-            return (UndoObjectAction) buffMinion((Minion) target, arg, attack, hp);
+            return (UndoAction) buffMinion((Minion) target, arg, attack, hp);
         }
         if (target instanceof Hero) {
-            return (UndoObjectAction) buffHero((Hero) target, arg, attack, hp);
+            return (UndoAction) buffHero((Hero) target, arg, attack, hp);
         }
-        return UndoObjectAction.DO_NOTHING;
+        return UndoAction.DO_NOTHING;
     }
 
-    private static UndoObjectAction<Minion> buffMinion(Minion minion, BuffArg arg, int attack, int hp) {
+    private static UndoAction<Minion> buffMinion(Minion minion, BuffArg arg, int attack, int hp) {
         if (attack == 0) {
-            return UndoObjectAction.of(minion, (m) -> m.getBody().getHp(), (hPro) -> hPro.buffHp(arg, hp));
+            return UndoAction.of(minion, (m) -> m.getBody().getHp(), (hPro) -> hPro.buffHp(arg, hp));
         }
         if (hp == 0) {
-            return UndoObjectAction.of(minion, Minion::getBuffableAttack, (ba) -> ba.addBuff(arg, attack));
+            return UndoAction.of(minion, Minion::getBuffableAttack, (ba) -> ba.addBuff(arg, attack));
         }
 
-        UndoObjectAction<AuraAwareIntProperty> attackUndo = minion.getBuffableAttack().addBuff(arg, attack);
-        UndoObjectAction<HpProperty> hpUndo = minion.getBody().getHp().buffHp(hp);
+        UndoAction<AuraAwareIntProperty> attackUndo = minion.getBuffableAttack().addBuff(arg, attack);
+        UndoAction<HpProperty> hpUndo = minion.getBody().getHp().buffHp(hp);
         return (m) -> {
             attackUndo.undo(m.getBuffableAttack());
             hpUndo.undo(m.getBody().getHp());
         };
     }
 
-    private static UndoObjectAction<Hero> buffHero(Hero hero, BuffArg arg, int attack, int hp) {
+    private static UndoAction<Hero> buffHero(Hero hero, BuffArg arg, int attack, int hp) {
         // FIXME: Attack buff is only OK because everything buffing a hero's
         // FIXME: attack only lasts until the end of turn.
 
         if (attack == 0) {
             hero.getHp().buffHp(arg, hp);
-            return UndoObjectAction.of(hero, Hero::getHp, (hP) -> hP.buffHp(arg, hp));
+            return UndoAction.of(hero, Hero::getHp, (hP) -> hP.buffHp(arg, hp));
         }
         if (hp == 0) {
-            UndoObjectAction<Hero> undoRef = hero.addExtraAttackForThisTurn(attack);
+            UndoAction<Hero> undoRef = hero.addExtraAttackForThisTurn(attack);
             return undoRef::undo;
         }
 
-        UndoObjectAction<Hero> attackBuffUndo = hero.addExtraAttackForThisTurn(attack);
-        UndoObjectAction<HpProperty> hpBuffUndo = hero.getHp().buffHp(arg, hp);
+        UndoAction<Hero> attackBuffUndo = hero.addExtraAttackForThisTurn(attack);
+        UndoAction<HpProperty> hpBuffUndo = hero.getHp().buffHp(arg, hp);
         return (h) -> {
             hpBuffUndo.undo(h.getHp());
             attackBuffUndo.undo(h);
@@ -235,16 +235,16 @@ public final class Buffs {
         return (Character target, BuffArg arg) -> {
             if (target instanceof Minion) {
                 Minion minion = (Minion) target;
-                UndoObjectAction<AuraAwareIntProperty> undoRef = minion.getBuffableAttack().addBuff(arg, attack);
+                UndoAction<AuraAwareIntProperty> undoRef = minion.getBuffableAttack().addBuff(arg, attack);
                 return (c) -> undoRef.undo(((Minion) c).getBuffableAttack());
             }
             if (target instanceof Hero) {
                 // FIXME: This is only OK because everything buffing a hero's
                 //        attack only lasts until the end of turn.
-                UndoObjectAction<Hero> undoRef = ((Hero) target).addExtraAttackForThisTurn(attack);
+                UndoAction<Hero> undoRef = ((Hero) target).addExtraAttackForThisTurn(attack);
                 return (c) -> undoRef.undo((Hero) c);
             }
-            return UndoObjectAction.DO_NOTHING;
+            return UndoAction.DO_NOTHING;
         };
     }
 
@@ -258,11 +258,11 @@ public final class Buffs {
         return (Minion minion, BuffArg arg) -> {
             Weapon weapon = minion.getOwner().tryGetWeapon();
             if (weapon == null) {
-                return UndoObjectAction.DO_NOTHING;
+                return UndoAction.DO_NOTHING;
             }
 
             int buff = weapon.getAttack();
-            return UndoObjectAction.of(minion, Minion::getBuffableAttack, (m) -> m.addBuff(arg, buffPerAttack * buff));
+            return UndoAction.of(minion, Minion::getBuffableAttack, (m) -> m.addBuff(arg, buffPerAttack * buff));
         };
     }
 
@@ -281,14 +281,14 @@ public final class Buffs {
         @NamedArg("attack") int attack,
         @NamedArg("durability") int durability) {
         if (durability == 0) {
-            return (weapon, arg) -> UndoObjectAction.of(weapon, Weapon::getBuffableAttack,
+            return (weapon, arg) -> UndoAction.of(weapon, Weapon::getBuffableAttack,
                 (ba) -> ba.addBuff(arg, attack));
         }
 
         return (weapon, arg) -> {
             arg.checkNormalBuff();
-            UndoObjectAction<AuraAwareIntProperty> attackBuffUndo = weapon.getBuffableAttack().addBuff(arg, attack);
-            UndoObjectAction<Weapon> incChargesUndo = weapon.increaseDurability(durability);
+            UndoAction<AuraAwareIntProperty> attackBuffUndo = weapon.getBuffableAttack().addBuff(arg, attack);
+            UndoAction<Weapon> incChargesUndo = weapon.increaseDurability(durability);
 
             return (w) -> {
                 incChargesUndo.undo(w);
@@ -309,10 +309,10 @@ public final class Buffs {
         return (Minion minion, BuffArg arg) -> {
             int mul = minion.getOwner().getCardsPlayedThisTurn() - 1;
             if (mul <= 0) {
-                return UndoObjectAction.DO_NOTHING;
+                return UndoAction.DO_NOTHING;
             }
 
-            return (UndoObjectAction) buff(minion, arg, attack * mul, hp * mul);
+            return (UndoAction) buff(minion, arg, attack * mul, hp * mul);
         };
     }
 
@@ -332,11 +332,11 @@ public final class Buffs {
             Predicate<LabeledEntity> appliedFilter = minionFilter.and((otherMinion) -> target != otherMinion);
             int buff = target.getOwner().getBoard().countMinions(appliedFilter);
             if (buff <= 0) {
-                return UndoObjectAction.DO_NOTHING;
+                return UndoAction.DO_NOTHING;
             }
 
-            UndoObjectAction<AuraAwareIntProperty> attackUndo = target.getBuffableAttack().addBuff(arg, attack * buff);
-            UndoObjectAction<HpProperty> hpUndo = target.getBody().getHp().buffHp(hp * buff);
+            UndoAction<AuraAwareIntProperty> attackUndo = target.getBuffableAttack().addBuff(arg, attack * buff);
+            UndoAction<HpProperty> hpUndo = target.getBody().getHp().buffHp(hp * buff);
 
             return (m) -> {
                 hpUndo.undo(m.getBody().getHp());

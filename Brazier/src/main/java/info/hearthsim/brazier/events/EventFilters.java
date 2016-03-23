@@ -22,7 +22,7 @@ import org.jtrim.utils.ExceptionHelper;
  * Predefined {@link EventFilter}s.
  */
 public final class EventFilters {
-    public static final EventFilter<GameProperty, Object> ANY
+    public static final EventFilter ANY
         = (owner, eventSource) -> true;
 
     public static final EventFilter<GameProperty, Object> SELF
@@ -40,11 +40,13 @@ public final class EventFilters {
     public static final EventFilter<GameProperty, TargetRef> TARGET_SELF
         = (owner, eventSource) -> owner == eventSource.getTarget();
 
-    public static final EventFilter<PlayerProperty, Object> SELF_TURN
-        = (owner, eventSource) -> owner.getOwner().getGame().getCurrentPlayer() == owner.getOwner();
+    public static final EventFilter<PlayerProperty, GameProperty> SELF_TURN
+        = (owner, eventSource) ->
+            eventSource.getGame().getCurrentPlayer().getPlayerId() == owner.getOwner().getPlayerId();
 
-    public static final EventFilter<PlayerProperty, Object> NOT_SELF_TURN
-        = (owner, eventSource) -> !SELF_TURN.applies(owner, SELF);
+    public static final EventFilter<PlayerProperty, GameProperty> NOT_SELF_TURN
+        = (owner, eventSource) ->
+            eventSource.getGame().getCurrentPlayer().getPlayerId() != owner.getOwner().getPlayerId();
 
     public static final EventFilter<PlayerProperty, CardPlayEvent> CARD_TARGET_IS_HERO
         = (owner, eventSource) -> eventSource.getTarget() instanceof Hero;
@@ -65,7 +67,8 @@ public final class EventFilters {
         = (owner, eventSource) -> eventSource.testExistingTarget((defender) -> defender instanceof Minion);
 
     public static final EventFilter<PlayerProperty, AttackRequest> ATTACK_TARGET_IS_OWN_HERO
-        = (owner, eventSource) -> owner.getOwner().getHero().getEntityId() == eventSource.getTarget().getEntityId();
+        = (owner, eventSource) ->
+            owner.getOwner().getHero().getEntityId() == eventSource.getTarget().getEntityId();
 
     public static final EventFilter<PlayerProperty, AttackRequest> ATTACK_TARGET_IS_OWNER
         = (owner, eventSource) -> eventSource.testExistingTarget((defender) -> owner.getOwner() == defender.getOwner());
@@ -104,10 +107,10 @@ public final class EventFilters {
         (owner, eventSource) -> !eventSource.getTarget().isDead();
 
     public static final EventFilter<PlayerProperty, PlayerProperty> HAS_DIFFERENT_OWNER_PLAYER =
-        (owner, eventSource) -> owner.getOwner() != eventSource.getOwner();
+        (owner, eventSource) -> owner.getOwner().getPlayerId() != eventSource.getOwner().getPlayerId();
 
     public static final EventFilter<PlayerProperty, PlayerProperty> HAS_SAME_OWNER_PLAYER =
-        (owner, eventSource) -> owner.getOwner() == eventSource.getOwner();
+        (owner, eventSource) -> owner.getOwner().getPlayerId() == eventSource.getOwner().getPlayerId();
 
     public static final EventFilter<PlayerProperty, Minion> HAS_OTHER_OWNED_BUFF_TARGET =
         (owner, eventSource) -> {

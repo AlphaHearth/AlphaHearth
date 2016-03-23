@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,10 +31,6 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
         this.combinedView = buffCombiner.viewCombinedBuffs(Collections.unmodifiableList(this.buffRefs));
     }
 
-    private AuraAwarePropertyBase(AuraAwarePropertyBase<T> other) {
-        this(other, false);
-    }
-
     private AuraAwarePropertyBase(AuraAwarePropertyBase<T> other, boolean copyExternal) {
         this.buffCombiner = other.buffCombiner;
         this.buffRefs = new ArrayList<>(other.buffRefs.size());
@@ -49,7 +45,7 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     /**
      * Added the given buff to this {@code AuraAwarePropertyBase}.
      */
-    public UndoObjectAction<AuraAwarePropertyBase> addRemovableBuff(BuffArg buffArg, T toAdd) {
+    public UndoAction<AuraAwarePropertyBase> addRemovableBuff(BuffArg buffArg, T toAdd) {
         int priority = buffArg.getPriority();
         boolean external = buffArg.isExternal();
 
@@ -73,8 +69,12 @@ public final class AuraAwarePropertyBase<T> implements Silencable {
     /**
      * Returns a new copy of this {@code AuraAwarePropertyBase}.
      */
-    public AuraAwarePropertyBase<T> clone() {
-        return new AuraAwarePropertyBase<>(this, false);
+    public AuraAwarePropertyBase<T> copy() {
+        return copy(false);
+    }
+
+    public AuraAwarePropertyBase<T> copy(boolean copyExternal) {
+        return new AuraAwarePropertyBase<>(this, copyExternal);
     }
 
     /**

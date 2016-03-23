@@ -37,6 +37,7 @@ public final class BoardSide implements PlayerProperty {
             BoardMinionRef newMinionRef =
                 new BoardMinionRef(minionRef.minion.copyFor(newOwner.getGame(), newOwner), minionRef.needsSpace);
             result.minionRefs.add(newMinionRef);
+            newMinionRef.minion.activatePassiveAbilities();
         }
         return result;
     }
@@ -368,6 +369,9 @@ public final class BoardSide implements PlayerProperty {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         if (minion.isDestroyed())
+            return;
+
+        if (minion.getOwner().getPlayerId() == getOwner().getPlayerId())
             return;
 
         if (isFull()) {

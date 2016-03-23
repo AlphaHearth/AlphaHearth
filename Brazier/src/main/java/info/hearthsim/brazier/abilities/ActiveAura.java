@@ -1,8 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UnregisterAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -16,13 +15,14 @@ import org.jtrim.utils.ExceptionHelper;
  * a certain aura, {@code ActiveAura} can represent a complete in-game aura, with aura source,
  * {@link AuraTargetProvider}, {@link AuraFilter} and {@link Aura} included as its fields.
  */
-public final class ActiveAura <Source extends Entity, Target extends Entity> {
+public final class ActiveAura <Source extends Entity, Target extends Entity> implements Entity {
+    private final EntityId entityId;
     private final Source source;
     private final AuraTargetProvider<? super Source, ? extends Target> targetProvider;
     private final AuraFilter<? super Source, ? super Target> targetFilter;
     private final Aura<? super Source, ? super Target> aura;
 
-    private Map<EntityId, UndoObjectAction<Game>> currentlyApplied;
+    private Map<EntityId, UndoAction<Game>> currentlyApplied;
 
     /**
      * Creates a {@code ActiveAura} with the designated source of the aura and
@@ -45,6 +45,7 @@ public final class ActiveAura <Source extends Entity, Target extends Entity> {
         ExceptionHelper.checkNotNullArgument(targetFilter, "targetFilter");
         ExceptionHelper.checkNotNullArgument(aura, "aura");
 
+        this.entityId = new EntityId();
         this.source = source;
         this.targetProvider = targetProvider;
         this.targetFilter = targetFilter;
@@ -52,11 +53,22 @@ public final class ActiveAura <Source extends Entity, Target extends Entity> {
         this.currentlyApplied = new IdentityHashMap<>(2 * Player.MAX_BOARD_SIZE);
     }
 
-    public ActiveAura<Source, Target> copyFor(Game newGame) {
-        ActiveAura<Source, Target> result = new ActiveAura<>((Source) newGame.findEntity(source.getEntityId()),
-            targetProvider, targetFilter, aura);
-        result.currentlyApplied.putAll(currentlyApplied);
-        return result;
+    private ActiveAura(ActiveAura<Source, Target> other) {
+        this.entityId = other.entityId;
+        this.source = other.source;
+        this.targetProvider = other.targetProvider;
+        this.targetFilter = other.targetFilter;
+        this.aura = other.aura;
+        this.currentlyApplied = new IdentityHashMap<>(2 * Player.MAX_BOARD_SIZE);
+    }
+
+    @Override
+    public EntityId getEntityId() {
+        return entityId;
+    }
+
+    public ActiveAura<Source, Target> copyFor(Game newGame, Player newOwner) {
+        return new ActiveAura<>(this);
     }
 
     /**
@@ -71,17 +83,17 @@ public final class ActiveAura <Source extends Entity, Target extends Entity> {
 
         List<? extends Target> targets = targetProvider.getPossibleTargets(game, source);
 
-        Map<EntityId, UndoObjectAction<Game>> newCurrentlyApplied = new IdentityHashMap<>();
+        Map<EntityId, UndoAction<Game>> newCurrentlyApplied = new IdentityHashMap<>();
 
         boolean didAnything = false;
-        Map<EntityId, UndoObjectAction<Game>> currentlyAppliedCopy = new IdentityHashMap<>(currentlyApplied);
+        Map<EntityId, UndoAction<Game>> currentlyAppliedCopy = new IdentityHashMap<>(currentlyApplied);
         for (Target target : targets) {
-            UndoObjectAction<Game> ref = currentlyAppliedCopy.remove(target.getEntityId());
+            UndoAction<Game> ref = currentlyAppliedCopy.remove(target.getEntityId());
             boolean needAura = targetFilter.isApplicable(game, source, target);
 
             if (ref == null) {
                 if (needAura) {
-                    UndoObjectAction<? super Target> undoRef = aura.applyAura(source, target);
+                    UndoAction<? super Target> undoRef = aura.applyAura(source, target);
                     Objects.requireNonNull(undoRef, "Aura.applyAura");
 
                     newCurrentlyApplied.put(target.getEntityId(),
@@ -98,7 +110,7 @@ public final class ActiveAura <Source extends Entity, Target extends Entity> {
             }
         }
 
-        for (UndoObjectAction<Game> ref : currentlyAppliedCopy.values()) {
+        for (UndoAction<Game> ref : currentlyAppliedCopy.values()) {
             didAnything = true;
             ref.undo(game);
         }
@@ -115,8 +127,13 @@ public final class ActiveAura <Source extends Entity, Target extends Entity> {
         if (currentlyApplied.isEmpty())
             return;
 
-        for (UndoObjectAction<Game> ref : currentlyApplied.values())
+        for (UndoAction<Game> ref : currentlyApplied.values())
             ref.undo(game);
         currentlyApplied.clear();
+    }
+
+    @Override
+    public Player getOwner() {
+        return source.getOwner();
     }
 }

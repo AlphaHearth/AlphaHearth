@@ -2,7 +2,7 @@ package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.Entity;
 import info.hearthsim.brazier.GameProperty;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.abilities.Ability;
 
 import java.util.ArrayList;
@@ -41,15 +41,15 @@ public final class TriggeringAbility <Owner extends Entity> implements Ability<O
     }
 
     @Override
-    public UndoObjectAction<Owner> activate(Owner owner) {
+    public UndoAction<Owner> activate(Owner owner) {
         if (!hasAnyActionDef)
-            return UndoObjectAction.DO_NOTHING;
+            return UndoAction.DO_NOTHING;
 
         GameEvents gameEvents = owner.getGame().getEvents();
 
-        UndoObjectAction.Builder<Owner> result = new UndoObjectAction.Builder<>(regTasks.size());
+        UndoAction.Builder<Owner> result = new UndoAction.Builder<>(regTasks.size());
         for (RegTask<Owner> regTask : regTasks) {
-            UndoObjectAction<GameEvents> undoRef = regTask.register(gameEvents, owner);
+            UndoAction<GameEvents> undoRef = regTask.register(gameEvents, owner);
             result.add((o) -> undoRef.undo(o.getGame().getEvents()));
         }
         return result;
@@ -72,7 +72,7 @@ public final class TriggeringAbility <Owner extends Entity> implements Ability<O
     }
 
     private interface RegTask <Self> {
-        public UndoObjectAction<GameEvents> register(GameEvents gameEvents, Self self);
+        public UndoAction<GameEvents> register(GameEvents gameEvents, Self self);
     }
 
     public static final class Builder <Owner extends Entity> {

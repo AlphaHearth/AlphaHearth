@@ -37,8 +37,8 @@ public final class TestDb {
         try {
             return getTestDbUnsafe();
         } catch (IOException | ObjectParsingException ex) {
-            AssumptionViolatedException toThrow = new AssumptionViolatedException("TestDb is not available.");
-            toThrow.addSuppressed(ex);
+            IllegalStateException toThrow = new IllegalStateException("TestDb is not available.", ex);
+            toThrow.setStackTrace(new StackTraceElement[0]);
             throw toThrow;
         }
     }

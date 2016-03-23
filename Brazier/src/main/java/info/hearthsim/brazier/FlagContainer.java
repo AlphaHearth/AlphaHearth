@@ -1,13 +1,9 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import java.util.HashMap;
+import info.hearthsim.brazier.util.UndoAction;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import info.hearthsim.brazier.events.RegisterId;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -37,9 +33,9 @@ public final class FlagContainer {
      * Registers the given flag in this container.
      *
      * @param flag the given flag.
-     * @return an {@link UndoableUnregisterAction} which can be used to unregister the given flag.
+     * @return an {@link UndoAction} which can be used to unregister the given flag.
      */
-    public UndoObjectAction<FlagContainer> registerFlag(Object flag) {
+    public UndoAction<FlagContainer> registerFlag(Object flag) {
         ExceptionHelper.checkNotNullArgument(flag, "flag");
         flags.add(flag);
         return (fc) -> fc.flags.remove(flag);

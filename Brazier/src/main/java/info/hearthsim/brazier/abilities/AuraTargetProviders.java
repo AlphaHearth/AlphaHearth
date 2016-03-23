@@ -40,7 +40,7 @@ public final class AuraTargetProviders {
      * {@code AuraTargetProvider} which returns the cards on the hands of the aura source's owner.
      */
     public static final AuraTargetProvider<PlayerProperty, Card> OWN_HAND_PROVIDER = (Game game, PlayerProperty source) -> {
-        return source.getOwner().getHand().getCards();
+        return game.getPlayer(source.getOwner().getPlayerId()).getHand().getCards();
     };
 
     /**

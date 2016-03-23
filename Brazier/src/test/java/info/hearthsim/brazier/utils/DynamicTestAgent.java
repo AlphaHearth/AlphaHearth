@@ -2,7 +2,9 @@ package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.minions.Minion;
+import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -224,7 +226,7 @@ public class DynamicTestAgent extends TestAgent {
 
     /**
      * Decreases the mana cost of all the cards in the hand of the player with the given name
-     * with {@code 1}.
+     * by {@code 1}.
      */
     public void decreaseManaCostOfHand(String playerName) {
         add(() -> super.decreaseManaCostOfHand(playerName));
@@ -341,8 +343,17 @@ public class DynamicTestAgent extends TestAgent {
                         ex.setStackTrace(EMPTY_STACK);
                         throw ex;
                     }
-                    this.invokePoint = element;
-                    break;
+                    try {
+                        Class testClass = Class.forName(element.getClassName());
+                        Method testMethod = testClass.getMethod(element.getMethodName());
+                        if (testMethod.isAnnotationPresent(Test.class)) {
+                            this.invokePoint = element;
+                            break;
+                        }
+                    } catch (ClassNotFoundException | NoSuchMethodException ex) {
+                        // Ignore
+                        // TODO Log it as warning message
+                    }
                 }
             }
         }

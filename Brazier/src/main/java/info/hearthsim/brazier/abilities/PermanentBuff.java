@@ -1,18 +1,13 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Entity;
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UnregisterAction;
+import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
-
-import javax.activation.UnsupportedDataTypeException;
 
 /**
  * Buffs that do not disappear until the owner is silenced. For temporary buff that
@@ -27,7 +22,7 @@ public interface PermanentBuff<Target extends Entity> {
      * Adds the permanent buff to the given target in the given game with
      * the given arguments in {@link BuffArg}.
      */
-    public UndoObjectAction<Target> buff(Target target, BuffArg arg);
+    public UndoAction<Target> buff(Target target, BuffArg arg);
 
     /**
      * Merges the given collection of {@link PermanentBuff}s to one which added all of the merged buffs
@@ -40,13 +35,13 @@ public interface PermanentBuff<Target extends Entity> {
         ExceptionHelper.checkNotNullElements(buffs, "buffs");
 
         if (buffs.isEmpty()) {
-            return (actor, arg) -> UndoObjectAction.DO_NOTHING;
+            return (actor, arg) -> UndoAction.DO_NOTHING;
         }
 
         List<? extends PermanentBuff<? super Target>> buffsCopy = new ArrayList<>(buffs);
 
         return (Target target, BuffArg arg) -> {
-            UndoObjectAction.Builder<Target> result = new UndoObjectAction.Builder<>(buffsCopy.size());
+            UndoAction.Builder<Target> result = new UndoAction.Builder<>(buffsCopy.size());
             for (PermanentBuff<? super Target> buff: buffsCopy) {
                 result.add(buff.buff(target, arg));
             }

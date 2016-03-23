@@ -13,7 +13,7 @@ import info.hearthsim.brazier.weapons.Weapon;
 public interface DestroyableEntity extends BornEntity {
     /**
      * Schedules to destroy this entity. An entity is scheduled to destroy only when it is dead (its
-     * health point being below {@code 0}). Once an entity is scheduled to destroy, it will be destroyed
+     * health point hits {@code 0}). Once an entity is scheduled to destroy, it will be destroyed
      * soon after by invoking its {@link #destroy()} method.
      */
     public void scheduleToDestroy();

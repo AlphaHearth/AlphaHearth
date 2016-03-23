@@ -1,7 +1,7 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.cards.CardDescr;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ public final class Secret implements Entity<Secret>, LabeledEntity, DamageSource
     private Player owner;
     private final CardDescr baseCard;
     private final Ability<Secret> ability;
-    private UndoObjectAction<Secret> ref;
+    private UndoAction<Secret> ref;
 
     public Secret(Player owner, CardDescr baseCard, Ability<Secret> ability) {
         ExceptionHelper.checkNotNullArgument(owner, "owner");
@@ -35,7 +35,6 @@ public final class Secret implements Entity<Secret>, LabeledEntity, DamageSource
         this.owner = newOwner;
         this.baseCard = other.baseCard;
         this.ability = other.ability;
-        this.ref = other.ref;
     }
 
     /**

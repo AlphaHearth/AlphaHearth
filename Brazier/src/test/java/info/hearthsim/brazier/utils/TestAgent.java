@@ -94,7 +94,6 @@ public class TestAgent {
     }
 
     private void playCard(PlayerId playerId, int cardIndex, int minionPos, String target) {
-        expectGameContinues();
         gameAgent.playCard(cardIndex, toPlayTarget(playerId, minionPos, target));
     }
 

@@ -17,7 +17,8 @@
             "action": {
                 "class": "TargetlessActions.addCard",
                 "card": "Headcrack"
-            }
+            },
+            "isFromSpell": true
         }
     ]
 }

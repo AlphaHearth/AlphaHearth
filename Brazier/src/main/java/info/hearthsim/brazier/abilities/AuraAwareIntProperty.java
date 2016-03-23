@@ -1,10 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.actions.undo.UndoAction;
-import info.hearthsim.brazier.events.RegisterId;
+import info.hearthsim.brazier.util.UndoAction;
 
 /**
  * Aura-aware int property, implemented by using an underlying {@link AuraAwarePropertyBase}.
@@ -47,7 +44,7 @@ public final class AuraAwareIntProperty implements Silencable {
     private AuraAwareIntProperty(AuraAwareIntProperty other) {
         this.baseValue = other.baseValue;
         this.minValue = other.minValue;
-        this.impl = other.impl.clone();
+        this.impl = other.impl.copy(false);
     }
 
     /**
@@ -61,21 +58,21 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which sets its buffed value to the
      * given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> setValueTo(int newValue) {
+    public UndoAction<AuraAwareIntProperty> setValueTo(int newValue) {
         return addBuff((prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which adds the property with the given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addBuff(int toAdd) {
+    public UndoAction<AuraAwareIntProperty> addBuff(int toAdd) {
         return addBuff((prev) -> prev + toAdd);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareIntProperty} which adds the property with the given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addBuff(IntPropertyBuff toAdd) {
+    public UndoAction<AuraAwareIntProperty> addBuff(IntPropertyBuff toAdd) {
         return addBuff(BuffArg.NORMAL_BUFF, toAdd);
     }
 
@@ -83,7 +80,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addExternalBuff(int toAdd) {
+    public UndoAction<AuraAwareIntProperty> addExternalBuff(int toAdd) {
         return addExternalBuff((prev) -> prev + toAdd);
     }
 
@@ -91,7 +88,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addExternalBuff(IntPropertyBuff toAdd) {
+    public UndoAction<AuraAwareIntProperty> addExternalBuff(IntPropertyBuff toAdd) {
         return addBuff(BuffArg.NORMAL_AURA_BUFF, toAdd);
     }
 
@@ -99,7 +96,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareIntProperty} which adds the property
      * with the given value.
      */
-    public UndoObjectAction<AuraAwareIntProperty> setValueTo(BuffArg arg, int newValue) {
+    public UndoAction<AuraAwareIntProperty> setValueTo(BuffArg arg, int newValue) {
         return addBuff(arg, (prev) -> newValue);
     }
 
@@ -107,7 +104,7 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} with the given {@code priority},
      * {@code external} (contained in a {@code BuffArg}) and value to add.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addBuff(BuffArg arg, int toAdd) {
+    public UndoAction<AuraAwareIntProperty> addBuff(BuffArg arg, int toAdd) {
         return addBuff(arg, (prev) -> prev + toAdd);
     }
 
@@ -115,8 +112,8 @@ public final class AuraAwareIntProperty implements Silencable {
      * Adds a new removable buff to this {@code AuraAwareIntProperty} with the given {@code priority},
      * {@code external} (contained in a {@code BuffArg}) and value to add.
      */
-    public UndoObjectAction<AuraAwareIntProperty> addBuff(BuffArg arg, IntPropertyBuff toAdd) {
-        UndoObjectAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(arg, toAdd);
+    public UndoAction<AuraAwareIntProperty> addBuff(BuffArg arg, IntPropertyBuff toAdd) {
+        UndoAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(arg, toAdd);
         return (aaip) -> undoRef.undo(aaip.impl);
     }
 

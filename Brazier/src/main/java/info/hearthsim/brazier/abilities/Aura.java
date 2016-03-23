@@ -1,9 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Entity;
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UnregisterAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +21,7 @@ public interface Aura<Source extends Entity, Target extends Entity> {
     /**
      * Applies the aura on the given source and target in the given game.
      */
-    public UndoObjectAction<Target> applyAura(Source source, Target target);
+    public UndoAction<Target> applyAura(Source source, Target target);
 
     /**
      * Merges the given collection of {@link Aura}s together.
@@ -35,13 +33,13 @@ public interface Aura<Source extends Entity, Target extends Entity> {
         ExceptionHelper.checkNotNullElements(auras, "auras");
 
         if (auras.isEmpty()) {
-            return (source, target) -> UndoObjectAction.DO_NOTHING;
+            return (source, target) -> UndoAction.DO_NOTHING;
         }
 
         List<Aura<? super Source, ? super Target>> aurasCopy = new ArrayList<>(auras);
 
         return (source, target) -> {
-            UndoObjectAction.Builder<Target> builder = new UndoObjectAction.Builder<>(aurasCopy.size());
+            UndoAction.Builder<Target> builder = new UndoAction.Builder<>(aurasCopy.size());
             for (Aura<? super Source, ? super Target> aura: aurasCopy) {
                 builder.add(aura.applyAura(source, target));
             }

@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Priorities;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.Silencable;
 
 /**
@@ -37,7 +37,7 @@ public final class HpProperty implements Silencable {
     /**
      * Applies the added auras to this {@code HpProperty} by re-evaluating its current and maximum value.
      */
-    public UndoObjectAction<HpProperty> applyAura() {
+    public UndoAction<HpProperty> applyAura() {
         int newMaxHp = buffedMaxHp + auraBuff;
         if (newMaxHp == currentMaxHp) {
             return null;
@@ -68,7 +68,7 @@ public final class HpProperty implements Silencable {
         result.auraBuff = 0;
 
         result.currentMaxHp = buffedMaxHp;
-        result.currentHp = Math.max(1, currentHp - auraBuff);
+        result.currentHp = currentHp - auraBuff;
         return result;
     }
 
@@ -76,7 +76,7 @@ public final class HpProperty implements Silencable {
      * Sets the current hp to the given value. If the given value is larger than the maximum hp,
      * the current hp will be set to the maximum hp.
      */
-    public UndoObjectAction<HpProperty> setCurrentHp(int newHp) {
+    public UndoAction<HpProperty> setCurrentHp(int newHp) {
         if (newHp == currentHp)
             return null;
 
@@ -88,7 +88,7 @@ public final class HpProperty implements Silencable {
     /**
      * Buffs the hp with the given amount.
      */
-    public UndoObjectAction<HpProperty> buffHp(BuffArg arg, int amount) {
+    public UndoAction<HpProperty> buffHp(BuffArg arg, int amount) {
         if (arg.isExternal()) {
             if (arg.getPriority() != Priorities.HIGH_PRIORITY) {
                 throw new UnsupportedOperationException("Unsupported aura priority: " + arg.getPriority());
@@ -106,12 +106,12 @@ public final class HpProperty implements Silencable {
     /**
      * Buffs the hp with the given amount.
      */
-    public UndoObjectAction<HpProperty> buffHp(int amount) {
+    public UndoAction<HpProperty> buffHp(int amount) {
         if (amount == 0)
             return null;
 
         currentHp += amount;
-        UndoObjectAction<HpProperty> maxHpUndo = setMaxHp(buffedMaxHp + amount);
+        UndoAction<HpProperty> maxHpUndo = setMaxHp(buffedMaxHp + amount);
 
         return (hp) -> {
             maxHpUndo.undo(hp);
@@ -123,7 +123,7 @@ public final class HpProperty implements Silencable {
      * Adds an aura buff with the given amount to this property. The added aura will change nothing until the
      * {@link #applyAura()} is called.
      */
-    public UndoObjectAction<HpProperty> addAuraBuff(int amount) {
+    public UndoAction<HpProperty> addAuraBuff(int amount) {
         auraBuff += amount;
 
         return (hp) -> hp.auraBuff -= amount;
@@ -161,7 +161,7 @@ public final class HpProperty implements Silencable {
     /**
      * Sets the max and current hp to the given value.
      */
-    public UndoObjectAction<HpProperty> setMaxAndCurrentHp(int newValue) {
+    public UndoAction<HpProperty> setMaxAndCurrentHp(int newValue) {
         int prevBuffedMaxHp = buffedMaxHp;
         int prevCurrentHp = currentHp;
         int prevCurrentMaxHp = currentMaxHp;
@@ -181,7 +181,7 @@ public final class HpProperty implements Silencable {
      * Sets the max hp to the given value. The current value will be set to the given value
      * if the given value is less than the current value.
      */
-    public UndoObjectAction<HpProperty> setMaxHp(int newValue) {
+    public UndoAction<HpProperty> setMaxHp(int newValue) {
         int prevBuffedMaxHp = buffedMaxHp;
         int prevCurrentHp = currentHp;
         int prevCurrentMaxHp = currentMaxHp;

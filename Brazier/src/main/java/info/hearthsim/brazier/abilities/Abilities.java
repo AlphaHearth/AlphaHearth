@@ -2,7 +2,7 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
@@ -259,12 +259,22 @@ public final class Abilities {
         @NamedArg("filter") AuraFilter<? super Self, ? super Target> filter,
         @NamedArg("aura") Aura<? super Self, ? super Target> aura) {
 
+        return aura(target, filter, aura, false);
+    }
+
+    public static <Self extends Entity, Target extends Entity> Ability<Self> aura(
+        AuraTargetProvider<? super Self, ? extends Target> target,
+        AuraFilter<? super Self, ? super Target> filter,
+        Aura<? super Self, ? super Target> aura,
+        boolean toCopy) {
+
         ExceptionHelper.checkNotNullArgument(target, "target");
         ExceptionHelper.checkNotNullArgument(filter, "filter");
         ExceptionHelper.checkNotNullArgument(aura, "aura");
 
         return (Self self) -> {
-            UndoObjectAction<Game> undoRef = self.getGame().addAura(new ActiveAura<>(self, target, filter, aura));
+            UndoAction<Game> undoRef = self.getGame()
+                .addAura(new ActiveAura<>(self, target, filter, aura), toCopy);
             return (s) -> {
                 undoRef.undo(s.getGame());
             };

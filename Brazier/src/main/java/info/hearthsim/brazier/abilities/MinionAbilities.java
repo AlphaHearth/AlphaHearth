@@ -1,8 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Entity;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 
@@ -21,7 +20,7 @@ public final class MinionAbilities {
      */
     public static Ability<Entity> spellPower(@NamedArg("spellPower") int spellPower) {
         return (Entity self) -> {
-            return UndoObjectAction.of(self, (e) -> e.getOwner().getSpellPower(), (sp) -> sp.addBuff(spellPower));
+            return UndoAction.of(self, (e) -> e.getOwner().getSpellPower(), (sp) -> sp.addExternalBuff(spellPower));
         };
     }
 
@@ -33,7 +32,7 @@ public final class MinionAbilities {
      */
     public static Ability<Entity> spellMultiplier(@NamedArg("mul") int mul) {
         return (Entity self) -> {
-            return UndoObjectAction.of(self, (e) -> e.getOwner().getSpellPower(),
+            return UndoAction.of(self, (e) -> e.getOwner().getSpellPower(),
                 (sp) -> sp.addExternalBuff((prev) -> prev * mul));
         };
     }

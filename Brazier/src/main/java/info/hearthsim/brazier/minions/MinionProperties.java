@@ -18,6 +18,7 @@ public final class MinionProperties implements Silencable {
     private final AbilityList<Minion> abilities;
     private List<EventAction<? super Minion, ? super Minion>> deathRattles;
     private boolean activated;
+    private boolean silenced = false;
 
     public MinionProperties(Minion minion, MinionDescr baseDescr) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
@@ -51,26 +52,26 @@ public final class MinionProperties implements Silencable {
         this.abilities = abilities;
         this.deathRattles = new ArrayList<>(baseProperties.deathRattles);
         this.activated = false;
+        this.silenced = baseProperties.silenced;
     }
 
     /**
      * Returns a copy of this {@code MinionProperties} for the given new minion.
      */
     public MinionProperties copyFor(Minion newMinion) {
-        return copyFor(newMinion, true);
+        return copyFor(newMinion, false, false);
     }
 
     /**
      * Returns a copy of this {@code MinionProperties} for the given new minion.
-     * The given {@code boolean} field {@code copyActivated} determines if to copy
-     * the {@code activated} field of the given minion's properties.
+     *
+     * @param copyAbilities whether to copy the abilities added to this {@code MinionProperties}
+     * @param copyActivated whether to copy the {@code activated} field of this {@code MinionProperties},
+     *                      or set it to {@code false}.
      */
-    public MinionProperties copyFor(Minion newMinion, boolean copyActivated) {
+    public MinionProperties copyFor(Minion newMinion, boolean copyAbilities, boolean copyActivated) {
         AbilityList<Minion> newAbilities;
-        if (copyActivated)
-            newAbilities = abilities.copyFor(newMinion);
-        else
-            newAbilities = new AbilityList<>(newMinion);
+        newAbilities = abilities.copyFor(newMinion, copyAbilities);
         MinionProperties result = new MinionProperties(newMinion, this, newAbilities);
         if (copyActivated)
             result.activated = activated;
@@ -85,7 +86,7 @@ public final class MinionProperties implements Silencable {
     }
 
     public void activatePassiveAbilities() {
-        if (activated)
+        if (activated || silenced)
             return;
 
         activated = true;
@@ -129,7 +130,6 @@ public final class MinionProperties implements Silencable {
         if (deathRattles.isEmpty())
             return;
 
-        Game game = getGame();
         for (EventAction<? super Minion, ? super Minion> deathRattle : new ArrayList<>(deathRattles)) {
             for (int i = 0; i < numberOfTriggers; i++)
                 deathRattle.trigger(minion, minion);
@@ -142,6 +142,7 @@ public final class MinionProperties implements Silencable {
 
     @Override
     public void silence() {
+        silenced = true;
         abilities.deactivate();
         attackTool.silence();
         body.silence();
@@ -169,10 +170,14 @@ public final class MinionProperties implements Silencable {
     }
 
     public void addAndActivateAbility(Ability<? super Minion> abilityRegisterTask) {
+        addAndActivateAbility(abilityRegisterTask, false, false);
+    }
+
+    public void addAndActivateAbility(Ability<? super Minion> abilityRegisterTask, boolean toCopy, boolean needsReactivate) {
         if (minion.isDestroyed())
             return;
 
-        abilities.addAndActivateAbility(abilityRegisterTask);
+        abilities.addAndActivateAbility(abilityRegisterTask, toCopy, needsReactivate);
     }
 
     public void setAttackFinalizer(OwnedIntPropertyBuff<? super Minion> newAttackFinalizer) {

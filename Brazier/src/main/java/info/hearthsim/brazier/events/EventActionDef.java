@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -21,8 +21,8 @@ import org.jtrim.utils.ExceptionHelper;
  * <ul>
  *     <li>{@code action}: the {@code EventAction} to be triggered;</li>
  *     <li>
- *         {@code listenerGetter}: a {@code Function} from {@code GameEvents} to {@code GameActionEvents},
- *         which fetches the appropriate {@code GameActionEvents} from the given {@code GamEvents} for this
+ *         {@code listenerGetter}: a {@code Function} from {@code GameEvents} to {@code GameEventActions},
+ *         which fetches the appropriate {@code GameEventActions} from the given {@code GamEvents} for this
  *         event-based action.
  *     </li>
  *     <li>
@@ -52,7 +52,7 @@ public final class EventActionDef <Owner extends Entity, Source extends GameProp
     private final boolean lazyFilter;
     private final boolean triggerOnce;
     private final int priority;
-    private final Function<GameEvents, GameActionEvents<Source>> listenerGetter;
+    private final Function<GameEvents, GameEventActions<Source>> listenerGetter;
     private final EventFilter<? super Owner, ? super Source> filter;
     private final EventAction<? super Owner, ? super Source> action;
 
@@ -60,7 +60,7 @@ public final class EventActionDef <Owner extends Entity, Source extends GameProp
         boolean lazyFilter,
         boolean triggerOnce,
         int priority,
-        Function<GameEvents, GameActionEvents<Source>> listenerGetter,
+        Function<GameEvents, GameEventActions<Source>> listenerGetter,
         EventFilter<? super Owner, ? super Source> condition,
         EventAction<? super Owner, ? super Source> action) {
         ExceptionHelper.checkNotNullArgument(listenerGetter, "listenerGetter");
@@ -79,16 +79,16 @@ public final class EventActionDef <Owner extends Entity, Source extends GameProp
      * Registers the given list of {@code EventActionDef} to the given {@link GameEvents}
      * for the given {@code Owner}.
      */
-    public static <Self extends Entity, T extends GameProperty> UndoObjectAction<GameEvents>
+    public static <Self extends Entity, T extends GameProperty> UndoAction<GameEvents>
     registerAll(
         List<EventActionDef<Self, T>> actionDefs,
         GameEvents gameEvents,
         Self eventOwner) {
         if (actionDefs.isEmpty())
-            return UndoObjectAction.DO_NOTHING;
+            return UndoAction.DO_NOTHING;
 
-        UndoObjectAction.Builder<GameEvents> result =
-            new UndoObjectAction.Builder<>(actionDefs.size());
+        UndoAction.Builder<GameEvents> result =
+            new UndoAction.Builder<>(actionDefs.size());
         for (EventActionDef<Self, T> actionDef : actionDefs) {
             result.add(actionDef.registerForEvent(gameEvents, eventOwner));
         }
@@ -98,15 +98,15 @@ public final class EventActionDef <Owner extends Entity, Source extends GameProp
     /**
      * Registers this {@code EventActionDef} to the given {@link GameEvents} for the given {@code Owner}.
      */
-    public UndoObjectAction<GameEvents> registerForEvent(GameEvents gameEvents, Owner owner) {
-        GameActionEvents<Source> actionEvents = listenerGetter.apply(gameEvents);
+    public UndoAction<GameEvents> registerForEvent(GameEvents gameEvents, Owner owner) {
+        GameEventActions<Source> actionEvents = listenerGetter.apply(gameEvents);
         if (!triggerOnce) {
-            UndoObjectAction<GameActionEvents> undoRef = registerForEvents(actionEvents, owner, action);
+            UndoAction<GameEventActions> undoRef = registerForEvents(actionEvents, owner, action);
             return (ge) -> undoRef.undo(listenerGetter.apply(ge));
         }
 
-        AtomicReference<UndoObjectAction<GameEvents>> refRef = new AtomicReference<>();
-        UndoObjectAction<GameActionEvents> ref = registerForEvents(actionEvents, owner,
+        AtomicReference<UndoAction<GameEvents>> refRef = new AtomicReference<>();
+        UndoAction<GameEventActions> ref = registerForEvents(actionEvents, owner,
             (Owner eventSelf, Source eventSource) -> {
                 refRef.get().undo(owner.getGame().getEvents());
                 action.trigger(eventSelf, eventSource);
@@ -115,21 +115,21 @@ public final class EventActionDef <Owner extends Entity, Source extends GameProp
         return refRef.get();
     }
 
-    private UndoObjectAction<GameActionEvents> registerForEvents(
-        GameActionEvents<Source> actionEvents,
+    private UndoAction<GameEventActions> registerForEvents(
+        GameEventActions<Source> actionEvents,
         Owner owner,
         EventAction<? super Owner, ? super Source> appliedEventAction) {
 
         if (lazyFilter) {
-            return actionEvents.register(priority, (Source eventSource) -> {
+            return actionEvents.register((Source eventSource) -> {
                 if (filter.applies(owner, eventSource))
                     appliedEventAction.trigger(owner, eventSource);
-            });
+            }, priority);
         } else {
             Predicate<Source> condition = (Source eventSource) -> filter.applies(owner, eventSource);
-            return actionEvents.register(priority, condition, (Source eventSource) -> {
+            return actionEvents.register((Source eventSource) -> {
                 appliedEventAction.trigger(owner, eventSource);
-            });
+            }, condition, priority);
         }
     }
 }

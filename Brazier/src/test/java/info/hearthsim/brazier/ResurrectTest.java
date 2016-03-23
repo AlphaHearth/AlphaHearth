@@ -9,6 +9,7 @@ import java.util.Set;
 
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.RandomTestUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static info.hearthsim.brazier.utils.TestCards.*;
@@ -63,6 +64,7 @@ public final class ResurrectTest extends BrazierTest {
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testResurrectTwoDeaths() {
         Set<String> resurrected = new HashSet<>();
         resurrected.add(runTwoMinionsResurrect(0).getName());

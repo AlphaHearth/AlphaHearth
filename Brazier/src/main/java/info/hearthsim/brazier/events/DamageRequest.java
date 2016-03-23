@@ -1,7 +1,6 @@
 package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.*;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -45,12 +44,10 @@ public final class DamageRequest implements TargetRef, PlayerProperty {
         return damage;
     }
 
-    public UndoAction vetoDamage() {
-        if (vetoDamage) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void vetoDamage() {
+        if (vetoDamage)
+            return;
 
         vetoDamage = true;
-        return () -> vetoDamage = false;
     }
 }

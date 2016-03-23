@@ -1,6 +1,5 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.minions.Minion;
 
 import java.util.ArrayList;
@@ -86,14 +85,10 @@ public final class Graveyard {
         return deadMinionsView;
     }
 
-    public UndoAction addDeadMinion(Minion minion) {
+    public void addDeadMinion(Minion minion) {
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         minionsDiedThisTurn.add(minion);
         deadMinions.add(minion);
-        return () -> {
-            deadMinions.remove(deadMinions.size() - 1);
-            minionsDiedThisTurn.remove(minionsDiedThisTurn.size() - 1);
-        };
     }
 }

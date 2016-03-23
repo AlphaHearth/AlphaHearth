@@ -3,7 +3,7 @@ package info.hearthsim.brazier;
 import info.hearthsim.brazier.abilities.ActiveAura;
 import info.hearthsim.brazier.abilities.ActiveAuraList;
 import info.hearthsim.brazier.actions.AttackRequest;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 import info.hearthsim.brazier.events.SimpleEventType;
@@ -79,9 +79,9 @@ public final class Game implements GameProperty {
         this.db = other.db;
         this.currentTime = new AtomicLong(other.currentTime.longValue());
         this.events = other.events.copyFor(this);
+        this.activeAuras = other.activeAuras.copyFor(this);
         this.player1 = other.player1.copyFor(this);
         this.player2 = other.player2.copyFor(this);
-        this.activeAuras = other.activeAuras.copyFor(this);
         this.gameResult = other.gameResult;
 
         this.randomProvider = other.randomProvider;
@@ -283,6 +283,12 @@ public final class Game implements GameProperty {
         result = getCard(id);
         if (result != null)
             return result;
+
+        if (player1.getEntityId() == id)
+            return player1;
+        if (player2.getEntityId() == id)
+            return player2;
+
         return null;
     }
 
@@ -328,11 +334,13 @@ public final class Game implements GameProperty {
 
         Character attacker = getCharacter(attackerId);
         if (attacker == null)
-            return;
+            throw new IllegalArgumentException("Cannot find attacker for the given EntityId "
+                + attackerId);
 
         Character defender = getCharacter(defenderId);
         if (defender == null)
-            return;
+            throw new IllegalArgumentException("Cannot find defender for the given EntityId "
+                + defenderId);
 
         AttackRequest attackRequest = new AttackRequest(attacker, defender);
         events.triggerEventNow(SimpleEventType.ATTACK_INITIATED, attackRequest);
@@ -392,7 +400,7 @@ public final class Game implements GameProperty {
     private void resolveAttackNonAtomic(Character attacker, Character defender) {
         AttackTool attackerWeapon = attacker.getAttackTool();
         if (!attackerWeapon.canAttackWith()) {
-            throw new IllegalArgumentException("Attacker is not allowed to attack with its weapon.");
+            throw new IllegalStateException("Attacker is not allowed to attack with its weapon.");
         }
 
         AttackTool defenderWeapon = defender.getAttackTool();
@@ -422,8 +430,12 @@ public final class Game implements GameProperty {
         return result;
     }
 
-    public UndoObjectAction<Game> addAura(ActiveAura aura) {
-        UndoObjectAction<ActiveAuraList> undoRef = activeAuras.addAura(aura);
+    public UndoAction<Game> addAura(ActiveAura aura) {
+        return addAura(aura, false);
+    }
+
+    public UndoAction<Game> addAura(ActiveAura aura, boolean toCopy) {
+        UndoAction<ActiveAuraList> undoRef = activeAuras.addAura(aura, toCopy);
         return (game) -> undoRef.undo(game.activeAuras);
     }
 

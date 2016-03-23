@@ -12,7 +12,7 @@ import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.actions.GameActionList;
+import info.hearthsim.brazier.events.GameActionList;
 import info.hearthsim.brazier.cards.PlayAction;
 import info.hearthsim.brazier.events.CardPlayEvent;
 import info.hearthsim.brazier.weapons.WeaponDescr;

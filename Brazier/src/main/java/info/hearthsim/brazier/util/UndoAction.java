@@ -1,4 +1,4 @@
-package info.hearthsim.brazier.actions.undo;
+package info.hearthsim.brazier.util;
 
 import org.jtrim.utils.ExceptionHelper;
 
@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface UndoObjectAction<T> {
-    public static final UndoObjectAction DO_NOTHING = (obj) -> { };
+public interface UndoAction <T> {
+    public static final UndoAction DO_NOTHING = (obj) -> { };
 
     public default void undo(T obj) {
         if (obj != null)
@@ -18,28 +18,28 @@ public interface UndoObjectAction<T> {
 
     public void undoUnsafe(T obj);
 
-    public static <Root, Field> UndoObjectAction<Root> of(Root root,
+    public static <Root, Field> UndoAction<Root> of(Root root,
                                                          Function<Root, Field> fieldGetter,
-                                                         Function<Field, UndoObjectAction<Field>> fieldModifier) {
+                                                         Function<Field, UndoAction<Field>> fieldModifier) {
         Field field = fieldGetter.apply(root);
-        UndoObjectAction<Field> undoRef = fieldModifier.apply(field);
+        UndoAction<Field> undoRef = fieldModifier.apply(field);
         return (r) -> undoRef.undo(fieldGetter.apply(r));
     }
 
-    public static <T> UndoObjectAction<T> toIdempotent(UndoObjectAction<? super T> action) {
+    public static <T> UndoAction<T> toIdempotent(UndoAction<? super T> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        AtomicReference<UndoObjectAction<? super T>> actionRef = new AtomicReference<>(action);
+        AtomicReference<UndoAction<? super T>> actionRef = new AtomicReference<>(action);
         return (obj) -> {
-            UndoObjectAction<? super T> currentAction = actionRef.getAndSet(null);
+            UndoAction<? super T> currentAction = actionRef.getAndSet(null);
             if (currentAction != null) {
                 currentAction.undo(obj);
             }
         };
     }
 
-    public final class Builder<T> implements UndoObjectAction<T> {
-        private final List<UndoObjectAction<? super T>> wrapped;
+    public final class Builder<T> implements UndoAction<T> {
+        private final List<UndoAction<? super T>> wrapped;
 
         public Builder() {
             this(5);
@@ -49,12 +49,12 @@ public interface UndoObjectAction<T> {
             wrapped = new ArrayList<>(expectSize);
         }
 
-        public void add(UndoObjectAction<? super T> action) {
+        public void add(UndoAction<? super T> action) {
             wrapped.add(action);
         }
 
         public void undoUnsafe(T obj) {
-            for (UndoObjectAction<? super T> action : wrapped)
+            for (UndoAction<? super T> action : wrapped)
                 action.undo(obj);
         }
     }

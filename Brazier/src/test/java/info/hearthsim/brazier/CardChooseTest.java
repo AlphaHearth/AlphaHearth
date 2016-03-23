@@ -2,10 +2,12 @@ package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.TestCards;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class CardChooseTest extends BrazierTest {
     @Test
+    @Ignore("TestAgent#addCardChoice is not supported for dynamic testing.")
     public void testTracking() {
         agent.setMana("p1", 10);
         agent.deck("p1", TestCards.YETI, TestCards.CULT_MASTER, TestCards.BLACKWING_CORRUPTOR, TestCards.BLUEGILL_WARRIOR, TestCards.ABUSIVE_SERGEANT);
@@ -18,6 +20,7 @@ public final class CardChooseTest extends BrazierTest {
     }
 
     @Test
+    @Ignore("TestAgent#addCardChoice is not supported for dynamic testing.")
     public void testTrackingWith2Cards() {
         agent.setMana("p1", 10);
         agent.deck("p1", TestCards.YETI, TestCards.CULT_MASTER);

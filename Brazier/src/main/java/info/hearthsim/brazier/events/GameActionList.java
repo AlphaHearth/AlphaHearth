@@ -1,4 +1,4 @@
-package info.hearthsim.brazier.actions;
+package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.GameProperty;
@@ -12,14 +12,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.actions.GameAction;
+import info.hearthsim.brazier.actions.GameObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.collections.RefLinkedList;
 import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
  * A {@code GameActionList} is essentially a weighted sequence of {@link GameObjectAction}. Every action element
- * is added to the list via {@link #addAction(int, Predicate, GameObjectAction)} method, where its priority and
+ * is added to the list via {@link #addAction(GameObjectAction)} method, where its priority and
  * trigger condition will be designated. The list will organised the added actions in a decreasing order of their
  * priorities. For actions with the same priority, they will be organised based on the sequence they are added.
  * <p>
@@ -50,8 +52,14 @@ public final class GameActionList <T extends GameProperty> {
      */
     public GameActionList<T> copy() {
         GameActionList<T> result = new GameActionList<>();
-        result.actions.addAll(actions);
+        for (ActionWrapper<T> action : actions)
+            if (action.toCopy)
+                result.actions.add(action);
         return result;
+    }
+
+    public UndoAction<GameActionList> addAction(GameObjectAction<T> action) {
+        return addAction(action, (arg) -> true, Priorities.NORMAL_PRIORITY, false);
     }
 
     /**
@@ -59,8 +67,8 @@ public final class GameActionList <T extends GameProperty> {
      *
      * @see Priorities#NORMAL_PRIORITY
      */
-    public UndoObjectAction<GameActionList> addAction(GameObjectAction<T> action) {
-        return addAction(Priorities.NORMAL_PRIORITY, (arg) -> true, action);
+    public UndoAction<GameActionList> addAction(GameObjectAction<T> action, boolean toCopy) {
+        return addAction(action, (arg) -> true, Priorities.NORMAL_PRIORITY, toCopy);
     }
 
     /**
@@ -87,17 +95,21 @@ public final class GameActionList <T extends GameProperty> {
 
     /**
      * Adds the given {@link GameObjectAction} to the list with given priority and trigger condition.
-     * @param priority the given priority.
-     * @param condition the given trigger condition.
+     *
      * @param action the given {@code GameObjectAction}.
+     * @param condition the given trigger condition.
+     * @param priority the given priority.
+     * @param toCopy if this action should be copied when this {@code GameActionList} is copied.
      *
      * @throws NullPointerException if the given {@code GameObjectAction} is {@code null}.
      */
-    public UndoObjectAction<GameActionList> addAction(int priority, Predicate<? super T> condition,
-                                                      GameObjectAction<? super T> action) {
+    public UndoAction<GameActionList> addAction(GameObjectAction<? super T> action,
+                                                      Predicate<? super T> condition,
+                                                      int priority,
+                                                      boolean toCopy) {
         ExceptionHelper.checkNotNullArgument(action, "action");
 
-        ActionWrapper<T> wrappedAction = new ActionWrapper<>(priority, condition, action);
+        ActionWrapper<T> wrappedAction = new ActionWrapper<>(action, condition, priority, toCopy);
         insert(wrappedAction);
 
         return (gal) -> gal.actions.remove(wrappedAction);
@@ -249,21 +261,24 @@ public final class GameActionList <T extends GameProperty> {
      * Wrapper for a {@link GameObjectAction}.
      */
     private static final class ActionWrapper<T> {
-        private final int priority;
-        private final Predicate<? super T> condition;
         private final GameObjectAction<? super T> wrapped;
+        private final Predicate<? super T> condition;
+        private final int priority;
+        private final boolean toCopy;
 
         /**
          * Creates a {@code ActionWrapper} with the given {@code priority}, {@code condition} and wrapping
          * {@link GameObjectAction}.
          */
-        public ActionWrapper(int priority, Predicate<? super T> condition, GameObjectAction<? super T> wrapped) {
+        public ActionWrapper(GameObjectAction<? super T> wrapped, Predicate<? super T> condition,
+                             int priority, boolean toCopy) {
             ExceptionHelper.checkNotNullArgument(condition, "condition");
             ExceptionHelper.checkNotNullArgument(wrapped, "wrapped");
 
-            this.priority = priority;
-            this.condition = condition;
             this.wrapped = wrapped;
+            this.condition = condition;
+            this.priority = priority;
+            this.toCopy = toCopy;
         }
 
         /**

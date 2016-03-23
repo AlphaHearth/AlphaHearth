@@ -59,7 +59,8 @@ public final class Minion implements Character<Minion>, DestroyableEntity, Silen
         this.birthDate = minion.birthDate;
         this.destroyed = new AtomicBoolean(minion.destroyed.get());
         this.scheduledToDestroy = new AtomicBoolean(minion.scheduledToDestroy.get());
-        this.properties = minion.properties.copyFor(this);
+        // All the abilities will be copied, but they will be reactivated for this new Minion.
+        this.properties = minion.properties.copyFor(this, false, false);
     }
 
     @Override
@@ -120,7 +121,7 @@ public final class Minion implements Character<Minion>, DestroyableEntity, Silen
         ExceptionHelper.checkNotNullArgument(other, "other");
 
         properties.deactivateAllAbilities();
-        properties = other.properties.copyFor(this, false);
+        properties = other.properties.copyFor(this);
         properties.activatePassiveAbilities();
         properties.exhaust();
     }

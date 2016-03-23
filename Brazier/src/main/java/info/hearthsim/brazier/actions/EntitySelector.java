@@ -9,7 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import info.hearthsim.brazier.GameProperty;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

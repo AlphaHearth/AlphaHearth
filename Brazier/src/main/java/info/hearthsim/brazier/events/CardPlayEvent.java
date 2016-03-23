@@ -2,7 +2,6 @@ package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.actions.CardPlayRef;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.Keyword;
 import info.hearthsim.brazier.LabeledEntity;
@@ -46,12 +45,11 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
      *
      * @param newTarget the new target for the new {@code PlayArg}.
      */
-    public UndoAction replaceTarget(Character newTarget) {
-        if (newTarget == getTarget()) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void replaceTarget(Character newTarget) {
+        if (newTarget == getTarget())
+            return;
 
-        return replaceTarget(Optional.ofNullable(newTarget));
+        replaceTarget(Optional.ofNullable(newTarget));
     }
 
     /**
@@ -60,12 +58,10 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
      *
      * @param newTarget the new target for the new {@code PlayArg}.
      */
-    public UndoAction replaceTarget(Optional<Character> newTarget) {
+    public void replaceTarget(Optional<Character> newTarget) {
         ExceptionHelper.checkNotNullArgument(newTarget, "newTarget");
 
-        PlayArg<Card> prevArg = cardPlayArg;
         cardPlayArg = new PlayArg<>(getCard(), newTarget);
-        return () -> cardPlayArg = prevArg;
     }
 
     public PlayArg<Card> getCardPlayArg() {
@@ -88,13 +84,11 @@ public final class CardPlayEvent implements PlayerProperty, LabeledEntity, CardP
     /**
      * Vetoes this card-playing event.
      */
-    public UndoAction vetoPlay() {
-        if (vetoedPlay) {
-            return UndoAction.DO_NOTHING;
-        }
+    public void vetoPlay() {
+        if (vetoedPlay)
+            return;
 
         vetoedPlay = true;
-        return () -> vetoedPlay = false;
     }
 
     /**

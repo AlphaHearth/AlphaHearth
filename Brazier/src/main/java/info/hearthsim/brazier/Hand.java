@@ -1,7 +1,7 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.ActionUtils;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.cards.Card;
 import info.hearthsim.brazier.cards.CardDescr;
 
@@ -36,7 +36,7 @@ public final class Hand implements PlayerProperty {
     public Hand copyFor(Player newOwner) {
         Hand result = new Hand(newOwner, this.maxSize);
         for (CardRef card : this.hand)
-            result.hand.add(new CardRef(card.card.copyFor(newOwner.getGame(), newOwner)));
+            result.addCard(card.card.copyFor(newOwner.getGame(), newOwner));
         return result;
     }
 
@@ -206,7 +206,7 @@ public final class Hand implements PlayerProperty {
 
     private static final class CardRef {
         private final Card card;
-        private UndoObjectAction<? super Card> unregisterRef;
+        private UndoAction<? super Card> unregisterRef;
 
         public CardRef(Player owner, CardDescr cardDescr) {
             this(new Card(owner, cardDescr));
@@ -215,7 +215,7 @@ public final class Hand implements PlayerProperty {
         public CardRef(Card card) {
             ExceptionHelper.checkNotNullArgument(card, "card");
             this.card = card;
-            this.unregisterRef = UndoObjectAction.DO_NOTHING;
+            this.unregisterRef = UndoAction.DO_NOTHING;
         }
 
         public void activate() {

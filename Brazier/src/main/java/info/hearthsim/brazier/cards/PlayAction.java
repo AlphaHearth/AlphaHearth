@@ -4,7 +4,6 @@ import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.TargetedAction;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 
 import java.util.Optional;
 

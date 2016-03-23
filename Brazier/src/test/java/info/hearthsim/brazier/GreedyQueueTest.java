@@ -3,6 +3,7 @@ package info.hearthsim.brazier;
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.RandomTestUtils;
 import info.hearthsim.brazier.utils.TestCards;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -58,21 +59,25 @@ public final class GreedyQueueTest extends BrazierTest {
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testExplosiveTrapWithAttackFaceTrapFirst() {
         testExplosiveTrapWithAttackFace(true);
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testExplosiveTrapWithAttackFaceTrapLast() {
         testExplosiveTrapWithAttackFace(false);
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testExplosiveTrapWithAttackMinionTrapFirst() {
         testExplosiveTrapWithAttackMinion(true);
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testExplosiveTrapWithAttackMinionTrapLast() {
         testExplosiveTrapWithAttackMinion(false);
     }

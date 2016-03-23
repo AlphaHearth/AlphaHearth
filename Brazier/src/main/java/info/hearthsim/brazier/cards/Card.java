@@ -2,7 +2,7 @@ package info.hearthsim.brazier.cards;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.ManaCostAdjuster;
 import info.hearthsim.brazier.minions.Minion;
@@ -55,7 +55,7 @@ public final class Card implements Entity<Card>, PlayerProperty, LabeledEntity, 
         this.owner = owner;
         this.cardDescr = cardDescr;
         this.manaCost = new AuraAwareIntProperty(cardDescr.getManaCost());
-        this.manaCost.addBuff(this::adjustManaCost);
+        this.manaCost.addExternalBuff(this::adjustManaCost);
 
         MinionDescr minionDescr = cardDescr.getMinion();
         this.minion = minionDescr != null ? new Minion(owner, cardDescr.getMinion()) : null;
@@ -75,6 +75,7 @@ public final class Card implements Entity<Card>, PlayerProperty, LabeledEntity, 
         this.owner = owner;
         this.cardDescr = card.cardDescr;
         this.manaCost = card.manaCost.copy();
+        this.manaCost.addExternalBuff(this::adjustManaCost);
         if (card.minion == null)
             this.minion = null;
         else
@@ -142,8 +143,8 @@ public final class Card implements Entity<Card>, PlayerProperty, LabeledEntity, 
     /**
      * Adds a buff to this {@code Card} which decreases its mana cost with the given amount.
      */
-    public UndoObjectAction<Card> decreaseManaCost(int amount) {
-        return UndoObjectAction.of(this, (c) -> c.manaCost, (mc) -> mc.addBuff(-amount));
+    public UndoAction<Card> decreaseManaCost(int amount) {
+        return UndoAction.of(this, (c) -> c.manaCost, (mc) -> mc.addBuff(-amount));
     }
 
     /**

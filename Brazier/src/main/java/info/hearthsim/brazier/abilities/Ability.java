@@ -1,8 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.Entity;
 import info.hearthsim.brazier.GameProperty;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,12 +30,12 @@ import org.jtrim.utils.ExceptionHelper;
  */
 @FunctionalInterface
 public interface Ability <Self> {
-    public static final Ability DO_NOTHING = (self) -> UndoObjectAction.DO_NOTHING;
+    public static final Ability DO_NOTHING = (self) -> UndoAction.DO_NOTHING;
 
     /**
      * Activates the {@code Ability} with the given object.
      */
-    public UndoObjectAction<Self> activate(Self self);
+    public UndoAction<Self> activate(Self self);
 
     /**
      * Merges the given collection of {@code Ability}s to one {@code Ability}.
@@ -48,13 +47,13 @@ public interface Ability <Self> {
         ExceptionHelper.checkNotNullElements(abilities, "abilities");
 
         if (abilities.isEmpty()) {
-            return (self) -> UndoObjectAction.DO_NOTHING;
+            return (self) -> UndoAction.DO_NOTHING;
         }
 
         List<Ability<? super Self>> abilitiesCopy = new ArrayList<>(abilities);
 
         return (Self self) -> {
-            UndoObjectAction.Builder<Self> result = new UndoObjectAction.Builder<>(abilitiesCopy.size());
+            UndoAction.Builder<Self> result = new UndoAction.Builder<>(abilitiesCopy.size());
             for (Ability<? super Self> ability : abilitiesCopy) {
                 result.add(ability.activate(self));
             }
@@ -81,8 +80,8 @@ public interface Ability <Self> {
 
         return (Self self) -> {
             GameEvents events = self.getGame().getEvents();
-            GameActionEvents<EventArg> listeners = events.simpleListeners(eventType);
-            UndoObjectAction<GameActionEvents> undoRef =
+            GameEventActions<EventArg> listeners = events.simpleListeners(eventType);
+            UndoAction<GameEventActions> undoRef =
                 listeners.register((EventArg eventArg) -> {
                     if (filter.applies(self, eventArg))
                         action.trigger(self, eventArg);

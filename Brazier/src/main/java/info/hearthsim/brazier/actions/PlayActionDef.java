@@ -6,7 +6,6 @@ import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.cards.PlayAction;
 import java.util.Collection;
 
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

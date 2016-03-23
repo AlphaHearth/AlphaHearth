@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Silencable;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 /**
  * Aura-aware boolean property, implemented by using an underlying {@link AuraAwarePropertyBase},
@@ -27,7 +27,7 @@ public final class AuraAwareBoolProperty implements Silencable {
 
     private AuraAwareBoolProperty(AuraAwareBoolProperty other) {
         this.baseValue = other.baseValue;
-        this.impl = other.impl.clone();
+        this.impl = other.impl.copy(false);
     }
 
     /**
@@ -40,7 +40,7 @@ public final class AuraAwareBoolProperty implements Silencable {
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty} which sets the buffed value to the given value.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> setValueTo(boolean newValue) {
+    public UndoAction<AuraAwareBoolProperty> setValueTo(boolean newValue) {
         return addRemovableBuff((prev) -> newValue);
     }
 
@@ -48,36 +48,36 @@ public final class AuraAwareBoolProperty implements Silencable {
      * Adds a new removable external buff to this {@code AuraAwareBoolProperty} which sets the buffed value to
      * the given value.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> setValueToExternal(boolean newValue) {
+    public UndoAction<AuraAwareBoolProperty> setValueToExternal(boolean newValue) {
         return addRemovableBuff(BuffArg.NORMAL_AURA_BUFF, (prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> addRemovableBuff(BoolPropertyBuff toAdd) {
+    public UndoAction<AuraAwareBoolProperty> addRemovableBuff(BoolPropertyBuff toAdd) {
         return addRemovableBuff(BuffArg.NORMAL_BUFF, toAdd);
     }
 
     /**
      * Adds a new removable external buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> addExternalBuff(BoolPropertyBuff toAdd) {
+    public UndoAction<AuraAwareBoolProperty> addExternalBuff(BoolPropertyBuff toAdd) {
         return addRemovableBuff(BuffArg.NORMAL_AURA_BUFF, toAdd);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty} which sets the buffed value to the given value.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> setValueTo(BuffArg buffArg, boolean newValue) {
+    public UndoAction<AuraAwareBoolProperty> setValueTo(BuffArg buffArg, boolean newValue) {
         return addRemovableBuff(buffArg, (prev) -> newValue);
     }
 
     /**
      * Adds a new removable buff to this {@code AuraAwareBoolProperty}.
      */
-    public UndoObjectAction<AuraAwareBoolProperty> addRemovableBuff(BuffArg buffArg, BoolPropertyBuff toAdd) {
-        UndoObjectAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(buffArg, toAdd);
+    public UndoAction<AuraAwareBoolProperty> addRemovableBuff(BuffArg buffArg, BoolPropertyBuff toAdd) {
+        UndoAction<AuraAwarePropertyBase> undoRef = impl.addRemovableBuff(buffArg, toAdd);
         return (aabp) -> undoRef.undo(aabp.impl);
     }
 

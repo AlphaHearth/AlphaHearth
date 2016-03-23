@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.TestAgent;
 import org.jtrim.collections.CollectionsEx;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static info.hearthsim.brazier.utils.TestCards.*;
@@ -117,6 +118,7 @@ public final class SummonEventTest extends BrazierTest {
     }
 
     @Test
+    @Ignore("Not supported for dynamic testing")
     public void testAlarmOBot() {
         testAlarmOBot(0);
         setUp(); // Set up again to reset TestAgent

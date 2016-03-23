@@ -174,7 +174,7 @@ public class Board {
     }
 
     /**
-     * Returns a clone of this {@code Board}, which represents the same game state
+     * Returns a copy of this {@code Board}, which represents the same game state
      * without sharing any reference to same object with this {@code Board} unless
      * the object is immutable.
      */

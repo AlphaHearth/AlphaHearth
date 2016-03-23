@@ -3,7 +3,6 @@ package info.hearthsim.brazier.actions;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
-import info.hearthsim.brazier.actions.undo.*;
 import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.minions.Minion;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -100,11 +100,11 @@ public final class TargetedActions {
      * See spell <em>Conceal</em>.
      */
     public static final TargetedAction<Object, Minion> STEALTH_FOR_A_TURN = (actor, minion) -> {
-        UndoObjectAction<AuraAwareBoolProperty> undoRef = minion.getBody().getStealthProperty().setValueTo(true);
+        UndoAction<AuraAwareBoolProperty> undoRef = minion.getBody().getStealthProperty().setValueTo(true);
         minion.getGame().getEvents().turnStartsListeners().register((actionPlayer) -> {
             if (actionPlayer.getPlayerId() == minion.getOwner().getPlayerId())
                 undoRef.undo(actionPlayer.getGame().getMinion(minion.getEntityId()).getBody().getStealthProperty());
-        });
+        }, true);
     };
 
     /**
@@ -332,20 +332,21 @@ public final class TargetedActions {
      * See spell <em>Blessing of Wisdom</em>.
      */
     public static <Actor extends PlayerProperty> TargetedAction<Actor, Minion> doOnAttack(
-        @NamedArg("action") TargetlessAction<? super Actor> action) {
+        @NamedArg("action") TargetlessAction<PlayerProperty> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (Actor actor, Minion target) -> {
-            target.addAndActivateAbility((Minion self) -> {
+            target.getProperties().addAndActivateAbility((Minion self) -> {
                 GameEvents events = self.getGame().getEvents();
-                GameActionEvents<AttackRequest> listeners = events.simpleListeners(SimpleEventType.ATTACK_INITIATED);
+                GameEventActions<AttackRequest> listeners = events.simpleListeners(SimpleEventType.ATTACK_INITIATED);
 
                 Predicate<AttackRequest> condition =
                     (attackRequest) -> attackRequest.getAttacker().getEntityId() == self.getEntityId();
-                UndoObjectAction<GameActionEvents> undoRef =
-                    listeners.register(Priorities.LOW_PRIORITY, condition,
-                        (attackRequest) -> action.apply(actor));
+                UndoAction<GameEventActions> undoRef =
+                    listeners.register(
+                        (attackRequest) -> action.apply(self.getGame().getPlayer(actor.getOwner().getPlayerId())),
+                        condition, Priorities.LOW_PRIORITY);
                 return (s) -> undoRef.undo(s.getGame().getEvents().simpleListeners(SimpleEventType.ATTACK_INITIATED));
-            });
+            }, true, true);
         };
     }
 
@@ -484,7 +485,7 @@ public final class TargetedActions {
     public static TargetedAction<Object, Minion> addAbility(
         @NamedArg("ability") Ability<? super Minion> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
-        return (actor, minion) -> minion.addAndActivateAbility(ability);
+        return (actor, minion) -> minion.getProperties().addAndActivateAbility(ability, true, true);
     }
 
     /**
@@ -638,7 +639,7 @@ public final class TargetedActions {
      * See spell <em>Divine Spirit</em>.
      */
     public static TargetedAction<Object, Character> multiplyHp(@NamedArg("mul") int mul) {
-        Function<HpProperty, UndoObjectAction<HpProperty>> buffAction =
+        Function<HpProperty, UndoAction<HpProperty>> buffAction =
             (hp) -> hp.buffHp((mul - 1) * hp.getCurrentHp());
         return (actor, target) -> ActionUtils.adjustHp(target, buffAction);
     }
@@ -709,7 +710,7 @@ public final class TargetedActions {
     }
 
     private static void takeControlForThisTurn(Player newOwner, Minion minion) {
-        minion.addAndActivateAbility(ActionUtils.toSingleTurnAbility((Minion self) -> {
+        minion.getProperties().addAndActivateAbility(ActionUtils.toSingleTurnAbility((Minion self) -> {
             Player originalOwner = self.getOwner();
             newOwner.getBoard().takeOwnership(self);
             self.refreshStartOfTurn();
@@ -719,7 +720,7 @@ public final class TargetedActions {
                     m.getGame().getPlayer(originalOwner.getPlayerId()).getBoard().takeOwnership(m);
                 }
             };
-        }));
+        }), true, false);
     }
 
     /**

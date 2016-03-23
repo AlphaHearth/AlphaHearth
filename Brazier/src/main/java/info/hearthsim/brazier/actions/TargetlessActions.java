@@ -3,7 +3,7 @@ package info.hearthsim.brazier.actions;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.Character;
 import info.hearthsim.brazier.abilities.*;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.cards.Card;
@@ -17,7 +17,6 @@ import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.minions.MinionName;
 import info.hearthsim.brazier.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import info.hearthsim.brazier.weapons.Weapon;
 import info.hearthsim.brazier.weapons.WeaponDescr;
 import info.hearthsim.brazier.weapons.WeaponProvider;
@@ -45,7 +44,8 @@ public final class TargetlessActions {
      * {@link TargetlessAction} which makes the actor's owner draw a card from the deck.
      */
     public static final TargetlessAction<PlayerProperty> DRAW_FOR_SELF =
-        (PlayerProperty actor) -> actor.getOwner().drawCardToHand();
+        (PlayerProperty actor) ->
+            actor.getOwner().drawCardToHand();
 
     /**
      * {@link TargetlessAction} which makes the opponent of the actor's owner draw a card from the deck.
@@ -477,7 +477,6 @@ public final class TargetlessActions {
                 return;
 
             int drawCount = opponentHand - playerHand;
-            UndoAction.Builder result = new UndoAction.Builder(drawCount);
             for (int i = 0; i < drawCount; i++)
                 player.drawCardToHand();
         };
@@ -947,7 +946,8 @@ public final class TargetlessActions {
         @NamedArg("card") EntitySelector<? super Actor, ? extends CardDescr> card) {
         ExceptionHelper.checkNotNullArgument(card, "card");
 
-        return (Actor actor) -> addCards(actor, card, costReduction);
+        return (Actor actor) ->
+            addCards(actor, card, costReduction);
     }
 
     /**
@@ -1288,7 +1288,7 @@ public final class TargetlessActions {
      * <p>
      * See spell <em>Commanding Shout</em>.
      */
-    public static <Actor extends GameProperty> TargetlessAction<Actor> addThisTurnAbility(
+    public static <Actor extends Entity> TargetlessAction<Actor> addThisTurnAbility(
         @NamedArg("ability") Ability<Actor> ability) {
         ExceptionHelper.checkNotNullArgument(ability, "ability");
         Ability<Actor> onTurnAbility = ActionUtils.toSingleTurnAbility(ability);
@@ -1568,7 +1568,8 @@ public final class TargetlessActions {
             Ability<Player> aura = Abilities.aura(
                 AuraTargetProviders.OWN_HAND_PROVIDER,
                 filter,
-                Auras.decreaseManaCost(amount));
+                Auras.decreaseManaCost(amount),
+                true);
             aura = deactivateAfterPlay(aura, filter);
             aura = ActionUtils.toSingleTurnAbility(aura);
 
@@ -1611,7 +1612,7 @@ public final class TargetlessActions {
 
     /**
      * Returns a {@link Ability} which activates the given {@code Ability} when it's activated, and
-     * deactivate the ability when the next card which satisfies the given {@code Predicate} is played.
+     * deactivates the ability when the next card which satisfies the given {@code Predicate} is played.
      */
     private static Ability<Player> deactivateAfterCardPlay(
         Ability<Player> ability,
@@ -1620,19 +1621,19 @@ public final class TargetlessActions {
         ExceptionHelper.checkNotNullArgument(deactivateCondition, "deactivateCondition");
 
         return (Player self) -> {
-            UndoObjectAction.Builder<Player> undoRef = new UndoObjectAction.Builder<>(2);
+            UndoAction.Builder<Player> undoRef = new UndoAction.Builder<>(2);
 
-            UndoObjectAction<Player> abilityUndo = ability.activate(self);
+            UndoAction<Player> abilityUndo = ability.activate(self);
             undoRef.add(abilityUndo);
 
             GameEvents events = self.getGame().getEvents();
 
-            GameActionEvents<CardPlayEvent> listeners = events.simpleListeners(SimpleEventType.PLAY_CARD);
-            UndoObjectAction<GameActionEvents> eventUndo =
+            GameEventActions<CardPlayEvent> listeners = events.simpleListeners(SimpleEventType.PLAY_CARD);
+            UndoAction<GameEventActions> eventUndo =
                 listeners.register((CardPlayEvent playEvent) -> {
                     if (deactivateCondition.test(playEvent.getCard()))
                         abilityUndo.undo(playEvent.getOwner());
-                });
+                }, true);
             undoRef.add((Player p) ->
                 eventUndo.undo(p.getGame().getEvents().simpleListeners(SimpleEventType.PLAY_CARD)));
 
@@ -1684,6 +1685,21 @@ public final class TargetlessActions {
     }
 
     /**
+     * Returns a {@code TargetlessAction} which executes the given {@code TargetlessAction} on the end of turn.
+     * <p>
+     * See spell <em>Headcrack</em>.
+     */
+    public static <Actor extends Entity> TargetlessAction<Actor> doOnEndOfTurn(
+        @NamedArg("action") TargetlessAction<? super Entity> action,
+        @NamedArg("isFromSpell") boolean isFromSpell) {
+        ExceptionHelper.checkNotNullArgument(action, "action");
+
+        return (Actor actor) -> ActionUtils.doOnEndOfTurn(actor.getGame(),
+            action::apply,
+            isFromSpell);
+    }
+
+    /**
      * Returns a {@code TargetlessAction} which draws a random card with all of the given {@code Keyword}s
      * from the deck and plays it.
      */
@@ -1729,7 +1745,6 @@ public final class TargetlessActions {
             Player player = actor.getOwner();
             Deck deck = player.getDeck();
 
-            UndoAction.Builder result = new UndoAction.Builder(cardCount + 1);
             List<CardDescr> choosenCards = new ArrayList<>(cardCount);
             for (int i = 0; i < cardCount; i++) {
                 Card card = deck.tryDrawOneCard();

@@ -4,10 +4,8 @@ import info.hearthsim.brazier.Character;
 
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.GameProperty;
 import info.hearthsim.brazier.Player;
 import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.actions.undo.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -57,10 +55,8 @@ public final class AttackRequest implements PlayerProperty {
     /**
      * Sets the target of this {@code AttackRequest}.
      */
-    public UndoAction replaceTarget(Character newTarget) {
-        Character prevTarget = target;
+    public void replaceTarget(Character newTarget) {
         target = newTarget;
-        return () -> target = prevTarget;
     }
 
     @Override

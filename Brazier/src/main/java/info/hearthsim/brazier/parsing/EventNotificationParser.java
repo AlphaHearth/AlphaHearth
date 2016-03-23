@@ -2,7 +2,7 @@ package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.events.GameActionEvents;
+import info.hearthsim.brazier.events.GameEventActions;
 import com.google.gson.JsonPrimitive;
 
 import java.util.Locale;
@@ -20,8 +20,8 @@ import org.jtrim.utils.ExceptionHelper;
 public final class EventNotificationParser <Self extends Entity> {
     private final Class<? extends Self> selfType;
     private final JsonDeserializer objectParser;
-    private final EventFilter<? super Self, Object> globalFilter;
-    private final EventAction<? super Self, Object> actionFinalizer;
+    private final EventFilter globalFilter;
+    private final EventAction actionFinalizer;
 
     public EventNotificationParser(Class<? extends Self> selfType, JsonDeserializer objectParser) {
         this(selfType, objectParser, EventFilters.ANY, EventAction.DO_NOTHING);
@@ -30,8 +30,8 @@ public final class EventNotificationParser <Self extends Entity> {
     public EventNotificationParser(
         Class<? extends Self> selfType,
         JsonDeserializer objectParser,
-        EventFilter<? super Self, Object> globalFilter,
-        EventAction<? super Self, Object> actionFinalizer) {
+        EventFilter globalFilter,
+        EventAction<? super Self, ?> actionFinalizer) {
         ExceptionHelper.checkNotNullArgument(selfType, "selfType");
         ExceptionHelper.checkNotNullArgument(objectParser, "objectParser");
         ExceptionHelper.checkNotNullArgument(globalFilter, "globalFilter");
@@ -134,7 +134,7 @@ public final class EventNotificationParser <Self extends Entity> {
         @SuppressWarnings("unchecked")
         Class<T> eventArgType = (Class<T>) eventType.getArgumentType();
 
-        Function<GameEvents, GameActionEvents<T>> actionEventListenersGetter =
+        Function<GameEvents, GameEventActions<T>> actionEventListenersGetter =
             (gameEvents) -> gameEvents.simpleListeners(eventType);
 
         Consumer<EventActionDef<Self, T>> actionDefAdder =
@@ -154,7 +154,7 @@ public final class EventNotificationParser <Self extends Entity> {
     private <T extends GameProperty> void parseActionDefs(
         Class<T> targetType,
         JsonTree actionDefsElement,
-        Function<GameEvents, GameActionEvents<T>> actionEventListenersGetter,
+        Function<GameEvents, GameEventActions<T>> actionEventListenersGetter,
         Consumer<EventActionDef<Self, T>> actionDefAdder,
         EventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
 
@@ -186,7 +186,7 @@ public final class EventNotificationParser <Self extends Entity> {
     private <T extends GameProperty> EventActionDef<Self, T> tryParseActionDef(
         Class<T> targetType,
         JsonTree actionDefElement,
-        Function<GameEvents, GameActionEvents<T>> actionEventListenersGetter,
+        Function<GameEvents, GameEventActions<T>> actionEventListenersGetter,
         EventFilter<? super Self, ? super T> globalFilter) throws ObjectParsingException {
 
         if (actionDefElement == null) {

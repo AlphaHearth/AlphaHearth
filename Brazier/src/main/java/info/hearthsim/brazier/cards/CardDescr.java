@@ -6,7 +6,7 @@ import info.hearthsim.brazier.actions.ManaCostAdjuster;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.TargetNeed;
 import info.hearthsim.brazier.actions.TargetlessAction;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.minions.Minion;
 import info.hearthsim.brazier.minions.MinionDescr;
 import info.hearthsim.brazier.HearthStoneEntity;
@@ -122,7 +122,7 @@ public final class CardDescr implements HearthStoneEntity {
     public Ability<? super Card> getInHandAbility() {
         return inHandAbility != null
                 ? inHandAbility
-                : (card) -> UndoObjectAction.DO_NOTHING;
+                : (card) -> UndoAction.DO_NOTHING;
     }
 
     public TargetNeed getCombinedTargetNeed(Player player) {

@@ -4,7 +4,7 @@ import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.Game;
 
@@ -53,7 +53,7 @@ public final class Weapon implements Entity<Weapon>, DestroyableEntity, DamageSo
         this.attack = other.attack.copy();
         this.durability = other.durability;
         this.birthDate = other.birthDate;
-        this.abilities = other.abilities.copyFor(this);
+        this.abilities = other.abilities.copyFor(this, true);
         this.scheduledToDestroy = new AtomicBoolean(other.isScheduledToDestroy());
         this.deathRattle = other.deathRattle;
     }
@@ -117,13 +117,13 @@ public final class Weapon implements Entity<Weapon>, DestroyableEntity, DamageSo
         return new Damage(this, damage);
     }
 
-    public UndoObjectAction<Weapon> increaseDurability() {
+    public UndoAction<Weapon> increaseDurability() {
         return increaseDurability(1);
     }
 
-    public UndoObjectAction<Weapon> increaseDurability(int amount) {
+    public UndoAction<Weapon> increaseDurability(int amount) {
         if (durability == Integer.MAX_VALUE || amount == 0) {
-            return UndoObjectAction.DO_NOTHING;
+            return UndoAction.DO_NOTHING;
         }
 
         durability += amount;
@@ -172,9 +172,9 @@ public final class Weapon implements Entity<Weapon>, DestroyableEntity, DamageSo
         ExceptionHelper.checkNotNullArgument(deathRattle, "deathRattle");
 
         return (Weapon self) -> {
-            GameActionEvents<Weapon> listeners = self.getGame().getEvents()
+            GameEventActions<Weapon> listeners = self.getGame().getEvents()
                     .simpleListeners(SimpleEventType.WEAPON_DESTROYED);
-            UndoObjectAction<GameActionEvents> undoRef = listeners.register((Weapon target) -> {
+            UndoAction<GameEventActions> undoRef = listeners.register((Weapon target) -> {
                 if (target == self)
                     deathRattle.trigger(self, target);
             });

@@ -2,9 +2,7 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.GameProperty;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
-import info.hearthsim.brazier.actions.undo.UndoAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
- * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura)} and {@link #updateAllAura()}
+ * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura, boolean)} and {@link #updateAllAura()}
  * to manage a group of {@code ActiveAura}s.
  */
 public final class ActiveAuraList implements GameProperty {
@@ -29,8 +27,10 @@ public final class ActiveAuraList implements GameProperty {
      */
     public ActiveAuraList copyFor(Game newGame) {
         ActiveAuraList result = new ActiveAuraList(newGame);
-        for (AuraWrapper aura : auras)
-            result.addAura(aura.aura.copyFor(newGame));
+        for (AuraWrapper aura : auras) {
+            if (aura.toCopy)
+                result.addAura(aura.aura.copyFor(newGame, null), true);
+        }
         return result;
     }
 
@@ -50,16 +50,21 @@ public final class ActiveAuraList implements GameProperty {
     /**
      * Adds (registers) a new {@code ActiveAura} to this {@code ActiveAuraList}.
      */
-    public UndoObjectAction<ActiveAuraList> addAura(ActiveAura aura) {
+    public UndoAction<ActiveAuraList> addAura(ActiveAura aura, boolean toCopy) {
         // We wrap "aura" to ensure that we remove the one
         // added by this method call in the returned reference.
-        AuraWrapper auraWrapper = new AuraWrapper(aura);
+        AuraWrapper auraWrapper = new AuraWrapper(aura, toCopy);
         auras.add(auraWrapper);
 
-        return UndoObjectAction.toIdempotent((aal) -> {
-            auraWrapper.deactivate(aal);
-            aal.removeAndGetIndex(aal.auras, auraWrapper);
-        });
+        return (aal) -> {
+            for (AuraWrapper a : aal.auras) {
+                if (a.aura.getEntityId() == aura.getEntityId()) {
+                    a.deactivate();
+                    aal.auras.remove(a);
+                    return;
+                }
+            }
+        };
     }
 
     /**
@@ -72,7 +77,7 @@ public final class ActiveAuraList implements GameProperty {
 
         // Copy the list to ensure that it does not change during iteration
         for (AuraWrapper aura: new ArrayList<>(auras))
-            aura.updateAura(this);
+            aura.updateAura();
     }
 
     @Override
@@ -80,20 +85,22 @@ public final class ActiveAuraList implements GameProperty {
         return game;
     }
 
-    private static final class AuraWrapper {
+    private final class AuraWrapper {
         private final ActiveAura aura;
+        private final boolean toCopy;
 
-        public AuraWrapper(ActiveAura aura) {
+        public AuraWrapper(ActiveAura aura, boolean toCopy) {
             ExceptionHelper.checkNotNullArgument(aura, "aura");
             this.aura = aura;
+            this.toCopy = toCopy;
         }
 
-        public void updateAura(ActiveAuraList list) {
-            aura.applyAura(list.getGame());
+        public void updateAura() {
+            aura.applyAura(getGame());
         }
 
-        public void deactivate(ActiveAuraList list) {
-            aura.deactivate(list.getGame());
+        public void deactivate() {
+            aura.deactivate(getGame());
         }
     }
 }

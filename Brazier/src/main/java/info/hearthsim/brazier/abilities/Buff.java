@@ -1,10 +1,7 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Entity;
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
-import info.hearthsim.brazier.actions.undo.UnregisterAction;
-import info.hearthsim.brazier.actions.undo.UndoableUnregisterAction;
+import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +20,7 @@ public interface Buff<Target extends Entity> {
     /**
      * Adds the temporary buff to the given target in the given game with the given arguments in {@link BuffArg}.
      */
-    public UndoObjectAction<Target> buff(Target target, BuffArg arg);
+    public UndoAction<Target> buff(Target target, BuffArg arg);
 
     public default PermanentBuff<Target> toPermanent() {
         return this::buff;
@@ -40,13 +37,13 @@ public interface Buff<Target extends Entity> {
         ExceptionHelper.checkNotNullElements(buffs, "buffs");
 
         if (buffs.isEmpty()) {
-            return (actor, arg) -> UndoObjectAction.DO_NOTHING;
+            return (actor, arg) -> UndoAction.DO_NOTHING;
         }
 
         List<? extends Buff<? super Target>> buffsCopy = new ArrayList<>(buffs);
 
         return (Target target, BuffArg arg) -> {
-            UndoObjectAction.Builder<Target> result = new UndoObjectAction.Builder<>(buffsCopy.size());
+            UndoAction.Builder<Target> result = new UndoAction.Builder<>(buffsCopy.size());
             for (Buff<? super Target> buff: buffsCopy) {
                 result.add(buff.buff(target, arg));
             }

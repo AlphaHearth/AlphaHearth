@@ -1,6 +1,6 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.actions.undo.UndoObjectAction;
+import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
@@ -76,7 +76,7 @@ public final class Hero implements Character<Hero> {
         this.owner = newOwner;
         this.hp = hero.hp.copy();
         this.currentArmor = hero.currentArmor;
-        this.attackTool = hero.attackTool.copy();
+        this.attackTool = new HeroAttackTool(hero.attackTool);
         this.immune = hero.immune.copy();
         this.heroClass = hero.heroClass;
         this.keywords = hero.keywords; // This field is unmodifiable
@@ -193,8 +193,8 @@ public final class Hero implements Character<Hero> {
         return attackTool.extraAttack;
     }
 
-    public UndoObjectAction<Hero> addExtraAttackForThisTurn(int amount) {
-        return UndoObjectAction.of(this, (h) -> h.attackTool, (at) -> at.addAttack(amount));
+    public UndoAction<Hero> addExtraAttackForThisTurn(int amount) {
+        return UndoAction.of(this, (h) -> h.attackTool, (at) -> at.addAttack(amount));
     }
 
     @Override
@@ -361,13 +361,6 @@ public final class Hero implements Character<Hero> {
             this.extraAttack = other.extraAttack;
         }
 
-        /**
-         * Returns a copy of this {@code HeroAttackTool}.
-         */
-        public HeroAttackTool copy() {
-            return new HeroAttackTool(this);
-        }
-
         private Weapon tryGetWeapon() {
             return getOwner().tryGetWeapon();
         }
@@ -377,7 +370,7 @@ public final class Hero implements Character<Hero> {
             return getOwner().getWeaponAttack() + extraAttack;
         }
 
-        public UndoObjectAction<HeroAttackTool> addAttack(int attackAddition) {
+        public UndoAction<HeroAttackTool> addAttack(int attackAddition) {
             extraAttack += attackAddition;
             return (hat) -> hat.extraAttack -= attackAddition;
         }

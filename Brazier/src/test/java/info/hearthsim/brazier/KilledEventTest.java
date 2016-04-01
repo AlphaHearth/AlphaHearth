@@ -6,6 +6,74 @@ import org.junit.Test;
 
 public final class KilledEventTest extends BrazierTest {
     @Test
+    public void testSI7KillsMadScientist() {
+        agent.setMana("p1", 2);
+        agent.setMana("p2", 2);
+        agent.deck("p2", TestCards.MIRROR_ENTITY);
+        agent.setCurrentPlayer("p2");
+        agent.playMinionCard("p2", TestCards.MAD_SCIENTIST, 0);
+        agent.endTurn();
+        agent.playNonMinionCard("p1", TestCards.THE_COIN, "");
+        agent.playMinionCard("p1", TestCards.SI7_AGENT, 0, "p2:0");
+
+        // The battle cry effect of SI:7 kills the Mad Scientist, whose death rattle effect
+        // pulls out the Mirror Entity for player2. Then the summoning event of SI:7 is triggered,
+        // which also triggers the Mirror Entity to summon a copy of SI:7 for player2.
+        //
+        // The tricks here is, summoning a minion should do the following steps in the exact order:
+        //   1. Adds the minion to the board;
+        //   2. Trigger its battle cry effect;
+        //   3. Trigger the summoning event.
+        agent.expectBoard("p1",
+            TestCards.expectedMinion(TestCards.SI7_AGENT, 3, 3)
+        );
+        agent.expectBoard("p2",
+            TestCards.expectedMinion(TestCards.SI7_AGENT, 3, 3)
+        );
+        agent.expectSecret("p2");
+    }
+
+    @Test
+    public void testMekgineerBlockBelcherDeathRattle() {
+        agent.setMana("p2", 10);
+        agent.setMana("p1", 10);
+
+        agent.setCurrentPlayer("p1");
+        agent.playMinionCard("p1", TestCards.RECKLESS_ROCKETEER, 0);
+        agent.endTurn();
+
+        agent.playMinionCard("p2", TestCards.MEKGINEER, 0);
+        agent.setMana("p2", 10);
+        agent.playMinionCard("p2", TestCards.WISP, 1);
+        agent.playMinionCard("p2", TestCards.WISP, 2);
+        agent.playMinionCard("p2", TestCards.WISP, 3);
+        agent.playMinionCard("p2", TestCards.WISP, 4);
+        agent.playMinionCard("p2", TestCards.WISP, 5);
+        agent.playMinionCard("p2", TestCards.SLUDGE_BELCHER, 6);
+        agent.endTurn();
+
+        agent.attack("p1:0", "p2:6");
+
+        // The triggering effect of Mekgineer Thermaplugg will summon a Leper Gnome for player2
+        // as Reckless Rocketeer dies. The Gnome fills up the player2's board, preventing the
+        // death rattle effect of Sludge Belcher from summoning the Slime.
+        //
+        // The tricks here is, Reckless Rocketeer born before Sludge Belcher, hence its killed event
+        // should be triggered before triggering Sludge Belcher's death rattle.
+
+        agent.expectBoard("p1");
+        agent.expectBoard("p2",
+            TestCards.expectedMinion(TestCards.MEKGINEER, 9, 7),
+            TestCards.expectedMinion(TestCards.LEPER_GNOME, 2, 1),
+            TestCards.expectedMinion(TestCards.WISP, 1, 1),
+            TestCards.expectedMinion(TestCards.WISP, 1, 1),
+            TestCards.expectedMinion(TestCards.WISP, 1, 1),
+            TestCards.expectedMinion(TestCards.WISP, 1, 1),
+            TestCards.expectedMinion(TestCards.WISP, 1, 1)
+        );
+    }
+
+    @Test
     public void testSoulOfTheForest() {
         agent.setMana("p2", 10);
         agent.playMinionCard("p2", TestCards.BLUEGILL_WARRIOR, 0);

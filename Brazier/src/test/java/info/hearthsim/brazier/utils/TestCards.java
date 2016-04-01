@@ -60,10 +60,13 @@ public final class TestCards {
     public static final String KEZAN_MYSTIC = "Kezan Mystic";
     public static final String KOBOLD_GEOMANCER = "Kobold Geomancer";
     public static final String KORKRON_ELITE = "Kor'kron Elite";
+    public static final String LEPER_GNOME = "Leper Gnome";
     public static final String LOST_TALLSTRIDER = "Lost Tallstrider";
+    public static final String MAD_SCIENTIST = "Mad Scientist";
     public static final String MALGANIS = "Mal'Ganis";
     public static final String MALYGOS = "Malygos";
     public static final String MANA_WRAITH = "Mana Wraith";
+    public static final String MEKGINEER = "Mekgineer Thermaplugg";
     public static final String MIRROR_ENTITY = "Mirror Entity";
     public static final String MOONFIRE = "Moonfire";
     public static final String OGRE_BRUTE = "Ogre Brute";
@@ -73,11 +76,13 @@ public final class TestCards {
     public static final String REPENTANCE = "Repentance";
     public static final String RESURRECT = "Resurrect";
     public static final String REVERSING_SWITCH = "Reversing Switch";
+    public static final String RECKLESS_ROCKETEER = "Reckless Rocketeer";
     public static final String SHIELD_BLOCK = "Shield Block";
     public static final String SCARLET_CRUSADER = "Scarlet Crusader";
     public static final String SHADOW_MADNESS = "Shadow Madness";
     public static final String SHADOW_STEP = "Shadowstep";
     public static final String SHATTERED_SUN_CLERIC = "Shattered Sun Cleric";
+    public static final String SI7_AGENT = "SI:7 Agent";
     public static final String SILENCE = "Silence";
     public static final String SLAM = "Slam";
     public static final String SLIME = "Slime";

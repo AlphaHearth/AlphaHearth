@@ -38,10 +38,6 @@ public class GameAgent {
         this.game.setCurrentPlayerId(startingPlayer);
     }
 
-    public Game getGame() {
-        return game;
-    }
-
     /**
      * Ends the current turn.
      */
@@ -121,5 +117,8 @@ public class GameAgent {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+    public Game getGame() {
+        return game;
     }
 }

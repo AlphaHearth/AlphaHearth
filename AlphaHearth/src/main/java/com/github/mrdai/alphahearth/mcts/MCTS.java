@@ -1,194 +1,94 @@
 package com.github.mrdai.alphahearth.mcts;
 
 import com.github.mrdai.alphahearth.Board;
+import com.github.mrdai.alphahearth.mcts.budget.Budget;
+import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
+import com.github.mrdai.alphahearth.mcts.policy.DefaultPolicy;
+import com.github.mrdai.alphahearth.mcts.policy.RandomDefaultPolicy;
+import com.github.mrdai.alphahearth.mcts.policy.TreePolicy;
+import com.github.mrdai.alphahearth.mcts.policy.UCTTreePolicy;
 import com.github.mrdai.alphahearth.move.Move;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MCTS {
-    private Random random;
-    private Node rootNode;
-    private double explorationConstant = Math.sqrt(2.0);
-    private double pessimisticBias;
-    private double optimisticBias;
-
-    private boolean scoreBounds;
-    private boolean trackTime; // display thinking time used
-
-    public MCTS() {
-        random = new Random();
-    }
+    private final Budget budget = new IterCountBudget(30);
+    private final TreePolicy treePolicy = new UCTTreePolicy();
+    private final DefaultPolicy defaultPolicy = new RandomDefaultPolicy();
 
     /**
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
-     * of the MCT and runs given number of iterations on it.
+     * of the MCT and runs iterations on it until a certain computational budget is reached.
      */
-    public Move runMCTS(Board board, int iterNum) {
-        rootNode = new Node(board);
+    public Move search(Board rootBoard) {
+        Node rootNode = new Node();
+        budget.startSearch();
 
-        long startTime = System.nanoTime();
+        while (!budget.hasReached()) {
+            budget.newIteration();
 
-        for (int i = 0; i < iterNum; i++) {
-            select(board.clone(), rootNode);
+            Board currentBoard = rootBoard.clone();
+            // Selection
+            Node selectedLeaf = select(currentBoard, rootNode);
+            // Simulation
+            simulate(currentBoard);
+            // Back Propagation
+            selectedLeaf.backPropagate(currentBoard.getScore());
         }
 
-        long endTime = System.nanoTime();
-
-        if (this.trackTime)
-            System.out.println("Thinking time per move in milliseconds: "
-                + (endTime - startTime) / 1000000);
-
-        return finalSelect(rootNode);
+        return bestChild(rootNode).move;
     }
 
     /**
-     * This represents the select stage, or default policy, of the algorithm.
-     * Traverse down to the bottom of the tree using the selection strategy
-     * until you find an unexpanded child node. Expand it. Run a random playout
-     * Backpropagate results of the playout.
+     * Selects an expandable node with the given root node of the Monte Carlo Tree and
+     * the copy of {@code Board} used for this iteration.
+     * <p>
+     * While traversing through the tree to look for the best candidate, the {@code Move} stored
+     * in every visited {@code Node} will also be applied on the given {@code Board},
+     * resulting it standing for the exact game state of the selected node when the method returns.
      *
-     * @param node Node from which to start selection
+     * @param copiedBoard the copied {@code Board} used for this iteration.
+     * @param rootNode Node from which to start selection.
+     *
+     * @return the most urgent expandable node.
      */
-    private void select(Board board, Node node) {
-        while (true) {
-            // Break procedure if end of tree
-            if (board.isGameOver()) {
-                node.backPropagateScore(board.getScore());
-                if (scoreBounds) {
-                    // This runs only if bounds propagation is enabled.
-                    // It propagates bounds from solved nodes and prunes
-                    // branches from the when needed.
-                    node.backPropagateBounds(board.optimisticBounds(),
-                        board.pessimisticBounds());
-                }
-                return;
-            }
+    private Node select(Board copiedBoard, Node rootNode) {
+        Node currentNode = rootNode;
+        while (!copiedBoard.isGameOver()) {
+            // Expansion
+            if (!currentNode.expanded)
+                currentNode.expand(copiedBoard.getAvailableMoves());
 
-            if (node.unvisitedChildren == null) {
-                List<Move> legalMoves = board.getAvailableMoves();
-                node.unvisitedChildren = new ArrayList<>();
-                for (Move move : legalMoves)
-                    node.unvisitedChildren.add(new Node(node, board, move));
-            }
-
-            if (!node.unvisitedChildren.isEmpty()) {
-                // it picks a move at random from list of unvisited children
-                Node selectedNode = node.unvisitedChildren.remove(random.nextInt(node.unvisitedChildren.size()));
-                node.visitedChildren.add(selectedNode);
-                playout(selectedNode, board);
-                return;
+            if (!currentNode.unvisitedChildren.isEmpty()) {
+                Node selectedChild = currentNode.unvisitedChildren.get(0);
+                currentNode.unvisitedChildren.remove(0);
+                currentNode.visitedChildren.add(selectedChild);
+                return selectedChild;
             } else {
-                double bestValue = Double.NEGATIVE_INFINITY;
-                Node bestChild = null;
-                double tempBest;
-                ArrayList<Node> bestNodes = new ArrayList<Node>();
-
-                for (Node child : node.visitedChildren) {
-                    // Pruned is only ever true if a branch has been pruned
-                    // from the tree and that can only happen if bounds
-                    // propagation mode is enabled.
-                    if (!child.pruned) {
-                        tempBest = child.upperConfidenceBound(explorationConstant)
-                            + optimisticBias * child.opti[node.player]
-                            + pessimisticBias * child.pess[node.player];
-
-                        // If we found a better node
-                        if (tempBest > bestValue) {
-                            bestNodes.clear();
-                            bestNodes.add(child);
-                            bestChild = child;
-                            bestValue = tempBest;
-                        } else if (tempBest == bestValue) {
-                            // If we found an equal node
-                            bestNodes.add(child);
-                        }
-                    }
-                }
-
-                // This only occurs when all branches have been pruned from the
-                // tree
-                if (node == rootNode && bestChild == null)
-                    return;
-
-                Node finalNode = bestNodes.get(random.nextInt(bestNodes.size()));
-                node = finalNode;
-                board.applyMoves(finalNode.move);
+                currentNode = bestChild(currentNode);
+                copiedBoard.applyMoves(currentNode.move);
             }
         }
+        return currentNode;
     }
 
     /**
-     * This is the final step of the algorithm, to pick the best move to
-     * actually make.
+     * Selects the best child from all the visited children of the given {@link Node}
+     * with the {@link TreePolicy} of this {@code MCTS}.
      *
-     * @param node this is the node whose children are considered the best Move the algorithm can find
+     * @param node the given {@code Node}.
+     * @return the best child from the visited children of the given {@code Node}.
      */
-    private Move finalSelect(Node node) {
-        double bestValue = Double.NEGATIVE_INFINITY;
-        double tempBest;
-        ArrayList<Node> bestNodes = new ArrayList<Node>();
-
-        for (Node child : node.visitedChildren) {
-            tempBest = child.games;
-            if (tempBest > bestValue) {
-                bestNodes.clear();
-                bestNodes.add(child);
-                bestValue = tempBest;
-            } else if (tempBest == bestValue) {
-                bestNodes.add(child);
-            }
-        }
-
-        Node finalNode = bestNodes.get(random.nextInt(bestNodes.size()));
-
-        System.out.println("Highest value: " + bestValue + ", O/P Bounds: "
-            + finalNode.opti[node.player] + ", " + finalNode.pess[node.player]);
-        return finalNode.move;
+    private Node bestChild(Node node) {
+        return treePolicy.bestChild(node);
     }
 
     /**
-     * Playout function for MCTS (non-flat)
+     * Plays out the given selected {@code Node} with the given starting {@code Board}.
      */
-    private void playout(Node node, Board board) {
-        List<Move> moves;
-        Board newBoard = board.clone();
-
-        // Start playing random moves until the game is over
-        while (true) {
-            if (newBoard.isGameOver()) {
-                node.backPropagateScore(newBoard.getScore());
-                return;
-            }
-
-            moves = newBoard.getAvailableMoves();
-            newBoard.applyMoves(moves.get(random.nextInt(moves.size())));
-        }
-    }
-
-    /**
-     * Sets the exploration constant for the algorithm. You will need to find
-     * the optimal value through testing. This can have a big impact on
-     * performance. Default value is sqrt(2)
-     */
-    public void setExplorationConstant(double exp) {
-        explorationConstant = exp;
-    }
-
-    public void setPessimisticBias(double b) {
-        pessimisticBias = b;
-    }
-
-    public void setOptimisticBias(double b) {
-        optimisticBias = b;
-    }
-
-    public void setScoreBounds(boolean b) {
-        scoreBounds = b;
-    }
-
-    public void setTimeDisplay(boolean displayTime) {
-        this.trackTime = displayTime;
+    private void simulate(Board board) {
+        // Start playing moves with the default policy until the game is over
+        while (!board.isGameOver())
+            board.applyMoves(defaultPolicy.produceMode(board));
     }
 }

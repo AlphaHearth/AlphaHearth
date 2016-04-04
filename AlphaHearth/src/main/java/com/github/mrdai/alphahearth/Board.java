@@ -22,6 +22,10 @@ public class Board {
         playAgent = new GameAgent(new Game(db, AI_PLAYER, AI_OPPONENT));
     }
 
+    private Board(Board other) {
+        playAgent = new GameAgent(other.playAgent.getGame().copy());
+    }
+
     /**
      * Returns all of the available {@link Move}s for the current player.
      */
@@ -180,8 +184,7 @@ public class Board {
      */
     @Override
     public Board clone() {
-        // TODO To be implemented
-        return null;
+        return new Board(this);
     }
 
     /**
@@ -199,23 +202,17 @@ public class Board {
         return playAgent.getCurrentPlayer().getPlayerId() == AI_PLAYER ? 0 : 1;
     }
 
-    public int getQuantityOfPlayers() {
-        // TODO To be implemented
-        return 0;
-    }
-
-    public double[] pessimisticBounds() {
-        // TODO To be implemented
-        return new double[0];
-    }
-
-    public double[] optimisticBounds() {
-        // TODO To be implemented
-        return new double[0];
-    }
-
-    public double[] getScore() {
-        // TODO To be implemented
-        return new double[0];
+    /**
+     * Returns the score of this game.
+     *
+     * @throws IllegalStateException if this method is invoked before the game ends.
+     */
+    public double getScore() {
+        if (!isGameOver())
+            throw new IllegalStateException("Error: Evaluating score before the game ends");
+        if (playAgent.getGame().getPlayer(AI_PLAYER).getHero().isDead())
+            return 0;
+        else
+            return 1;
     }
 }

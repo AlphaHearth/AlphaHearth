@@ -1356,7 +1356,7 @@ public final class TargetlessActions {
 
             CardDescr cardDescr = card.getCardDescr();
 
-            if (cardDescr.getCardType() == CardType.MINION) {
+            if (cardDescr.getCardType() == CardType.Minion) {
                 Game game = actor.getGame();
                 GameActionList.executeActionsNow(card, cardDescr.getOnDrawActions());
                 player.getHand().addCard(replaceCard.getCard());

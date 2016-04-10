@@ -151,7 +151,7 @@ public final class HearthStoneDb {
 
         CardParser cardParser = new CardParser(objectParser);
         return createEntityDb(powerDir, ".power", (obj) -> {
-            return cardParser.fromJson(obj, CardType.HERO_POWER);
+            return cardParser.fromJson(obj, CardType.HeroPower);
         });
     }
 

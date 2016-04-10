@@ -116,7 +116,7 @@ public final class Card implements Entity<Card>, PlayerProperty, LabeledEntity, 
             return minion.createDamage(damage);
         }
 
-        if (cardDescr.getCardType() == CardType.SPELL) {
+        if (cardDescr.getCardType() == CardType.Spell) {
             return getOwner().getSpellDamage(damage);
         }
 

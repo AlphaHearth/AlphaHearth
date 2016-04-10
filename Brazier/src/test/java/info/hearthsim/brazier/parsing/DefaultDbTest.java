@@ -40,17 +40,17 @@ public final class DefaultDbTest {
                 Set<Keyword> keywords = card.getKeywords();
 
                 switch (card.getCardType()) {
-                    case SPELL:
+                    case Spell:
                         assertFalse(keywords.contains(Keywords.MINION));
                         assertTrue(keywords.contains(Keywords.SPELL));
                         assertFalse(keywords.contains(Keywords.WEAPON));
                         break;
-                    case MINION:
+                    case Minion:
                         assertTrue(keywords.contains(Keywords.MINION));
                         assertFalse(keywords.contains(Keywords.SPELL));
                         assertFalse(keywords.contains(Keywords.WEAPON));
                         break;
-                    case WEAPON:
+                    case Weapon:
                         assertFalse(keywords.contains(Keywords.MINION));
                         assertFalse(keywords.contains(Keywords.SPELL));
                         assertTrue(keywords.contains(Keywords.WEAPON));
@@ -124,7 +124,7 @@ public final class DefaultDbTest {
                 }
                 else {
                     // Improve this for weapons
-                    needDescription = card.getCardType() == CardType.SPELL;
+                    needDescription = card.getCardType() == CardType.Spell;
                 }
 
                 verifyChooseOneDescription(card, description);
@@ -152,7 +152,7 @@ public final class DefaultDbTest {
     public void testAllMinionCardsHaveMinion() {
         HearthStoneEntityDatabase<CardDescr> cardDb = TestDb.getTestDb().getCardDb();
         for (CardDescr card: cardDb.getAll()) {
-            if (card.getCardType() == CardType.MINION) {
+            if (card.getCardType() == CardType.Minion) {
                 assertNotNull("minion", card.getMinion());
             }
         }
@@ -191,7 +191,7 @@ public final class DefaultDbTest {
             if (!allowedClasses.contains(card.getCardClass())) {
                 fail("Card " + card.getId() + " has an unexpected card class: " + card.getCardClass());
             }
-            if (card.getCardType() == CardType.MINION) {
+            if (card.getCardType() == CardType.Minion) {
                 assertNotNull("minion", card.getMinion());
             }
         }

@@ -34,7 +34,7 @@ public class CardParserTest {
     public void testShieldBlock() throws Exception {
         CardDescr card = getCard("Shield Block");
 
-        Assert.assertEquals(CardType.SPELL, card.getCardType());
+        Assert.assertEquals(CardType.Spell, card.getCardType());
         assertEquals(3, card.getManaCost());
         assertEquals("Gain 5 Armor. Draw a card.", card.getDescription());
         assertKeywords(card, Keywords.CLASS_WARRIOR, Keywords.SPELL, Keywords.COLLECTIBLE, Keywords.RARITY_COMMON);
@@ -44,7 +44,7 @@ public class CardParserTest {
     }
 
     private void assertMinionCard(CardDescr card) {
-        assertEquals(CardType.MINION, card.getCardType());
+        assertEquals(CardType.Minion, card.getCardType());
         MinionDescr minion = card.getMinion();
         assertNotNull("minion", minion);
 

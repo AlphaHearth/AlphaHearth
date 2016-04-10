@@ -7,10 +7,11 @@ import info.hearthsim.brazier.game.Keywords;
  * The type of a card.
  */
 public enum CardType {
-    SPELL(Keywords.SPELL),
-    MINION(Keywords.MINION),
-    WEAPON(Keywords.WEAPON),
-    HERO_POWER(Keywords.HERO_POWER),
+    Spell(Keywords.SPELL),
+    Minion(Keywords.MINION),
+    Weapon(Keywords.WEAPON),
+    HeroPower(Keywords.HERO_POWER),
+    Hero(Keywords.HERO),
     UNKNOWN(Keyword.create("unknown-card-type"));
 
     private final Keyword keyword;

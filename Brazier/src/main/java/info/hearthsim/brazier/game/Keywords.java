@@ -2,14 +2,19 @@ package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.game.cards.CardRarity;
 
+/**
+ * Predefined {@link Keyword}s.
+ */
 public final class Keywords {
     public static final Keyword MINION = Keyword.create("minion");
     public static final Keyword SPELL = Keyword.create("spell");
     public static final Keyword WEAPON = Keyword.create("weapon");
     public static final Keyword HERO_POWER = Keyword.create("hero-power");
+    public static final Keyword HERO = Keyword.create("hero");
 
     public static final Keyword SPARE_PART = Keyword.create("spare-part");
-    public static final Keyword BATTLE_CRY = Keyword.create("battlecry");
+    public static final Keyword BATTLE_CRY = Keyword.create("battle-cry");
+    public static final Keyword DEATH_RATTLE = Keyword.create("death-rattle");
     public static final Keyword OVERLOAD = Keyword.create("overload");
 
     public static final Keyword COLLECTIBLE = Keyword.create("collectible");

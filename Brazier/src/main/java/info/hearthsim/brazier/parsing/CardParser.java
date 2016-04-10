@@ -75,14 +75,14 @@ public final class CardParser implements EntityParser<CardDescr> {
 
         JsonTree minionElement = tree.getChild("minion");
         if (minionElement != null && cardType == CardType.UNKNOWN)
-            cardType = CardType.MINION;
+            cardType = CardType.Minion;
 
         JsonTree weaponElement = tree.getChild("weapon");
         if (weaponElement != null) {
-            if (cardType != CardType.UNKNOWN && cardType != CardType.WEAPON) {
+            if (cardType != CardType.UNKNOWN && cardType != CardType.Weapon) {
                 throw new ObjectParsingException("Weapon containing card cannot have this type: " + cardType);
             }
-            cardType = CardType.WEAPON;
+            cardType = CardType.Weapon;
         }
 
         CardName cardId = new CardName(name);
@@ -169,7 +169,7 @@ public final class CardParser implements EntityParser<CardDescr> {
         keywords = Collections.unmodifiableSet(keywords);
 
 
-        if (minionElement == null && cardType == CardType.MINION) {
+        if (minionElement == null && cardType == CardType.Minion) {
             throw new ObjectParsingException("Minion cards must have an explicit minion declaration.");
         }
 

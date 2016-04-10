@@ -6,6 +6,7 @@ This module acts as the game simulator for the AI module [AlphaHearth](../AlphaH
 
 More works are remained to be done in this module, which include:
 
+- [ ] Replace `Keyword` with enums like `Race`, `HeroClass`, etc.
 - [ ] Implement cards from BRM and TGT.
 - [ ] Rewrite every card in Groovy or Scala and delete the dynamic parsing framework.
 - [ ] Verify the correctness of all the existed test cases.

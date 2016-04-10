@@ -74,11 +74,11 @@ public final class CardDescr implements HearthStoneEntity {
         this.chooseOneActionsRef = CollectionsEx.readOnlyCopy(builder.chooseOneActions);
         this.chooseOneActions = new AtomicReference<>(chooseOneActionsRef.isEmpty() ? Collections.emptyList() : null);
 
-        if (this.cardType == CardType.MINION && this.minion == null) {
-            throw new IllegalStateException("Must have a minion when the card tpye is MINION.");
+        if (this.cardType == CardType.Minion && this.minion == null) {
+            throw new IllegalStateException("Must have a minion when the card tpye is Minion.");
         }
-        if (this.cardType != CardType.MINION && this.minion != null) {
-            throw new IllegalStateException("May not have a minion when the card tpye is not MINION.");
+        if (this.cardType != CardType.Minion && this.minion != null) {
+            throw new IllegalStateException("May not have a minion when the card tpye is not Minion.");
         }
     }
 

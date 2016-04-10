@@ -14,6 +14,11 @@ public interface AttackTool {
     public void refreshEndOfTurn();
 
     /**
+     * Returns the maximum attack count of the owner of this {@code AttackTool}.
+     */
+    public int getMaxAttackCount();
+
+    /**
      * Gets the attack point of this entity.
      */
     public int getAttack();

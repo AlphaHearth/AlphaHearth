@@ -375,7 +375,8 @@ public final class Hero implements Character<Hero> {
             return (hat) -> hat.extraAttack -= attackAddition;
         }
 
-        private int getMaxAttackCount() {
+        @Override
+        public int getMaxAttackCount() {
             Weapon currentWeapon = tryGetWeapon();
             return currentWeapon != null
                 ? currentWeapon.getBaseDescr().getMaxAttackCount()

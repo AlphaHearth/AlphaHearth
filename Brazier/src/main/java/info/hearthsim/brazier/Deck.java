@@ -66,6 +66,13 @@ public final class Deck implements PlayerProperty {
     }
 
     /**
+     * Shuffles the deck with the {@link RandomProvider} of the game.
+     */
+    public void shuffle() {
+        shuffle(getGame().getRandomProvider());
+    }
+
+    /**
      * Shuffles the deck with the given {@link RandomProvider}.
      */
     public void shuffle(RandomProvider randomProvider) {

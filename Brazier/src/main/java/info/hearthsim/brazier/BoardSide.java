@@ -337,7 +337,7 @@ public final class BoardSide implements PlayerProperty {
      * Returns a {@code List} of all living minions.
      */
     public List<Minion> getAliveMinions() {
-        return getMinions(BoardSide::isAlive);
+        return findMinions(BoardSide::isAlive);
     }
 
     public List<Minion> getAllMinions() {
@@ -349,7 +349,7 @@ public final class BoardSide implements PlayerProperty {
     /**
      * Returns a {@code List} of minions which satisfy the given predicate.
      */
-    public List<Minion> getMinions(Predicate<? super Minion> filter) {
+    public List<Minion> findMinions(Predicate<? super Minion> filter) {
         List<Minion> result = new ArrayList<>(minionRefs.size());
         collectMinions(result, filter);
         return result;
@@ -441,6 +441,7 @@ public final class BoardSide implements PlayerProperty {
         if (battleCryTarget != null) {
             PlayArg<Minion> battleCryArg = new PlayArg<>(minion, battleCryTarget);
             minion.getBaseDescr().executeBattleCriesNow(owner, battleCryArg);
+            minion.getGame().endPhase();
         }
 
         events.summoningListeners().triggerEvent(minion);

@@ -10,7 +10,7 @@ import java.util.Random;
  * A {@link DefaultPolicy} which produces {@link Move} by randomly selecting from all the
  * valid moves of the given {@link Board}.
  */
-public class RandomDefaultPolicy implements DefaultPolicy {
+public class RandomPolicy implements DefaultPolicy {
     private final Random random = new Random();
 
     @Override

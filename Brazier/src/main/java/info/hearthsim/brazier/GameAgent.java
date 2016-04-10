@@ -22,7 +22,8 @@ public class GameAgent {
      * @param game the given {@code Game}
      */
     public GameAgent(Game game) {
-        this(game, game.getPlayer1().getPlayerId());
+        ExceptionHelper.checkNotNullArgument(game, "game");
+        this.game = game;
     }
 
     /**

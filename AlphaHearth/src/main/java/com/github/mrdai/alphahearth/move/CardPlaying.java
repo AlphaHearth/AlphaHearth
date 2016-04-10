@@ -1,6 +1,8 @@
 package com.github.mrdai.alphahearth.move;
 
+import com.github.mrdai.alphahearth.Board;
 import info.hearthsim.brazier.EntityId;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.PlayerId;
 
 public class CardPlaying implements SingleMove {
@@ -55,5 +57,28 @@ public class CardPlaying implements SingleMove {
 
     public PlayerId getPlayerId() {
         return playerId;
+    }
+
+    public String toString(Board board) {
+        Game game = board.getGame();
+        StringBuilder builder = new StringBuilder();
+        if (minionLocation == -1) {
+            builder.append(game.getPlayer(playerId).getPlayerId()).append(" plays ")
+                   .append(game.getPlayer(playerId).getHand().getCard(cardIndex));
+            if (target != null)
+                builder.append(" with target ").append(game.findEntity(target));
+        } else {
+            builder.append(game.getPlayer(playerId)).append(" summons ")
+                   .append(game.getPlayer(playerId).getHand().getCard(cardIndex))
+                   .append(" on location ").append(minionLocation);
+            if (target != null)
+                builder.append(" with battle cry target ").append(game.findEntity(target));
+        }
+        return builder.toString();
+    }
+
+    public String toString() {
+        return String.format("CardPlaying[PlayerId: %s, cardIndex: %d, minionLocation: %d, target: %s]",
+            playerId, cardIndex, minionLocation, target);
     }
 }

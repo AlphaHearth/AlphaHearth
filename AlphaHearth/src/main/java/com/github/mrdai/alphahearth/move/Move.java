@@ -31,10 +31,45 @@ public class Move {
     public Move withNewMove(SingleMove move) {
         List<SingleMove> newMoves = new ArrayList<>(actualMoves.size() + 1);
         actualMoves.forEach(newMoves::add);
+        newMoves.add(move);
         return new Move(Collections.unmodifiableList(newMoves));
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder("{");
+        for (SingleMove move : actualMoves) {
+            builder.append(move);
+            builder.append(",");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 
     public List<SingleMove> getActualMoves() {
         return actualMoves;
+    }
+
+    public static class Builder {
+        private final List<SingleMove> moves;
+
+        public Builder() {
+            moves = new ArrayList<>();
+        }
+
+        public Builder(int expectedSize) {
+            moves = new ArrayList<>(expectedSize);
+        }
+
+        public void addMove(SingleMove move) {
+            moves.add(move);
+        }
+
+        public boolean isEmpty() {
+            return moves.isEmpty();
+        }
+
+        public Move build() {
+            return new Move(Collections.unmodifiableList(moves));
+        }
     }
 }

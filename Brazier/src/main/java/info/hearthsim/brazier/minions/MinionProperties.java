@@ -287,6 +287,11 @@ public final class MinionProperties implements Silencable {
         }
 
         @Override
+        public int getMaxAttackCount() {
+            return maxAttackCount.getValue();
+        }
+
+        @Override
         public void freeze() {
             freezeManager.freeze();
         }

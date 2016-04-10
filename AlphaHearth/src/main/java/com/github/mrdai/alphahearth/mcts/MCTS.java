@@ -4,37 +4,48 @@ import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.mcts.budget.Budget;
 import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.mcts.policy.DefaultPolicy;
-import com.github.mrdai.alphahearth.mcts.policy.RandomDefaultPolicy;
+import com.github.mrdai.alphahearth.mcts.policy.RandomPolicy;
 import com.github.mrdai.alphahearth.mcts.policy.TreePolicy;
 import com.github.mrdai.alphahearth.mcts.policy.UCTTreePolicy;
 import com.github.mrdai.alphahearth.move.Move;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MCTS {
+    private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
+
     private final Budget budget = new IterCountBudget(30);
     private final TreePolicy treePolicy = new UCTTreePolicy();
-    private final DefaultPolicy defaultPolicy = new RandomDefaultPolicy();
+    private final DefaultPolicy defaultPolicy = new RandomPolicy();
 
     /**
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
      * of the MCT and runs iterations on it until a certain computational budget is reached.
      */
     public Move search(Board rootBoard) {
+        LOG.info("Start new MCTS");
         Node rootNode = new Node();
         budget.startSearch();
+        long startTime = System.currentTimeMillis();
+        int iterNum = 1;
 
         while (!budget.hasReached()) {
+            LOG.debug("Start iteration #" + iterNum);
             budget.newIteration();
-
             Board currentBoard = rootBoard.clone();
+            LOG.debug("Selecting...");
             // Selection
             Node selectedLeaf = select(currentBoard, rootNode);
+            LOG.debug("Simulating...");
             // Simulation
             simulate(currentBoard);
+            LOG.debug("Back propagating...");
             // Back Propagation
             selectedLeaf.backPropagate(currentBoard.getScore());
+            iterNum++;
         }
+        long finishTime = System.currentTimeMillis();
+        LOG.info("Search finished in " + (finishTime - startTime) + "ms.");
 
         return bestChild(rootNode).move;
     }
@@ -88,7 +99,9 @@ public class MCTS {
      */
     private void simulate(Board board) {
         // Start playing moves with the default policy until the game is over
-        while (!board.isGameOver())
+        while (!board.isGameOver()) {
             board.applyMoves(defaultPolicy.produceMode(board));
+            board.getGame().endTurn();
+        }
     }
 }

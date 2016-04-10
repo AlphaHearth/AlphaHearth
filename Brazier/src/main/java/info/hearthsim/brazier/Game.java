@@ -179,6 +179,7 @@ public final class Game implements GameProperty {
         updateAllAuras();
         currentPlayer = getOpponent(currentPlayer.getPlayerId());
         currentPlayer.startNewTurn();
+        updateGameOverState();
     }
 
     public Hero getHero(EntityId id) {

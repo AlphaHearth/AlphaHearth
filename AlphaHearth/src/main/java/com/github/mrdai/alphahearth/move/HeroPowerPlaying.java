@@ -1,6 +1,8 @@
 package com.github.mrdai.alphahearth.move;
 
+import com.github.mrdai.alphahearth.Board;
 import info.hearthsim.brazier.EntityId;
+import info.hearthsim.brazier.Game;
 import info.hearthsim.brazier.PlayerId;
 
 /**
@@ -36,5 +38,17 @@ public class HeroPowerPlaying implements SingleMove {
 
     public PlayerId getPlayerId() {
         return playerId;
+    }
+
+    public String toString(Board board) {
+        Game game = board.getGame();
+        StringBuilder builder = new StringBuilder(playerId + " uses hero power");
+        if (target != null)
+            builder.append(" with target ").append(game.findEntity(target));
+        return builder.toString();
+    }
+
+    public String toString() {
+        return String.format("HeroPowerPlaying[playerId: %s, target: %s]", playerId, target);
     }
 }

@@ -64,7 +64,7 @@ task debug(type: JavaExec) {
 task createCardDbZip(type: Zip) {
     from cardDbDir.toFile();
     archiveName = 'card-db.zip';
-    destinationDir = buildDir.toPath().resolve('card-db').toFile();
+    destinationDir = buildDir.toPath().resolve('libs').toFile();
 }
 
 task createPackage(type: Copy) {

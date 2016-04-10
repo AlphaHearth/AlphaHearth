@@ -2,7 +2,7 @@
     "name": "Leader of the Pack",
     "description": "Give your minions +1/+1.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

@@ -2,7 +2,7 @@
     "name": "Hammer of Wrath",
     "description": "Deal 3 damage. Draw a card.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 4,
     "playActions": [
         {

@@ -2,7 +2,7 @@
     "name": "Bear Form",
     "description": "+2 Health and Taunt.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

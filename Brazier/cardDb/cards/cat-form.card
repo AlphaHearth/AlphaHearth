@@ -2,7 +2,7 @@
     "name": "Cat Form",
     "description": "Charge",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

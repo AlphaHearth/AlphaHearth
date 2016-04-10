@@ -2,7 +2,7 @@
     "name": "The Coin",
     "description": "Gain 1 Mana Crystal this turn only.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

@@ -2,7 +2,7 @@
     "name": "Tree of Life",
     "description": "Restore all characters to full Health.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 9,
     "playActions": {

@@ -2,7 +2,7 @@
     "name": "Finicky Cloakfield",
     "description": "Give a friendly minion Stealth until your next turn.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "spare-part",
     "collectible": false,
     "manaCost": 1,

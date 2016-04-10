@@ -234,7 +234,7 @@ public final class CardParser implements EntityParser<CardDescr> {
             return CardType.UNKNOWN;
         }
 
-        String cardTypeStr = cardTypeElement.getAsString().toUpperCase(Locale.ROOT);
+        String cardTypeStr = cardTypeElement.getAsString();
         try {
             return CardType.valueOf(cardTypeStr);
         } catch (IllegalArgumentException ex) {

@@ -2,7 +2,7 @@
     "name": "Vanish",
     "description": "Return all minions to their owner's hand.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 6,
     "playActions": {
         "class": "TargetlessActions.forBornTargets",

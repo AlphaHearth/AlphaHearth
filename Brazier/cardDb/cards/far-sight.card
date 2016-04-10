@@ -2,7 +2,7 @@
     "name": "Far Sight",
     "description": "Draw a card. That card costs (3) less.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 3,
     "playActions": {

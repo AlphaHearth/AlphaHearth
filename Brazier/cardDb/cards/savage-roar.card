@@ -2,7 +2,7 @@
     "name": "Savage Roar",
     "description": "Give your characters +2 Attack this turn.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": {
         "class": "TargetlessActions.forTargets",

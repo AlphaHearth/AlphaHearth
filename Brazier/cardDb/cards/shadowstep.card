@@ -2,7 +2,7 @@
     "name": "Shadowstep",
     "description": "Return a friendly minion to your hand. It costs (2) less.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "targets": "friendly-minions",

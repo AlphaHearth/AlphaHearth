@@ -2,7 +2,7 @@
     "name": "Unstable Portal",
     "description": "Add a random minion to your hand. It costs (3) less.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "class": "TargetlessActions.addSelectedCard",

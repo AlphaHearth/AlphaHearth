@@ -2,7 +2,7 @@
     "name": "Wild Growth",
     "description": "Gain an empty Mana Crystal.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "class": "TargetlessActions.doIf",

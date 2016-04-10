@@ -2,7 +2,7 @@
     "name": "Shield Block",
     "description": "Gain 5 Armor. Draw a card.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": [
         {

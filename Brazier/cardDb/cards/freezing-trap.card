@@ -2,7 +2,7 @@
     "name": "Freezing Trap",
     "description": "Secret: When an enemy minion attacks, return it to its owner's hand and it costs (2) more.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "secret": {
         "attack-initiated": {

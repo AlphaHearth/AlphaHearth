@@ -2,7 +2,7 @@
     "name": "Charge",
     "description": "Give a friendly minion +2 Attack and Charge.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": {
         "targets": "friendly-minions",

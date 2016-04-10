@@ -2,7 +2,7 @@
     "name": "Savagery",
     "description": "Deal damage equal to your hero's Attack to a minion.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 1,
     "playActions": {

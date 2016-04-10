@@ -2,7 +2,7 @@
     "name": "Shadowform",
     "description": "Your Hero Power becomes 'Deal 2 damage'. If already in Shadowform: 3 damage.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 3,
     "playActions": {

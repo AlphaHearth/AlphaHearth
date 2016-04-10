@@ -2,7 +2,7 @@
     "name": "Power of the Horde",
     "description": "Summon a random Horde Warrior.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "power-chord",
     "collectible": false,
     "manaCost": 4,

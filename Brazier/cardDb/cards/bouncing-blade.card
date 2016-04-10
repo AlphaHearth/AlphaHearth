@@ -2,7 +2,7 @@
     "name": "Bouncing Blade",
     "description": "Deal 1 damage to a random minion. Repeat until a minion dies.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 3,
     "playActions": {

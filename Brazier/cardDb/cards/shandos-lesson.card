@@ -2,7 +2,7 @@
     "name": "Shan'do's Lesson",
     "description": "Summon two 2/2 Treants with Taunt.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

@@ -2,7 +2,7 @@
     "name": "Blade Flurry",
     "description": "Destroy your weapon and deal its damage to all enemies.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": {

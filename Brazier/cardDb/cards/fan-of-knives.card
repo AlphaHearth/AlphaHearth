@@ -2,7 +2,7 @@
     "name": "Fan of Knives",
     "description": "Deal 1 damage to all enemy minions. Draw a card.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": [
         {

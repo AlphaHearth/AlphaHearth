@@ -2,7 +2,7 @@
     "name": "Flamestrike",
     "description": "Deal 4 damage to all enemy minions.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 7,
     "playActions": {
         "class": "TargetlessActions.damageTarget",

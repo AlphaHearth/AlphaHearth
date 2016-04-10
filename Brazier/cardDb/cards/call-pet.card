@@ -2,7 +2,7 @@
     "name": "Call Pet",
     "description": "Draw a card. If it's a Beast, it costs (4) less.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": {

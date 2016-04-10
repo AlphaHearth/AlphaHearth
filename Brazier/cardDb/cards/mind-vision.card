@@ -2,7 +2,7 @@
     "name": "Mind Vision",
     "description": "Put a copy of a random card in your opponent's hand into your hand.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": "TargetlessActions.MIND_VISION"
 }

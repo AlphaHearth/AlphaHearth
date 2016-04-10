@@ -2,7 +2,7 @@
     "name": "Poison Seeds",
     "description": "Destroy all minions and summon 2/2 Treants to replace them.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 4,
     "playActions": {
         "class": "TargetlessActions.killAndReplaceMinions",

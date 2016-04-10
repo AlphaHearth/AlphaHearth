@@ -2,7 +2,7 @@
     "name": "Headcrack",
     "description": "Deal 2 damage to the enemy hero. Combo: Return this to your hand next turn.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "playActions": [

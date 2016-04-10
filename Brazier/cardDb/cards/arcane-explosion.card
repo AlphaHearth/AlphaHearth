@@ -2,7 +2,7 @@
     "name": "Arcane Explosion",
     "description": "Deal 1 damage to all enemy minions.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "class": "TargetlessActions.damageTarget",

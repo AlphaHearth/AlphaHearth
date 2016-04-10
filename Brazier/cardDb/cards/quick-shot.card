@@ -2,7 +2,7 @@
     "name": "Quick Shot",
     "description": "If your hand is empty, draw a card.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": [
         {

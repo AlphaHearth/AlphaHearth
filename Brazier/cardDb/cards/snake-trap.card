@@ -2,7 +2,7 @@
     "name": "Snake Trap",
     "description": "Secret: When one of your minions is attacked, summon three 1/1 Snakes.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 2,
     "secret": {

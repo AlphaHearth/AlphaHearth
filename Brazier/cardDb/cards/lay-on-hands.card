@@ -2,7 +2,7 @@
     "name": "Lay on Hands",
     "description": "Restore 8 Health. Draw 3 cards.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 8,
     "playActions": [

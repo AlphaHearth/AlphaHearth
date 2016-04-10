@@ -2,7 +2,7 @@
     "name": "Burrowing Mine",
     "description": "When you draw this, it explodes. You take 10 damage and draw a card.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "drawActions": [

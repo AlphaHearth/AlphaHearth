@@ -2,7 +2,7 @@
     "name": "Equality",
     "description": "Change the Health of ALL minions to 1.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": {

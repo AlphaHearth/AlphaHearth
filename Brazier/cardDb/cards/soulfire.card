@@ -2,7 +2,7 @@
     "name": "Soulfire",
     "description": "Deal 4 damage. Discard a random card.",
     "class": "warlock",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": [
         {

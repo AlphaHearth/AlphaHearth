@@ -37,8 +37,12 @@ public class Board {
         List<Move> availableMoves = new LinkedList<>();
         availableMoves.add(Move.EMPTY_MOVE);
 
-        for (int i = 0; i < availableMoves.size(); i++)
+        for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
+            LOG.trace("" + availableMoves.size());
+            if (availableMoves.size() > 100)
+                break;
+        }
 
         return availableMoves;
     }
@@ -63,37 +67,46 @@ public class Board {
             PlayerTargetNeed targetNeed =
                 new PlayerTargetNeed(new TargeterDef(curPlayerId, true, false), heroPower.getTargetNeed());
             if (!targetNeed.getTargetNeed().hasTarget()) {
-                SingleMove heroPowerPlaying = new HeroPowerPlaying(null);
+                HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId);
+                LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on " + copiedBoard);
                 add(selectedMove, heroPowerPlaying, availableMoves);
             } else {
                 currentGame.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
-                    SingleMove heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getEntityId());
+                    HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getEntityId());
+                    LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on " + copiedBoard);
                     add(selectedMove, heroPowerPlaying, availableMoves);
                 });
             }
         }
 
         // List direct attack
-        currentGame.getTargets((target) -> target.getOwner() == curPlayer && target.getAttackTool().canAttackWith())
-            .forEach((attacker) -> {
-                if (enemyMinions.hasNonStealthTaunt()) {
-                    enemyMinions.findMinions((minion) -> minion.getBody().isTaunt() && !minion.getBody().isStealth())
-                        .forEach((target) -> {
-                            SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
-                            add(selectedMove, directAttacking, availableMoves);
-                        });
-                } else {
-                    if (!enemyHero.isImmune()) {
-                        SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), enemyHero.getEntityId());
-                        add(selectedMove, directAttacking, availableMoves);
-                    }
-                    enemyMinions.findMinions((minion) -> !minion.getBody().isStealth() && !minion.getBody().isImmune())
-                        .forEach((target) -> {
-                            SingleMove directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
-                            add(selectedMove, directAttacking, availableMoves);
-                        });
+        List<Character> attackers = currentGame.getTargets((t) -> t.getOwner() == curPlayer && t.getAttackTool().canAttackWith());
+        if (enemyMinions.hasNonStealthTaunt()) {
+            List<Minion> enemyTaunt = enemyMinions.findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth() && !m.getBody().isImmune());
+            for (Character attacker : attackers) {
+                for (Minion target : enemyTaunt) {
+                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    add(selectedMove, directAttacking, availableMoves);
                 }
-            });
+            }
+        } else {
+            if (!enemyHero.isImmune()) {
+                for (Character attacker : attackers) {
+                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), enemyHero.getEntityId());
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    add(selectedMove, directAttacking, availableMoves);
+                }
+            }
+            List<Minion> targets = enemyMinions.findMinions((m) -> !m.getBody().isStealth() && !m.getBody().isImmune());
+            for (Character attacker : attackers) {
+                for (Minion target : targets) {
+                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    add(selectedMove, directAttacking, availableMoves);
+                }
+            }
+        }
 
         if (curPlayer.getPlayerId() != AI_PLAYER)
             return; // We do not consider the AI opponent's card for now.
@@ -112,14 +125,16 @@ public class Board {
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
-                                SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getEntityId());
+                                CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getEntityId());
+                                LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                                 add(selectedMove, cardPlaying, availableMoves);
                             }
                         }
                     }
                 } else { // Minion card without battle cry target
                     for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
-                        SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc);
+                        CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc);
+                        LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                         add(selectedMove, cardPlaying, availableMoves);
                     }
                 }
@@ -127,12 +142,14 @@ public class Board {
                 if (card.getTargetNeed().hasTarget()) { // Spell or Weapon card with target
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
-                            SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getEntityId());
+                            CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getEntityId());
+                            LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                             add(selectedMove, cardPlaying, availableMoves);
                         }
                     }
                 } else { // Spell or Weapon card without target
-                    SingleMove cardPlaying = new CardPlaying(curPlayerId, cardIndex);
+                    CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex);
+                    LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                     add(selectedMove, cardPlaying, availableMoves);
                 }
             }
@@ -157,8 +174,7 @@ public class Board {
                 LOG.info(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
             else
                 LOG.debug(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
-        }
-        else
+        } else
             move.getActualMoves().forEach((m) -> applyMove(m, logMove));
     }
 
@@ -261,6 +277,7 @@ public class Board {
             .append(", Armor: ").append(aiOpponent.getHero().getCurrentArmor())
             .append("\nWeapon: ").append(aiOpponent.tryGetWeapon())
             .append("\nHero Power playable: ").append(aiOpponent.getHero().getHeroPower().isPlayable());
+        builder.append("\nMana: " + aiOpponent.getManaResource().getMana() + "/" + aiOpponent.getManaResource().getManaCrystals());
         builder.append("\nCards in Hand: ");
         for (Card card : aiOpponent.getHand().getCards())
             builder.append(card).append(", ");
@@ -279,6 +296,7 @@ public class Board {
         for (Card card : aiPlayer.getHand().getCards())
             builder.append(card).append(", ");
         builder.append("\nCards in Deck: ").append(aiPlayer.getDeck().getNumberOfCards());
+        builder.append("\nMana: " + aiPlayer.getManaResource().getMana() + "/" + aiPlayer.getManaResource().getManaCrystals());
         builder.append("\n===================");
         return builder.toString();
     }

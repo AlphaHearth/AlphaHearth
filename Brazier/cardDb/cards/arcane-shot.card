@@ -2,7 +2,7 @@
     "name": "Arcane Shot",
     "description": "Deal 2 damage.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "targets": "all",

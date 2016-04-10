@@ -2,7 +2,7 @@
     "name": "Conceal",
     "description": "Give your minions Stealth until your next turn.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "class": "TargetlessActions.forTargets",

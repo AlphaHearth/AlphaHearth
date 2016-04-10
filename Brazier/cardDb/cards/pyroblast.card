@@ -2,7 +2,7 @@
     "name": "Pyroblast",
     "description": "Deal 10 damage.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 10,
     "playActions": {

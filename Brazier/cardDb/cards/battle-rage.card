@@ -2,7 +2,7 @@
     "name": "Battle Rage",
     "description": "Draw a card for each damaged friendly character.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": "TargetlessActions.BATTLE_RAGE"
 }

@@ -2,7 +2,7 @@
     "name": "Avenging Wrath",
     "description": "Deal 8 damage randomly split among all enemies.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 6,
     "playActions": {

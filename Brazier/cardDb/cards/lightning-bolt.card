@@ -2,7 +2,7 @@
     "name": "Lightning Bolt",
     "description": "Deal 3 damage. Overload: (1)",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "overload": 1,
     "playActions": {

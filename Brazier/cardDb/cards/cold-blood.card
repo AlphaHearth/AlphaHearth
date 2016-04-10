@@ -2,7 +2,7 @@
     "name": "Cold Blood",
     "description": "Give a minion +2 Attack. Combo: +4 Attack instead.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": [
         {

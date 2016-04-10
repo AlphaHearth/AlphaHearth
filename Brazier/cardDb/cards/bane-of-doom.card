@@ -2,7 +2,7 @@
     "name": "Bane of Doom",
     "description": "Deal 2 damage to a character. If that kills it, summon a random Demon.",
     "class": "warlock",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 5,
     "playActions": {

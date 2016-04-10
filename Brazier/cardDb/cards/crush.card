@@ -2,7 +2,7 @@
     "name": "Crush",
     "description": "Destroy a minion. If you have a damaged minion, this costs (4) less.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 7,
     "manaCostAdjusters": {

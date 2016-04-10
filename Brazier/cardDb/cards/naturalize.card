@@ -2,7 +2,7 @@
     "name": "Naturalize",
     "description": "Destroy a minion. Your opponent draws 2 cards.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": [
         {

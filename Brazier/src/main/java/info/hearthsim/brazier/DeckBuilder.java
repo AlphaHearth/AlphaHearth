@@ -39,7 +39,7 @@ public class DeckBuilder {
      *
      * @throws IllegalArgumentException if the given number is invalid for this {@code DeckBuilder}.
      */
-    public void addCard(CardDescr card, int num) {
+    public DeckBuilder addCard(CardDescr card, int num) {
         if (num <= 0)
             throw new IllegalArgumentException("The given number cannot be less than 1.");
         if (cardNum + num > 30)
@@ -58,6 +58,7 @@ public class DeckBuilder {
             throw new IllegalArgumentException("The number of cards with the same name in the deck cannot be more than 1, "
                                                    + "there are already " + orgNum + " of it");
         cards.put(card, newNum);
+        return this;
     }
 
     /**
@@ -65,6 +66,14 @@ public class DeckBuilder {
      */
     public boolean isFull() {
         return cardNum == 30;
+    }
+
+    public List<CardDescr> toCardList() {
+        List<CardDescr> cardList = new ArrayList<>(30);
+        for (Map.Entry<CardDescr, Integer> entry : cards.entrySet())
+            for (int i = 0; i < entry.getValue(); i++)
+                cardList.add(entry.getKey());
+        return cardList;
     }
 
     /**

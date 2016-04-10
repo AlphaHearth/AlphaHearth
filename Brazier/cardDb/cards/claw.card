@@ -2,7 +2,7 @@
     "name": "Claw",
     "description": "Give your hero +2 Attack this turn and 2 Armor.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "actions": [

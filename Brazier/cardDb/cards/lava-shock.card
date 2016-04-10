@@ -2,7 +2,7 @@
     "name": "Lava Shock",
     "description": "Deal 2 damage. Unlock your Overloaded Mana Crystals.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": [

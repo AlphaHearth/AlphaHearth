@@ -2,7 +2,7 @@
     "name": "Cone of Cold",
     "description": "Freeze a minion and the minions next to it, and deal 1 damage to them.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 4,
     "playActions": {
         "targets": "all-minions",

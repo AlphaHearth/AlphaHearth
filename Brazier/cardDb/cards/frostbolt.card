@@ -2,7 +2,7 @@
     "name": "Frostbolt",
     "description": "Deal 3 damage to a character and Freeze it.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": [
         {

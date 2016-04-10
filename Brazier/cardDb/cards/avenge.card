@@ -2,7 +2,7 @@
     "name": "Avenge",
     "description": "Secret: When one of your minions dies, give a random friendly minion +3/+2.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "secret": {
         "minion-killed": {

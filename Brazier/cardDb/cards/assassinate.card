@@ -2,7 +2,7 @@
     "name": "Assassinate",
     "description": "Destroy an enemy minion.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 5,
     "playActions": {
         "targets": "all-minions",

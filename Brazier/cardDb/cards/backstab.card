@@ -2,7 +2,7 @@
     "name": "Backstab",
     "description": "Deal 2 damage to an undamaged minion.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "targets": [

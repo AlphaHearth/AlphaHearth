@@ -2,7 +2,7 @@
     "name": "Bloodlust",
     "description": "Give your minions +3 Attack this turn.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 5,
     "playActions": {
         "class": "TargetlessActions.forTargets",

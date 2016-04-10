@@ -2,7 +2,7 @@
     "name": "Revenge",
     "description": "Deal 1 damage to all minions. If you have 12 or less Health, deal 3 damage instead.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": [

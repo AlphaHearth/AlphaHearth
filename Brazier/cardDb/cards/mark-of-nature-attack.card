@@ -2,7 +2,7 @@
     "name": "Mark of Nature/AttackBuff",
     "description": "+4 Attack.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

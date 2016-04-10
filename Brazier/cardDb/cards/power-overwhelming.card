@@ -2,7 +2,7 @@
     "name": "Power Overwhelming",
     "description": "Give a friendly minion +4/+4 until end of turn. Then, it dies. Horribly.",
     "class": "warlock",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "targets": "friendly-minions",

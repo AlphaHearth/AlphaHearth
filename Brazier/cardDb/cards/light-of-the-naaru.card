@@ -2,7 +2,7 @@
     "name": "Light of the Naaru",
     "description": "Restore 3 Health. If the target is still damaged, summon a Lightwarden.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 1,
     "playActions": [

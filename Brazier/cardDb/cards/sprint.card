@@ -2,7 +2,7 @@
     "name": "Sprint",
     "description": "Draw 4 cards.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 7,
     "playActions": [
         "TargetlessActions.DRAW_FOR_SELF",

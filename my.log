@@ -1,0 +1,849 @@
+2016-04-10 22:01:08 INFO  AiGameAgent:89 - Initiating game...
+2016-04-10 22:01:08 INFO  AiGameAgent:98 - Setting both players' decks...
+2016-04-10 22:01:08 INFO  AiGameAgent:109 - Adding cards to both players' hand...
+2016-04-10 22:01:08 INFO  AiGameAgent:118 - Choosing first player...
+2016-04-10 22:01:08 INFO  AiGameAgent:122 - The AI Opponent will play first.
+2016-04-10 22:01:08 INFO  AiGameAgent:133 - +++++++++++++++++++ Game start +++++++++++++++++++
+2016-04-10 22:01:08 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 0/1
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, 
+Cards in Deck: 27
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: The Coin, 
+Cards in Deck: 26
+Mana: 0/1
+===================
+2016-04-10 22:01:08 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:08 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:08 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 0/1
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, 
+Cards in Deck: 27
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: The Coin, Card: Force-Tank MAX, 
+Cards in Deck: 25
+Mana: 2/2
+===================
+2016-04-10 22:01:08 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:17 INFO  MCTS:45 - Search finished in 8377ms.
+2016-04-10 22:01:17 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:17 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:17 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 28, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 2/2
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, 
+Cards in Deck: 26
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: The Coin, Card: Force-Tank MAX, 
+Cards in Deck: 25
+Mana: 0/2
+===================
+2016-04-10 22:01:17 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:17 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:17 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 28, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 2/2
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, 
+Cards in Deck: 26
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: The Coin, Card: Force-Tank MAX, Card: Hunter's Mark, 
+Cards in Deck: 24
+Mana: 3/3
+===================
+2016-04-10 22:01:17 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:21 INFO  MCTS:45 - Search finished in 4198ms.
+2016-04-10 22:01:21 INFO  Board:200 - Player AiPlayer plays Card: The Coin
+2016-04-10 22:01:21 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:21 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 28, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 3/3
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, 
+Cards in Deck: 25
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, 
+Cards in Deck: 24
+Mana: 4/3
+===================
+2016-04-10 22:01:21 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:21 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:21 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 28, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 3/3
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, 
+Cards in Deck: 25
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, Card: Spider Tank, 
+Cards in Deck: 23
+Mana: 4/4
+===================
+2016-04-10 22:01:21 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:25 INFO  MCTS:45 - Search finished in 4216ms.
+2016-04-10 22:01:25 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:25 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:25 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 26, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 4/4
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, 
+Cards in Deck: 24
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 30, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, Card: Spider Tank, 
+Cards in Deck: 23
+Mana: 2/4
+===================
+2016-04-10 22:01:25 INFO  Board:208 - Player AiOpponent uses hero power
+2016-04-10 22:01:25 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:25 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 26, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 2/4
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, 
+Cards in Deck: 24
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 28, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, Card: Spider Tank, Card: Kill Command, 
+Cards in Deck: 22
+Mana: 5/5
+===================
+2016-04-10 22:01:25 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:29 INFO  MCTS:45 - Search finished in 3660ms.
+2016-04-10 22:01:29 INFO  Board:200 - Player AiPlayer plays Card: Kill Command with target info.hearthsim.brazier.game.Hero@6979553
+2016-04-10 22:01:29 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:29 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 26, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 5/5
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, 
+Cards in Deck: 23
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 25, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, Card: Spider Tank, 
+Cards in Deck: 22
+Mana: 2/5
+===================
+2016-04-10 22:01:29 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:29 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:29 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 26, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 5/5
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, 
+Cards in Deck: 23
+------------------
+
+------------------
+
+------------------
+AiPlayer - Health: 25, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Hunter's Mark, Card: Spider Tank, Card: Abusive Sergeant, 
+Cards in Deck: 21
+Mana: 6/6
+===================
+2016-04-10 22:01:29 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:33 INFO  MCTS:45 - Search finished in 3625ms.
+2016-04-10 22:01:33 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:33 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Spider Tank on location 0
+2016-04-10 22:01:33 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Abusive Sergeant on location 0 with battle cry target Minion(Spider Tank) 3/4
+2016-04-10 22:01:33 INFO  Board:200 - Player AiPlayer plays Card: Hunter's Mark with target Minion(Spider Tank) 5/4
+2016-04-10 22:01:33 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:33 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 24, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 6/6
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, 
+Cards in Deck: 22
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+
+------------------
+AiPlayer - Health: 25, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, 
+Cards in Deck: 21
+Mana: 0/6
+===================
+2016-04-10 22:01:33 INFO  Board:208 - Player AiOpponent uses hero power
+2016-04-10 22:01:33 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:33 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 24, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 4/6
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, 
+Cards in Deck: 22
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+
+------------------
+AiPlayer - Health: 23, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Abusive Sergeant, Card: Eaglehorn Bow, Card: Boulderfist Ogre, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Chillwind Yeti, 
+Cards in Deck: 20
+Mana: 7/7
+===================
+2016-04-10 22:01:33 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:36 INFO  MCTS:45 - Search finished in 3052ms.
+2016-04-10 22:01:36 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Abusive Sergeant on location 2 with battle cry target Minion(Abusive Sergeant) 2/1
+2016-04-10 22:01:36 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Boulderfist Ogre on location 3
+2016-04-10 22:01:36 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:36 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 24, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 7/7
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, 
+Cards in Deck: 21
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 23, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Chillwind Yeti, 
+Cards in Deck: 20
+Mana: 0/7
+===================
+2016-04-10 22:01:36 INFO  Board:208 - Player AiOpponent uses hero power
+2016-04-10 22:01:36 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:36 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 24, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 5/7
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, 
+Cards in Deck: 21
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 21, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Chillwind Yeti, Card: Arcane Shot, 
+Cards in Deck: 19
+Mana: 8/8
+===================
+2016-04-10 22:01:36 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:38 INFO  MCTS:45 - Search finished in 2725ms.
+2016-04-10 22:01:38 INFO  Board:215 - Minion(Abusive Sergeant) 2/1 attacks info.hearthsim.brazier.game.Hero@e0acb5
+2016-04-10 22:01:38 INFO  Board:215 - Minion(Spider Tank) 3/1 attacks info.hearthsim.brazier.game.Hero@e0acb5
+2016-04-10 22:01:38 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:38 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 8/8
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 20
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 21, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Chillwind Yeti, Card: Arcane Shot, 
+Cards in Deck: 19
+Mana: 8/8
+===================
+2016-04-10 22:01:38 INFO  Board:208 - Player AiOpponent uses hero power
+2016-04-10 22:01:38 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:38 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 6/8
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 20
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Chillwind Yeti, Card: Arcane Shot, Card: Worgen Infiltrator, 
+Cards in Deck: 18
+Mana: 9/9
+===================
+2016-04-10 22:01:38 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:41 INFO  MCTS:45 - Search finished in 2425ms.
+2016-04-10 22:01:41 INFO  Board:215 - Minion(Spider Tank) 3/1 attacks info.hearthsim.brazier.game.Hero@e0acb5
+2016-04-10 22:01:41 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Chillwind Yeti on location 1
+2016-04-10 22:01:41 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:41 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 16, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 9/9
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 19
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Arcane Shot, Card: Worgen Infiltrator, 
+Cards in Deck: 18
+Mana: 5/9
+===================
+2016-04-10 22:01:41 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:41 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:41 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 16, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 9/9
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 19
+------------------
+
+------------------
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Force-Tank MAX, Card: Arcane Shot, Card: Worgen Infiltrator, Card: Chillwind Yeti, 
+Cards in Deck: 17
+Mana: 10/10
+===================
+2016-04-10 22:01:41 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:43 INFO  MCTS:45 - Search finished in 2257ms.
+2016-04-10 22:01:43 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:43 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Force-Tank MAX on location 0
+2016-04-10 22:01:43 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:43 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 14, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 18
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Arcane Shot, Card: Worgen Infiltrator, Card: Chillwind Yeti, 
+Cards in Deck: 17
+Mana: 0/10
+===================
+2016-04-10 22:01:43 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:43 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:43 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 14, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 18
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Arcane Shot, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Spider Tank, 
+Cards in Deck: 16
+Mana: 10/10
+===================
+2016-04-10 22:01:43 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:44 INFO  MCTS:45 - Search finished in 1380ms.
+2016-04-10 22:01:44 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:44 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Spider Tank on location 5
+2016-04-10 22:01:44 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:44 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 12, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 17
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Arcane Shot, Card: Worgen Infiltrator, Card: Chillwind Yeti, 
+Cards in Deck: 16
+Mana: 5/10
+===================
+2016-04-10 22:01:44 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:44 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:44 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 12, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 17
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Spider Tank) 3/1
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Arcane Shot, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, 
+Cards in Deck: 15
+Mana: 10/10
+===================
+2016-04-10 22:01:44 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:46 INFO  MCTS:45 - Search finished in 1186ms.
+2016-04-10 22:01:46 INFO  Board:215 - Minion(Force-Tank MAX) 7/7 attacks info.hearthsim.brazier.game.Hero@e0acb5
+2016-04-10 22:01:46 INFO  Board:200 - Player AiPlayer plays Card: Arcane Shot with target Minion(Spider Tank) 3/1
+2016-04-10 22:01:46 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:46 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 5, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 16
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, 
+Cards in Deck: 15
+Mana: 9/10
+===================
+2016-04-10 22:01:46 INFO  Board:174 - Player AiOpponent does nothing.
+2016-04-10 22:01:46 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:46 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 5, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 16
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, Card: Leeroy Jenkins, 
+Cards in Deck: 14
+Mana: 10/10
+===================
+2016-04-10 22:01:46 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:46 INFO  MCTS:45 - Search finished in 690ms.
+2016-04-10 22:01:46 INFO  Board:208 - Player AiPlayer uses hero power
+2016-04-10 22:01:46 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Leeroy Jenkins on location 1
+2016-04-10 22:01:46 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:46 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 3, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 15
+------------------
+Minion(Whelp) 1/1
+Minion(Whelp) 1/1
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Leeroy Jenkins) 6/2
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: false
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, 
+Cards in Deck: 14
+Mana: 3/10
+===================
+2016-04-10 22:01:46 INFO  Board:215 - Minion(Whelp) 1/1 attacks Minion(Leeroy Jenkins) 6/2
+2016-04-10 22:01:46 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:46 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 3, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 15
+------------------
+Minion(Whelp) 1/1
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Leeroy Jenkins) 6/1
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/5
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, Card: Kill Command, 
+Cards in Deck: 13
+Mana: 10/10
+===================
+2016-04-10 22:01:46 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:47 INFO  MCTS:45 - Search finished in 551ms.
+2016-04-10 22:01:47 INFO  Board:200 - Player AiPlayer plays Card: Kill Command with target Minion(Chillwind Yeti) 4/5
+2016-04-10 22:01:47 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:47 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: 3, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 14
+------------------
+Minion(Whelp) 1/1
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Leeroy Jenkins) 6/1
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/2
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/4
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 19, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, 
+Cards in Deck: 13
+Mana: 7/10
+===================
+2016-04-10 22:01:47 INFO  Board:208 - Player AiOpponent uses hero power
+2016-04-10 22:01:47 INFO  Board:215 - Minion(Whelp) 1/1 attacks Minion(Spider Tank) 3/4
+2016-04-10 22:01:47 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:47 INFO  AiGameAgent:73 - Current board is
+====== Board ======
+Current Player: Player AiPlayer
+------------------
+AiOpponent - Health: 3, Armor: 0
+Weapon: null
+Hero Power playable: false
+Mana: 8/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 14
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Leeroy Jenkins) 6/1
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/2
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/3
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 17, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Chillwind Yeti, Card: Unleash the Hounds, Card: Freezing Trap, 
+Cards in Deck: 12
+Mana: 10/10
+===================
+2016-04-10 22:01:47 INFO  MCTS:23 - Start new MCTS
+2016-04-10 22:01:47 INFO  MCTS:45 - Search finished in 327ms.
+2016-04-10 22:01:47 INFO  Board:215 - Minion(Force-Tank MAX) 7/7 attacks info.hearthsim.brazier.game.Hero@e0acb5
+2016-04-10 22:01:47 INFO  Board:200 - info.hearthsim.brazier.game.Player@5c42c80e summons Card: Chillwind Yeti on location 7
+2016-04-10 22:01:47 INFO  AiGameAgent:79 - End turn
+2016-04-10 22:01:47 INFO  AiGameAgent:82 - +++++++++++++++++++ Game over +++++++++++++++++++
+2016-04-10 22:01:47 INFO  AiGameAgent:83 - The final board is
+====== Board ======
+Current Player: Player AiOpponent
+------------------
+AiOpponent - Health: -4, Armor: 0
+Weapon: null
+Hero Power playable: true
+Mana: 10/10
+Cards in Hand: Card: Freezing Trap, Card: Eaglehorn Bow, Card: Explosive Trap, Card: Abusive Sergeant, Card: Force-Tank MAX, Card: Spider Tank, Card: Unleash the Hounds, Card: Chillwind Yeti, Card: Worgen Infiltrator, Card: Kill Command, 
+Cards in Deck: 13
+------------------
+
+------------------
+Minion(Force-Tank MAX) 7/7
+Minion(Leeroy Jenkins) 6/1
+Minion(Abusive Sergeant) 2/1
+Minion(Chillwind Yeti) 4/2
+Minion(Abusive Sergeant) 2/1
+Minion(Spider Tank) 3/3
+Minion(Boulderfist Ogre) 6/7
+
+------------------
+AiPlayer - Health: 17, Armor: 0
+Weapon: null
+Hero Power playable: true
+Cards in Hand: Card: Eaglehorn Bow, Card: Unleash the Hounds, Card: Worgen Infiltrator, Card: Unleash the Hounds, Card: Freezing Trap, 
+Cards in Deck: 12
+Mana: 6/10
+===================
+2016-04-10 22:01:47 INFO  AiGameAgent:61 - hasAiWon: true

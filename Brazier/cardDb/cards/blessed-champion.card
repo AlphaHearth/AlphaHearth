@@ -2,7 +2,7 @@
     "name": "Blessed Champion",
     "description": "Double a minion's Attack.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 5,
     "playActions": {

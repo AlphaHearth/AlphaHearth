@@ -2,7 +2,7 @@
     "name": "Nightmare",
     "description": "Give a minion +5/+5. At the start of your next turn, destroy it.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "emerald-dream",
     "collectible": false,
     "manaCost": 0,

@@ -2,7 +2,7 @@
     "name": "Armor Plating",
     "description": "Give a minion +1 Health.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "spare-part",
     "collectible": false,
     "manaCost": 1,

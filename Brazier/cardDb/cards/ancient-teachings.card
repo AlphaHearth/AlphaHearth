@@ -2,7 +2,7 @@
     "name": "Ancient Teachings",
     "description": "Draw 2 cards.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": [

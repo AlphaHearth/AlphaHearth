@@ -2,7 +2,7 @@
     "name": "Hunter's Mark",
     "description": "Hunter's Mark",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "targets": "all-minions",

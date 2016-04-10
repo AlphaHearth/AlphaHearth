@@ -2,7 +2,7 @@
     "name": "Commanding Shout",
     "description": "Your minions can't be reduced below 1 Health this turn. Draw a card.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 2,
     "playActions": [

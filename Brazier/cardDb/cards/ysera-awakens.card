@@ -2,7 +2,7 @@
     "name": "Ysera Awakens",
     "description": "Deal 5 damage to all characters except Ysera.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "emerald-dream",
     "collectible": false,
     "manaCost": 2,

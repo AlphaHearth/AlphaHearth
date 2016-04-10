@@ -3,7 +3,7 @@
     "displayName": "Dark Wispers",
     "description": "Summon 5 Wisps.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

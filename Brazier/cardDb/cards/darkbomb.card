@@ -2,7 +2,7 @@
     "name": "Darkbomb",
     "description": "Deal 3 damage.",
     "class": "warlock",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "targets": "all",

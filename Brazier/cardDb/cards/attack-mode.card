@@ -2,7 +2,7 @@
     "name": "Attack Mode",
     "description": "+1 Attack.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

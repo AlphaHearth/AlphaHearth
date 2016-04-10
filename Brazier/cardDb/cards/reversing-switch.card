@@ -2,7 +2,7 @@
     "name": "Reversing Switch",
     "description": "Swap a minion's Attack and Health.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "spare-part",
     "collectible": false,
     "manaCost": 1,

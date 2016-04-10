@@ -2,7 +2,7 @@
     "name": "Kill Command",
     "description": "Deal 3 damage. If you have a Beast, deal 5 damage instead.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": [
         {

@@ -2,7 +2,7 @@
     "name": "Shiv",
     "description": "Deal 1 damage. Draw a card.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": [
         {

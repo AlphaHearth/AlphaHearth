@@ -2,7 +2,7 @@
     "name": "Crackle",
     "description": "Deal 3-6 damage. Overload: (1)",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "overload": 1,
     "playActions": {

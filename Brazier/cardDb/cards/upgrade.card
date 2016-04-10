@@ -2,7 +2,7 @@
     "name": "Upgrade!",
     "description": "If you have a weapon, give it +1/+1. Otherwise equip a 1/3 weapon.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 1,
     "playActions": [

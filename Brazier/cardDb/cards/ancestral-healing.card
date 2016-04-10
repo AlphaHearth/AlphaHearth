@@ -2,7 +2,7 @@
     "name": "Ancestral Healing",
     "description": "Restore a minion to full Health and give it Taunt.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "targets": "all-minions",

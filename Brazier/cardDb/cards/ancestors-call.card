@@ -2,7 +2,7 @@
     "name": "Ancestor's Call",
     "description": "Put a random minion from each player's hand into the battlefield.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 4,
     "playActions": [

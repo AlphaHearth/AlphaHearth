@@ -2,7 +2,7 @@
     "name": "Mirror Entity",
     "description": "Secret: When your opponent plays a minion, summon a copy of it.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "secret": {
         "play-card": {

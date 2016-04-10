@@ -28,6 +28,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
             SingleMove move = produceSingleMove(board);
             if (move == null)
                 break;
+            board.applyMoves(move.toMove());
             builder.addMove(move);
         }
         return builder.build();

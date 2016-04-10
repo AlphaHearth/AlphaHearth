@@ -2,7 +2,7 @@
     "name": "Tracking",
     "description": "Look at the top three cards of your deck. Draw one and discard the others.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "class": "TargetlessActions.trackCard",

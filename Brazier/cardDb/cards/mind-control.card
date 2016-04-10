@@ -2,7 +2,7 @@
     "name": "Mind Control",
     "description": "Take control of an enemy minion.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 10,
     "playActions": {
         "targets": "enemy-minions",

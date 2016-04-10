@@ -3,7 +3,7 @@
     "displayName": "Moonfire",
     "description": "Deal 2 damage.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

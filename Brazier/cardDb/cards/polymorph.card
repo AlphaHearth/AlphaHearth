@@ -2,7 +2,7 @@
     "name": "Polymorph",
     "description": "Transform a minion into a 1/1 Sheep.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 4,
     "playActions": {
         "targets": "all-minions",

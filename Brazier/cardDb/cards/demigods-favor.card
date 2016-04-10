@@ -2,7 +2,7 @@
     "name": "Demigod's Favor",
     "description": "Give your other minions +2/+2.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

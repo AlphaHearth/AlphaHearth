@@ -2,7 +2,7 @@
     "name": "Noble Sacrifice",
     "description": "Secret: When an enemy attacks, summon a 2/1 Defender as the new target.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "secret": {
         "attack-initiated": {

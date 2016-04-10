@@ -2,7 +2,7 @@
     "name": "Seal of Light",
     "description": "Restore 4 Health to your hero and gain +2 Attack this turn.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "class": "TargetlessActions.forTargets",

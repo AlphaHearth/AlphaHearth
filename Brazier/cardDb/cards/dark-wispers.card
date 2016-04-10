@@ -2,7 +2,7 @@
     "name": "Dark Wispers",
     "description": "Choose One - Summon 5 Wisps; or Give a minion +5/+5 and Taunt.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 6,
     "chooseOne": [

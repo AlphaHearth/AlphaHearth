@@ -2,7 +2,7 @@
     "name": "Spellbender",
     "description": "Secret: When an enemy casts a spell on a minion, summon a 1/3 as the new target.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "secret": {
         "play-card": {

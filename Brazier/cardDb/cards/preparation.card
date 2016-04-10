@@ -2,7 +2,7 @@
     "name": "Preparation",
     "description": "The next spell you cast this turn costs (3) less.",
     "class": "rouge",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 0,
     "playActions": {

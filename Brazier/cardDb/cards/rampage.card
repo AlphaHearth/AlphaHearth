@@ -2,7 +2,7 @@
     "name": "Rampage",
     "description": "Give a damaged minion +3/+3.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "targets": [

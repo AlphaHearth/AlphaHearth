@@ -2,7 +2,7 @@
     "name": "Twisting Nether",
     "description": "Destroy all minions.",
     "class": "warlock",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 8,
     "playActions": {

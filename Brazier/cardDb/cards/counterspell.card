@@ -2,7 +2,7 @@
     "name": "Counterspell",
     "description": "Secret: When your opponent casts a spell, Counter it.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "secret": {

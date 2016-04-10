@@ -2,7 +2,7 @@
     "name": "Nourish/Draw",
     "description": "Draw 3 cards.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": [

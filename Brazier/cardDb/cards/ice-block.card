@@ -2,7 +2,7 @@
     "name": "Ice Block",
     "description": "Secret: When your hero takes fatal damage, prevent it and become Immune this turn.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 3,
     "secret": {

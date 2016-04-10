@@ -3,10 +3,7 @@ package com.github.mrdai.alphahearth.mcts;
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.mcts.budget.Budget;
 import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
-import com.github.mrdai.alphahearth.mcts.policy.DefaultPolicy;
-import com.github.mrdai.alphahearth.mcts.policy.RandomPolicy;
-import com.github.mrdai.alphahearth.mcts.policy.TreePolicy;
-import com.github.mrdai.alphahearth.mcts.policy.UCTTreePolicy;
+import com.github.mrdai.alphahearth.mcts.policy.*;
 import com.github.mrdai.alphahearth.move.Move;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class MCTS {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
 
-    private final Budget budget = new IterCountBudget(30);
+    private final Budget budget = new IterCountBudget(300);
     private final TreePolicy treePolicy = new UCTTreePolicy();
     private final DefaultPolicy defaultPolicy = new RandomPolicy();
 
@@ -97,11 +94,11 @@ public class MCTS {
     /**
      * Plays out the given selected {@code Node} with the given starting {@code Board}.
      */
-    private void simulate(Board board) {
+    private void simulate(Board copiedBoard) {
         // Start playing moves with the default policy until the game is over
-        while (!board.isGameOver()) {
-            board.applyMoves(defaultPolicy.produceMode(board));
-            board.getGame().endTurn();
+        while (!copiedBoard.isGameOver()) {
+            copiedBoard.applyMoves(defaultPolicy.produceMode(copiedBoard));
+            copiedBoard.getGame().endTurn();
         }
     }
 }

@@ -2,7 +2,7 @@
     "name": "Repentance",
     "description": "Secret: When your opponent plays a minion, reduce its Health to 1.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "secret": {
         "play-card": {

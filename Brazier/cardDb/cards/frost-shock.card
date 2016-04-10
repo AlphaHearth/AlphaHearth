@@ -2,7 +2,7 @@
     "name": "Frost Shock",
     "description": "Deal 1 damage to an enemy character and Freeze it.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": [
         {

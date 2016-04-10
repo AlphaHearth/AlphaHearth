@@ -2,7 +2,7 @@
     "name": "Arcane Intellect",
     "description": "Draw 2 cards.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": [
         "TargetlessActions.DRAW_FOR_SELF",

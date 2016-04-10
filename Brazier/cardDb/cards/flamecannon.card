@@ -2,7 +2,7 @@
     "name": "Flamecannon",
     "description": "Deal 4 damage to a random enemy minion.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "requires": "PlayActionRequirements.OPPONENT_BOARD_NOT_EMPTY",

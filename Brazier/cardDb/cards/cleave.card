@@ -2,7 +2,7 @@
     "name": "Cleave",
     "description": "Deal 2 damage to two random enemy minions.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "requires": {

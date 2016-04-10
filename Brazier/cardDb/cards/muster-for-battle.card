@@ -2,7 +2,7 @@
     "name": "Muster for Battle",
     "description": "Summon three 1/1 Silver Hand Recruits. Equip a 1/4 Weapon.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "playActions": [

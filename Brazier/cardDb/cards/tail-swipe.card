@@ -2,7 +2,7 @@
     "name": "Tail Swipe",
     "description": "Deal 4 damage.",
     "class": "boss-class",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 4,
     "playActions": {

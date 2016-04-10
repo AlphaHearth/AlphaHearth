@@ -2,7 +2,7 @@
     "name": "Force of Nature",
     "description": "Summon three 2/2 Treants with Charge that die at the end of the turn.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "epic",
     "manaCost": 6,
     "playActions": {

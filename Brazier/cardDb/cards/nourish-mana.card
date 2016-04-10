@@ -2,7 +2,7 @@
     "name": "Nourish/Mana",
     "description": "Gain 2 Mana Crystals.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

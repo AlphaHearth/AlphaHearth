@@ -2,7 +2,7 @@
     "name": "Unleash the Hounds",
     "description": "For each enemy minion, summon a 1/1 Hound with Charge.",
     "class": "hunter",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "playActions": {
         "class": "TargetlessActions.unleashMinions",

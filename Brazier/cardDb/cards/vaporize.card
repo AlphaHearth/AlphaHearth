@@ -2,7 +2,7 @@
     "name": "Vaporize",
     "description": "Secret: When a minion attacks your hero, destroy it.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "secret": {

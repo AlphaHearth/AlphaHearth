@@ -2,7 +2,7 @@
     "name": "Lightning Storm",
     "description": "Deal 2-3 damage to all enemy minions. Overload: (2)",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "overload": 2,

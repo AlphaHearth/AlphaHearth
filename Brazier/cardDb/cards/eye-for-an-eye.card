@@ -2,7 +2,7 @@
     "name": "Eye for an Eye",
     "description": "Secret: When your hero takes damage, deal that much damage to the enemy hero.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "secret": {
         "hero-damaged": {

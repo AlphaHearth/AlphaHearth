@@ -2,7 +2,7 @@
     "name": "Mirror Image",
     "description": "Summon two 0/2 minions with Taunt.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "class": "TargetlessActions.summonMinion",

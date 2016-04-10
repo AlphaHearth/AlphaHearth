@@ -2,7 +2,7 @@
     "name": "Silence",
     "description": "Silence a minion.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "targets": "all-minions",

@@ -2,7 +2,7 @@
     "name": "Holy Smite",
     "description": "Deal 2 damage.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "targets": "all",

@@ -2,7 +2,7 @@
     "name": "Holy Light",
     "description": "Restore 6 Health.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 2,
     "playActions": {
         "targets": "all",

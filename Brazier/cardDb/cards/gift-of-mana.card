@@ -2,7 +2,7 @@
     "name": "Gift of Mana",
     "description": "Give each player a Mana Crystal.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": [

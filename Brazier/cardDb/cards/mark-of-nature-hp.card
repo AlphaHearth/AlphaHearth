@@ -2,7 +2,7 @@
     "name": "Mark of Nature/HpBuff",
     "description": "+4 Health and Taunt.",
     "class": "druid",
-    "type": "spell",
+    "type": "Spell",
     "collectible": false,
     "manaCost": 0,
     "playActions": {

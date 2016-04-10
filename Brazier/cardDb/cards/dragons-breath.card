@@ -2,7 +2,7 @@
     "name": "Dragon's Breath",
     "description": "Deal 4 damage. Costs (1) less for each minion that died this turn.",
     "class": "mage",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 4,
     "manaCostAdjusters": "ManaCostAdjusters.REDUCE_BY_DEATH_THIS_TURN",
     "playActions": {

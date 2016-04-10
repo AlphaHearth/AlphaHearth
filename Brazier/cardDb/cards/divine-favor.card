@@ -2,7 +2,7 @@
     "name": "Divine Favor",
     "description": "Draw cards until you have as many in hand as your opponent.",
     "class": "paladin",
-    "type": "spell",
+    "type": "Spell",
     "rarity": "rare",
     "manaCost": 3,
     "playActions": "TargetlessActions.DIVINE_FAVOR"

@@ -2,7 +2,7 @@
     "name": "Emergency Coolant",
     "description": "Freeze a minion.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "spare-part",
     "collectible": false,
     "manaCost": 1,

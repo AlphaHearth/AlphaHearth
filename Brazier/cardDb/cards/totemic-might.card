@@ -2,7 +2,7 @@
     "name": "Totemic Might",
     "description": "Give your Totems +2 Health.",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 0,
     "playActions": {
         "class": "TargetlessActions.forOtherTargets",

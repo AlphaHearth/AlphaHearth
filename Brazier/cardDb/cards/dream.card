@@ -2,7 +2,7 @@
     "name": "Dream",
     "description": "Return a minion to its owner's hand.",
     "class": "neutral",
-    "type": "spell",
+    "type": "Spell",
     "keywords": "emerald-dream",
     "collectible": false,
     "manaCost": 0,

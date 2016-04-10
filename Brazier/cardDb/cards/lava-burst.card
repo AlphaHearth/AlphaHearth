@@ -2,7 +2,7 @@
     "name": "Lava Burst",
     "description": "Deal 5 damage. Overload: (2)",
     "class": "shaman",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 3,
     "overload": 2,
     "playActions": {

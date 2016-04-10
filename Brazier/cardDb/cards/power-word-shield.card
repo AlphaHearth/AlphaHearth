@@ -2,7 +2,7 @@
     "name": "Power Word: Shield",
     "description": "Give a minion +2 Health. Draw a card.",
     "class": "priest",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": [
         {

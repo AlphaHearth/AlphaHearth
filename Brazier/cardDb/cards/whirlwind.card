@@ -2,7 +2,7 @@
     "name": "Whirlwind",
     "description": "Deal 1 damage to ALL minions.",
     "class": "warrior",
-    "type": "spell",
+    "type": "Spell",
     "manaCost": 1,
     "playActions": {
         "class": "TargetlessActions.damageTarget",

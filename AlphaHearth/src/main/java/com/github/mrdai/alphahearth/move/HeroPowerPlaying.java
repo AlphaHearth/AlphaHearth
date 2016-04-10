@@ -1,9 +1,9 @@
 package com.github.mrdai.alphahearth.move;
 
 import com.github.mrdai.alphahearth.Board;
-import info.hearthsim.brazier.EntityId;
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.PlayerId;
+import info.hearthsim.brazier.game.EntityId;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.PlayerId;
 
 /**
  * Move designating the current player playing its hero power with a potential target.

@@ -3,7 +3,7 @@ package info.hearthsim.brazier.abilities;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 

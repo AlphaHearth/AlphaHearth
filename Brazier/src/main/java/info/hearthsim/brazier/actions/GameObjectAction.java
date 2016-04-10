@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;

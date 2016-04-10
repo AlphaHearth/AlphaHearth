@@ -1,7 +1,10 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.game.Damage;
+import info.hearthsim.brazier.game.DamageSource;
+import info.hearthsim.brazier.game.Player;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

@@ -1,20 +1,21 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.*;
-import info.hearthsim.brazier.cards.CardProvider;
-import info.hearthsim.brazier.cards.CardRarity;
-import info.hearthsim.brazier.cards.CardType;
-import info.hearthsim.brazier.minions.MinionDescr;
+import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.game.cards.CardRarity;
+import info.hearthsim.brazier.game.cards.CardType;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.events.EventFilters;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardName;
-import info.hearthsim.brazier.cards.PlayAction;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.CardName;
+import info.hearthsim.brazier.game.cards.PlayAction;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.events.TriggeringAbility;
-import info.hearthsim.brazier.weapons.WeaponDescr;
+import info.hearthsim.brazier.db.WeaponDescr;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -317,7 +318,7 @@ public final class CardParser implements EntityParser<CardDescr> {
 
     private PlayAction<Card> secretAction(Supplier<CardDescr> cardRef, TriggeringAbility<Secret> secretActionDef) {
         ExceptionHelper.checkNotNullArgument(secretActionDef, "secretActionDef");
-        return (Card actor, Optional<info.hearthsim.brazier.Character> target) -> {
+        return (Card actor, Optional<Character> target) -> {
             CardDescr card = cardRef.get();
             Player player = actor.getOwner();
             Secret secret = new Secret(player, card, secretActionDef);

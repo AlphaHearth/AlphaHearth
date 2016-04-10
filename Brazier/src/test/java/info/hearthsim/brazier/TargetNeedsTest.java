@@ -1,11 +1,14 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.TestDb;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardName;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.CardName;
 
 import java.util.List;
 

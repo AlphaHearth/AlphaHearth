@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 
 /**
  * A reference of an action of playing a card with a specific mana cost.

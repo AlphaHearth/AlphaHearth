@@ -2,13 +2,13 @@ package com.github.mrdai.alphahearth.mcts.policy;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.*;
-import info.hearthsim.brazier.Hand;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.HeroPower;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.weapons.Weapon;
+import info.hearthsim.brazier.game.Hand;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.HeroPower;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.weapons.Weapon;
 
 import java.util.Comparator;
 import java.util.List;

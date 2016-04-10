@@ -1,13 +1,13 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.HearthStoneDb;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.ManaResource;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardName;
+import info.hearthsim.brazier.db.HearthStoneDb;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.ManaResource;
+import info.hearthsim.brazier.game.Keywords;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.CardName;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;

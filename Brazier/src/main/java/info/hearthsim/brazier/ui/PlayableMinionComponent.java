@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.minions.Minion;
 
 import javax.swing.JButton;
 

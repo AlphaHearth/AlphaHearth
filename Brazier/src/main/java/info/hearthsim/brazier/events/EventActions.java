@@ -1,9 +1,10 @@
 package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionProvider;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.AttackRequest;
@@ -11,7 +12,7 @@ import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.EntitySelector;
 import info.hearthsim.brazier.actions.TargetedAction;
 import info.hearthsim.brazier.actions.TargetlessAction;
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,7 @@ public final class EventActions {
     }
 
     public static <Actor extends PlayerProperty> EventAction<Actor, TargetRef> forDamageTarget(
-        @NamedArg("action") TargetedAction<? super Actor, ? super info.hearthsim.brazier.Character> action) {
+        @NamedArg("action") TargetedAction<? super Actor, ? super Character> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
         return (Actor self, TargetRef eventSource) -> action.apply(self, eventSource.getTarget());
     }

@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.MouseAdapter;

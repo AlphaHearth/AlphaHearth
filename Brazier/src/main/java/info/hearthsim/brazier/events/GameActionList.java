@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.Priorities;
 
 import java.util.ArrayList;

@@ -1,7 +1,9 @@
 package info.hearthsim.brazier.utils;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.Secret;
+import info.hearthsim.brazier.game.minions.Minion;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

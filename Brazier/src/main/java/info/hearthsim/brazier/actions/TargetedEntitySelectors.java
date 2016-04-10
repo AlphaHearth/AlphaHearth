@@ -1,7 +1,11 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.BoardSide;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 
 import java.util.ArrayList;

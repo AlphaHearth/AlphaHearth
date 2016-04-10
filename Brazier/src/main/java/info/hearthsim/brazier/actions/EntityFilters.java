@@ -1,9 +1,10 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionName;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.minions.MinionName;
 import info.hearthsim.brazier.parsing.NamedArg;
 import java.util.List;
 import java.util.function.Predicate;
@@ -112,7 +113,7 @@ public final class EntityFilters {
      * Returns a {@link Predicate} of {@link Character} which checks if the given character has
      * {@link Keywords#RACE_MURLOC}.
      */
-    public static <Entity extends info.hearthsim.brazier.Character> Predicate<Entity> isMurloc() {
+    public static <Entity extends Character> Predicate<Entity> isMurloc() {
         return withKeywords(Keywords.RACE_MURLOC);
     }
 

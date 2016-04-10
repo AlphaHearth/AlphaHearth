@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.utils;
 
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionName;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.minions.MinionName;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;

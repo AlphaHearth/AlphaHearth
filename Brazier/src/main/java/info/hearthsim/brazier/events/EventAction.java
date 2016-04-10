@@ -20,7 +20,7 @@ import org.jtrim.utils.ExceptionHelper;
  *         {@code owner}: the owner of the triggering effect. For example, minion <em>Acolyte of Pain</em>
  *         has a triggering effect which draws a card for its owner when it takes damage. In this case,
  *         the owner of this triggering effect would be the <em>Acolyte of Pain</em> itself, being
- *         a {@link info.hearthsim.brazier.minions.Minion Minion};
+ *         a {@link info.hearthsim.brazier.game.minions.Minion Minion};
  *     </li>
  *     <li>
  *         {@code source}: source of the event, or what triggers this triggering effect. For example,

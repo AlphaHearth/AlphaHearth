@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.HearthStoneEntity;
+import info.hearthsim.brazier.db.HearthStoneEntity;
 
 /**
  * Parser for {@link HearthStoneEntity}, which parse a given {@link JsonTree} to a

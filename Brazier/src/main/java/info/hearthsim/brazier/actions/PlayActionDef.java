@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.GameProperty;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.PlayAction;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.PlayAction;
 import java.util.Collection;
 
 import org.jtrim.utils.ExceptionHelper;

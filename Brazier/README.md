@@ -7,6 +7,7 @@ This module acts as the game simulator for the AI module [AlphaHearth](../AlphaH
 More works are remained to be done in this module, which include:
 
 - [ ] Implement cards from BRM and TGT.
+- [ ] Rewrite every card in Groovy or Scala and delete the dynamic parsing framework.
 - [ ] Verify the correctness of all the existed test cases.
 - [ ] Add more test cases.
 - [ ] Replace `CharacterAbilities` with `AbilityList`, as its `externalAbilities` field is never used.

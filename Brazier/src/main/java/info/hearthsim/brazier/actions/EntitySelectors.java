@@ -1,15 +1,16 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
-import info.hearthsim.brazier.cards.CardProvider;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.Weapon;
+import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.weapons.Weapon;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -382,7 +383,7 @@ public final class EntitySelectors {
      * Returns a {@link EntitySelector} which returns all friendly living {@link Character}s,
      * including {@link Hero} and {@link Minion}s.
      */
-    public static <Actor extends PlayerProperty> EntitySelector<Actor, info.hearthsim.brazier.Character> friendlyLivingTargets() {
+    public static <Actor extends PlayerProperty> EntitySelector<Actor, Character> friendlyLivingTargets() {
         return EntitySelector.merge(Arrays.asList(friendlyLivingMinions(), friendlyHero()));
     }
 

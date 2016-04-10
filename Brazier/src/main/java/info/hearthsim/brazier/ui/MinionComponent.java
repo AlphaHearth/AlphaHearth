@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionBody;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.minions.MinionBody;
 
 import java.awt.Color;
 import javax.swing.BorderFactory;

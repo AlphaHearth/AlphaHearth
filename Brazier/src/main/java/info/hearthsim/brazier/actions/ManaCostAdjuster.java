@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 
 /**
  * Mana cost adjuster for a certain card. It's a functional interface with its sole un-implemented method

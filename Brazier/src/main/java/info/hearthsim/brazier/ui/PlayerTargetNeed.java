@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.PlayerId;
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.PlayerId;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.TargetNeed;
 

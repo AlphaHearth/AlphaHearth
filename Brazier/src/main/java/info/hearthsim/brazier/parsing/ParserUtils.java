@@ -1,24 +1,26 @@
 package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.db.HearthStoneDb;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.abilities.*;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardName;
-import info.hearthsim.brazier.cards.CardProvider;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.CardName;
+import info.hearthsim.brazier.game.cards.CardProvider;
 import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.events.EventFilter;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.events.TriggeringAbility;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionName;
-import info.hearthsim.brazier.minions.MinionProvider;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.minions.MinionName;
+import info.hearthsim.brazier.game.minions.MinionProvider;
 import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.cards.PlayAction;
-import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.WeaponName;
-import info.hearthsim.brazier.weapons.WeaponProvider;
+import info.hearthsim.brazier.game.cards.PlayAction;
+import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.weapons.WeaponName;
+import info.hearthsim.brazier.game.weapons.WeaponProvider;
 import com.google.gson.*;
 
 import java.io.IOException;
@@ -728,7 +730,7 @@ public final class ParserUtils {
             return action;
         }
 
-        return (Actor actor, Optional<info.hearthsim.brazier.Character> target) -> {
+        return (Actor actor, Optional<Character> target) -> {
             if (condition.meetsRequirement(actor.getOwner()))
                 action.apply(actor, target);
         };

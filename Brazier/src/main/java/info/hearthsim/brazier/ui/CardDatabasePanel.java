@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.HearthStoneDb;
+import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.ui.jtable.JTableBuilder;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.game.Keywords;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.ui.jtable.FormattedTableModel;
 import info.hearthsim.brazier.ui.jtable.JTableUtils;
 import java.util.ArrayList;

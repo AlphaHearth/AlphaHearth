@@ -1,10 +1,11 @@
 package com.github.mrdai.alphahearth;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
 import com.github.mrdai.alphahearth.move.*;
 import org.slf4j.Logger;

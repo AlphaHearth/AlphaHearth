@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.game.Game;
 
 /**
  * Actions that can be used to alter a given {@code Game}. Usually used as a functional

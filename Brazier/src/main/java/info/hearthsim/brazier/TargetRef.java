@@ -1,5 +1,7 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.game.Character;
+
 /**
  * An event of targeting a specific target.
  */

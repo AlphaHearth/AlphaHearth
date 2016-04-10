@@ -1,13 +1,13 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.game.Game;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.ArrayList;

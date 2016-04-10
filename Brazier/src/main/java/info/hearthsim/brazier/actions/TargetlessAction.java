@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

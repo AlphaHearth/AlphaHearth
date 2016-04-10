@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.util.function.Consumer;
 import javax.swing.JComponent;
 
+import info.hearthsim.brazier.game.Character;
 import org.jtrim.event.ListenerRef;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -27,7 +28,7 @@ public final class AttackTargetNeed {
     public static ListenerRef trackForTarget(
             TargetManager targetManager,
             JComponent component,
-            info.hearthsim.brazier.Character target,
+            Character target,
             Consumer<Boolean> highlightSetter) {
         ExceptionHelper.checkNotNullArgument(targetManager, "targetManager");
         ExceptionHelper.checkNotNullArgument(component, "component");

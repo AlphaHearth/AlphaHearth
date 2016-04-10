@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")

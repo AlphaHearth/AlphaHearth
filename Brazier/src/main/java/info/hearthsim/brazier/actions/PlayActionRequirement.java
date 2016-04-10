@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Player;
+import info.hearthsim.brazier.game.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

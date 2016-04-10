@@ -1,12 +1,12 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.weapons.Weapon;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.weapons.Weapon;
 
 /**
  * Predefined {@link ManaCostAdjuster}s.

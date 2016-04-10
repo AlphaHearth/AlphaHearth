@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.parsing.NamedArg;
 

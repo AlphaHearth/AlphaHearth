@@ -1,11 +1,11 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.Keywords;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionName;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.Keywords;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.minions.MinionName;
 import java.util.Set;
 import java.util.function.Supplier;
 

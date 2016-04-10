@@ -1,6 +1,8 @@
 package info.hearthsim.brazier;
 
 import java.util.Objects;
+
+import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

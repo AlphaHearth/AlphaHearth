@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.PlayerId;
+import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class UiMinionIndexNeed {

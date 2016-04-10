@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.WeaponName;
-import info.hearthsim.brazier.weapons.Weapon;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.weapons.WeaponName;
+import info.hearthsim.brazier.game.weapons.Weapon;
 
 import java.util.Collections;
 import java.util.Set;

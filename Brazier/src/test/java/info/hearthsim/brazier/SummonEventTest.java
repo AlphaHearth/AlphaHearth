@@ -1,7 +1,8 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.minions.MinionName;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.Hand;
+import info.hearthsim.brazier.game.minions.MinionName;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.minions.MinionName;
+import info.hearthsim.brazier.game.minions.MinionName;
 
 import java.util.Arrays;
 import java.util.HashSet;

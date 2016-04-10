@@ -9,6 +9,9 @@ import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import info.hearthsim.brazier.game.Entity;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Secret;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

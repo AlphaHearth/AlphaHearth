@@ -1,5 +1,7 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.PlayerId;
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.TestAgent;
 import info.hearthsim.brazier.utils.TestCards;

@@ -2,13 +2,13 @@ package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.actions.CardPlayRef;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.Keyword;
-import info.hearthsim.brazier.LabeledEntity;
-import info.hearthsim.brazier.Player;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.LabeledEntity;
+import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.TargetRef;
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.Character;
 
 import java.util.Optional;
 import java.util.Set;

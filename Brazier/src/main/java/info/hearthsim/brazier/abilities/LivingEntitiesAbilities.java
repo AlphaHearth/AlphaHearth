@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.events.TriggeringAbility;
 import org.jtrim.utils.ExceptionHelper;

@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.actions.Action;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.Game;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.Game;
 
 import java.util.EnumMap;
 import java.util.Map;

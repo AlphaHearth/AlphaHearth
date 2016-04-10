@@ -1,5 +1,9 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Player;
+
 /**
  * Interface, works as markers of properties of a {@link Player}, with
  * the sole un-implemented method {@link #getOwner()}, which returns

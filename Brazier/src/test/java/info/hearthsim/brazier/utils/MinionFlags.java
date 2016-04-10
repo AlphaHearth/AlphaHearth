@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.utils;
 
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.minions.Minion;
 
 import java.util.Set;
 import java.util.function.Predicate;

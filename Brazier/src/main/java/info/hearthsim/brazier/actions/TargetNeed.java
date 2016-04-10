@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.PlayerId;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.PlayerId;
 import info.hearthsim.brazier.PlayerPredicate;
-import info.hearthsim.brazier.minions.Minion;
+import info.hearthsim.brazier.game.minions.Minion;
 
 import java.util.Objects;
 

@@ -1,5 +1,7 @@
 package info.hearthsim.brazier;
 
+import info.hearthsim.brazier.game.PlayerId;
+
 import java.util.function.Predicate;
 
 /**

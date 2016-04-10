@@ -1,7 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.db.CardDescr;
 import java.awt.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,11 +10,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import info.hearthsim.brazier.db.HearthStoneDb;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.event.ListenerRef;
 import org.jtrim.event.ListenerRegistries;
 import org.jtrim.utils.ExceptionHelper;
-
-import static org.jtrim.property.swing.AutoDisplayState.*;
 
 @SuppressWarnings("serial")
 public class GamePlayPanel extends javax.swing.JPanel {
@@ -106,7 +108,7 @@ public class GamePlayPanel extends javax.swing.JPanel {
     private ListenerRef trackForTarget(
             TargetManager targetManager,
             JComponent component,
-            info.hearthsim.brazier.Character target,
+            Character target,
             Consumer<Boolean> highlightSetter) {
         ListenerRef ref1 = PlayerTargetNeed.trackForTarget(targetManager, component, target, highlightSetter);
         ListenerRef ref2 = AttackTargetNeed.trackForTarget(targetManager, component, target, highlightSetter);

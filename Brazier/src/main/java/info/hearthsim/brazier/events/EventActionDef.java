@@ -1,7 +1,7 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.Entity;
-import info.hearthsim.brazier.GameProperty;
+import info.hearthsim.brazier.game.Entity;
+import info.hearthsim.brazier.game.GameProperty;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;

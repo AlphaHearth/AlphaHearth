@@ -1,14 +1,16 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.db.HearthStoneEntityDatabase;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.events.GameEventActions;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.minions.MinionDescr;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
 
 import java.util.ArrayList;
 import java.util.Collections;

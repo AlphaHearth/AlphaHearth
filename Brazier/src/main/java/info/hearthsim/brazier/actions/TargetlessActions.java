@@ -1,25 +1,26 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.abilities.*;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.minions.Minion;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
-import info.hearthsim.brazier.cards.CardName;
-import info.hearthsim.brazier.cards.CardProvider;
-import info.hearthsim.brazier.cards.CardType;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.CardName;
+import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.game.cards.CardType;
 import info.hearthsim.brazier.events.EventFilter;
-import info.hearthsim.brazier.minions.MinionBody;
-import info.hearthsim.brazier.minions.MinionDescr;
-import info.hearthsim.brazier.minions.MinionName;
-import info.hearthsim.brazier.minions.MinionProvider;
+import info.hearthsim.brazier.game.minions.MinionBody;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.minions.MinionName;
+import info.hearthsim.brazier.game.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.weapons.Weapon;
-import info.hearthsim.brazier.weapons.WeaponDescr;
-import info.hearthsim.brazier.weapons.WeaponProvider;
+import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.weapons.WeaponProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -910,7 +911,7 @@ public final class TargetlessActions {
             int appliedMissileCount = actor.createDamage(missileCount).getDamage();
 
             Damage damage = new Damage(actor, 1);
-            Consumer<info.hearthsim.brazier.Character> damageAction =
+            Consumer<Character> damageAction =
                 (target) -> target.damage(damage);
             for (int i = 0; i < appliedMissileCount; i++)
                 selector.select(actor).forEach(damageAction);

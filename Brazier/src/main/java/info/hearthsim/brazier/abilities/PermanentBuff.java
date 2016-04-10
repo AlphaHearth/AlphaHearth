@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.Entity;
+import info.hearthsim.brazier.game.Entity;
 
 import java.util.ArrayList;
 import java.util.Collection;

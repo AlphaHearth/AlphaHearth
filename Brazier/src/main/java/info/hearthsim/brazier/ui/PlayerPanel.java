@@ -1,13 +1,13 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.HearthStoneDb;
-import info.hearthsim.brazier.Hero;
-import info.hearthsim.brazier.HeroPower;
-import info.hearthsim.brazier.ManaResource;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.Player;
-import info.hearthsim.brazier.weapons.AttackTool;
-import info.hearthsim.brazier.weapons.Weapon;
+import info.hearthsim.brazier.db.HearthStoneDb;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.HeroPower;
+import info.hearthsim.brazier.game.ManaResource;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.weapons.AttackTool;
+import info.hearthsim.brazier.game.weapons.Weapon;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.GridLayout;

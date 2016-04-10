@@ -1,6 +1,9 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.game.Entity;
+import info.hearthsim.brazier.game.EntityId;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.IdentityHashMap;

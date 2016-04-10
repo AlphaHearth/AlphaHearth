@@ -3,12 +3,14 @@ package info.hearthsim.brazier.ui;
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.cards.Card;
-import info.hearthsim.brazier.cards.CardDescr;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.db.CardDescr;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.Character;
 import org.jtrim.utils.ExceptionHelper;
 
 public final class PlayerUiAgent {
@@ -164,7 +166,7 @@ public final class PlayerUiAgent {
         });
     }
 
-    public void attack(info.hearthsim.brazier.Character attacker) {
+    public void attack(Character attacker) {
         ExceptionHelper.checkNotNullArgument(attacker, "attacker");
         if (!Objects.equals(attacker.getOwner().getPlayerId(), playerId)) {
             throw new IllegalArgumentException("Must attack with player: " + playerId.getName());

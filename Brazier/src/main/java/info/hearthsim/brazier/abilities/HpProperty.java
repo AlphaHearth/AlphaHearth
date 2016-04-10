@@ -2,7 +2,7 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.Priorities;
 import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.Silencable;
+import info.hearthsim.brazier.game.Silencable;
 
 /**
  * A helpful manager class for the health point property of a certain character, which can be nasty in HearthStone.

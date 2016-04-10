@@ -1,6 +1,6 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 
 import java.util.List;
 

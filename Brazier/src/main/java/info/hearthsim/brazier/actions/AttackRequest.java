@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.Character;
+import info.hearthsim.brazier.game.Character;
 
 import java.util.function.Predicate;
 
-import info.hearthsim.brazier.Player;
+import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.PlayerProperty;
 import org.jtrim.utils.ExceptionHelper;
 
@@ -24,7 +24,7 @@ public final class AttackRequest implements PlayerProperty {
      *
      * @throws NullPointerException if the given {@code attacker} is {@code null}.
      */
-    public AttackRequest(info.hearthsim.brazier.Character attacker, Character target) {
+    public AttackRequest(Character attacker, Character target) {
         ExceptionHelper.checkNotNullArgument(attacker, "attacker");
 
         this.attacker = attacker;

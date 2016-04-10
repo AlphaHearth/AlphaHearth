@@ -1,6 +1,6 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.cards.Card;
+import info.hearthsim.brazier.game.cards.Card;
 
 /**
  * A reference to a {@link Card}, with the sole un-implemented method {@link #getCard()},

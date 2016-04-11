@@ -46,6 +46,7 @@ public final class Player implements Entity<Player>, PlayerProperty {
 
     private final ManaResource manaResource;
 
+    private int turnNum = 0;
     private int fatigue;
 
     private int cardsPlayedThisTurn;
@@ -132,6 +133,7 @@ public final class Player implements Entity<Player>, PlayerProperty {
         board.refreshStartOfTurn();
         hero.refresh();
 
+        turnNum++;
         getGame().getEvents().triggerEvent(SimpleEventType.TURN_STARTS, this);
     }
 
@@ -496,5 +498,9 @@ public final class Player implements Entity<Player>, PlayerProperty {
     @Override
     public EntityId getEntityId() {
         return playerId;
+    }
+
+    public int getTurnNum() {
+        return turnNum;
     }
 }

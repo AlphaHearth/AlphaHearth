@@ -13,11 +13,11 @@ class DistinctMoveList {
     private Set<Board> boardSet = new HashSet<>();
 
     public void add(Board copiedParentBoard, Move move) {
-        int orgValue = copiedParentBoard.getValue();
+        int orgValue = (int) copiedParentBoard.getValue();
         copiedParentBoard.applyMoves(move);
         if (boardSet.contains(copiedParentBoard))
             return;
-        int value = copiedParentBoard.getValue();
+        int value = (int) copiedParentBoard.getValue();
         if (orgValue > value)
             return;
 
@@ -67,7 +67,7 @@ class DistinctMoveList {
 
     public List<Move> toMoveList(Function<Integer, Integer> trimSizeProducer) {
         int listSize = trimSizeProducer.apply(size);
-        List<Move> result = new ArrayList<>(listSize);
+        List<Move> result = new LinkedList<>();
         Node ptr = head;
         for (int i = 0; i < listSize; i++) {
             assert ptr != null;

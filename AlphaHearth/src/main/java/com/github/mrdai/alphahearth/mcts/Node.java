@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-    private static final double PLY_PENALTY = 0.85;
+    private static final double PLY_PENALTY = 0.95;
 
     private final Node parent;
     final Move move;
@@ -16,8 +16,8 @@ public class Node {
     public final List<Node> visitedChildren = new ArrayList<>();
     boolean expanded;
 
-    public int gameCount;
-    public double reward;
+    public double gameCount = 0;
+    public double reward = 0;
 
     /**
      * Creates a root {@code Node} with the given {@link Board}.

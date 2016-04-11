@@ -1,9 +1,7 @@
 package com.github.mrdai.alphahearth.move;
 
 import com.github.mrdai.alphahearth.Board;
-import info.hearthsim.brazier.game.EntityId;
-import info.hearthsim.brazier.game.Game;
-import info.hearthsim.brazier.game.PlayerId;
+import info.hearthsim.brazier.game.*;
 
 /**
  * Move designating the current player playing its hero power with a potential target.
@@ -43,8 +41,14 @@ public class HeroPowerPlaying implements SingleMove {
     public String toString(Board board) {
         Game game = board.getGame();
         StringBuilder builder = new StringBuilder(playerId + " uses hero power");
-        if (target != null)
-            builder.append(" with target ").append(game.findEntity(target));
+        if (target != null) {
+            builder.append(" with target ");
+            Entity eTarget = game.findEntity(target);
+            if (eTarget instanceof Hero)
+                builder.append(eTarget.getOwner().getPlayerId().getName());
+            else
+                builder.append(eTarget);
+        }
         return builder.toString();
     }
 

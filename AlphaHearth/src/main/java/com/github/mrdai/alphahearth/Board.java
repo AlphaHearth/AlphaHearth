@@ -44,11 +44,11 @@ public class Board {
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
             LOG.debug("Move list size: " + availableMoves.size());
-            if (availableMoves.size() > 100)
+            if (availableMoves.size() > 1000)
                 break;
         }
 
-        return availableMoves.toMoveList(20);
+        return availableMoves.toMoveList(500);
     }
 
     private void expandMove(DistinctMoveList availableMoves, int expandMoveIndex) {
@@ -286,12 +286,15 @@ public class Board {
      * @throws IllegalStateException if this method is invoked before the game ends.
      */
     public double getScore() {
+        double TURN_PENALTY = 0.97;
+
         if (!isGameOver())
             throw new IllegalStateException("Error: Evaluating score before the game ends");
-        if (playAgent.getGame().getPlayer(AI_PLAYER).getHero().isDead())
+        Player aiPlayer = playAgent.getGame().getPlayer(AI_PLAYER);
+        if (aiPlayer.getHero().isDead())
             return 0;
         else
-            return 1;
+            return Math.pow(TURN_PENALTY, aiPlayer.getTurnNum());
     }
 
     public Game getGame() {
@@ -338,7 +341,7 @@ public class Board {
 
     @Override
     public int hashCode() {
-        return getValue();
+        return (int) getValue();
     }
 
     /**
@@ -348,12 +351,12 @@ public class Board {
      * <p>
      * This method is also used as the inner implementation of {@link #hashCode()}.
      */
-    public int getValue() {
-        int HERO_HEALTH_FACTOR = 10;
-        int MINION_COST_FACTOR = 4;
-        int HAND_SIZE_FACTOR = 3;
-        int UNATTACKED_PENALTY = 12;
-        int UNUSED_CARD_PENALTY = 8;
+    public double getValue() {
+        double HERO_HEALTH_FACTOR = 1;
+        double MINION_COST_FACTOR = 0.4;
+        double HAND_SIZE_FACTOR = 0.3;
+        double UNATTACKED_PENALTY = 1.2;
+        double UNUSED_CARD_PENALTY = 0.8;
 
         int result = 0;
 

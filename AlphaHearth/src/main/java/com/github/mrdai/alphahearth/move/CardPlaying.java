@@ -1,9 +1,7 @@
 package com.github.mrdai.alphahearth.move;
 
 import com.github.mrdai.alphahearth.Board;
-import info.hearthsim.brazier.game.EntityId;
-import info.hearthsim.brazier.game.Game;
-import info.hearthsim.brazier.game.PlayerId;
+import info.hearthsim.brazier.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,14 +65,26 @@ public class CardPlaying implements SingleMove {
         if (minionLocation == -1) {
             builder.append(game.getPlayer(playerId).getPlayerId()).append(" plays ")
                    .append(game.getPlayer(playerId).getHand().getCard(cardIndex));
-            if (target != null)
-                builder.append(" with target ").append(game.findEntity(target));
+            if (target != null) {
+                builder.append(" with target ");
+                Entity eTarget = game.findEntity(target);
+                if (eTarget instanceof Hero)
+                    builder.append(eTarget.getOwner().getPlayerId().getName());
+                else
+                    builder.append(eTarget);
+            }
         } else {
             builder.append(game.getPlayer(playerId).getPlayerId()).append(" summons ")
                    .append(game.getPlayer(playerId).getHand().getCard(cardIndex))
                    .append(" on location ").append(minionLocation);
-            if (target != null)
-                builder.append(" with battle cry target ").append(game.findEntity(target));
+            if (target != null) {
+                builder.append(" with battle cry target ");
+                Entity eTarget = game.findEntity(target);
+                if (eTarget instanceof Hero)
+                    builder.append(eTarget.getOwner().getPlayerId().getName());
+                else
+                    builder.append(eTarget.toString());
+            }
         }
         return builder.toString();
     }

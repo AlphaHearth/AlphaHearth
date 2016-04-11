@@ -120,15 +120,13 @@ public class AiGameAgent {
             LOG.info("The AI Opponent will play first.");
             aiPlayer.drawCardToHand();
             aiPlayer.addCardToHand(game.getDb().getCardDb().getById(new CardName("The Coin")));
-            aiOpponent.getManaResource().setManaCrystals(1);
-            aiOpponent.setMana(1);
+            aiOpponent.startNewTurn();
             game.setCurrentPlayerId(aiOpponent.getPlayerId());
         } else {
             LOG.info("The AI Player will play first.");
             aiOpponent.drawCardToHand();
             aiOpponent.addCardToHand(game.getDb().getCardDb().getById(new CardName("The Coin")));
-            aiPlayer.getManaResource().setManaCrystals(1);
-            aiPlayer.setMana(1);
+            aiPlayer.startNewTurn();
             game.setCurrentPlayerId(aiPlayer.getPlayerId());
         }
 

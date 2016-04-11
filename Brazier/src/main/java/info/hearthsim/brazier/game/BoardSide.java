@@ -170,7 +170,7 @@ public final class BoardSide implements PlayerProperty {
      */
     public Minion getMinion(int index) {
         if (index >= minionRefs.size() || index < 0)
-            return null;
+            throw new IllegalArgumentException("The given index " + index + " is invalid.");
         return minionRefs.get(index).minion;
     }
 

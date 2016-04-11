@@ -186,7 +186,7 @@ public final class Weapon implements Entity<Weapon>, DestroyableEntity, DamageSo
 
     @Override
     public String toString() {
-        return "Weapon{" + ", attack=" + attack + ", durability=" + durability + '}';
+        return "Weapon{" + getBaseDescr().getDisplayName() + ", attack=" + attack.getValue() + ", durability=" + durability + '}';
     }
 
     @Override

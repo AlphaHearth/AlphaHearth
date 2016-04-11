@@ -3,6 +3,7 @@ package com.github.mrdai.alphahearth.mcts;
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.mcts.budget.Budget;
 import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
+import com.github.mrdai.alphahearth.mcts.budget.TimeBudget;
 import com.github.mrdai.alphahearth.mcts.policy.*;
 import com.github.mrdai.alphahearth.move.Move;
 import org.slf4j.Logger;
@@ -11,9 +12,9 @@ import org.slf4j.LoggerFactory;
 public class MCTS {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
 
-    private final Budget budget = new IterCountBudget(300);
+    private final Budget budget = new TimeBudget(15000);
     private final TreePolicy treePolicy = new UCTTreePolicy();
-    private final DefaultPolicy defaultPolicy = new RandomPolicy();
+    private final DefaultPolicy defaultPolicy = new RuleBasedPolicy();
 
     /**
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
@@ -42,7 +43,7 @@ public class MCTS {
             iterNum++;
         }
         long finishTime = System.currentTimeMillis();
-        LOG.info("Search finished in " + (finishTime - startTime) + "ms.");
+        LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
 
         return bestChild(rootNode).move;
     }

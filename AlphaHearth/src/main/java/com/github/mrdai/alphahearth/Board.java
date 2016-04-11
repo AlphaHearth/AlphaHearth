@@ -43,7 +43,7 @@ public class Board {
 
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
-            LOG.trace("Move list size: " + availableMoves.size());
+            LOG.debug("Move list size: " + availableMoves.size());
         }
 
         return availableMoves.toMoveList(100);
@@ -70,12 +70,12 @@ public class Board {
                 new PlayerTargetNeed(new TargeterDef(curPlayerId, true, false), heroPower.getTargetNeed());
             if (!targetNeed.getTargetNeed().hasTarget()) {
                 HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId);
-                LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
                 add(selectedMove, heroPowerPlaying, availableMoves);
             } else {
                 currentGame.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
                     HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getEntityId());
-                    LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                    LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, heroPowerPlaying, availableMoves);
                 });
             }
@@ -87,24 +87,38 @@ public class Board {
             List<Minion> enemyTaunt = enemyMinions.findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth() && !m.getBody().isImmune());
             for (Character attacker : attackers) {
                 for (Minion target : enemyTaunt) {
-                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
-                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    DirectAttacking directAttacking;
+                    int targetIndex = enemyMinions.indexOf(target);
+                    if (attacker instanceof Hero)
+                        directAttacking = new DirectAttacking(8, targetIndex);
+                    else
+                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), targetIndex);
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, directAttacking, availableMoves);
                 }
             }
         } else {
             if (!enemyHero.isImmune()) {
                 for (Character attacker : attackers) {
-                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), enemyHero.getEntityId());
-                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    DirectAttacking directAttacking;
+                    if (attacker instanceof Hero)
+                        directAttacking = new DirectAttacking(8, 8);
+                    else
+                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), 8);
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, directAttacking, availableMoves);
                 }
             }
             List<Minion> targets = enemyMinions.findMinions((m) -> !m.getBody().isStealth() && !m.getBody().isImmune());
             for (Character attacker : attackers) {
                 for (Minion target : targets) {
-                    DirectAttacking directAttacking = new DirectAttacking(attacker.getEntityId(), target.getEntityId());
-                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on " + copiedBoard);
+                    DirectAttacking directAttacking;
+                    int targetIndex = enemyMinions.indexOf(target);
+                    if (attacker instanceof Hero)
+                        directAttacking = new DirectAttacking(8, targetIndex);
+                    else
+                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), targetIndex);
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, directAttacking, availableMoves);
                 }
             }
@@ -175,7 +189,7 @@ public class Board {
             if (logMove)
                 LOG.info(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
             else
-                LOG.debug(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
+                LOG.trace(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
         } else
             move.getActualMoves().forEach((m) -> applyMove(m, logMove));
     }
@@ -201,7 +215,7 @@ public class Board {
             if (logMove)
                 LOG.info(cardPlaying.toString(this));
             else if (LOG.isDebugEnabled())
-                LOG.debug(cardPlaying.toString(this));
+                LOG.trace(cardPlaying.toString(this));
             playAgent.playCard(cardPlaying.getCardIndex(),
                 new PlayTargetRequest(cardPlaying.getPlayerId(), cardPlaying.getMinionLocation(), cardPlaying.getTarget()));
         } else if (move instanceof HeroPowerPlaying) {
@@ -209,15 +223,27 @@ public class Board {
             if (logMove)
                 LOG.info(heroPowerPlaying.toString(this));
             else if (LOG.isDebugEnabled())
-                LOG.debug(heroPowerPlaying.toString(this));
+                LOG.trace(heroPowerPlaying.toString(this));
             playAgent.playHeroPower(new PlayTargetRequest(heroPowerPlaying.getPlayerId(), -1, heroPowerPlaying.getTarget()));
         } else if (move instanceof DirectAttacking) {
             DirectAttacking directAttacking = (DirectAttacking) move;
             if (logMove)
                 LOG.info(directAttacking.toString(this));
             else if (LOG.isDebugEnabled())
-                LOG.debug(directAttacking.toString(this));
-            playAgent.attack(directAttacking.getAttacker(), directAttacking.getTarget());
+                LOG.trace(directAttacking.toString(this));
+            EntityId attackerId;
+            int attackerIndex = directAttacking.getAttacker();
+            if (attackerIndex == 8)
+                attackerId = getGame().getCurrentPlayer().getHero().getEntityId();
+            else
+                attackerId = getGame().getCurrentPlayer().getBoard().getMinion(attackerIndex).getEntityId();
+            EntityId targetId;
+            int targetIndex = directAttacking.getTarget();
+            if (targetIndex == 8)
+                targetId = getGame().getOpponent(getGame().getCurrentPlayer().getPlayerId()).getHero().getEntityId();
+            else
+                targetId = getGame().getOpponent(getGame().getCurrentPlayer().getPlayerId()).getBoard().getMinion(targetIndex).getEntityId();
+            playAgent.attack(attackerId, targetId);
         }
     }
 

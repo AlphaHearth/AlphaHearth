@@ -9,6 +9,8 @@ import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
  * A {@code DefaultPolicy} who produces {@link Move} based on predefined rules.
  */
 public class RuleBasedPolicy implements DefaultPolicy {
+    private static final Logger LOG = LoggerFactory.getLogger(RuleBasedPolicy.class);
     private static final Comparator<Minion> CMP = new CardPowerComparer();
 
     @Override
@@ -48,8 +51,10 @@ public class RuleBasedPolicy implements DefaultPolicy {
         enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
 
         SingleMove move = produceCardPlaying(us, enemy, enemyAttackPoint);
-        if (move != null)
+        if (move != null) {
+            LOG.trace(move.toString(board));
             return move;
+        }
 
 
         // Fetch friendly attackers and enemy targets
@@ -71,29 +76,50 @@ public class RuleBasedPolicy implements DefaultPolicy {
         // Generate Minion Attack Move
 
         // Deal with enemy's taunt minions
-        DirectAttacking attacking = playKill(friendlyNonTauntAttackers, enemyTaunt);
-        if (attacking != null)
-            return attacking;
-        attacking = playKill(friendlyTauntAttackers, enemyTaunt);
-        if (attacking != null)
-            return attacking;
-        if (!enemyTaunt.isEmpty() && !friendlyAttackers.isEmpty())
-            return new DirectAttacking(friendlyAttackers.get(0).getEntityId(), enemyTaunt.get(0).getEntityId());
+        move = playKill(friendlyNonTauntAttackers, enemyTaunt);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
+        move = playKill(friendlyTauntAttackers, enemyTaunt);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+        if (!enemyTaunt.isEmpty() && !friendlyAttackers.isEmpty()) {
+            move = new DirectAttacking(us.getBoard().indexOf(friendlyAttackers.get(0)),
+                                          enemy.getBoard().indexOf(enemyTaunt.get(0)));
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
 
         // Deal with enemy's dangerous minions
-        attacking = playKill(friendlyNonTauntAttackers, enemyDangerous);
-        if (attacking != null)
-            return attacking;
-        if (!friendlyNonTauntAttackers.isEmpty() && !enemyDangerous.isEmpty())
-            return new DirectAttacking(friendlyNonTauntAttackers.get(0).getEntityId(), enemyDangerous.get(0).getEntityId());
+        move = playKill(friendlyNonTauntAttackers, enemyDangerous);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
+        if (!friendlyNonTauntAttackers.isEmpty() && !enemyDangerous.isEmpty()) {
+            move = new DirectAttacking(us.getBoard().indexOf(friendlyNonTauntAttackers.get(0)),
+                                          enemy.getBoard().indexOf(enemyDangerous.get(0)));
+            LOG.trace(move.toString(board));
+            return move;
+        }
 
         // Deal with enemy minions depends on my health
         if (enemyTaunt.isEmpty() && us.getHero().getCurrentHp() - enemyAttackPoint < 0) {
             for (Minion target : enemyMinions) {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 1) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
-                    if (bestAttacker != null)
-                        return new DirectAttacking(bestAttacker.getEntityId(), target.getEntityId());
+                    if (bestAttacker != null) {
+                        move = new DirectAttacking(us.getBoard().indexOf(bestAttacker),
+                                                      enemy.getBoard().indexOf(target));
+                        LOG.trace(move.toString(board));
+                        return move;
+                    }
                 }
             }
         }
@@ -101,15 +127,22 @@ public class RuleBasedPolicy implements DefaultPolicy {
             for (Minion target : enemyMinions) {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 3) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
-                    if (bestAttacker != null)
-                        return new DirectAttacking(bestAttacker.getEntityId(), target.getEntityId());
+                    if (bestAttacker != null) {
+                        move = new DirectAttacking(us.getBoard().indexOf(bestAttacker),
+                                                      enemy.getBoard().indexOf(target));
+                        LOG.trace(move.toString(board));
+                        return move;
+                    }
                 }
             }
         }
 
         // Attack enemy's face
-        if (!friendlyAttackers.isEmpty())
-            return new DirectAttacking(friendlyAttackers.get(0).getEntityId(), enemyHero.getEntityId());
+        if (!friendlyAttackers.isEmpty()) {
+            move = new DirectAttacking(us.getBoard().indexOf(friendlyAttackers.get(0)), 8);
+            LOG.trace(move.toString(board));
+            return move;
+        }
 
         // Play Hero Power
         if (us.getMana() >= 2 && us.getHero().getHeroPower().isPlayable()) {
@@ -146,8 +179,11 @@ public class RuleBasedPolicy implements DefaultPolicy {
 
         // Attack with Hero
         if (us.getHero().getAttackTool().canAttackWith()) {
-            if (enemyTaunt.isEmpty())
-                return new DirectAttacking(us.getHero().getEntityId(), enemyHero.getEntityId());
+            if (enemyTaunt.isEmpty()) {
+                move = new DirectAttacking(8, 8);
+                LOG.trace(move.toString(board));
+                return move;
+            }
         }
 
         return null;
@@ -188,7 +224,8 @@ public class RuleBasedPolicy implements DefaultPolicy {
         for (Minion target : enemyTargets) {
             bestAttacker = bestAttacker(friendlyAttackers, target);
             if (bestAttacker != null)
-                return new DirectAttacking(bestAttacker.getEntityId(), target.getEntityId());
+                return new DirectAttacking(bestAttacker.getOwner().getBoard().indexOf(bestAttacker),
+                                              target.getOwner().getBoard().indexOf(target));
         }
 
         return null;

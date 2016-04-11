@@ -4,6 +4,8 @@ import com.github.mrdai.alphahearth.Board;
 import info.hearthsim.brazier.game.EntityId;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.PlayerId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CardPlaying implements SingleMove {
     private final PlayerId playerId;

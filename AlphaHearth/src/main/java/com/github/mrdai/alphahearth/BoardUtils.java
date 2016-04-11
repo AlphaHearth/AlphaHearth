@@ -40,7 +40,7 @@ public abstract class BoardUtils {
     public static boolean compareWeapon(Weapon weaponA, Weapon weaponB) {
         if (weaponA == null && weaponB != null || weaponB == null && weaponA != null)
             return false;
-        if (weaponA == null && weaponB == null)
+        if (weaponA == null)
             return true;
         if (weaponA.getAttack() != weaponB.getAttack())
             return false;

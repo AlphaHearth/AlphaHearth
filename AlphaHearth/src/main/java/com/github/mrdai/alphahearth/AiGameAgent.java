@@ -50,7 +50,7 @@ public class AiGameAgent {
         	.addCard(HEARTH_DB.getCardDb().getById(new CardName("Force-Tank MAX")), 2);
     }
 
-    private DefaultPolicy aiOpponentPolicy = new RandomPolicy();
+    private DefaultPolicy aiOpponentPolicy = new RuleBasedPolicy();
     private Game game;
     private MCTS mcts = new MCTS();
     private Board board;
@@ -91,9 +91,7 @@ public class AiGameAgent {
         board = new Board(game);
 
         Player aiPlayer = game.getPlayer1();
-        aiPlayer.getManaResource().setManaCrystals(1);
         Player aiOpponent = game.getPlayer2();
-        aiOpponent.getManaResource().setManaCrystals(1);
 
         LOG.info("Setting both players' decks...");
         // Add cards to both players' decks
@@ -122,11 +120,15 @@ public class AiGameAgent {
             LOG.info("The AI Opponent will play first.");
             aiPlayer.drawCardToHand();
             aiPlayer.addCardToHand(game.getDb().getCardDb().getById(new CardName("The Coin")));
+            aiOpponent.getManaResource().setManaCrystals(1);
+            aiOpponent.setMana(1);
             game.setCurrentPlayerId(aiOpponent.getPlayerId());
         } else {
             LOG.info("The AI Player will play first.");
             aiOpponent.drawCardToHand();
             aiOpponent.addCardToHand(game.getDb().getCardDb().getById(new CardName("The Coin")));
+            aiPlayer.getManaResource().setManaCrystals(1);
+            aiPlayer.setMana(1);
             game.setCurrentPlayerId(aiPlayer.getPlayerId());
         }
 

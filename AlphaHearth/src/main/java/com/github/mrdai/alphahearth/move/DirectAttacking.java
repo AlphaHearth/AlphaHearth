@@ -6,31 +6,41 @@ import info.hearthsim.brazier.game.Game;
 import org.jtrim.utils.ExceptionHelper;
 
 public class DirectAttacking implements SingleMove {
-    private final EntityId attacker;
-    private final EntityId target;
+    private final int attackerIndex;
+    private final int targetIndex;
 
-    public DirectAttacking(EntityId attacker, EntityId target) {
-        ExceptionHelper.checkNotNullArgument(attacker, "attacker");
-        ExceptionHelper.checkNotNullArgument(target, "target");
+    public DirectAttacking(int attacker, int target) {
+        ExceptionHelper.checkArgumentInRange(attacker, 0, 8, "attacker");
+        ExceptionHelper.checkArgumentInRange(target, 0, 8, "target");
 
-        this.attacker = attacker;
-        this.target = target;
+        this.attackerIndex = attacker;
+        this.targetIndex = target;
     }
 
-    public EntityId getTarget() {
-        return target;
+    public int getTarget() {
+        return targetIndex;
     }
 
-    public EntityId getAttacker() {
-        return attacker;
+    public int getAttacker() {
+        return attackerIndex;
     }
 
     public String toString(Board board) {
         Game game = board.getGame();
-        return game.findEntity(attacker) + " attacks " + game.findEntity(target);
+        String attackerName;
+        if (attackerIndex == 8)
+            attackerName = game.getCurrentPlayer().getPlayerId().getName();
+        else
+            attackerName = game.getCurrentPlayer().getBoard().getMinion(attackerIndex).toString();
+        String targetName;
+        if (targetIndex == 8)
+            targetName = game.getOpponent(game.getCurrentPlayer().getPlayerId()).getPlayerId().getName();
+        else
+            targetName = game.getOpponent(game.getCurrentPlayer().getPlayerId()).getBoard().getMinion(targetIndex).toString();
+        return attackerName + " attacks " + targetName;
     }
 
     public String toString() {
-        return String.format("DirectAttacking[attacker: %s, target: %s]", attacker, target);
+        return String.format("DirectAttacking[attacker: %s, target: %s]", attackerIndex, targetIndex);
     }
 }

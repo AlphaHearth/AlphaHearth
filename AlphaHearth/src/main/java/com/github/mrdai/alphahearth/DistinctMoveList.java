@@ -2,32 +2,50 @@ package com.github.mrdai.alphahearth;
 
 import com.github.mrdai.alphahearth.move.Move;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 class DistinctMoveList {
     private int size = 0;
     private Node head = null;
     private Node tail = null;
 
-    private List<Board> boardSet = new LinkedList<>();
+    private Set<Board> boardSet = new HashSet<>();
 
     public void add(Board copiedParentBoard, Move move) {
+        int orgValue = copiedParentBoard.getValue();
         copiedParentBoard.applyMoves(move);
-        for (Board board : boardSet)
-            if (board.equals(copiedParentBoard))
-                return;
-        boardSet.add(copiedParentBoard);
+        if (boardSet.contains(copiedParentBoard))
+            return;
+        int value = copiedParentBoard.getValue();
+        if (orgValue > value)
+            return;
 
-        Node node = new Node(move);
+        boardSet.add(copiedParentBoard);
+        Node node = new Node(move, value);
         if (head == null && tail == null) {
             head = node;
             tail = node;
         } else {
-            node.next = head;
-            head.front = node;
-            head = node;
+            // Adds it in the decreasing order of the value
+            Node ptr = head;
+            while (true) {
+                assert ptr != null;
+                if (ptr.next == null) {
+                    ptr.next = node;
+                    node.front = ptr;
+                    tail = node;
+                    break;
+                }
+                if (ptr.value > value && ptr.next.value <= value) {
+                    node.next = ptr.next;
+                    ptr.next.front = node;
+                    node.front = ptr;
+                    ptr.next = node;
+                    break;
+                }
+                ptr = ptr.next;
+            }
         }
         size++;
     }
@@ -44,7 +62,11 @@ class DistinctMoveList {
     }
 
     public List<Move> toMoveList(int trimSize) {
-        int listSize = size < trimSize ? size : trimSize;
+        return toMoveList((s) -> s < trimSize ? s : trimSize);
+    }
+
+    public List<Move> toMoveList(Function<Integer, Integer> trimSizeProducer) {
+        int listSize = trimSizeProducer.apply(size);
         List<Move> result = new ArrayList<>(listSize);
         Node ptr = head;
         for (int i = 0; i < listSize; i++) {
@@ -61,11 +83,13 @@ class DistinctMoveList {
 
     private static final class Node {
         final Move move;
+        final int value;
         Node front = null;
         Node next = null;
 
-        Node(Move move) {
+        Node(Move move, int value) {
             this.move = move;
+            this.value = value;
         }
     }
 }

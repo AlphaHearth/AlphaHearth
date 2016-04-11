@@ -16,7 +16,7 @@ public class UCTTreePolicy implements TreePolicy {
      * Creates a {@code UCTTreePolicy} with its Exploration Factor setting to {@code 1 / sqrt(2)}.
      */
     public UCTTreePolicy() {
-        this(Math.sqrt(2));
+        this(1 / Math.sqrt(2));
     }
 
     /**

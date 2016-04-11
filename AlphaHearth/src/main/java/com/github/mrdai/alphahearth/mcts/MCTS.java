@@ -2,19 +2,22 @@ package com.github.mrdai.alphahearth.mcts;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.mcts.budget.Budget;
-import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.mcts.budget.TimeBudget;
 import com.github.mrdai.alphahearth.mcts.policy.*;
 import com.github.mrdai.alphahearth.move.Move;
+import com.github.mrdai.alphahearth.move.SingleMove;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.github.mrdai.alphahearth.Board.AI_OPPONENT;
 
 public class MCTS {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
 
-    private final Budget budget = new TimeBudget(15000);
+    private final Budget budget = new TimeBudget(90000);
     private final TreePolicy treePolicy = new UCTTreePolicy();
-    private final DefaultPolicy defaultPolicy = new RuleBasedPolicy();
+    private final DefaultPolicy enemyDefaultPolicy = new RuleBasedPolicy();
+    private final DefaultPolicy ourDefaultPolicy = new RuleBasedPolicy();
 
     /**
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
@@ -44,6 +47,32 @@ public class MCTS {
         }
         long finishTime = System.currentTimeMillis();
         LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
+        StringBuilder builder = new StringBuilder("Direct children include: \n=== Visited Children ===\n");
+        for (Node node : rootNode.visitedChildren) {
+            Board board = rootBoard.clone();
+            if (node.move.getActualMoves().isEmpty())
+                builder.append("AiPlayer does nothing\n");
+            for (SingleMove move : node.move.getActualMoves()) {
+                builder.append(move.toString(board)).append("\n");
+                board.applyMoves(move.toMove());
+            }
+            builder.append("Reward: " + node.reward + ", Game count: " + node.gameCount + "\n");
+            builder.append("----------\n");
+        }
+        if (!rootNode.unvisitedChildren.isEmpty()) {
+            builder.append("=== Unvisited Children ===");
+            for (Node node : rootNode.unvisitedChildren) {
+                Board board = rootBoard.clone();
+                if (node.move.getActualMoves().isEmpty())
+                    builder.append("AiPlayer does nothing\n");
+                for (SingleMove move : node.move.getActualMoves()) {
+                    builder.append(move.toString(board)).append("\n");
+                    board.applyMoves(move.toMove());
+                }
+                builder.append("----------\n");
+            }
+        }
+        LOG.info(builder.toString());
 
         return bestChild(rootNode).move;
     }
@@ -96,9 +125,14 @@ public class MCTS {
      * Plays out the given selected {@code Node} with the given starting {@code Board}.
      */
     private void simulate(Board copiedBoard) {
+        copiedBoard.getGame().getPlayer1().getDeck().shuffle();
+        copiedBoard.getGame().getPlayer2().getDeck().shuffle();
         // Start playing moves with the default policy until the game is over
         while (!copiedBoard.isGameOver()) {
-            copiedBoard.applyMoves(defaultPolicy.produceMode(copiedBoard));
+            if (copiedBoard.getGame().getCurrentPlayer().getPlayerId() == AI_OPPONENT)
+                copiedBoard.applyMoves(enemyDefaultPolicy.produceMode(copiedBoard));
+            else
+                copiedBoard.applyMoves(ourDefaultPolicy.produceMode(copiedBoard));
             copiedBoard.getGame().endTurn();
         }
     }

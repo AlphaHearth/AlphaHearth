@@ -44,9 +44,11 @@ public class Board {
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
             LOG.debug("Move list size: " + availableMoves.size());
+            if (availableMoves.size() > 100)
+                break;
         }
 
-        return availableMoves.toMoveList(100);
+        return availableMoves.toMoveList(20);
     }
 
     private void expandMove(DistinctMoveList availableMoves, int expandMoveIndex) {
@@ -334,6 +336,90 @@ public class Board {
             builder.append(minion).append("\n");
     }
 
+    @Override
+    public int hashCode() {
+        return getValue();
+    }
+
+    /**
+     * Returns the coarse value of this current {@code Board}. More advantageous the {@link #AI_PLAYER} is,
+     * higher the value is. If two given {@code Board} {@code a} and {@code b} has {@code a.equals(b) = true},
+     * {@code a.getValue() = b.getValue()}. If {@code a.getValue() != b.getValue()}, {@code a.equals(b) = false}.
+     * <p>
+     * This method is also used as the inner implementation of {@link #hashCode()}.
+     */
+    public int getValue() {
+        int HERO_HEALTH_FACTOR = 10;
+        int MINION_COST_FACTOR = 4;
+        int HAND_SIZE_FACTOR = 3;
+        int UNATTACKED_PENALTY = 12;
+        int UNUSED_CARD_PENALTY = 8;
+
+        int result = 0;
+
+        Game game = getGame();
+
+        Player us = game.getPlayer(AI_PLAYER);
+        Player enemy = game.getPlayer(AI_OPPONENT);
+
+        // Calculate instant-death situation
+        if (us.getHero().isDead())
+            return Integer.MIN_VALUE;
+        if (enemy.getHero().isDead())
+            return Integer.MAX_VALUE;
+
+        int ourAttackPoint = 0;
+        int enemyAttackPoint = 0;
+
+        List<Minion> friendlyMinions = us.getBoard().getAllMinions();
+        List<Minion> enemyMinions = enemy.getBoard().getAllMinions();
+
+        for (Minion minion : friendlyMinions) {
+            // Calculate minions
+            result += MINION_COST_FACTOR * minion.getCard().getCardDescr().getManaCost();
+
+            AttackTool attack = minion.getAttackTool();
+            ourAttackPoint += attack.getAttack() * attack.getMaxAttackCount();
+
+            if (attack.canAttackWith())
+                result -= UNATTACKED_PENALTY * attack.getAttack();
+        }
+        for (Minion minion : enemyMinions) {
+            result -= MINION_COST_FACTOR * minion.getCard().getCardDescr().getManaCost();
+
+            AttackTool attack = minion.getAttackTool();
+            enemyAttackPoint += attack.getAttack() * attack.getMaxAttackCount();
+        }
+
+        Hero enemyHero = enemy.getHero();
+        enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
+
+        Hero ourHero = us.getHero();
+        ourAttackPoint += ourHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
+        if (ourHero.getAttackTool().canAttackWith())
+            result -= UNATTACKED_PENALTY * ourHero.getAttackTool().getAttack();
+
+        // Calculate left health in next turn for both heroes.
+        int enemyLeftHealth = enemyHero.getCurrentHp() + enemyHero.getCurrentArmor() - ourAttackPoint;
+        int ourLeftHealth = ourHero.getCurrentHp() + ourHero.getCurrentArmor() - enemyAttackPoint;
+
+        result += HERO_HEALTH_FACTOR * (Math.log(-enemyLeftHealth) - Math.log(-ourLeftHealth));
+
+        // Calculate hand size distance
+        result += HAND_SIZE_FACTOR * (us.getHand().getCardCount() + us.getSecrets().getSecrets().size()
+            - enemy.getHand().getCardCount() - enemy.getSecrets().getSecrets().size());
+
+        // Calculate unused card penalty
+        int mana = us.getMana();
+        for (Card card : us.getHand().getCards()) {
+            if (card.getActiveManaCost() <= mana)
+                result -= UNUSED_CARD_PENALTY * card.getActiveManaCost();
+        }
+
+        return result;
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (!(other instanceof Board))
             return false;

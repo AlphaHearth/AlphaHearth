@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-    private static final double PLY_PENALTY = 0.95;
+    private static final double PLY_PENALTY = 0.85;
 
     private final Node parent;
     final Move move;

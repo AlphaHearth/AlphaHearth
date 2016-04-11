@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
+    private static final double PLY_PENALTY = 0.98;
+
     private final Node parent;
     final Move move;
 
@@ -54,6 +56,6 @@ public class Node {
         reward += score;
 
         if (parent != null)
-            parent.backPropagate(score);
+            parent.backPropagate(PLY_PENALTY * score);
     }
 }

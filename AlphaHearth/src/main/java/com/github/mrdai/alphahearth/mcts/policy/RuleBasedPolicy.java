@@ -24,12 +24,14 @@ public class RuleBasedPolicy implements DefaultPolicy {
     public Move produceMode(Board board) {
         board = board.clone();
         Move.Builder builder = new Move.Builder();
-        while (true) {
+        int i = 0;
+        while (i < 30) {
             SingleMove move = produceSingleMove(board);
             if (move == null)
                 break;
             board.applyMoves(move.toMove());
             builder.addMove(move);
+            i++;
         }
         return builder.build();
     }

@@ -65,7 +65,7 @@ public final class Player implements Entity<Player>, PlayerProperty {
         this.board = new BoardSide(this, MAX_BOARD_SIZE);
         this.hand = new Hand(this, MAX_HAND_SIZE);
         this.manaResource = new ManaResource();
-        this.fatigue = 0;
+        this.fatigue = 1;
         this.spellPower = new AuraAwareIntProperty(0);
         this.heroDamageMultiplier = new AuraAwareIntProperty(1);
         this.damagingHealAura = new AuraAwareBoolProperty(false);
@@ -363,8 +363,15 @@ public final class Player implements Entity<Player>, PlayerProperty {
      * increases by {@code 1}.
      */
     private void doFatigueDamage() {
-        fatigue++;
         ActionUtils.damageCharacter(hero, fatigue, hero);
+        fatigue++;
+    }
+
+    /**
+     * Returns the amount of next fatigue damage.
+     */
+    public int getFatigueDamage() {
+        return fatigue;
     }
 
     /**

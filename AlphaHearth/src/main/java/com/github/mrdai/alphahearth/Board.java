@@ -6,6 +6,8 @@ import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.weapons.AttackTool;
+import info.hearthsim.brazier.game.weapons.Weapon;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
 import com.github.mrdai.alphahearth.move.*;
 import org.slf4j.Logger;
@@ -13,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.github.mrdai.alphahearth.BoardUtils.*;
 
 public class Board {
     private static final Logger LOG = LoggerFactory.getLogger(Board.class);
@@ -304,5 +308,67 @@ public class Board {
     private static void logBoardSide(StringBuilder builder, BoardSide board) {
         for (Minion minion : board.getAllMinions())
             builder.append(minion).append("\n");
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof Board))
+            return false;
+        Board otherBoard = (Board) other;
+
+        // Compare Hero
+        if (!compareHero(getGame().getPlayer1().getHero(), otherBoard.getGame().getPlayer1().getHero()))
+            return false;
+        if (!compareHero(getGame().getPlayer2().getHero(), otherBoard.getGame().getPlayer2().getHero()))
+            return false;
+
+        // Compare Weapon
+        if (!compareWeapon(getGame().getPlayer1().tryGetWeapon(), otherBoard.getGame().getPlayer1().tryGetWeapon()))
+            return false;
+        if (!compareWeapon(getGame().getPlayer2().tryGetWeapon(), otherBoard.getGame().getPlayer2().tryGetWeapon()))
+            return false;
+
+        // Compare Deck Size
+        if (getGame().getPlayer1().getDeck().getNumberOfCards() != otherBoard.getGame().getPlayer1().getDeck().getNumberOfCards())
+            return false;
+        if (getGame().getPlayer2().getDeck().getNumberOfCards() != otherBoard.getGame().getPlayer2().getDeck().getNumberOfCards())
+            return false;
+
+        // Compare Fatigue Damage
+        if (getGame().getPlayer1().getFatigueDamage() != otherBoard.getGame().getPlayer1().getFatigueDamage())
+            return false;
+        if (getGame().getPlayer2().getFatigueDamage() != otherBoard.getGame().getPlayer2().getFatigueDamage())
+            return false;
+
+        // Compare Hand Size
+        if (getGame().getPlayer1().getHand().getCardCount() != otherBoard.getGame().getPlayer1().getHand().getCardCount())
+            return false;
+        if (getGame().getPlayer2().getHand().getCardCount() != otherBoard.getGame().getPlayer2().getHand().getCardCount())
+            return false;
+
+        // Compare Minion on board
+        if (!compareBoardSide(getGame().getPlayer1().getBoard(), otherBoard.getGame().getPlayer1().getBoard()))
+            return false;
+        if (!compareBoardSide(getGame().getPlayer2().getBoard(), otherBoard.getGame().getPlayer2().getBoard()))
+            return false;
+
+        // Compare Spell Damage
+        if (getGame().getPlayer1().getSpellPower().getValue() != otherBoard.getGame().getPlayer1().getSpellPower().getValue())
+            return false;
+        if (getGame().getPlayer2().getSpellPower().getValue() != otherBoard.getGame().getPlayer2().getSpellPower().getValue())
+            return false;
+
+        // Compare Secrets
+        if (!compareSecrets(getGame().getPlayer1().getSecrets(), otherBoard.getGame().getPlayer1().getSecrets()))
+            return false;
+        if (!compareSecrets(getGame().getPlayer2().getSecrets(), otherBoard.getGame().getPlayer2().getSecrets()))
+            return false;
+
+        // Compare Mana Resource
+        if (!compareMana(getGame().getPlayer1().getManaResource(), otherBoard.getGame().getPlayer1().getManaResource()))
+            return false;
+        if (!compareMana(getGame().getPlayer2().getManaResource(), otherBoard.getGame().getPlayer2().getManaResource()))
+            return false;
+
+        return true;
     }
 }

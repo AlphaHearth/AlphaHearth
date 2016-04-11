@@ -68,7 +68,7 @@ public class CardPlaying implements SingleMove {
             if (target != null)
                 builder.append(" with target ").append(game.findEntity(target));
         } else {
-            builder.append(game.getPlayer(playerId)).append(" summons ")
+            builder.append(game.getPlayer(playerId).getPlayerId()).append(" summons ")
                    .append(game.getPlayer(playerId).getHand().getCard(cardIndex))
                    .append(" on location ").append(minionLocation);
             if (target != null)

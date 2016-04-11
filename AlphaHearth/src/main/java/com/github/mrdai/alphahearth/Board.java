@@ -38,20 +38,18 @@ public class Board {
      * Returns all of the available {@link Move}s for the current player.
      */
     public List<Move> getAvailableMoves() {
-        List<Move> availableMoves = new LinkedList<>();
-        availableMoves.add(Move.EMPTY_MOVE);
+        DistinctMoveList availableMoves = new DistinctMoveList();
+        availableMoves.add(clone(), Move.EMPTY_MOVE);
 
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
-            LOG.trace("" + availableMoves.size());
-            if (availableMoves.size() > 100)
-                break;
+            LOG.trace("Move list size: " + availableMoves.size());
         }
 
-        return availableMoves;
+        return availableMoves.toMoveList(100);
     }
 
-    private void expandMove(List<Move> availableMoves, int expandMoveIndex) {
+    private void expandMove(DistinctMoveList availableMoves, int expandMoveIndex) {
         Move selectedMove = availableMoves.get(expandMoveIndex);
 
         Board copiedBoard = clone();
@@ -162,9 +160,9 @@ public class Board {
     }
 
     // Add the new Move
-    private void add(Move parentMoves, SingleMove newMove, List<Move> moves) {
+    private void add(Move parentMoves, SingleMove newMove, DistinctMoveList moves) {
         Move newMoves = parentMoves.withNewMove(newMove);
-        moves.add(newMoves);
+        moves.add(clone(), newMoves);
     }
 
     /**

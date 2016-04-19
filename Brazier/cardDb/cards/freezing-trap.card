@@ -9,7 +9,8 @@
             "lazyFilter": true,
             "filter": [
                 "EventFilters.ATTACKER_IS_ENEMY",
-                "EventFilters.ATTACKER_IS_ALIVE"
+                "EventFilters.ATTACKER_IS_ALIVE",
+                "EventFilters.ATTACKER_IS_MINION"
             ],
             "action": {
                 "class": "EventActions.forAttacker",

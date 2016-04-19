@@ -58,6 +58,10 @@ public final class Hand implements PlayerProperty {
         return hand.get(index).card;
     }
 
+    public int indexOf(Card card) {
+        return getCards().indexOf(card);
+    }
+
     public List<Card> getCards() {
         List<Card> result = new ArrayList<>(getCardCount());
         collectCards(result);

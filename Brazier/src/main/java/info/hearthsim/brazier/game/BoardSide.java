@@ -86,6 +86,7 @@ public final class BoardSide implements PlayerProperty {
         if (indexOf(minion.getEntityId()) != -1)
             return;
         if (isFull())
+            return;
         ExceptionHelper.checkNotNullArgument(minion, "minion");
 
         BoardMinionRef minionRef = new BoardMinionRef(minion);

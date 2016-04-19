@@ -1,14 +1,15 @@
 package com.github.mrdai.alphahearth;
 
 import com.github.mrdai.alphahearth.mcts.MCTS;
-import com.github.mrdai.alphahearth.mcts.policy.DefaultPolicy;
+import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.mcts.policy.RandomPolicy;
 import com.github.mrdai.alphahearth.mcts.policy.RuleBasedPolicy;
+import com.github.mrdai.alphahearth.mcts.policy.UCTTreePolicy;
 import info.hearthsim.brazier.DeckBuilder;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.PlayerId;
 import info.hearthsim.brazier.game.cards.CardName;
 import info.hearthsim.brazier.game.cards.HeroClass;
 import info.hearthsim.brazier.parsing.ObjectParsingException;
@@ -16,11 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AiGameAgent {
     private static final Logger LOG = LoggerFactory.getLogger(AiGameAgent.class);
+
+    public static final PlayerId AI_PLAYER = new PlayerId("AiPlayer");
+    public static final PlayerId AI_OPPONENT = new PlayerId("AiOpponent");
 
     public static HearthStoneDb HEARTH_DB;
     static {
@@ -50,15 +52,48 @@ public class AiGameAgent {
         	.addCard(HEARTH_DB.getCardDb().getById(new CardName("Force-Tank MAX")), 2);
     }
 
-    private DefaultPolicy aiOpponentPolicy = new RuleBasedPolicy();
     private Game game;
-    private MCTS mcts = new MCTS();
     private Board board;
+    private Agent aiPlayer = new MCTS(AI_PLAYER, new RuleBasedPolicy(), new IterCountBudget(500));
+    private Agent aiOpponent = new MCTS(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(500));
 
     public static void main(String[] args) {
-        AiGameAgent agent = new AiGameAgent();
-        boolean hasAiWon = agent.roll();
-        LOG.info("hasAiWon: " + hasAiWon);
+
+        // int[] iterNumArr = {0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500};
+        int[] iterNumArr = {600, 700, 800, 900, 1000, 1500, 2000};
+
+        int[] winCounts = new int[iterNumArr.length];
+
+        for (int i = 0; i < iterNumArr.length; i++) {
+            LOG.warn("Begin for iterNum " + iterNumArr[i]);
+            AiGameAgent agent = new AiGameAgent();
+            agent.aiPlayer = new MCTS(AI_PLAYER, new RuleBasedPolicy(), new IterCountBudget(iterNumArr[i]));
+            agent.aiOpponent = new MCTS(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
+            int winCount = 0;
+            for (int j = 1; j <= 100; j++) {
+                try {
+                    boolean hasAiWon = agent.roll();
+                    if (hasAiWon) {
+                        winCount++;
+                        LOG.warn("#" + j + " game finished, AiPlayer won.");
+                    } else {
+                        LOG.warn("#" + j + " game finished, AiPlayer lost.");
+                    }
+                    LOG.warn("AiPlayer already won " + winCount + " game(s).");
+                } catch (Throwable thr) {
+                    LOG.error("Exception occurred during #" + j + " roll out.", thr);
+                    LOG.error("Retrying...");
+                    j--;
+                }
+            }
+            LOG.warn("100 games finished, AiPlayer won in " + winCount + " games.");
+            winCounts[i] = winCount;
+        }
+        StringBuilder builder = new StringBuilder("Results: {");
+        for (int i = 0; i < iterNumArr.length; i++)
+            builder.append(String.format("%d: %d, ", iterNumArr[i], winCounts[i]));
+        builder.append("}");
+        LOG.warn(builder.toString());
     }
 
     /**
@@ -71,10 +106,10 @@ public class AiGameAgent {
 
         while (!board.isGameOver()) {
             LOG.info("Current board is\n" + board);
-            if (game.getCurrentPlayer().getPlayerId() == Board.AI_PLAYER) {
-                board.applyMoves(mcts.search(board), true);
+            if (game.getCurrentPlayer().getPlayerId() == AI_PLAYER) {
+                board.applyMoves(aiPlayer.produceMode(board), true);
             } else {
-                board.applyMoves(aiOpponentPolicy.produceMode(board), true);
+                board.applyMoves(aiOpponent.produceMode(board), true);
             }
             LOG.info("End turn");
             game.endTurn();
@@ -82,16 +117,16 @@ public class AiGameAgent {
         LOG.info("+++++++++++++++++++ Game over +++++++++++++++++++");
         LOG.info("The final board is\n" + board);
 
-        return !game.getPlayer1().getHero().isDead();
+        return !game.getPlayer(AI_PLAYER).getHero().isDead();
     }
 
     private void startNewGame() {
         LOG.info("Initiating game...");
-        game = new Game(HEARTH_DB, Board.AI_PLAYER, Board.AI_OPPONENT);
+        game = new Game(HEARTH_DB, AI_PLAYER, AI_OPPONENT);
         board = new Board(game);
 
-        Player aiPlayer = game.getPlayer1();
-        Player aiOpponent = game.getPlayer2();
+        Player aiPlayer = game.getPlayer(AI_PLAYER);
+        Player aiOpponent = game.getOpponent(AI_PLAYER);
 
         LOG.info("Setting both players' decks...");
         // Add cards to both players' decks

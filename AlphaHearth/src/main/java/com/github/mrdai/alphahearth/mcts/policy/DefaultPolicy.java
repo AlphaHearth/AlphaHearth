@@ -1,5 +1,6 @@
 package com.github.mrdai.alphahearth.mcts.policy;
 
+import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.Move;
 
@@ -9,7 +10,7 @@ import com.github.mrdai.alphahearth.move.Move;
  * {@link #produceMode(Board)} produces the next {@link Move} for the simulation with the
  * given {@link Board}.
  */
-public interface DefaultPolicy {
+public interface DefaultPolicy extends Agent {
 
     /**
      * Produces the next {@link Move} for the simulation with the given {@link Board}.

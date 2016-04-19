@@ -101,7 +101,13 @@ public final class EventActions {
     public static <Actor extends PlayerProperty> EventAction<Actor, AttackRequest> forAttacker(
         @NamedArg("action") TargetedAction<? super Actor, ? super Character> action) {
         ExceptionHelper.checkNotNullArgument(action, "action");
-        return (Actor self, AttackRequest eventSource) -> action.apply(self, eventSource.getAttacker());
+        return (Actor self, AttackRequest eventSource) -> {
+            try {
+                action.apply(self, eventSource.getAttacker());
+            } catch (Throwable thr) {
+                System.out.println("Hello!");
+            }
+        };
     }
 
     public static <Actor extends PlayerProperty, Target> EventAction<Actor, Target> forEventArgTarget(

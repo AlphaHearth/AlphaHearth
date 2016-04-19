@@ -1,28 +1,42 @@
 package com.github.mrdai.alphahearth.mcts;
 
+import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.mcts.budget.Budget;
-import com.github.mrdai.alphahearth.mcts.budget.TimeBudget;
+import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.mcts.policy.*;
 import com.github.mrdai.alphahearth.move.Move;
 import com.github.mrdai.alphahearth.move.SingleMove;
 import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.PlayerId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
 
-import static com.github.mrdai.alphahearth.Board.AI_OPPONENT;
-import static com.github.mrdai.alphahearth.Board.AI_PLAYER;
-
-public class MCTS {
+public class MCTS implements Agent {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
 
-    private final Budget budget = new TimeBudget(10000);
-    private final TreePolicy treePolicy = new UCTTreePolicy();
-    private final DefaultPolicy enemyDefaultPolicy = new RuleBasedPolicy();
-    private final DefaultPolicy ourDefaultPolicy = new RuleBasedPolicy();
+    private final PlayerId aiPlayerId;
+    private final Budget budget;
+    private final TreePolicy treePolicy;
+    private final DefaultPolicy defaultPolicy;
+
+    public MCTS(PlayerId aiPlayerId) {
+        this(aiPlayerId, new UCTTreePolicy(), new RandomPolicy(), new IterCountBudget(500));
+    }
+
+    public MCTS(PlayerId aiPlayerId, DefaultPolicy defaultPolicy, Budget budget) {
+        this(aiPlayerId, new UCTTreePolicy(), defaultPolicy, budget);
+    }
+
+    public MCTS(PlayerId aiPlayerId, TreePolicy treePolicy, DefaultPolicy defaultPolicy, Budget budget) {
+        this.aiPlayerId = aiPlayerId;
+        this.budget = budget;
+        this.treePolicy = treePolicy;
+        this.defaultPolicy = defaultPolicy;
+    }
 
     /**
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
@@ -37,16 +51,30 @@ public class MCTS {
 
         LOG.debug("Expanding...");
         expand(rootBoard, rootNode);
+        LOG.debug("Visiting unvisited children...");
+        while (!rootNode.unvisitedChildren.isEmpty()) {
+            Board currentBoard = rootBoard.clone();
+            Node selectedChild = rootNode.unvisitedChildren.remove(0);
+            rootNode.visitedChildren.add(selectedChild);
+            currentBoard.applyMoves(selectedChild.move);
+            simulate(currentBoard);
+            selectedChild.backPropagate(currentBoard.getScore(aiPlayerId));
+        }
+
         while (!budget.hasReached()) {
             LOG.debug("Start iteration #" + iterNum);
             budget.newIteration();
             Board currentBoard = rootBoard.clone();
             LOG.debug("Selecting...");
+            if (rootNode.unvisitedChildren.isEmpty() && rootNode.visitedChildren.size() == 1) {
+                LOG.info("Found only one child. Return it directly.");
+                return rootNode.visitedChildren.get(0).move;
+            }
             // Selection
             Node selectedLeaf = select(currentBoard, rootNode);
 
             // Already won, stop searching.
-            if (currentBoard.isGameOver() && !currentBoard.getGame().getPlayer(Board.AI_PLAYER).getHero().isDead()) {
+            if (currentBoard.isGameOver() && !currentBoard.getGame().getPlayer(aiPlayerId).getHero().isDead()) {
                 long finishTime = System.currentTimeMillis();
                 LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
                 return selectedLeaf.move;
@@ -57,27 +85,29 @@ public class MCTS {
             simulate(currentBoard);
             LOG.debug("Back propagating...");
             // Back Propagation
-            selectedLeaf.backPropagate(currentBoard.getScore());
+            selectedLeaf.backPropagate(currentBoard.getScore(aiPlayerId));
             iterNum++;
         }
         long finishTime = System.currentTimeMillis();
         LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
-        StringBuilder builder = new StringBuilder("Visited direct children include: \n");
         Comparator<Node> CMP = (o1, o2) -> -1 * Double.compare(o1.reward / o1.gameCount, o2.reward / o2.gameCount);
         rootNode.visitedChildren.sort(CMP);
-        for (Node node : rootNode.visitedChildren) {
-            Board board = rootBoard.clone();
-            if (node.move.getActualMoves().isEmpty())
-                builder.append("AiPlayer does nothing\n");
-            for (SingleMove move : node.move.getActualMoves()) {
-                builder.append(move.toString(board)).append("\n");
-                board.applyMoves(move.toMove());
+        if (LOG.isInfoEnabled()) {
+            StringBuilder builder = new StringBuilder("Visited direct children include: \n");
+            for (Node node : rootNode.visitedChildren) {
+                Board board = rootBoard.clone();
+                if (node.move.getActualMoves().isEmpty())
+                    builder.append("AiPlayer does nothing\n");
+                for (SingleMove move : node.move.getActualMoves()) {
+                    builder.append(move.toString(board)).append("\n");
+                    move.applyTo(board);
+                }
+                builder.append("Game count: " + node.gameCount + ", Average Reward: " + node.reward / node.gameCount + "\n");
+                builder.append("----------\n");
             }
-            builder.append("Game count: " + node.gameCount + ", Average Reward: " + node.reward / node.gameCount + "\n");
-            builder.append("----------\n");
+            builder.append("=====================");
+            LOG.info(builder.toString());
         }
-        builder.append("=====================");
-        LOG.info(builder.toString());
 
         return rootNode.visitedChildren.get(0).move;
     }
@@ -95,15 +125,9 @@ public class MCTS {
      * @return the most urgent expandable node.
      */
     private Node select(Board copiedBoard, Node rootNode) {
-        if (!rootNode.unvisitedChildren.isEmpty()) {
-            Node selectedChild = rootNode.unvisitedChildren.get(0);
-            rootNode.unvisitedChildren.remove(0);
-            rootNode.visitedChildren.add(selectedChild);
-            return selectedChild;
-        } else {
-            rootNode = bestChild(rootNode);
-            copiedBoard.applyMoves(rootNode.move);
-        }
+        rootNode = bestChild(rootNode);
+        copiedBoard.applyMoves(rootNode.move);
+
         return rootNode;
     }
 
@@ -118,11 +142,14 @@ public class MCTS {
                 Board copiedBoard = board.clone();
                 copiedBoard.applyMoves(move);
 
-                if (copiedBoard.getGame().isGameOver())
+                if (copiedBoard.isGameOver()) {
+                    if (!copiedBoard.hasWon(aiPlayerId))
+                        moves.remove(i);
                     continue;
+                }
 
-                Player aiPlayer = copiedBoard.getGame().getPlayer(AI_PLAYER);
-                Player aiOpponent = copiedBoard.getGame().getOpponent(aiPlayer.getPlayerId());
+                Player aiPlayer = copiedBoard.getGame().getPlayer(aiPlayerId);
+                Player aiOpponent = copiedBoard.getGame().getOpponent(aiPlayerId);
                 if (aiPlayer.getBoard().countMinions((m) -> m.getAttackTool().canAttackWith()) > 0
                         && !aiOpponent.getBoard().hasNonStealthTaunt())
                     moves.remove(i);
@@ -155,11 +182,13 @@ public class MCTS {
         copiedBoard.getGame().getPlayer2().getDeck().shuffle();
         // Start playing moves with the default policy until the game is over
         while (!copiedBoard.isGameOver()) {
-            if (copiedBoard.getGame().getCurrentPlayer().getPlayerId() == AI_OPPONENT)
-                copiedBoard.applyMoves(enemyDefaultPolicy.produceMode(copiedBoard));
-            else
-                copiedBoard.applyMoves(ourDefaultPolicy.produceMode(copiedBoard));
+            copiedBoard.applyMoves(defaultPolicy.produceMode(copiedBoard));
             copiedBoard.getGame().endTurn();
         }
+    }
+
+    @Override
+    public Move produceMode(Board board) {
+        return search(board);
     }
 }

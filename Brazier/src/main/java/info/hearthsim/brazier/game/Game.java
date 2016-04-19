@@ -133,6 +133,12 @@ public final class Game implements GameProperty {
         return gameResult != null;
     }
 
+    public Player getCurrentOpponent() {
+        if (currentPlayer == player1)
+            return player2;
+        return player1;
+    }
+
     /**
      * Returns the {@code GameResult}; {@code null} if the game is not over yet.
      */

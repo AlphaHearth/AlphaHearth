@@ -32,14 +32,14 @@ public class RuleBasedPolicy implements DefaultPolicy {
             SingleMove move = produceSingleMove(board);
             if (move == null)
                 break;
-            board.applyMoves(move.toMove());
+            move.applyTo(board);
             builder.addMove(move);
             i++;
         }
         return builder.build();
     }
 
-    private SingleMove produceSingleMove(Board board) {
+    protected SingleMove produceSingleMove(Board board) {
         Player us = board.getCurrentPlayer();
         Player enemy = board.getCurrentOpponent();
 
@@ -88,8 +88,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
             return move;
         }
         if (!enemyTaunt.isEmpty() && !friendlyAttackers.isEmpty()) {
-            move = new DirectAttacking(us.getBoard().indexOf(friendlyAttackers.get(0)),
-                                          enemy.getBoard().indexOf(enemyTaunt.get(0)));
+            move = new DirectAttacking(friendlyAttackers.get(0), enemyTaunt.get(0));
             LOG.trace(move.toString(board));
             return move;
         }
@@ -103,8 +102,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
         }
 
         if (!friendlyNonTauntAttackers.isEmpty() && !enemyDangerous.isEmpty()) {
-            move = new DirectAttacking(us.getBoard().indexOf(friendlyNonTauntAttackers.get(0)),
-                                          enemy.getBoard().indexOf(enemyDangerous.get(0)));
+            move = new DirectAttacking(friendlyNonTauntAttackers.get(0), enemyDangerous.get(0));
             LOG.trace(move.toString(board));
             return move;
         }
@@ -115,8 +113,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 1) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
                     if (bestAttacker != null) {
-                        move = new DirectAttacking(us.getBoard().indexOf(bestAttacker),
-                                                      enemy.getBoard().indexOf(target));
+                        move = new DirectAttacking(bestAttacker, target);
                         LOG.trace(move.toString(board));
                         return move;
                     }
@@ -128,8 +125,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 3) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
                     if (bestAttacker != null) {
-                        move = new DirectAttacking(us.getBoard().indexOf(bestAttacker),
-                                                      enemy.getBoard().indexOf(target));
+                        move = new DirectAttacking(bestAttacker, target);
                         LOG.trace(move.toString(board));
                         return move;
                     }
@@ -139,7 +135,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
 
         // Attack enemy's face
         if (!friendlyAttackers.isEmpty()) {
-            move = new DirectAttacking(us.getBoard().indexOf(friendlyAttackers.get(0)), 8);
+            move = new DirectAttacking(friendlyAttackers.get(0), enemyHero);
             LOG.trace(move.toString(board));
             return move;
         }
@@ -160,8 +156,8 @@ public class RuleBasedPolicy implements DefaultPolicy {
                 case "Fireblast": // Deal damage
                 case "Mind Shatter":
                 case "Mind Spike":
-                    return new HeroPowerPlaying(us.getPlayerId(), enemyHero.getEntityId());
-                case "Reinforce":
+                    return new HeroPowerPlaying(us.getPlayerId(), enemyHero);
+                case "Reinforce": // Summon minion
                 case "INFERNO!":
                 case "Totemic Call":
                     if (!us.getBoard().isFull())
@@ -180,7 +176,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
         // Attack with Hero
         if (us.getHero().getAttackTool().canAttackWith()) {
             if (enemyTaunt.isEmpty()) {
-                move = new DirectAttacking(8, 8);
+                move = new DirectAttacking(us.getHero(), enemyHero);
                 LOG.trace(move.toString(board));
                 return move;
             }
@@ -196,8 +192,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
 
         // Generate CardPlaying Move
         List<Card> handCards = us.getHand().getCards();
-        for (int i = 0; i < handCards.size(); i++) {
-            Card card = handCards.get(i);
+        for (Card card : handCards) {
             // Not the coin
             if (card.getCardDescr().getName().equals("The Coin"))
                 continue;
@@ -206,12 +201,12 @@ public class RuleBasedPolicy implements DefaultPolicy {
 
             // Play Animal Companion
             if (card.getCardDescr().getName().equals("Animal Companion"))
-                return new CardPlaying(us.getPlayerId(), i);
+                return new CardPlaying(card);
 
             Minion minion = card.getMinion();
             if (minion != null && !us.getBoard().isFull()) {
                 if (us.getBoard().getMinionCount() < 6 || minion.isCharge() || minion.getBody().isTaunt())
-                    return new CardPlaying(us.getPlayerId(), i);
+                    return new CardPlaying(card, 0);
             }
         }
 
@@ -224,8 +219,7 @@ public class RuleBasedPolicy implements DefaultPolicy {
         for (Minion target : enemyTargets) {
             bestAttacker = bestAttacker(friendlyAttackers, target);
             if (bestAttacker != null)
-                return new DirectAttacking(bestAttacker.getOwner().getBoard().indexOf(bestAttacker),
-                                              target.getOwner().getBoard().indexOf(target));
+                return new DirectAttacking(bestAttacker, target);
         }
 
         return null;
@@ -247,36 +241,33 @@ public class RuleBasedPolicy implements DefaultPolicy {
     private static CardPlaying playEmergencyCard(int mana, Hand hand, Hero friendlyHero,
                                                  Hero enemyHero, int enemyAttackPoint) {
         List<Card> handCards = hand.getCards();
-        for (int i = 0; i < handCards.size(); i++) {
-            Card card = handCards.get(i);
+        for (Card card : handCards) {
             if (mana < card.getActiveManaCost())
                 continue;
             Minion minion = card.getMinion();
             if (minion != null && minion.getBody().isTaunt() && !friendlyHero.getOwner().getBoard().isFull()
                 && (card.getActiveManaCost() == mana || card.getActiveManaCost() == mana - 2))
-                return new CardPlaying(friendlyHero.getOwner().getPlayerId(), i);
+                return new CardPlaying(card);
         }
 
         if (friendlyHero.getCurrentHp() - enemyAttackPoint < 10) {
-            for (int i = 0; i < handCards.size(); i++) {
-                Card card = handCards.get(i);
+            for (Card card : handCards) {
                 if (mana < card.getActiveManaCost())
                     continue;
                 Minion minion = card.getMinion();
                 if (minion != null && minion.getBody().isTaunt() && !friendlyHero.getOwner().getBoard().isFull()
                     && (card.getActiveManaCost() == mana - 1 || card.getActiveManaCost() == mana - 3))
-                    return new CardPlaying(friendlyHero.getOwner().getPlayerId(), i);
+                    return new CardPlaying(card);
             }
         }
 
         if (friendlyHero.getCurrentHp() - enemyHero.getCurrentHp() > 10) {
-            for (int i = 0; i < handCards.size(); i++) {
-                Card card = handCards.get(i);
+            for (Card card : handCards) {
                 if (mana < card.getActiveManaCost())
                     continue;
                 Minion minion = card.getMinion();
                 if (minion != null && minion.isCharge() && !friendlyHero.getOwner().getBoard().isFull())
-                    return new CardPlaying(friendlyHero.getOwner().getPlayerId(), i);
+                    return new CardPlaying(card, 0);
             }
         }
 

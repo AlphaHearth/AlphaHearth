@@ -2,29 +2,25 @@ package com.github.mrdai.alphahearth;
 
 import info.hearthsim.brazier.*;
 import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.AttackTool;
-import info.hearthsim.brazier.game.weapons.Weapon;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
 import com.github.mrdai.alphahearth.move.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
 import java.util.List;
 
+import static com.github.mrdai.alphahearth.AiGameAgent.AI_OPPONENT;
+import static com.github.mrdai.alphahearth.AiGameAgent.AI_PLAYER;
 import static com.github.mrdai.alphahearth.BoardUtils.*;
 
 public class Board {
     private static final Logger LOG = LoggerFactory.getLogger(Board.class);
 
-    public static final PlayerId AI_PLAYER = new PlayerId("AiPlayer");
-    public static final PlayerId AI_OPPONENT = new PlayerId("AiOpponent");
-
-    private final GameAgent playAgent;
+    public final GameAgent playAgent;
 
     public Board(Game game) {
         playAgent = new GameAgent(game);
@@ -43,7 +39,8 @@ public class Board {
 
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
-            LOG.debug("Move list size: " + availableMoves.size());
+            if (LOG.isTraceEnabled())
+                LOG.trace("Move list size: " + availableMoves.size());
             if (availableMoves.size() > 1000)
                 break;
         }
@@ -72,87 +69,93 @@ public class Board {
                 new PlayerTargetNeed(new TargeterDef(curPlayerId, true, false), heroPower.getTargetNeed());
             if (!targetNeed.getTargetNeed().hasTarget()) {
                 HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId);
-                LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
+                if (LOG.isTraceEnabled())
+                    LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
                 add(selectedMove, heroPowerPlaying, availableMoves);
             } else {
                 currentGame.getTargets().stream().filter(targetNeed::isAllowedTarget).forEach((target) -> {
-                    HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target.getEntityId());
-                    LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
+                    HeroPowerPlaying heroPowerPlaying = new HeroPowerPlaying(curPlayerId, target);
+                    if (LOG.isTraceEnabled())
+                        LOG.trace("Adding " + heroPowerPlaying.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, heroPowerPlaying, availableMoves);
                 });
             }
         }
 
-        // List direct attack
-        List<Character> attackers = currentGame.getTargets((t) -> t.getOwner() == curPlayer && t.getAttackTool().canAttackWith());
-        if (enemyMinions.hasNonStealthTaunt()) {
-            List<Minion> enemyTaunt = enemyMinions.findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth() && !m.getBody().isImmune());
-            for (Character attacker : attackers) {
-                for (Minion target : enemyTaunt) {
-                    DirectAttacking directAttacking;
-                    int targetIndex = enemyMinions.indexOf(target);
-                    if (attacker instanceof Hero)
-                        directAttacking = new DirectAttacking(8, targetIndex);
-                    else
-                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), targetIndex);
-                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
+        // List Hero Attack
+        if (friendlyHero.getAttackTool().canAttackWith()) {
+            List<Minion> targetMinions;
+            if (enemyMinions.hasNonStealthTaunt()) {
+                targetMinions = enemyMinions.findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth() && !m.getBody().isImmune());
+            } else {
+                // Attacking enemy hero
+                if (!enemyHero.isImmune()) {
+                    DirectAttacking directAttacking = new DirectAttacking(friendlyHero, enemyHero);
+                    if (LOG.isTraceEnabled())
+                        LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
                     add(selectedMove, directAttacking, availableMoves);
                 }
+                targetMinions = enemyMinions.findMinions((m) -> !m.getBody().isStealth() && !m.getBody().isImmune());
             }
-        } else {
-            if (!enemyHero.isImmune()) {
-                for (Character attacker : attackers) {
-                    DirectAttacking directAttacking;
-                    if (attacker instanceof Hero)
-                        directAttacking = new DirectAttacking(8, 8);
-                    else
-                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), 8);
+            // Attacking enemy minions
+            for (Minion target : targetMinions) {
+                DirectAttacking directAttacking = new DirectAttacking(friendlyHero, target);
+                if (LOG.isTraceEnabled())
                     LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
-                    add(selectedMove, directAttacking, availableMoves);
-                }
-            }
-            List<Minion> targets = enemyMinions.findMinions((m) -> !m.getBody().isStealth() && !m.getBody().isImmune());
-            for (Character attacker : attackers) {
-                for (Minion target : targets) {
-                    DirectAttacking directAttacking;
-                    int targetIndex = enemyMinions.indexOf(target);
-                    if (attacker instanceof Hero)
-                        directAttacking = new DirectAttacking(8, targetIndex);
-                    else
-                        directAttacking = new DirectAttacking(friendlyMinions.indexOf(attacker.getEntityId()), targetIndex);
-                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
-                    add(selectedMove, directAttacking, availableMoves);
-                }
+                add(selectedMove, directAttacking, availableMoves);
             }
         }
 
-        if (curPlayer.getPlayerId() != AI_PLAYER)
-            return; // We do not consider the AI opponent's card for now.
+        // List Minion attack
+        List<Minion> attackers = friendlyMinions.findMinions((m) -> m.getAttackTool().canAttackWith());
+        List<Minion> targetMinions;
+        if (enemyMinions.hasNonStealthTaunt()) {
+            targetMinions = enemyMinions.findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth() && !m.getBody().isImmune());
+        } else {
+            if (!enemyHero.isImmune()) { // Attack enemy hero
+                for (Minion attacker : attackers) {
+                    DirectAttacking directAttacking = new DirectAttacking(attacker, enemyHero);
+                    if (LOG.isTraceEnabled())
+                        LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
+                    add(selectedMove, directAttacking, availableMoves);
+                }
+            }
+            targetMinions = enemyMinions.findMinions((m) -> !m.getBody().isStealth() && !m.getBody().isImmune());
+        }
+        for (Minion attacker : attackers) {
+            for (Minion target : targetMinions) {
+                DirectAttacking directAttacking = new DirectAttacking(attacker, target);
+                if (LOG.isTraceEnabled())
+                    LOG.trace("Adding " + directAttacking.toString(copiedBoard) + " on\n" + copiedBoard);
+                add(selectedMove, directAttacking, availableMoves);
+            }
+        }
 
         // List Card
         Hand hand = curPlayer.getHand();
-        for (int cardIndex = 0; cardIndex < hand.getCardCount(); cardIndex++) {
-            Card card = hand.getCard(cardIndex);
+        for (Card card : hand.getCards()) {
             if (card.getActiveManaCost() > curPlayer.getMana())
                 continue;
 
             PlayerTargetNeed targetNeed =
-                new PlayerTargetNeed(new TargeterDef(AI_PLAYER, true, false), card.getTargetNeed());
+                new PlayerTargetNeed(new TargeterDef(curPlayerId, true, false), card.getTargetNeed());
             if (card.isMinionCard()) {
                 if (card.getTargetNeed().hasTarget()) { // Minion card with battle cry target
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
                             for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
-                                CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc, target.getEntityId());
-                                LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                                CardPlaying cardPlaying = new CardPlaying(card, minionLoc, target);
+                                if (LOG.isTraceEnabled())
+                                    LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                                 add(selectedMove, cardPlaying, availableMoves);
                             }
                         }
                     }
                 } else { // Minion card without battle cry target
                     for (int minionLoc = 0; minionLoc <= friendlyMinions.getMinionCount(); minionLoc++) {
-                        CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, minionLoc);
-                        LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                        CardPlaying cardPlaying = new CardPlaying(card, minionLoc);
+                        if (LOG.isTraceEnabled())
+                            LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                         add(selectedMove, cardPlaying, availableMoves);
                     }
                 }
@@ -160,14 +163,16 @@ public class Board {
                 if (card.getTargetNeed().hasTarget()) { // Spell or Weapon card with target
                     for (Character target : currentGame.getTargets()) {
                         if (targetNeed.isAllowedTarget(target)) {
-                            CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex, target.getEntityId());
-                            LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                            CardPlaying cardPlaying = new CardPlaying(card, -1, target);
+                            if (LOG.isTraceEnabled())
+                                LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                             add(selectedMove, cardPlaying, availableMoves);
                         }
                     }
                 } else { // Spell or Weapon card without target
-                    CardPlaying cardPlaying = new CardPlaying(curPlayerId, cardIndex);
-                    LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
+                    CardPlaying cardPlaying = new CardPlaying(card);
+                    if (LOG.isTraceEnabled())
+                        LOG.trace("Adding " + cardPlaying.toString(copiedBoard) + " on " + copiedBoard);
                     add(selectedMove, cardPlaying, availableMoves);
                 }
             }
@@ -193,7 +198,7 @@ public class Board {
             else
                 LOG.trace(getGame().getCurrentPlayer().getPlayerId() + " does nothing.");
         } else
-            move.getActualMoves().forEach((m) -> applyMove(m, logMove));
+            move.getActualMoves().forEach((m) -> m.applyTo(this, logMove));
     }
 
     /**
@@ -201,52 +206,6 @@ public class Board {
      */
     public void applyMoves(Move move) {
         applyMoves(move, false);
-    }
-
-    /**
-     * Applies the given {@link SingleMove} to this {@code Board}.
-     *
-     * @param logMove whether to log the applied move
-     */
-    private void applyMove(SingleMove move, boolean logMove) {
-        if (move == null)
-            return;
-
-        if (move instanceof CardPlaying) {
-            CardPlaying cardPlaying = (CardPlaying) move;
-            if (logMove)
-                LOG.info(cardPlaying.toString(this));
-            else if (LOG.isDebugEnabled())
-                LOG.trace(cardPlaying.toString(this));
-            playAgent.playCard(cardPlaying.getCardIndex(),
-                new PlayTargetRequest(cardPlaying.getPlayerId(), cardPlaying.getMinionLocation(), cardPlaying.getTarget()));
-        } else if (move instanceof HeroPowerPlaying) {
-            HeroPowerPlaying heroPowerPlaying = (HeroPowerPlaying) move;
-            if (logMove)
-                LOG.info(heroPowerPlaying.toString(this));
-            else if (LOG.isDebugEnabled())
-                LOG.trace(heroPowerPlaying.toString(this));
-            playAgent.playHeroPower(new PlayTargetRequest(heroPowerPlaying.getPlayerId(), -1, heroPowerPlaying.getTarget()));
-        } else if (move instanceof DirectAttacking) {
-            DirectAttacking directAttacking = (DirectAttacking) move;
-            if (logMove)
-                LOG.info(directAttacking.toString(this));
-            else if (LOG.isDebugEnabled())
-                LOG.trace(directAttacking.toString(this));
-            EntityId attackerId;
-            int attackerIndex = directAttacking.getAttacker();
-            if (attackerIndex == 8)
-                attackerId = getGame().getCurrentPlayer().getHero().getEntityId();
-            else
-                attackerId = getGame().getCurrentPlayer().getBoard().getMinion(attackerIndex).getEntityId();
-            EntityId targetId;
-            int targetIndex = directAttacking.getTarget();
-            if (targetIndex == 8)
-                targetId = getGame().getOpponent(getGame().getCurrentPlayer().getPlayerId()).getHero().getEntityId();
-            else
-                targetId = getGame().getOpponent(getGame().getCurrentPlayer().getPlayerId()).getBoard().getMinion(targetIndex).getEntityId();
-            playAgent.attack(attackerId, targetId);
-        }
     }
 
     /**
@@ -264,6 +223,13 @@ public class Board {
      */
     public boolean isGameOver() {
         return playAgent.getGame().isGameOver();
+    }
+
+    /**
+     * Returns if the game is over and the player with the given id has won.
+     */
+    public boolean hasWon(PlayerId playerId) {
+        return isGameOver() && !getGame().getPlayer(playerId).getHero().isDead();
     }
 
     /**
@@ -285,12 +251,12 @@ public class Board {
      *
      * @throws IllegalStateException if this method is invoked before the game ends.
      */
-    public double getScore() {
+    public double getScore(PlayerId playerId) {
         double TURN_PENALTY = 0.97;
 
         if (!isGameOver())
             throw new IllegalStateException("Error: Evaluating score before the game ends");
-        Player aiPlayer = playAgent.getGame().getPlayer(AI_PLAYER);
+        Player aiPlayer = playAgent.getGame().getPlayer(playerId);
         if (aiPlayer.getHero().isDead())
             return 0;
         else
@@ -345,7 +311,7 @@ public class Board {
     }
 
     /**
-     * Returns the coarse value of this current {@code Board}. More advantageous the {@link #AI_PLAYER} is,
+     * Returns the coarse value of this current {@code Board}. More advantageous the current player is,
      * higher the value is. If two given {@code Board} {@code a} and {@code b} has {@code a.equals(b) = true},
      * {@code a.getValue() = b.getValue()}. If {@code a.getValue() != b.getValue()}, {@code a.equals(b) = false}.
      * <p>
@@ -362,8 +328,8 @@ public class Board {
 
         Game game = getGame();
 
-        Player us = game.getPlayer(AI_PLAYER);
-        Player enemy = game.getPlayer(AI_OPPONENT);
+        Player us = game.getCurrentPlayer();
+        Player enemy = game.getCurrentOpponent();
 
         // Calculate instant-death situation
         if (us.getHero().isDead())
@@ -410,7 +376,7 @@ public class Board {
 
         // Calculate hand size distance
         result += HAND_SIZE_FACTOR * (us.getHand().getCardCount() + us.getSecrets().getSecrets().size()
-            - enemy.getHand().getCardCount() - enemy.getSecrets().getSecrets().size());
+                                          - enemy.getHand().getCardCount() - enemy.getSecrets().getSecrets().size());
 
         // Calculate unused card penalty
         int mana = us.getMana();

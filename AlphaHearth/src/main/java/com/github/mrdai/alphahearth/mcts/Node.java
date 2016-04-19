@@ -2,8 +2,10 @@ package com.github.mrdai.alphahearth.mcts;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.Move;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Node {
@@ -12,8 +14,8 @@ public class Node {
     private final Node parent;
     final Move move;
 
-    final List<Node> unvisitedChildren = new ArrayList<>();
-    public final List<Node> visitedChildren = new ArrayList<>();
+    final List<Node> unvisitedChildren = Collections.synchronizedList(new ArrayList<>());
+    public final List<Node> visitedChildren = Collections.synchronizedList(new ArrayList<>());
     boolean expanded;
 
     public double gameCount = 0;

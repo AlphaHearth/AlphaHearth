@@ -2,13 +2,15 @@ package com.github.mrdai.alphahearth.mcts.budget;
 
 import com.github.mrdai.alphahearth.mcts.MCTS;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Computational {@link Budget} defined on times of iterations, i.e. terminating the search when certain
  * times of iterations have been simulated.
  */
 public class IterCountBudget implements Budget {
     private final int iterLimit;
-    private int currentNum;
+    private final AtomicInteger currentNum;
 
     /**
      * Creates a {@code IterCountBudget} with the given limit of iteration times. The created instance
@@ -18,20 +20,21 @@ public class IterCountBudget implements Budget {
      */
     public IterCountBudget(int iterLimit) {
         this.iterLimit = iterLimit;
+        this.currentNum = new AtomicInteger();
     }
 
     @Override
     public void startSearch() {
-        currentNum = 0;
+        currentNum.set(0);
     }
 
     @Override
     public void newIteration() {
-        currentNum++;
+        currentNum.getAndIncrement();
     }
 
     @Override
     public boolean hasReached() {
-        return currentNum >= iterLimit;
+        return currentNum.get() >= iterLimit;
     }
 }

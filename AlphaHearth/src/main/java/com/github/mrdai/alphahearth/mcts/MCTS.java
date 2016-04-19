@@ -14,9 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MCTS implements Agent {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
+
+    private final SimulateExecutor executor = new SimulateExecutor(3);
 
     private final PlayerId aiPlayerId;
     private final Budget budget;
@@ -42,52 +46,71 @@ public class MCTS implements Agent {
      * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
      * of the MCT and runs iterations on it until a certain computational budget is reached.
      */
-    public Move search(Board rootBoard) {
+    public synchronized Move search(Board rootBoard) {
         LOG.info("Start new MCTS");
         Node rootNode = new Node();
         budget.startSearch();
         long startTime = System.currentTimeMillis();
-        int iterNum = 1;
+        final AtomicInteger iterNum = new AtomicInteger(1);
 
         LOG.debug("Expanding...");
         expand(rootBoard, rootNode);
-        LOG.debug("Visiting unvisited children...");
-        while (!rootNode.unvisitedChildren.isEmpty()) {
-            Board currentBoard = rootBoard.clone();
-            Node selectedChild = rootNode.unvisitedChildren.remove(0);
-            rootNode.visitedChildren.add(selectedChild);
-            currentBoard.applyMoves(selectedChild.move);
-            simulate(currentBoard);
-            selectedChild.backPropagate(currentBoard.getScore(aiPlayerId));
+
+        if (rootNode.unvisitedChildren.size() == 1) {
+            LOG.info("Found only one child. Return it directly.");
+            return rootNode.unvisitedChildren.get(0).move;
         }
 
-        while (!budget.hasReached()) {
-            LOG.debug("Start iteration #" + iterNum);
-            budget.newIteration();
-            Board currentBoard = rootBoard.clone();
-            LOG.debug("Selecting...");
-            if (rootNode.unvisitedChildren.isEmpty() && rootNode.visitedChildren.size() == 1) {
-                LOG.info("Found only one child. Return it directly.");
-                return rootNode.visitedChildren.get(0).move;
-            }
-            // Selection
-            Node selectedLeaf = select(currentBoard, rootNode);
+        final AtomicReference<Move> lethalRef = new AtomicReference<>();
+        LOG.debug("Submitting first traversing task...");
+        executor.execute(() -> {
+            while (!rootNode.unvisitedChildren.isEmpty() && !Thread.interrupted()) {
+                Board currentBoard = rootBoard.clone();
+                Node child = rootNode.unvisitedChildren.remove(0);
+                rootNode.visitedChildren.add(child);
+                currentBoard.applyMoves(child.move);
 
-            // Already won, stop searching.
-            if (currentBoard.isGameOver() && !currentBoard.getGame().getPlayer(aiPlayerId).getHero().isDead()) {
-                long finishTime = System.currentTimeMillis();
-                LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
-                return selectedLeaf.move;
-            }
+                // Found lethal
+                if (currentBoard.isGameOver() && !currentBoard.getGame().getPlayer(aiPlayerId).getHero().isDead()) {
+                    LOG.debug("Found lethal. Interrupting worker threads...");
+                    lethalRef.set(child.move);
+                    executor.interrupt();
+                    return;
+                }
 
-            LOG.debug("Simulating...");
-            // Simulation
-            simulate(currentBoard);
-            LOG.debug("Back propagating...");
-            // Back Propagation
-            selectedLeaf.backPropagate(currentBoard.getScore(aiPlayerId));
-            iterNum++;
+                simulate(currentBoard);
+                child.backPropagate(currentBoard.getScore(aiPlayerId));
+            }
+        });
+        executor.waitToFinish();
+
+        Move lethalMove = lethalRef.get();
+        if (lethalMove != null) {
+            LOG.info("Found lethal. Returning...");
+            return lethalMove;
         }
+
+        LOG.debug("Submitting simulation task...");
+        executor.execute(() -> {
+            while (!budget.hasReached()) {
+                LOG.debug("Start iteration #" + iterNum.get());
+                budget.newIteration();
+                Board currentBoard = rootBoard.clone();
+
+                LOG.debug("Selecting...");
+                Node selectedLeaf = select(currentBoard, rootNode);
+
+                LOG.debug("Simulating...");
+                simulate(currentBoard);
+
+                LOG.debug("Back propagating...");
+                selectedLeaf.backPropagate(currentBoard.getScore(aiPlayerId));
+
+                iterNum.getAndIncrement();
+            }
+        });
+        executor.waitToFinish();
+
         long finishTime = System.currentTimeMillis();
         LOG.info("Search finished in " + (finishTime - startTime) + "ms with " + iterNum + " iterations.");
         Comparator<Node> CMP = (o1, o2) -> -1 * Double.compare(o1.reward / o1.gameCount, o2.reward / o2.gameCount);

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MCTS implements Agent {
     private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
 
-    private final SimulateExecutor executor = new SimulateExecutor(3);
+    private final SimulateExecutor executor = new SimulateExecutor(6);
 
     private final PlayerId aiPlayerId;
     private final Budget budget;
@@ -66,7 +66,13 @@ public class MCTS implements Agent {
         executor.execute(() -> {
             while (!rootNode.unvisitedChildren.isEmpty() && !Thread.interrupted()) {
                 Board currentBoard = rootBoard.clone();
-                Node child = rootNode.unvisitedChildren.remove(0);
+                Node child;
+                try {
+                   child = rootNode.unvisitedChildren.remove(0);
+                } catch (IndexOutOfBoundsException e) {
+                    // Already removed
+                    break;
+                }
                 rootNode.visitedChildren.add(child);
                 currentBoard.applyMoves(child.move);
 

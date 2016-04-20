@@ -59,16 +59,18 @@ public class AiGameAgent {
 
     public static void main(String[] args) {
 
-        // int[] iterNumArr = {0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500};
-        int[] iterNumArr = {600, 700, 800, 900, 1000, 1500, 2000};
+        int[] iterNumArr = {
+            0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500,
+            600, 700, 800, 900, 1000, 1500, 2000
+        };
 
         int[] winCounts = new int[iterNumArr.length];
 
         for (int i = 0; i < iterNumArr.length; i++) {
             LOG.warn("Begin for iterNum " + iterNumArr[i]);
             AiGameAgent agent = new AiGameAgent();
-            agent.aiPlayer = new MCTS(AI_PLAYER, new RuleBasedPolicy(), new IterCountBudget(iterNumArr[i]));
-            agent.aiOpponent = new MCTS(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
+            agent.aiPlayer = new MCTS(AI_PLAYER, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
+            agent.aiOpponent = new RuleBasedPolicy();
             int winCount = 0;
             for (int j = 1; j <= 100; j++) {
                 try {
@@ -79,7 +81,7 @@ public class AiGameAgent {
                     } else {
                         LOG.warn("#" + j + " game finished, AiPlayer lost.");
                     }
-                    LOG.warn("AiPlayer already won " + winCount + " game(s).");
+                    LOG.info("AiPlayer already won " + winCount + " game(s).");
                 } catch (Throwable thr) {
                     LOG.error("Exception occurred during #" + j + " roll out.", thr);
                     LOG.error("Retrying...");

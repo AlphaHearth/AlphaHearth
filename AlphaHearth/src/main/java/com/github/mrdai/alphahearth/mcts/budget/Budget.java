@@ -1,6 +1,6 @@
 package com.github.mrdai.alphahearth.mcts.budget;
 
-import com.github.mrdai.alphahearth.mcts.MCTS;
+import com.github.mrdai.alphahearth.mcts.MCSAgent;
 
 /**
  * Computational budget, used to tell a MCTS when to stop. Typically, the computational budget can be defined
@@ -13,18 +13,18 @@ import com.github.mrdai.alphahearth.mcts.MCTS;
 public interface Budget {
 
     /**
-     * The {@link MCTS} will invoke this method to signal the start of a new search.
+     * The {@link MCSAgent} will invoke this method to signal the start of a new search.
      * Typically, the {@code Budget} should reset all its inner states when this method is invoked.
      */
     public void startSearch();
 
     /**
-     * The {@link MCTS} will invoke this method to signal the start of a new iteration of MCTS.
+     * The {@link MCSAgent} will invoke this method to signal the start of a new iteration of MCTS.
      */
     public void newIteration();
 
     /**
-     * The {@link MCTS} will invoke this method every time an iteration ends, and determine if to
+     * The {@link MCSAgent} will invoke this method every time an iteration ends, and determine if to
      * terminate the search based on the value returned.
      *
      * @return {@code true} is the computational budget is reached and the search should be terminated;

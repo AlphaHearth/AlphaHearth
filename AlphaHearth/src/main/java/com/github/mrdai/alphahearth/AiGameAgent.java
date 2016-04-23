@@ -1,10 +1,9 @@
 package com.github.mrdai.alphahearth;
 
-import com.github.mrdai.alphahearth.mcts.MCTS;
+import com.github.mrdai.alphahearth.mcts.MCSAgent;
 import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.mcts.policy.RandomPolicy;
-import com.github.mrdai.alphahearth.mcts.policy.RuleBasedPolicy;
-import com.github.mrdai.alphahearth.mcts.policy.UCTTreePolicy;
+import com.github.mrdai.alphahearth.mcts.policy.ExpertRuleBasedPolicy;
 import info.hearthsim.brazier.DeckBuilder;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.db.HearthStoneDb;
@@ -54,8 +53,8 @@ public class AiGameAgent {
 
     private Game game;
     private Board board;
-    private Agent aiPlayer = new MCTS(AI_PLAYER, new RuleBasedPolicy(), new IterCountBudget(500));
-    private Agent aiOpponent = new MCTS(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(500));
+    private Agent aiPlayer = new MCSAgent(AI_PLAYER, new ExpertRuleBasedPolicy(), new IterCountBudget(500));
+    private Agent aiOpponent = new MCSAgent(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(500));
 
     public static void main(String[] args) {
 
@@ -69,8 +68,8 @@ public class AiGameAgent {
         for (int i = 0; i < iterNumArr.length; i++) {
             LOG.warn("Begin for iterNum " + iterNumArr[i]);
             AiGameAgent agent = new AiGameAgent();
-            agent.aiPlayer = new MCTS(AI_PLAYER, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
-            agent.aiOpponent = new RuleBasedPolicy();
+            agent.aiPlayer = new MCSAgent(AI_PLAYER, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
+            agent.aiOpponent = new ExpertRuleBasedPolicy();
             int winCount = 0;
             for (int j = 1; j <= 100; j++) {
                 try {

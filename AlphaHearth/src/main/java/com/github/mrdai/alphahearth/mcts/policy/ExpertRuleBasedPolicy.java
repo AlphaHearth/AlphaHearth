@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 /**
  * A {@code DefaultPolicy} who produces {@link Move} based on predefined rules.
  */
-public class RuleBasedPolicy implements DefaultPolicy {
-    private static final Logger LOG = LoggerFactory.getLogger(RuleBasedPolicy.class);
+public class ExpertRuleBasedPolicy implements DefaultPolicy {
+    private static final Logger LOG = LoggerFactory.getLogger(ExpertRuleBasedPolicy.class);
     private static final Comparator<Minion> CMP = new CardPowerComparer();
 
     @Override

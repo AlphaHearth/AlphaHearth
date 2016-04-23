@@ -9,20 +9,20 @@ import com.github.mrdai.alphahearth.mcts.Node;
  * of the UCT formulation. Assigning it with a greater value emphasizes the exploration of the MCTS, while
  * setting it to a lesser value emphasizes the exploitation. It is set to {@code 1 / sqrt(2)} by default.
  */
-public class UCTTreePolicy implements TreePolicy {
+public class UCBPolicy implements TreePolicy {
     private final double cp;
 
     /**
      * Creates a {@code UCTTreePolicy} with its Exploration Factor setting to {@code 1 / sqrt(2)}.
      */
-    public UCTTreePolicy() {
+    public UCBPolicy() {
         this(1 / Math.sqrt(2));
     }
 
     /**
      * Creates a {@code UCTTreePolicy} with the given Exploration Factor.
      */
-    public UCTTreePolicy(double cp) {
+    public UCBPolicy(double cp) {
         this.cp = cp;
     }
 

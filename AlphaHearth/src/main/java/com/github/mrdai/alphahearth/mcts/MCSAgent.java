@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MCTS implements Agent {
-    private static final Logger LOG = LoggerFactory.getLogger(MCTS.class);
+public class MCSAgent implements Agent {
+    private static final Logger LOG = LoggerFactory.getLogger(MCSAgent.class);
 
     private final SimulateExecutor executor = new SimulateExecutor(6);
 
@@ -27,15 +27,15 @@ public class MCTS implements Agent {
     private final TreePolicy treePolicy;
     private final DefaultPolicy defaultPolicy;
 
-    public MCTS(PlayerId aiPlayerId) {
-        this(aiPlayerId, new UCTTreePolicy(), new RandomPolicy(), new IterCountBudget(500));
+    public MCSAgent(PlayerId aiPlayerId) {
+        this(aiPlayerId, new UCBPolicy(), new RandomPolicy(), new IterCountBudget(500));
     }
 
-    public MCTS(PlayerId aiPlayerId, DefaultPolicy defaultPolicy, Budget budget) {
-        this(aiPlayerId, new UCTTreePolicy(), defaultPolicy, budget);
+    public MCSAgent(PlayerId aiPlayerId, DefaultPolicy defaultPolicy, Budget budget) {
+        this(aiPlayerId, new UCBPolicy(), defaultPolicy, budget);
     }
 
-    public MCTS(PlayerId aiPlayerId, TreePolicy treePolicy, DefaultPolicy defaultPolicy, Budget budget) {
+    public MCSAgent(PlayerId aiPlayerId, TreePolicy treePolicy, DefaultPolicy defaultPolicy, Budget budget) {
         this.aiPlayerId = aiPlayerId;
         this.budget = budget;
         this.treePolicy = treePolicy;
@@ -64,15 +64,14 @@ public class MCTS implements Agent {
         final AtomicReference<Move> lethalRef = new AtomicReference<>();
         LOG.debug("Submitting first traversing task...");
         executor.execute(() -> {
-            while (!rootNode.unvisitedChildren.isEmpty() && !Thread.interrupted()) {
-                Board currentBoard = rootBoard.clone();
+            while (!Thread.interrupted()) {
                 Node child;
-                try {
-                   child = rootNode.unvisitedChildren.remove(0);
-                } catch (IndexOutOfBoundsException e) {
-                    // Already removed
-                    break;
+                synchronized (rootNode.unvisitedChildren) {
+                    child = rootNode.unvisitedChildren.pollFirst();
+                    if (child == null)
+                        break;
                 }
+                Board currentBoard = rootBoard.clone();
                 rootNode.visitedChildren.add(child);
                 currentBoard.applyMoves(child.move);
 
@@ -138,7 +137,7 @@ public class MCTS implements Agent {
             LOG.info(builder.toString());
         }
 
-        return rootNode.visitedChildren.get(0).move;
+        return rootNode.visitedChildren.peekFirst().move;
     }
 
     /**

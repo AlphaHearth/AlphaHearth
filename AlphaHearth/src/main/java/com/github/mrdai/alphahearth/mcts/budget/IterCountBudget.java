@@ -1,6 +1,6 @@
 package com.github.mrdai.alphahearth.mcts.budget;
 
-import com.github.mrdai.alphahearth.mcts.MCTS;
+import com.github.mrdai.alphahearth.mcts.MCSAgent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,7 +14,7 @@ public class IterCountBudget implements Budget {
 
     /**
      * Creates a {@code IterCountBudget} with the given limit of iteration times. The created instance
-     * will signal the {@link MCTS} to stop when the time of iterations reaches the given value.
+     * will signal the {@link MCSAgent} to stop when the time of iterations reaches the given value.
      *
      * @param iterLimit the given limit of iteration.
      */

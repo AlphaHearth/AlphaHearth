@@ -2,10 +2,8 @@ package com.github.mrdai.alphahearth.mcts;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.Move;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Node {
@@ -14,8 +12,8 @@ public class Node {
     private final Node parent;
     final Move move;
 
-    final List<Node> unvisitedChildren = Collections.synchronizedList(new ArrayList<>());
-    public final List<Node> visitedChildren = Collections.synchronizedList(new ArrayList<>());
+    final LinkedList<Node> unvisitedChildren = new LinkedList<>();
+    public final LinkedList<Node> visitedChildren = new LinkedList<>();
     boolean expanded;
 
     public double gameCount = 0;
@@ -46,7 +44,7 @@ public class Node {
      */
     public void expand(List<Move> moves) {
         for (Move move : moves)
-            unvisitedChildren.add(new Node(this, move));
+            unvisitedChildren.addLast(new Node(this, move));
         expanded = true;
     }
 

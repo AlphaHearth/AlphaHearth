@@ -322,7 +322,7 @@ public class Board {
         double MINION_COST_FACTOR = 0.4;
         double HAND_SIZE_FACTOR = 0.3;
         double UNATTACKED_PENALTY = 1.2;
-        double UNUSED_CARD_PENALTY = 0.8;
+        double UNUSED_CARD_PENALTY = 0.4;
 
         int result = 0;
 

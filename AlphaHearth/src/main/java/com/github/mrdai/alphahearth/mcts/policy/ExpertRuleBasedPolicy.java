@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class ExpertRuleBasedPolicy implements DefaultPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(ExpertRuleBasedPolicy.class);
-    private static final Comparator<Minion> CMP = new CardPowerComparer();
+    private static final Comparator<Minion> CMP = new MinionPowerComparer();
 
     @Override
     public Move produceMode(Board board) {
@@ -289,7 +289,7 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         return attack - health > 2;
     }
 
-    private static class CardPowerComparer implements Comparator<Minion> {
+    private static class MinionPowerComparer implements Comparator<Minion> {
         public int compare(Minion x, Minion y) {
             int powerX = getPower(x);
             int powerY = getPower(y);

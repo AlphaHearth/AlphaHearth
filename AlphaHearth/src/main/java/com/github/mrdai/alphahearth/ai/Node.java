@@ -22,14 +22,14 @@ import java.util.List;
  * This class can be used for both MCS and MCTS.
  */
 public class Node {
-    public final Node parent;
+    public Node parent;
     public final Move move;
 
     public final PlayerId ownerId;
 
     public final LinkedList<Node> unvisitedChildren = new LinkedList<>();
     public final LinkedList<Node> visitedChildren = new LinkedList<>();
-    public boolean expanded;
+    public boolean expanded = false;
 
     public double gameCount = 0;
     public double reward = 0;
@@ -74,20 +74,23 @@ public class Node {
     /**
      * Back propagates the new score through the tree.
      */
-    public void backPropagate(double score) {
-        backPropagate(score, 1);
+    public void backPropagate(PlayerId winnerId, double score) {
+        backPropagate(winnerId, score, 0.97);
     }
 
     /**
      * Back propagates the new score through the tree with the given ply penalty.
      * Each time the score back propagates to the parent, the score will be timed
-     * with the given ply penalty. 
+     * with the given ply penalty.
      */
-    public void backPropagate(double score, double plyPenalty) {
+    public void backPropagate(PlayerId winnerId, double score, double plyPenalty) {
         gameCount++;
-        reward += score;
+        if (winnerId == ownerId)
+            reward += score;
+        else
+            reward -= score;
 
         if (parent != null)
-            parent.backPropagate(plyPenalty * score, plyPenalty);
+            parent.backPropagate(winnerId, plyPenalty * score, plyPenalty);
     }
 }

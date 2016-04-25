@@ -3,7 +3,7 @@ package com.github.mrdai.alphahearth.ai.mcs;
 import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.ai.Node;
-import com.github.mrdai.alphahearth.ai.SimulateExecutor;
+import com.github.mrdai.alphahearth.ai.MultipleExecutor;
 import com.github.mrdai.alphahearth.ai.budget.Budget;
 import com.github.mrdai.alphahearth.ai.budget.IterCountBudget;
 import com.github.mrdai.alphahearth.ai.policy.*;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MCSAgent implements Agent {
     private static final Logger LOG = LoggerFactory.getLogger(MCSAgent.class);
 
-    private final SimulateExecutor executor = new SimulateExecutor(6);
+    private final MultipleExecutor executor = new MultipleExecutor(6);
 
     private final PlayerId aiPlayerId;
     private final Budget budget;
@@ -86,7 +86,7 @@ public class MCSAgent implements Agent {
                 }
 
                 simulate(currentBoard);
-                child.backPropagate(currentBoard.getScore(aiPlayerId));
+                child.backPropagate(aiPlayerId, currentBoard.getScore(aiPlayerId));
             }
         });
         executor.waitToFinish();
@@ -111,7 +111,7 @@ public class MCSAgent implements Agent {
                 simulate(currentBoard);
 
                 LOG.debug("Back propagating...");
-                selectedLeaf.backPropagate(currentBoard.getScore(aiPlayerId));
+                selectedLeaf.backPropagate(aiPlayerId, currentBoard.getScore(aiPlayerId));
 
                 iterNum.getAndIncrement();
             }
@@ -143,16 +143,13 @@ public class MCSAgent implements Agent {
     }
 
     /**
-     * Selects an expandable node with the given root node of the Monte Carlo Tree and
-     * the copy of {@code Board} used for this iteration.
-     * <p>
-     * While traversing through the tree to look for the best candidate, the {@code Move} stored
-     * in every visited {@code Node} will also be applied on the given {@code Board},
-     * resulting it standing for the exact game state of the selected node when the method returns.
+     * Selects the best child from all the direct children of the given root node.
+     * The {@link Move} associated to the selected child will be applied to the
+     * given {@link Board} before the method returns.
      *
-     * @param copiedBoard the copied {@code Board} used for this iteration.
-     * @param rootNode    Node from which to start selection.
-     * @return the most urgent expandable node.
+     * @param copiedBoard the copied {@code Board} used for applying the best move.
+     * @param rootNode    the given root node.
+     * @return the best child of the given root node.
      */
     private Node select(Board copiedBoard, Node rootNode) {
         rootNode = bestChild(rootNode);
@@ -189,7 +186,7 @@ public class MCSAgent implements Agent {
                     moves.remove(i);
             }
             LOG.info("Added " + moves.size() + " moves.");
-            rootNode.expand(moves);
+            rootNode.expand(moves, aiPlayerId);
         }
     }
 
@@ -201,7 +198,7 @@ public class MCSAgent implements Agent {
      * @return the best child from the visited children of the given {@code Node}.
      */
     private Node bestChild(Node node) {
-        return treePolicy.bestChild(node);
+        return treePolicy.bestNode(node.visitedChildren);
     }
 
     /**
@@ -221,4 +218,6 @@ public class MCSAgent implements Agent {
     public Move produceMode(Board board) {
         return search(board);
     }
+
+    public void close() {}
 }

@@ -149,4 +149,6 @@ public class RandomPolicy implements DefaultPolicy {
         assert !list.isEmpty();
         return list.get(random.nextInt(list.size()));
     }
+
+    public void close() {}
 }

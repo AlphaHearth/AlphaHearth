@@ -2,6 +2,8 @@ package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.ai.Node;
 
+import java.util.List;
+
 /**
  * A {@code TreePolicy} is used to select or create a leaf node from the nodes already contained
  * within the search tree in the <em>Selection</em> and <em>Expansion</em> stage.
@@ -9,10 +11,10 @@ import com.github.mrdai.alphahearth.ai.Node;
 public interface TreePolicy {
 
     /**
-     * Selects the best child from all the visited children of the given {@link Node}.
+     * Selects the best node from the given list of {@link Node}s.
      *
-     * @param node the given {@code Node}.
-     * @return the best child from the visited children of the given {@code Node}.
+     * @param nodes the given list of {@code Node}s.
+     * @return the best node from the given list of {@code Node}s.
      */
-    public Node bestChild(Node node);
+    public Node bestNode(List<Node> nodes);
 }

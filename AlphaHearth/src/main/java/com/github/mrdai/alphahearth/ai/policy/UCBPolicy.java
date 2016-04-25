@@ -2,6 +2,8 @@ package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.ai.Node;
 
+import java.util.List;
+
 /**
  * {@link TreePolicy} which selects the child with the highest Upper Confidence Bound.
  * <p>
@@ -27,19 +29,23 @@ public class UCBPolicy implements TreePolicy {
     }
 
     @Override
-    public Node bestChild(Node node) {
+    public Node bestNode(List<Node> nodes) {
+        int totalGameCount = 0;
+        for (Node node : nodes)
+            totalGameCount += node.gameCount;
+
         double currentMax = Double.MIN_VALUE;
         int nodeIdx = 0;
-        for (int i = 0; i < node.visitedChildren.size(); i++) {
-            Node currentChild = node.visitedChildren.get(i);
+        for (int i = 0; i < nodes.size(); i++) {
+            Node currentChild = nodes.get(i);
             double uct = currentChild.reward / currentChild.gameCount
-                         + 2 * cp * Math.sqrt(2 * Math.log(node.gameCount) / currentChild.gameCount);
+                         + 2 * cp * Math.sqrt(2 * Math.log(totalGameCount) / currentChild.gameCount);
             if (uct > currentMax) {
                 currentMax = uct;
                 nodeIdx = i;
             }
         }
 
-        return node.visitedChildren.get(nodeIdx);
+        return nodes.get(nodeIdx);
     }
 }

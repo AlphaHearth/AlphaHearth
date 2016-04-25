@@ -56,7 +56,7 @@ public class Board {
         Game currentGame = copiedBoard.playAgent.getGame();
         Player curPlayer = currentGame.getCurrentPlayer();
         PlayerId curPlayerId = curPlayer.getPlayerId();
-        Player curOpponent = currentGame.getOpponent(curPlayer.getPlayerId());
+        Player curOpponent = currentGame.getCurrentOpponent();
         Hero friendlyHero = curPlayer.getHero();
         Hero enemyHero = curOpponent.getHero();
         BoardSide friendlyMinions = curPlayer.getBoard();
@@ -252,6 +252,12 @@ public class Board {
      * @throws IllegalStateException if this method is invoked before the game ends.
      */
     public double getScore(PlayerId playerId) {
+        double TURN_PENALTY = 0.97;
+
+        return getScore(TURN_PENALTY, playerId);
+    }
+
+    public double getScore(double turnPenalty, PlayerId playerId) {
         double TURN_PENALTY = 0.97;
 
         if (!isGameOver())

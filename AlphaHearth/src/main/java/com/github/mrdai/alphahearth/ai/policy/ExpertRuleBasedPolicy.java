@@ -332,4 +332,5 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         }
     }
 
+    public void close() {}
 }

@@ -128,4 +128,5 @@ public class ReducedRuleBasedPolicy extends ExpertRuleBasedPolicy implements Def
         return list.get(random.nextInt(list.size()));
     }
 
+    public void close() {}
 }

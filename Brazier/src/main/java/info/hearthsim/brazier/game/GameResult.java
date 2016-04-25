@@ -15,6 +15,10 @@ public final class GameResult {
         ExceptionHelper.checkNotNullElements(this.deadPlayers, "deadPlayers");
     }
 
+    public boolean hasWon(PlayerId playerId) {
+        return !deadPlayers.contains(playerId);
+    }
+
     public List<PlayerId> getDeadPlayers() {
         return deadPlayers;
     }

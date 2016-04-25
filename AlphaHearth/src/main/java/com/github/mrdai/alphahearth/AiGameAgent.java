@@ -1,7 +1,7 @@
 package com.github.mrdai.alphahearth;
 
-import com.github.mrdai.alphahearth.ai.mcs.MCSAgent;
 import com.github.mrdai.alphahearth.ai.budget.IterCountBudget;
+import com.github.mrdai.alphahearth.ai.mcts.MCTSAgent;
 import com.github.mrdai.alphahearth.ai.policy.RandomPolicy;
 import com.github.mrdai.alphahearth.ai.policy.ExpertRuleBasedPolicy;
 import info.hearthsim.brazier.DeckBuilder;
@@ -53,8 +53,8 @@ public class AiGameAgent {
 
     private Game game;
     private Board board;
-    private Agent aiPlayer = new MCSAgent(AI_PLAYER, new ExpertRuleBasedPolicy(), new IterCountBudget(500));
-    private Agent aiOpponent = new MCSAgent(AI_OPPONENT, new RandomPolicy(), new IterCountBudget(500));
+    private Agent aiPlayer;
+    private Agent aiOpponent;
 
     public static void main(String[] args) {
 
@@ -65,13 +65,14 @@ public class AiGameAgent {
 
         int[] winCounts = new int[iterNumArr.length];
 
-        for (int i = 0; i < iterNumArr.length; i++) {
+        for (int i = 0; i < 1; i++) {
             LOG.warn("Begin for iterNum " + iterNumArr[i]);
             AiGameAgent agent = new AiGameAgent();
-            agent.aiPlayer = new MCSAgent(AI_PLAYER, new RandomPolicy(), new IterCountBudget(iterNumArr[i]));
+            final int iterNum = 500;
+            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(iterNum), 20);
             agent.aiOpponent = new ExpertRuleBasedPolicy();
             int winCount = 0;
-            for (int j = 1; j <= 100; j++) {
+            for (int j = 1; j <= 1; j++) {
                 try {
                     boolean hasAiWon = agent.roll();
                     if (hasAiWon) {
@@ -86,7 +87,10 @@ public class AiGameAgent {
                     LOG.error("Retrying...");
                     j--;
                 }
+                System.gc();
             }
+            agent.aiPlayer.close();
+            agent.aiOpponent.close();
             LOG.warn("100 games finished, AiPlayer won in " + winCount + " games.");
             winCounts[i] = winCount;
         }

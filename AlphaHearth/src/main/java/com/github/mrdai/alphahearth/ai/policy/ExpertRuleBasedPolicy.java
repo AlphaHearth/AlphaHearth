@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts.policy;
+package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.*;
@@ -50,6 +50,7 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         Hero enemyHero = enemy.getHero();
         enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
 
+        // Generate `CardPlaying` move
         SingleMove move = produceCardPlaying(us, enemy, enemyAttackPoint);
         if (move != null) {
             LOG.trace(move.toString(board));
@@ -75,40 +76,48 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
 
         // Generate Minion Attack Move
 
-        // Deal with enemy's taunt minions
+        // Use friendly non-taunt minions to deal with enemy's taunt minions
         move = playKill(friendlyNonTauntAttackers, enemyTaunt);
         if (move != null) {
             LOG.trace(move.toString(board));
             return move;
         }
 
+        // Use friendly taunt minions to deal with enemy's taunt minions
         move = playKill(friendlyTauntAttackers, enemyTaunt);
         if (move != null) {
             LOG.trace(move.toString(board));
             return move;
         }
+
+        // At this point, no more friendly minion can kill any of enemy taunt minions
+        // So, just attack them blindly.
         if (!enemyTaunt.isEmpty() && !friendlyAttackers.isEmpty()) {
             move = new DirectAttacking(friendlyAttackers.get(0), enemyTaunt.get(0));
             LOG.trace(move.toString(board));
             return move;
         }
 
-
-        // Deal with enemy's dangerous minions
+        // Use friendly non-taunt minions to deal with enemy's dangerous minions
         move = playKill(friendlyNonTauntAttackers, enemyDangerous);
         if (move != null) {
             LOG.trace(move.toString(board));
             return move;
         }
 
+        // At this point, no more friendly non-taunt minion can kill any of enemy dangerous minions
+        // So, just attack them blindly.
         if (!friendlyNonTauntAttackers.isEmpty() && !enemyDangerous.isEmpty()) {
             move = new DirectAttacking(friendlyNonTauntAttackers.get(0), enemyDangerous.get(0));
             LOG.trace(move.toString(board));
             return move;
         }
 
-        // Deal with enemy minions depends on my health
-        if (enemyTaunt.isEmpty() && us.getHero().getCurrentHp() - enemyAttackPoint < 0) {
+        // At this point, if there is still any available friendly attackers,
+        // there would be no taunt minion on enemy's side.
+
+        // Deal with enemy non-taunt minions if enemy can kill us in the next turn.
+        if (enemyTaunt.isEmpty() && us.getHero().getCurrentHp() - enemyAttackPoint <= 0) {
             for (Minion target : enemyMinions) {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 1) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
@@ -120,7 +129,9 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
                 }
             }
         }
-        if (enemyTaunt.isEmpty() && us.getHero().getCurrentHp() - enemyAttackPoint < 10) {
+
+        // Deal with enemy non-taunt minions if enemy's attack point is high enough to threaten us.
+        if (enemyTaunt.isEmpty() && us.getHero().getCurrentHp() - enemyAttackPoint <= 10) {
             for (Minion target : enemyMinions) {
                 if (target.getAttackTool().getAttack() - target.getBody().getCurrentHp() > 3) {
                     Minion bestAttacker = bestAttacker(friendlyAttackers, target);
@@ -213,6 +224,14 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         return null;
     }
 
+    /**
+     * For the given list of enemy targets, produces a {@link DirectAttacking} if a best attacker can be found
+     * for any target from the given lists.
+     * <p>
+     * Returns {@code null} if no such pair of attacker and target can be found.
+     *
+     * @see #bestAttacker(List, Minion)
+     */
     private static DirectAttacking playKill(List<Minion> friendlyAttackers, List<Minion> enemyTargets) {
         Minion bestAttacker;
 
@@ -225,11 +244,19 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         return null;
     }
 
+    /**
+     * Given a list of candidate attackers and enemy target, return the best attacker for the given target
+     * from the given list.
+     * <p>
+     * The best attacker would be the minion with the least attack that can kill the target.
+     * <p>
+     * Returns {@code null} if there is no attacker from the list can kill the target.
+     */
     private static Minion bestAttacker(List<Minion> attackerCandidates, Minion target) {
         Minion bestAttacker = null;
 
         for (Minion attacker : attackerCandidates) {
-            if (target.getBody().getCurrentHp() < attacker.getAttackTool().getAttack())
+            if (target.getBody().getCurrentHp() <= attacker.getAttackTool().getAttack())
                 bestAttacker = attacker;
             else if (bestAttacker != null && bestAttacker.getAttackTool().getAttack() > attacker.getAttackTool().getAttack())
                 bestAttacker = attacker;
@@ -247,7 +274,7 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
             Minion minion = card.getMinion();
             if (minion != null && minion.getBody().isTaunt() && !friendlyHero.getOwner().getBoard().isFull()
                 && (card.getActiveManaCost() == mana || card.getActiveManaCost() == mana - 2))
-                return new CardPlaying(card);
+                return new CardPlaying(card, 0);
         }
 
         if (friendlyHero.getCurrentHp() - enemyAttackPoint < 10) {
@@ -257,7 +284,7 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
                 Minion minion = card.getMinion();
                 if (minion != null && minion.getBody().isTaunt() && !friendlyHero.getOwner().getBoard().isFull()
                     && (card.getActiveManaCost() == mana - 1 || card.getActiveManaCost() == mana - 3))
-                    return new CardPlaying(card);
+                    return new CardPlaying(card, 0);
             }
         }
 

@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts.policy;
+package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.*;
@@ -8,11 +8,7 @@ import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 

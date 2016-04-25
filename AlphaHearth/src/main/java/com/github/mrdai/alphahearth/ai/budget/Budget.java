@@ -1,6 +1,6 @@
-package com.github.mrdai.alphahearth.mcts.budget;
+package com.github.mrdai.alphahearth.ai.budget;
 
-import com.github.mrdai.alphahearth.mcts.MCSAgent;
+import com.github.mrdai.alphahearth.ai.mcs.MCSAgent;
 
 /**
  * Computational budget, used to tell a MCTS when to stop. Typically, the computational budget can be defined

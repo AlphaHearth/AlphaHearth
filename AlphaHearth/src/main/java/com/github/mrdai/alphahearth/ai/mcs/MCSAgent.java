@@ -1,10 +1,12 @@
-package com.github.mrdai.alphahearth.mcts;
+package com.github.mrdai.alphahearth.ai.mcs;
 
 import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;
-import com.github.mrdai.alphahearth.mcts.budget.Budget;
-import com.github.mrdai.alphahearth.mcts.budget.IterCountBudget;
-import com.github.mrdai.alphahearth.mcts.policy.*;
+import com.github.mrdai.alphahearth.ai.Node;
+import com.github.mrdai.alphahearth.ai.SimulateExecutor;
+import com.github.mrdai.alphahearth.ai.budget.Budget;
+import com.github.mrdai.alphahearth.ai.budget.IterCountBudget;
+import com.github.mrdai.alphahearth.ai.policy.*;
 import com.github.mrdai.alphahearth.move.Move;
 import com.github.mrdai.alphahearth.move.SingleMove;
 import info.hearthsim.brazier.game.Player;
@@ -43,11 +45,11 @@ public class MCSAgent implements Agent {
     }
 
     /**
-     * The main entry point of the MCTS class, which uses the given {@link Board} as the root node
+     * The main entry point of the MCS class, which uses the given {@link Board} as the root node
      * of the MCT and runs iterations on it until a certain computational budget is reached.
      */
     public synchronized Move search(Board rootBoard) {
-        LOG.info("Start new MCTS");
+        LOG.info("Start new MCS");
         Node rootNode = new Node();
         budget.startSearch();
         long startTime = System.currentTimeMillis();

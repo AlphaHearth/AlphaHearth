@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts.budget;
+package com.github.mrdai.alphahearth.ai.budget;
 
 /**
  * Computational {@link Budget} defined on the length of time used on iterations, i.e. terminating the search

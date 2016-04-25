@@ -1,6 +1,6 @@
-package com.github.mrdai.alphahearth.mcts.policy;
+package com.github.mrdai.alphahearth.ai.policy;
 
-import com.github.mrdai.alphahearth.mcts.Node;
+import com.github.mrdai.alphahearth.ai.Node;
 
 /**
  * {@link TreePolicy} which selects the child with the highest Upper Confidence Bound.
@@ -13,14 +13,14 @@ public class UCBPolicy implements TreePolicy {
     private final double cp;
 
     /**
-     * Creates a {@code UCTTreePolicy} with its Exploration Factor setting to {@code 1 / sqrt(2)}.
+     * Creates a {@code UCBPolicy} with its Exploration Factor setting to {@code 1 / sqrt(2)}.
      */
     public UCBPolicy() {
         this(1 / Math.sqrt(2));
     }
 
     /**
-     * Creates a {@code UCTTreePolicy} with the given Exploration Factor.
+     * Creates a {@code UCBPolicy} with the given Exploration Factor.
      */
     public UCBPolicy(double cp) {
         this.cp = cp;

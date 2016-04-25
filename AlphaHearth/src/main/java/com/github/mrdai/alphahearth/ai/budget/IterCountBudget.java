@@ -1,6 +1,6 @@
-package com.github.mrdai.alphahearth.mcts.budget;
+package com.github.mrdai.alphahearth.ai.budget;
 
-import com.github.mrdai.alphahearth.mcts.MCSAgent;
+import com.github.mrdai.alphahearth.ai.mcs.MCSAgent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

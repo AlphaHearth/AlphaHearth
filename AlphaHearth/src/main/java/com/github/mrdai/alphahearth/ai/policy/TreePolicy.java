@@ -1,6 +1,6 @@
-package com.github.mrdai.alphahearth.mcts.policy;
+package com.github.mrdai.alphahearth.ai.policy;
 
-import com.github.mrdai.alphahearth.mcts.Node;
+import com.github.mrdai.alphahearth.ai.Node;
 
 /**
  * A {@code TreePolicy} is used to select or create a leaf node from the nodes already contained

@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts;
+package com.github.mrdai.alphahearth.ai;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

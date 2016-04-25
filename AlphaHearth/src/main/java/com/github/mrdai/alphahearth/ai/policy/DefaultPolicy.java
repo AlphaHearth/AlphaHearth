@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts.policy;
+package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;

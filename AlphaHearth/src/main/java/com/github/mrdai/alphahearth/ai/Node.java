@@ -1,4 +1,4 @@
-package com.github.mrdai.alphahearth.mcts;
+package com.github.mrdai.alphahearth.ai;
 
 import com.github.mrdai.alphahearth.Board;
 import com.github.mrdai.alphahearth.move.Move;
@@ -9,12 +9,12 @@ import java.util.List;
 public class Node {
     private static final double PLY_PENALTY = 0.95;
 
-    private final Node parent;
-    final Move move;
+    public final Node parent;
+    public final Move move;
 
-    final LinkedList<Node> unvisitedChildren = new LinkedList<>();
+    public final LinkedList<Node> unvisitedChildren = new LinkedList<>();
     public final LinkedList<Node> visitedChildren = new LinkedList<>();
-    boolean expanded;
+    public boolean expanded;
 
     public double gameCount = 0;
     public double reward = 0;

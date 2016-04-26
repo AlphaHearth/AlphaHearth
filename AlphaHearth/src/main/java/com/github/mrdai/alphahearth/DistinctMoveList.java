@@ -1,25 +1,36 @@
 package com.github.mrdai.alphahearth;
 
 import com.github.mrdai.alphahearth.move.Move;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Function;
 
 class DistinctMoveList {
+    private static final Logger LOG = LoggerFactory.getLogger(DistinctMoveList.class);
+
     private int size = 0;
     private Node head = null;
     private Node tail = null;
 
     private Set<Board> boardSet = new HashSet<>();
 
-    public void add(Board copiedParentBoard, Move move) {
-        int orgValue = (int) copiedParentBoard.getValue();
+    public void add(Board parentBoard, Move move) {
+        int orgValue = (int) parentBoard.getValue();
+        Board copiedParentBoard = parentBoard.clone();
         copiedParentBoard.applyMoves(move);
-        if (boardSet.contains(copiedParentBoard))
+        if (boardSet.contains(copiedParentBoard)) {
+            LOG.debug("Not adding move \n{} as it leads to the same state as other added moves.",
+                move.toString());
             return;
+        }
         int value = (int) copiedParentBoard.getValue();
-        if (orgValue > value)
+        if (orgValue > value) {
+            LOG.debug("Not adding move \n{} as it decrease the board value from {} to {}.",
+                move.toString(), orgValue, value);
             return;
+        }
 
         boardSet.add(copiedParentBoard);
         Node node = new Node(move, value);

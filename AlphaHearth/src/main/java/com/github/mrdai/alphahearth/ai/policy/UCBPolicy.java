@@ -1,8 +1,8 @@
 package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.ai.Node;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link TreePolicy} which selects the child with the highest Upper Confidence Bound.
@@ -12,6 +12,8 @@ import java.util.List;
  * setting it to a lesser value emphasizes the exploitation. It is set to {@code 1 / sqrt(2)} by default.
  */
 public class UCBPolicy implements TreePolicy {
+    private static final Logger LOG = LoggerFactory.getLogger(UCBPolicy.class);
+
     private final double cp;
 
     /**
@@ -29,23 +31,17 @@ public class UCBPolicy implements TreePolicy {
     }
 
     @Override
-    public Node bestNode(List<Node> nodes) {
-        int totalGameCount = 0;
-        for (Node node : nodes)
-            totalGameCount += node.gameCount;
-
-        double currentMax = Double.MIN_VALUE;
-        int nodeIdx = 0;
-        for (int i = 0; i < nodes.size(); i++) {
-            Node currentChild = nodes.get(i);
-            double uct = currentChild.reward / currentChild.gameCount
-                         + 2 * cp * Math.sqrt(2 * Math.log(totalGameCount) / currentChild.gameCount);
+    public Node bestChild(Node node) {
+        double currentMax = Double.MAX_VALUE * -1;
+        Node maxNode = null;
+        for (Node child : node.visitedChildren) {
+            double uct = child.reward / child.gameCount
+                         + 2 * cp * Math.sqrt(2 * Math.log(node.gameCount) / child.gameCount);
             if (uct > currentMax) {
                 currentMax = uct;
-                nodeIdx = i;
+                maxNode = child;
             }
         }
-
-        return nodes.get(nodeIdx);
+        return maxNode == null ? node.visitedChildren.peekFirst() : maxNode;
     }
 }

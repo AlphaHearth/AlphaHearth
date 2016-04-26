@@ -198,7 +198,7 @@ public class MCSAgent implements Agent {
      * @return the best child from the visited children of the given {@code Node}.
      */
     private Node bestChild(Node node) {
-        return treePolicy.bestNode(node.visitedChildren);
+        return treePolicy.bestChild(node);
     }
 
     /**

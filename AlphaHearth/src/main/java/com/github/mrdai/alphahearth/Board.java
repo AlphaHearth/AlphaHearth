@@ -35,7 +35,7 @@ public class Board {
      */
     public List<Move> getAvailableMoves() {
         DistinctMoveList availableMoves = new DistinctMoveList();
-        availableMoves.add(clone(), Move.EMPTY_MOVE);
+        availableMoves.add(this, Move.EMPTY_MOVE);
 
         for (int i = 0; i < availableMoves.size(); i++) {
             expandMove(availableMoves, i);
@@ -183,7 +183,7 @@ public class Board {
     // Add the new Move
     private void add(Move parentMoves, SingleMove newMove, DistinctMoveList moves) {
         Move newMoves = parentMoves.withNewMove(newMove);
-        moves.add(clone(), newMoves);
+        moves.add(this, newMoves);
     }
 
     /**
@@ -327,7 +327,7 @@ public class Board {
         double HERO_HEALTH_FACTOR = 1;
         double MINION_COST_FACTOR = 0.4;
         double HAND_SIZE_FACTOR = 0.3;
-        double UNATTACKED_PENALTY = 1.2;
+        double MINION_UNATTACKED_PENALTY = 1.2;
         double UNUSED_CARD_PENALTY = 0.4;
 
         int result = 0;
@@ -357,7 +357,7 @@ public class Board {
             ourAttackPoint += attack.getAttack() * attack.getMaxAttackCount();
 
             if (attack.canAttackWith())
-                result -= UNATTACKED_PENALTY * attack.getAttack();
+                result -= MINION_UNATTACKED_PENALTY * attack.getAttack();
         }
         for (Minion minion : enemyMinions) {
             result -= MINION_COST_FACTOR * minion.getCard().getCardDescr().getManaCost();
@@ -370,9 +370,6 @@ public class Board {
         enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
 
         Hero ourHero = us.getHero();
-        ourAttackPoint += ourHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
-        if (ourHero.getAttackTool().canAttackWith())
-            result -= UNATTACKED_PENALTY * ourHero.getAttackTool().getAttack();
 
         // Calculate left health in next turn for both heroes.
         int enemyLeftHealth = enemyHero.getCurrentHp() + enemyHero.getCurrentArmor() - ourAttackPoint;

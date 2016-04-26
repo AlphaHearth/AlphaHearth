@@ -61,14 +61,21 @@ public class MCTSAgent implements Agent {
      */
     public Move search(Board rootBoard) {
         // Initialize direct children
+        LOG.debug("Getting direct moves...");
         List<Move> directMoves = getAvailableMoves(rootBoard);
+        LOG.debug("Direct moves fetched.");
+
         if (directMoves.size() == 1) {
             LOG.info("Found only one move. Return it directly.");
             return directMoves.get(0);
         }
-        LinkedList<Node> directChildren = new LinkedList<>();
+
+        // Dummy Parent Node for all nodes of `directMoves`
+        Node dummyRootNode = new Node();
+        // Nodes of all `directMoves`
+        LinkedList<Node> directChildren = dummyRootNode.visitedChildren;
         for (Move move : directMoves) {
-            Node node = new Node(null, move, aiPlayerId);
+            Node node = new Node(dummyRootNode, move, aiPlayerId);
             Board copiedBoard = rootBoard.clone();
             copiedBoard.applyMoves(move);
             if (copiedBoard.isGameOver() && !copiedBoard.getGame().getPlayer(aiPlayerId).getHero().isDead()) {
@@ -82,6 +89,7 @@ public class MCTSAgent implements Agent {
         }
 
         // Initialize boards for determinized trees
+        // (where AI's deck and Opponent's hand and deck are shuffled and determined)
         Board[] determinizedBoards = new Board[deterNum];
         for (int i = 0; i < deterNum; i++) {
             Board copiedBoard = rootBoard.clone();
@@ -104,29 +112,30 @@ public class MCTSAgent implements Agent {
         // Submit search job for each determinized tree
         List<Future> futures = new ArrayList<>(deterNum);
         for (int i = 0; i < deterNum; i++) {
-            // Initialize determinized trees
+            // Generate corresponding determinized tree for each directChild
             Map<Node, Node> determinizedTrees = new HashMap<>();
-            for (Node node : directChildren)
-                determinizedTrees.put(node, new Node(node, null, aiPlayerId));
+            for (Node directChild : directChildren)
+                determinizedTrees.put(directChild, new Node(directChild, null, aiPlayerId));
 
             final Board board = determinizedBoards[i];
             final Budget budget = budgetSupplier.get();
             final int deter = i + 1;
             LOG.debug("Submitting determinization {}", deter);
-            //futures.add(executor.submit(() -> {
+            futures.add(executor.submit(() -> {
                 budget.startSearch();
                 int iterNum = 1;
+                long startTime = System.currentTimeMillis();
                 while (!budget.hasReached()) {
                     LOG.debug("Determinization {} starts iteration #{}", deter, iterNum);
                     Board currentBoard = board.clone();
                     LOG.debug("Determinization {} applying the best direct move...", deter);
-                    Node bestDirectChild = treePolicy.bestNode(directChildren);
-                    Node rootNode = determinizedTrees.get(bestDirectChild);
+                    Node bestDirectChild = treePolicy.bestChild(dummyRootNode);
+                    Node determinizedRoot = determinizedTrees.get(bestDirectChild);
                     currentBoard.applyMoves(bestDirectChild.move);
                     currentBoard.getGame().endTurn();
 
                     LOG.debug("Determinization {} selecting...", deter);
-                    Node selectedLeaf = select(currentBoard, rootNode);
+                    Node selectedLeaf = select(currentBoard, determinizedRoot);
                     LOG.debug("Determinization {} simulating...", deter);
                     simulate(currentBoard);
                     LOG.debug("Determinization {} back propagating...", deter);
@@ -134,8 +143,9 @@ public class MCTSAgent implements Agent {
                     budget.newIteration();
                     iterNum++;
                 }
-                LOG.info("Determinization {} finished.", deter);
-            //}));
+                LOG.info("Determinization {} finished in {}ms for {} direct children.",
+                    deter, System.currentTimeMillis() - startTime, directChildren.size());
+            }));
         }
         LOG.info("Main thread waiting for determinizations to finish...");
         for (int i = 0; i < futures.size(); i++) {
@@ -190,21 +200,30 @@ public class MCTSAgent implements Agent {
             copiedBoard.applyMoves(move);
 
             if (copiedBoard.isGameOver()) {
-                if (!copiedBoard.hasWon(board.getCurrentPlayer().getPlayerId()))
+                if (!copiedBoard.hasWon(board.getCurrentPlayer().getPlayerId())) {
+                    LOG.debug("Remove move:\n{} as it would kill ourselves.", move.toString());
                     moves.remove(i);
+                }
                 continue;
             }
 
             Player currentPlayer = copiedBoard.getGame().getCurrentPlayer();
             Player currentOpponent = copiedBoard.getGame().getCurrentOpponent();
             if (currentPlayer.getBoard().countMinions((m) -> m.getAttackTool().canAttackWith()) > 0
-                    && !currentOpponent.getBoard().hasNonStealthTaunt())
+                    && !currentOpponent.getBoard().hasNonStealthTaunt()) {
+                LOG.debug("Remove move:\n{} as there is not-attacked minion.",
+                    move.toString());
                 moves.remove(i);
-            else if (currentPlayer.getHero().getHeroPower().isPlayable())
+            } else if (currentPlayer.getHero().getHeroPower().isPlayable()) {
+                LOG.debug("Remove move:\n{} as the hero power is not used when it is usable.",
+                    move.toString());
                 moves.remove(i);
-            else if (!currentPlayer.getHand().getCards((c) -> c.isMinionCard()
-                     && c.getActiveManaCost() < currentPlayer.getMana()).isEmpty())
+            } else if (!currentPlayer.getHand().getCards((c) -> c.isMinionCard()
+                     && c.getActiveManaCost() < currentPlayer.getMana()).isEmpty()) {
+                LOG.debug("Remove move:\n{} as there is playable minion card left in hand.",
+                    move.toString());
                 moves.remove(i);
+            }
         }
         LOG.debug("Get {} available moves", moves.size());
         return moves;
@@ -225,7 +244,8 @@ public class MCTSAgent implements Agent {
     private Node select(Board copiedBoard, Node rootNode) {
         Node node = rootNode;
 
-        while (!copiedBoard.isGameOver()) {
+        int plyCounter = 0;
+        while (!copiedBoard.isGameOver() && plyCounter < 5) {
             if (!node.expanded) {
                 node.expand(getAvailableMoves(copiedBoard),
                     copiedBoard.getGame().getCurrentOpponent().getPlayerId());
@@ -237,13 +257,16 @@ public class MCTSAgent implements Agent {
                 node.visitedChildren.addLast(selectedLeaf);
                 copiedBoard.applyMoves(selectedLeaf.move);
                 copiedBoard.getGame().endTurn();
+                LOG.debug("Returning unvisited child on ply {}.", plyCounter + 1);
                 return selectedLeaf;
             }
-            node = treePolicy.bestNode(node.visitedChildren);
+            node = treePolicy.bestChild(node);
             copiedBoard.applyMoves(node.move);
             copiedBoard.getGame().endTurn();
+            plyCounter++;
         }
 
+        LOG.debug("Returning game over child on ply {}.", plyCounter);
         return node;
     }
 

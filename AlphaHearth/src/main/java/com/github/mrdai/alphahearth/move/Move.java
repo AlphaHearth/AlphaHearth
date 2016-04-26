@@ -1,5 +1,7 @@
 package com.github.mrdai.alphahearth.move;
 
+import com.github.mrdai.alphahearth.Board;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,12 +38,25 @@ public class Move {
     }
 
     public String toString() {
+        if (actualMoves.isEmpty())
+            return "Does nothing";
+
         StringBuilder builder = new StringBuilder("{");
         for (SingleMove move : actualMoves) {
             builder.append(move);
             builder.append(",");
         }
         builder.append("}");
+        return builder.toString();
+    }
+
+    public String toString(Board board) {
+        if (actualMoves.isEmpty())
+            return board.getCurrentPlayer().getPlayerId() + " does nothing.";
+
+        StringBuilder builder = new StringBuilder();
+        for (SingleMove move : actualMoves)
+            builder.append(move.toString(board)).append("\n");
         return builder.toString();
     }
 

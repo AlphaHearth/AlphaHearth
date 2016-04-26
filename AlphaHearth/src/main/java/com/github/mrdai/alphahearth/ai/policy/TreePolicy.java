@@ -11,10 +11,10 @@ import java.util.List;
 public interface TreePolicy {
 
     /**
-     * Selects the best node from the given list of {@link Node}s.
+     * Selects and returns the best visited child of the given {@link Node}.
      *
-     * @param nodes the given list of {@code Node}s.
-     * @return the best node from the given list of {@code Node}s.
+     * @param node the given {@code Node}.
+     * @return the best visited child of the given {@code Node}s.
      */
-    public Node bestNode(List<Node> nodes);
+    public Node bestChild(Node node);
 }

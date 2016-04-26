@@ -57,22 +57,24 @@ public class AiGameAgent {
     private Agent aiOpponent;
 
     public static void main(String[] args) {
-
+/*
         int[] iterNumArr = {
             0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500,
             600, 700, 800, 900, 1000, 1500, 2000
-        };
+        };*/
+
+        int[] iterNumArr = { 1, 2, 4, 5, 10, 20, 40, 50, 100 };
 
         int[] winCounts = new int[iterNumArr.length];
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < iterNumArr.length; i++) {
             LOG.warn("Begin for iterNum " + iterNumArr[i]);
             AiGameAgent agent = new AiGameAgent();
-            final int iterNum = 500;
-            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(iterNum), 20);
+            final int iterNum = iterNumArr[i];
+            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(200 / iterNum), iterNum);
             agent.aiOpponent = new ExpertRuleBasedPolicy();
             int winCount = 0;
-            for (int j = 1; j <= 1; j++) {
+            for (int j = 1; j <= 100; j++) {
                 try {
                     boolean hasAiWon = agent.roll();
                     if (hasAiWon) {

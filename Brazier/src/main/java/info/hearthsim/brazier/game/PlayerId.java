@@ -16,6 +16,10 @@ public final class PlayerId extends EntityId {
 
     @Override
     public String toString() {
-        return "Player " + name;
+        return name;
+    }
+
+    public int hashCode() {
+        return name.hashCode();
     }
 }

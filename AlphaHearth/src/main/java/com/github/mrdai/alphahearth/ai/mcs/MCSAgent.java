@@ -68,13 +68,13 @@ public class MCSAgent implements Agent {
         executor.execute(() -> {
             while (!Thread.interrupted()) {
                 Node child;
-                synchronized (rootNode.unvisitedChildren) {
+                synchronized (rootNode) {
                     child = rootNode.unvisitedChildren.pollFirst();
                     if (child == null)
                         break;
+                    rootNode.visitedChildren.add(child);
                 }
                 Board currentBoard = rootBoard.clone();
-                rootNode.visitedChildren.add(child);
                 currentBoard.applyMoves(child.move);
 
                 // Found lethal

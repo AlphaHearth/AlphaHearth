@@ -25,8 +25,8 @@ public class RandomPolicy implements DefaultPolicy {
         Move.Builder builder = new Move.Builder();
 
         while (true) {
-            int choice = random.nextInt(5);
-            SingleMove move;
+            int choice = random.nextInt(4);
+            SingleMove move = null;
             if (choice == 0)
                 move = minionAttack(board);
             else if (choice == 1)
@@ -35,27 +35,28 @@ public class RandomPolicy implements DefaultPolicy {
                 move = cardPlaying(board);
             else if (choice == 3)
                 move = heroPowerPlaying(board);
-            else
-                break;
 
             if (move != null) {
                 builder.addMove(move);
                 move.applyTo(board);
+            } else {
+                break;
             }
         }
 
         return builder.build();
     }
 
-    private DirectAttacking minionAttack(Board board) {
+    DirectAttacking minionAttack(Board board) {
         Game game = board.getGame();
         Player us = board.getCurrentPlayer();
         Player enemy = board.getCurrentOpponent();
 
-        // Randomly Minion Attack
         List<Minion> attackers = us.getBoard().findMinions((m) -> m.getAttackTool().canAttackWith());
         if (attackers.isEmpty())
             return null;
+
+        // Randomly select attacker and target
         Minion attacker = randomElem(attackers);
         Character target;
         if (enemy.getBoard().hasNonStealthTaunt()) {
@@ -68,12 +69,12 @@ public class RandomPolicy implements DefaultPolicy {
         return new DirectAttacking(attacker, target);
     }
 
-    private DirectAttacking heroAttack(Board board) {
+    DirectAttacking heroAttack(Board board) {
         Game game = board.getGame();
         Player us = board.getCurrentPlayer();
         Player enemy = board.getCurrentOpponent();
 
-        // Randomly Hero Attack
+        // Randomly select target
         if (us.getHero().getAttackTool().canAttackWith() && random.nextBoolean()) {
             Character target;
             if (enemy.getBoard().hasNonStealthTaunt()) {
@@ -89,7 +90,7 @@ public class RandomPolicy implements DefaultPolicy {
         return null;
     }
 
-    private HeroPowerPlaying heroPowerPlaying(Board board) {
+    HeroPowerPlaying heroPowerPlaying(Board board) {
         Game game = board.getGame();
         Player us = board.getCurrentPlayer();
 
@@ -110,15 +111,15 @@ public class RandomPolicy implements DefaultPolicy {
         return null;
     }
 
-    private CardPlaying cardPlaying(Board board) {
+    CardPlaying cardPlaying(Board board) {
         Game game = board.getGame();
         Player us = board.getCurrentPlayer();
-        Player enemy = board.getCurrentOpponent();
 
         // Randomly use Card
         List<Card> availableCards = us.getHand().getCards((c) -> c.getActiveManaCost() <= us.getMana());
         if (availableCards.isEmpty()) // No more card, break it
             return null;
+
         Card card = randomElem(availableCards); // Randomly select a card
         PlayerTargetNeed targetNeed =
             new PlayerTargetNeed(new TargeterDef(us.getPlayerId(), true, false), card.getTargetNeed());

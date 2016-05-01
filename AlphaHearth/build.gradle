@@ -16,7 +16,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task runAi(type: JavaExec, dependsOn: build) {
+task runAi(type: JavaExec) {
+    dependsOn build
+    dependsOn ':Brazier:createCardDbZip'
+
     main = "com.github.mrdai.alphahearth.AiGameAgent"
     classpath = project.sourceSets.main.runtimeClasspath;
 }

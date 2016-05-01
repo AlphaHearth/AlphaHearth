@@ -40,6 +40,86 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
     }
 
     protected SingleMove produceSingleMove(Board board) {
+        // Generate `CardPlaying` move
+        SingleMove move = cardPlaying(board);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
+        // Generate `DirectAttacking` move
+        move = minionAttack(board);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
+        move = heroAttack(board);
+        if (move != null) {
+            LOG.trace(move.toString(board));
+            return move;
+        }
+
+        // Generate `HeroPowerPlaying` move
+        return heroPowerPlaying(board);
+    }
+
+    DirectAttacking heroAttack(Board board) {
+        Player us = board.getCurrentPlayer();
+        Player enemy = board.getCurrentOpponent();
+
+        DirectAttacking move;
+        // Attack with Hero
+        if (us.getHero().getAttackTool().canAttackWith()) {
+            if (enemy.getBoard().findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth()).isEmpty()) {
+                move = new DirectAttacking(us.getHero(), enemy.getHero());
+                LOG.trace(move.toString(board));
+                return move;
+            }
+        }
+
+        return null;
+    }
+
+    HeroPowerPlaying heroPowerPlaying(Board board) {
+        Player us = board.getCurrentPlayer();
+        Player enemy = board.getCurrentOpponent();
+
+        // Play Hero Power
+        if (us.getMana() >= 2 && us.getHero().getHeroPower().isPlayable()) {
+            HeroPower heroPower = us.getHero().getHeroPower();
+            String name = heroPower.getPowerDef().getName();
+            switch (name) {
+                case "Life Tap": // Warlock
+                    if (us.getHand().getCardCount() <= 8 && us.getHero().getCurrentHp() >= 5)
+                        return new HeroPowerPlaying(us.getPlayerId());
+                    if (us.getHero().getCurrentHp() >= 12)
+                        return new HeroPowerPlaying(us.getPlayerId());
+                    break;
+                case "Fireblast": // Deal damage
+                case "Mind Shatter":
+                case "Mind Spike":
+                    return new HeroPowerPlaying(us.getPlayerId(), enemy.getHero());
+                case "Reinforce": // Summon minion
+                case "INFERNO!":
+                case "Totemic Call":
+                    if (!us.getBoard().isFull())
+                        return new HeroPowerPlaying(us.getPlayerId());
+                    break;
+                case "Dagger Mastery":
+                    Weapon weapon = us.tryGetWeapon();
+                    if (weapon == null || weapon.getAttack() <= 1 && weapon.getDurability() <= 2)
+                        return new HeroPowerPlaying(us.getPlayerId());
+                    break;
+                default:
+                    return new HeroPowerPlaying(us.getPlayerId());
+            }
+        }
+
+        return null;
+    }
+
+    DirectAttacking minionAttack(Board board) {
         Player us = board.getCurrentPlayer();
         Player enemy = board.getCurrentOpponent();
 
@@ -50,14 +130,6 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         Hero enemyHero = enemy.getHero();
         enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
 
-        // Generate `CardPlaying` move
-        SingleMove move = produceCardPlaying(us, enemy, enemyAttackPoint);
-        if (move != null) {
-            LOG.trace(move.toString(board));
-            return move;
-        }
-
-
         // Fetch friendly attackers and enemy targets
         List<Minion> enemyMinions = enemy.getBoard().getAliveMinions();
         List<Minion> enemyTaunt = enemy.getBoard().findMinions((m) -> m.getBody().isTaunt() && !m.getBody().isStealth());
@@ -65,9 +137,9 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
 
         List<Minion> friendlyAttackers = us.getBoard().findMinions((m) -> m.getAttackTool().canAttackWith());
         List<Minion> friendlyTauntAttackers = friendlyAttackers.stream()
-                                              .filter((m) -> m.getBody().isTaunt()).collect(Collectors.toList());
+                                                  .filter((m) -> m.getBody().isTaunt()).collect(Collectors.toList());
         List<Minion> friendlyNonTauntAttackers = friendlyAttackers.stream()
-                                                 .filter((m) -> !m.getBody().isTaunt()).collect(Collectors.toList());
+                                                     .filter((m) -> !m.getBody().isTaunt()).collect(Collectors.toList());
         enemyMinions.sort(CMP);
         enemyTaunt.sort(CMP);
         friendlyNonTauntAttackers.sort(CMP.reversed());
@@ -77,7 +149,7 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
         // Generate Minion Attack Move
 
         // Use friendly non-taunt minions to deal with enemy's taunt minions
-        move = playKill(friendlyNonTauntAttackers, enemyTaunt);
+        DirectAttacking move = playKill(friendlyNonTauntAttackers, enemyTaunt);
         if (move != null) {
             LOG.trace(move.toString(board));
             return move;
@@ -151,52 +223,20 @@ public class ExpertRuleBasedPolicy implements DefaultPolicy {
             return move;
         }
 
-        // Play Hero Power
-        if (us.getMana() >= 2 && us.getHero().getHeroPower().isPlayable()) {
-            HeroPower heroPower = us.getHero().getHeroPower();
-            String name = heroPower.getPowerDef().getName();
-            switch (name) {
-                case "Life Tap": // Warlock
-                    if (us.getHand().getCardCount() <= 8 && us.getHero().getCurrentHp() >= 5)
-                        return new HeroPowerPlaying(us.getPlayerId());
-                    if (us.getHero().getCurrentHp() < 12 && us.getHero().getCurrentHp() > enemyAttackPoint + 2)
-                        return new HeroPowerPlaying(us.getPlayerId());
-                    if (us.getHero().getCurrentHp() >= 12)
-                        return new HeroPowerPlaying(us.getPlayerId());
-                    break;
-                case "Fireblast": // Deal damage
-                case "Mind Shatter":
-                case "Mind Spike":
-                    return new HeroPowerPlaying(us.getPlayerId(), enemyHero);
-                case "Reinforce": // Summon minion
-                case "INFERNO!":
-                case "Totemic Call":
-                    if (!us.getBoard().isFull())
-                        return new HeroPowerPlaying(us.getPlayerId());
-                    break;
-                case "Dagger Mastery":
-                    Weapon weapon = us.tryGetWeapon();
-                    if (weapon == null || weapon.getAttack() <= 1 && weapon.getDurability() <= 2)
-                        return new HeroPowerPlaying(us.getPlayerId());
-                    break;
-                default:
-                    return new HeroPowerPlaying(us.getPlayerId());
-            }
-        }
-
-        // Attack with Hero
-        if (us.getHero().getAttackTool().canAttackWith()) {
-            if (enemyTaunt.isEmpty()) {
-                move = new DirectAttacking(us.getHero(), enemyHero);
-                LOG.trace(move.toString(board));
-                return move;
-            }
-        }
-
         return null;
     }
 
-    private static CardPlaying produceCardPlaying(Player us, Player enemy, int enemyAttackPoint) {
+    CardPlaying cardPlaying(Board board) {
+        Player us = board.getCurrentPlayer();
+        Player enemy = board.getCurrentOpponent();
+
+        // Calculate the enemy's total attack point
+        int enemyAttackPoint = 0;
+        for (Minion minion : enemy.getBoard().findMinions((m) -> m.getAttackTool().canAttackWith()))
+            enemyAttackPoint += minion.getAttackTool().getAttack() * minion.getAttackTool().getMaxAttackCount();
+        Hero enemyHero = enemy.getHero();
+        enemyAttackPoint += enemyHero.getAttackTool().getAttack() * enemyHero.getAttackTool().getMaxAttackCount();
+
         CardPlaying emergencyCardPlaying = playEmergencyCard(us.getMana(), us.getHand(), us.getHero(), enemy.getHero(), enemyAttackPoint);
         if (emergencyCardPlaying != null)
             return emergencyCardPlaying;

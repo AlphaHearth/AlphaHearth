@@ -1,9 +1,11 @@
 package com.github.mrdai.alphahearth;
 
 import com.github.mrdai.alphahearth.ai.budget.IterCountBudget;
+import com.github.mrdai.alphahearth.ai.mcs.MCSAgent;
 import com.github.mrdai.alphahearth.ai.mcts.MCTSAgent;
 import com.github.mrdai.alphahearth.ai.policy.RandomPolicy;
 import com.github.mrdai.alphahearth.ai.policy.ExpertRuleBasedPolicy;
+import com.github.mrdai.alphahearth.ai.policy.ReducedRuleBasedPolicy;
 import info.hearthsim.brazier.DeckBuilder;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.db.HearthStoneDb;
@@ -57,24 +59,19 @@ public class AiGameAgent {
     private Agent aiOpponent;
 
     public static void main(String[] args) {
-/*
-        int[] iterNumArr = {
-            0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500,
-            600, 700, 800, 900, 1000, 1500, 2000
-        };*/
+        final int totalGameCount = 100;
+        int[] iterNum = { 0, 5, 10, 20, 30, 40, 50};
 
-        int[] iterNumArr = { 1, 2, 4, 5, 10, 20, 40, 50, 100 };
+        int[] winCounts = new int[iterNum.length];
 
-        int[] winCounts = new int[iterNumArr.length];
-
-        for (int i = 0; i < iterNumArr.length; i++) {
-            LOG.warn("Begin for iterNum " + iterNumArr[i]);
+        for (int i = 0; i < iterNum.length; i++) {
+            LOG.warn("Begin for iterNum " + iterNum[i]);
             AiGameAgent agent = new AiGameAgent();
-            final int iterNum = iterNumArr[i];
-            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(200 / iterNum), iterNum);
+            final int currentNum = iterNum[i];
+            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(currentNum), 4);
             agent.aiOpponent = new ExpertRuleBasedPolicy();
             int winCount = 0;
-            for (int j = 1; j <= 100; j++) {
+            for (int j = 1; j <= totalGameCount; j++) {
                 try {
                     boolean hasAiWon = agent.roll();
                     if (hasAiWon) {
@@ -93,12 +90,12 @@ public class AiGameAgent {
             }
             agent.aiPlayer.close();
             agent.aiOpponent.close();
-            LOG.warn("100 games finished, AiPlayer won in " + winCount + " games.");
+            LOG.warn("{} games finished, AiPlayer won in {} games.", totalGameCount, winCount);
             winCounts[i] = winCount;
         }
         StringBuilder builder = new StringBuilder("Results: {");
-        for (int i = 0; i < iterNumArr.length; i++)
-            builder.append(String.format("%d: %d, ", iterNumArr[i], winCounts[i]));
+        for (int i = 0; i < iterNum.length; i++)
+            builder.append(String.format("%d: %d, ", iterNum[i], winCounts[i]));
         builder.append("}");
         LOG.warn(builder.toString());
     }

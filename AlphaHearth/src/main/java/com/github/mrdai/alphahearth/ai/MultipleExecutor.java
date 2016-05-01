@@ -20,7 +20,7 @@ public class MultipleExecutor {
 
         waitToFinish();
 
-        LOG.info("Adding new task...");
+        LOG.debug("Adding new task...");
         for (int i = 0; i < threadNum; i++) {
             threads[i] = new Thread(r);
             threads[i].start();
@@ -28,7 +28,7 @@ public class MultipleExecutor {
     }
 
     public void waitToFinish() {
-        LOG.info("Waiting for the last task to finish...");
+        LOG.debug("Waiting for the last task to finish...");
         for (int i = 0; i < threadNum; i++) {
             if (threads[i] != null) {
                 try {
@@ -41,7 +41,7 @@ public class MultipleExecutor {
                 }
             }
         }
-        LOG.info("The last task is finished.");
+        LOG.debug("The last task is finished.");
     }
 
     public void interrupt() {

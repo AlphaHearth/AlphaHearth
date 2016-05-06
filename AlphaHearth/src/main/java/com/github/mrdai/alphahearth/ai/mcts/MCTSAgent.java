@@ -245,7 +245,7 @@ public class MCTSAgent implements Agent {
         Node node = rootNode;
 
         int plyCounter = 0;
-        while (!copiedBoard.isGameOver() && plyCounter < 5) {
+        while (!copiedBoard.isGameOver() && plyCounter < 2) {
             if (!node.expanded) {
                 node.expand(getAvailableMoves(copiedBoard),
                     copiedBoard.getGame().getCurrentOpponent().getPlayerId());

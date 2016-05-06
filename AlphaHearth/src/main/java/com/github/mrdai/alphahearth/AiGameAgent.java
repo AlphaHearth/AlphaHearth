@@ -59,45 +59,51 @@ public class AiGameAgent {
     private Agent aiOpponent;
 
     public static void main(String[] args) {
-        final int totalGameCount = 100;
-        int[] iterNum = { 0, 5, 10, 20, 30, 40, 50};
+        final int totalGameCount = 500;
+        int[] iterNum = { 2000 };
+        float[] ps = { 0, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1 };
 
-        int[] winCounts = new int[iterNum.length];
+        int[][] winCounts = new int[iterNum.length][ps.length];
 
-        for (int i = 0; i < iterNum.length; i++) {
-            LOG.warn("Begin for iterNum " + iterNum[i]);
-            AiGameAgent agent = new AiGameAgent();
-            final int currentNum = iterNum[i];
-            agent.aiPlayer = new MCTSAgent(AI_PLAYER, new RandomPolicy(), () -> new IterCountBudget(currentNum), 4);
-            agent.aiOpponent = new ExpertRuleBasedPolicy();
-            int winCount = 0;
-            for (int j = 1; j <= totalGameCount; j++) {
-                try {
-                    boolean hasAiWon = agent.roll();
-                    if (hasAiWon) {
-                        winCount++;
-                        LOG.warn("#" + j + " game finished, AiPlayer won.");
-                    } else {
-                        LOG.warn("#" + j + " game finished, AiPlayer lost.");
+        for (int a = 0; a < iterNum.length; a++) {
+            for (int i = 0; i < ps.length; i++) {
+                LOG.warn("Begin for p " + ps[i]);
+                AiGameAgent agent = new AiGameAgent();
+                agent.aiPlayer = new MCSAgent(AI_PLAYER, new ReducedRuleBasedPolicy(ps[i]), new IterCountBudget(iterNum[a]));
+                agent.aiOpponent = new ExpertRuleBasedPolicy();
+                int winCount = 0;
+                for (int j = 1; j <= totalGameCount; j++) {
+                    try {
+                        boolean hasAiWon = agent.roll();
+                        if (hasAiWon) {
+                            winCount++;
+                            LOG.warn("#" + j + " game finished, AiPlayer won.");
+                        } else {
+                            LOG.warn("#" + j + " game finished, AiPlayer lost.");
+                        }
+                        LOG.info("AiPlayer already won " + winCount + " game(s).");
+                    } catch (Throwable thr) {
+                        LOG.error("Exception occurred during #" + j + " roll out.", thr);
+                        LOG.error("Retrying...");
+                        j--;
                     }
-                    LOG.info("AiPlayer already won " + winCount + " game(s).");
-                } catch (Throwable thr) {
-                    LOG.error("Exception occurred during #" + j + " roll out.", thr);
-                    LOG.error("Retrying...");
-                    j--;
+                    System.gc();
                 }
-                System.gc();
+                agent.aiPlayer.close();
+                agent.aiOpponent.close();
+                LOG.warn("{} games finished, AiPlayer won in {} games.", totalGameCount, winCount);
+                winCounts[a][i] = winCount;
             }
-            agent.aiPlayer.close();
-            agent.aiOpponent.close();
-            LOG.warn("{} games finished, AiPlayer won in {} games.", totalGameCount, winCount);
-            winCounts[i] = winCount;
         }
-        StringBuilder builder = new StringBuilder("Results: {");
-        for (int i = 0; i < iterNum.length; i++)
-            builder.append(String.format("%d: %d, ", iterNum[i], winCounts[i]));
-        builder.append("}");
-        LOG.warn(builder.toString());
+        StringBuilder builder;
+
+        for (int a = 0; a < iterNum.length; a++) {
+            builder = new StringBuilder("Results: {");
+            for (int i = 0; i < ps.length; i++)
+                builder.append(String.format("%f: %d, ", ps[i], winCounts[a][i]));
+            builder.append("}");
+            LOG.warn(iterNum[a] + " " + builder.toString());
+        }
     }
 
     /**

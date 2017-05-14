@@ -12,7 +12,7 @@ import java.util.Optional;
  * <ul>
  *     <li>{@code actor}: the source of the action;</li>
  *     <li>
- *         {@code target}: the potential target of the action, represented as
+ *         {@code target}: the optional target of the action, represented as
  *         a {@link Optional} of {@link Character}.
  *     </li>
  * </ul>

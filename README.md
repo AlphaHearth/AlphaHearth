@@ -1,5 +1,8 @@
 # AlphaHearth
 
+[![Build Status](https://travis-ci.org/AlphaHearth/AlphaHearth.svg?branch=master)](https://travis-ci.org/AlphaHearth/AlphaHearth)
+[![codecov](https://codecov.io/gh/AlphaHearth/AlphaHearth/branch/master/graph/badge.svg)](https://codecov.io/gh/AlphaHearth/AlphaHearth)
+
 Yes, this project is named after the famous AlphaGo.
 
 As a MCTS AI for Hearthstone, AlphaHearth is still under construction. It uses a greatly changed version of [Brazier](https://github.com/HearthSim/Brazier) as its game simulator, which provides a better API, naming consistency and documentation than the original version. For more information, see the [Brazier](Brazier) module.

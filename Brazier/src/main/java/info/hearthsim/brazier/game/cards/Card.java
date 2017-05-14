@@ -1,20 +1,19 @@
 package info.hearthsim.brazier.game.cards;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.util.UndoAction;
+import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.CardRef;
 import info.hearthsim.brazier.actions.ManaCostAdjuster;
-import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.actions.TargetNeed;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.MinionDescr;
-import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.List;
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * An instance of {@code Card} stands for a card in a specific game.

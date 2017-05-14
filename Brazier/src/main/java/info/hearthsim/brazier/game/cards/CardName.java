@@ -1,10 +1,9 @@
 package info.hearthsim.brazier.game.cards;
 
 import info.hearthsim.brazier.game.EntityName;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Objects;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The id of a card, which is essentially the name of the card.

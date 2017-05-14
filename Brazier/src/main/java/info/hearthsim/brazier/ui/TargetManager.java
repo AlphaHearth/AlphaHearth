@@ -1,9 +1,10 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Cursor;
-import java.util.function.Consumer;
-import javax.swing.JComponent;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.function.Consumer;
 
 public final class TargetManager {
     private final JComponent parent;

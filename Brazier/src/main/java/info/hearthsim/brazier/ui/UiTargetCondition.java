@@ -1,7 +1,8 @@
 package info.hearthsim.brazier.ui;
 
-import java.util.function.Consumer;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.function.Consumer;
 
 public final class UiTargetCondition {
     private final Object condition;

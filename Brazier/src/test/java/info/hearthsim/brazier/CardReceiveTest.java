@@ -1,7 +1,6 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.utils.BrazierTest;
-import info.hearthsim.brazier.utils.TestAgent;
 import org.junit.Test;
 
 import static info.hearthsim.brazier.utils.TestCards.*;

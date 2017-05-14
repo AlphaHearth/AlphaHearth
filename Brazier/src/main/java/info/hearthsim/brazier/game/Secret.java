@@ -1,12 +1,11 @@
 package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Secret implements Entity<Secret>, LabeledEntity, DamageSource {
     private final EntityId secretId;

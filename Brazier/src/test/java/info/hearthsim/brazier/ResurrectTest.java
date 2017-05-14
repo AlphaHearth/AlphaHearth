@@ -1,19 +1,19 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.game.minions.MinionName;
+import info.hearthsim.brazier.utils.BrazierTest;
+import info.hearthsim.brazier.utils.RandomTestUtils;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import info.hearthsim.brazier.utils.BrazierTest;
-import info.hearthsim.brazier.utils.RandomTestUtils;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import static info.hearthsim.brazier.utils.TestCards.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public final class ResurrectTest extends BrazierTest {
     @Test

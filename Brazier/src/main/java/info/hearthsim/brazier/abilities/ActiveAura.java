@@ -5,13 +5,12 @@ import info.hearthsim.brazier.game.EntityId;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * An active aura with source and target. Compare to {@link Aura} which can only be used to describe the effect of

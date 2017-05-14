@@ -1,48 +1,39 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.db.HearthStoneDb;
-import info.hearthsim.brazier.game.*;
+import com.google.gson.*;
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.abilities.*;
+import info.hearthsim.brazier.actions.*;
 import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.game.cards.CardName;
-import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.db.HearthStoneDb;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.db.WeaponDescr;
 import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.events.EventFilter;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.events.TriggeringAbility;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.CardName;
+import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.game.cards.PlayAction;
 import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.game.minions.MinionName;
 import info.hearthsim.brazier.game.minions.MinionProvider;
-import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.game.cards.PlayAction;
-import info.hearthsim.brazier.db.WeaponDescr;
 import info.hearthsim.brazier.game.weapons.WeaponName;
 import info.hearthsim.brazier.game.weapons.WeaponProvider;
-import com.google.gson.*;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import info.hearthsim.brazier.actions.*;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Util class with static methods for parsing {@link JsonTree}.

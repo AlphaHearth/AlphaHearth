@@ -1,10 +1,11 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.game.Player;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Requirement of a play action, usually used as a functional interface. The sole un-implemented

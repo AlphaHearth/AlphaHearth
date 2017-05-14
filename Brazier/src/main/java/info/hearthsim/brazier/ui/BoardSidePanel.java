@@ -1,23 +1,16 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.BoardSide;
 import info.hearthsim.brazier.game.PlayerId;
+import info.hearthsim.brazier.game.minions.Minion;
+import org.jtrim.utils.ExceptionHelper;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-
-import org.jtrim.utils.ExceptionHelper;
 
 @SuppressWarnings("serial")
 public class BoardSidePanel extends javax.swing.JPanel {

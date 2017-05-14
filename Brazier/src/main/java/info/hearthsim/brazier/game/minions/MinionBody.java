@@ -1,14 +1,14 @@
 package info.hearthsim.brazier.game.minions;
 
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
-import info.hearthsim.brazier.events.GameEvents;
-import info.hearthsim.brazier.game.Damage;
-import info.hearthsim.brazier.game.Silencable;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.events.DamageEvent;
-import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.events.DamageEvent;
+import info.hearthsim.brazier.events.GameEvents;
+import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.game.Damage;
+import info.hearthsim.brazier.game.Silencable;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

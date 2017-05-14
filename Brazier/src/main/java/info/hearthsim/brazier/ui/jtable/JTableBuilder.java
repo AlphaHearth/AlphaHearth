@@ -1,13 +1,14 @@
 package info.hearthsim.brazier.ui.jtable;
 
+import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JTable;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableRowSorter;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class JTableBuilder<RowData> {
     private final JTable table;

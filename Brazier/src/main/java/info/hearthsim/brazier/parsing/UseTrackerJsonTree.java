@@ -3,15 +3,9 @@ package info.hearthsim.brazier.parsing;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.*;
 
 /**
  * {@link JsonTree} that keeps track to its usage. Every time its method is called, a flag called {@code used}

@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.game.cards;
 
-import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.TargetedAction;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.GameProperty;
 

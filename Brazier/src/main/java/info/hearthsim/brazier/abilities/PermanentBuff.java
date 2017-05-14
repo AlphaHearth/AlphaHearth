@@ -1,13 +1,12 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.game.Entity;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import info.hearthsim.brazier.util.UndoAction;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Buffs that do not disappear until the owner is silenced. For temporary buff that

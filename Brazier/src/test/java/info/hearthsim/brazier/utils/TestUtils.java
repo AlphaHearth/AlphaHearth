@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.utils;
 
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.PlayerId;
-import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.cards.CardName;
 
 import java.util.ArrayList;

@@ -1,12 +1,11 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.game.Character;
-
-import java.util.Optional;
-
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.GameProperty;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Optional;
 
 /**
  * The arguments of acting (playing) something. Essentially, a {@code PlayArg} contains:

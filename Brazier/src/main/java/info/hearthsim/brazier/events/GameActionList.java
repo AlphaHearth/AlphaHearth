@@ -1,23 +1,17 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.game.Game;
-import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.Priorities;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Predicate;
-
 import info.hearthsim.brazier.actions.GameAction;
 import info.hearthsim.brazier.actions.GameObjectAction;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.collections.RefLinkedList;
 import org.jtrim.collections.RefList;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * A {@code GameActionList} is essentially a weighted sequence of {@link GameObjectAction}. Every action element

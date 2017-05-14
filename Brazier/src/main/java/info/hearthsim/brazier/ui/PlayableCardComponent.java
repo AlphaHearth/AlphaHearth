@@ -1,7 +1,8 @@
 package info.hearthsim.brazier.ui;
 
 import info.hearthsim.brazier.game.cards.Card;
-import javax.swing.JButton;
+
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class PlayableCardComponent extends javax.swing.JPanel {

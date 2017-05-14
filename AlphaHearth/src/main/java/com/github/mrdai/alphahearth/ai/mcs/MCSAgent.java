@@ -2,11 +2,14 @@ package com.github.mrdai.alphahearth.ai.mcs;
 
 import com.github.mrdai.alphahearth.Agent;
 import com.github.mrdai.alphahearth.Board;
-import com.github.mrdai.alphahearth.ai.Node;
 import com.github.mrdai.alphahearth.ai.MultipleExecutor;
+import com.github.mrdai.alphahearth.ai.Node;
 import com.github.mrdai.alphahearth.ai.budget.Budget;
 import com.github.mrdai.alphahearth.ai.budget.IterCountBudget;
-import com.github.mrdai.alphahearth.ai.policy.*;
+import com.github.mrdai.alphahearth.ai.policy.DefaultPolicy;
+import com.github.mrdai.alphahearth.ai.policy.RandomPolicy;
+import com.github.mrdai.alphahearth.ai.policy.TreePolicy;
+import com.github.mrdai.alphahearth.ai.policy.UCBPolicy;
 import com.github.mrdai.alphahearth.move.Move;
 import com.github.mrdai.alphahearth.move.SingleMove;
 import info.hearthsim.brazier.game.Player;

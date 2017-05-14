@@ -1,11 +1,11 @@
 package info.hearthsim.brazier.game;
 
+import info.hearthsim.brazier.PlayerProperty;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import info.hearthsim.brazier.PlayerProperty;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Container for {@link Secret}, which can be used as the container of the active in-game secrets

@@ -1,10 +1,10 @@
 package com.github.mrdai.alphahearth.move;
 
 import com.github.mrdai.alphahearth.Board;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.EntityId;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.Hero;
-import info.hearthsim.brazier.game.Character;
 import org.jtrim.utils.ExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

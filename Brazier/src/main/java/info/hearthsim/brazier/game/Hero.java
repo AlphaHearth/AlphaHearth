@@ -1,22 +1,20 @@
 package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.TargeterDef;
-import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.HpProperty;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.game.weapons.AttackTool;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.ToIntFunction;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The hero in a game, controlled by the specific player.

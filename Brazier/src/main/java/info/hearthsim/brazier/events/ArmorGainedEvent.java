@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.game.Hero;
 import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.PlayerProperty;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

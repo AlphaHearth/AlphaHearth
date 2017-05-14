@@ -1,7 +1,8 @@
 package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.Board;
-import com.github.mrdai.alphahearth.move.*;
+import com.github.mrdai.alphahearth.move.Move;
+import com.github.mrdai.alphahearth.move.SingleMove;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

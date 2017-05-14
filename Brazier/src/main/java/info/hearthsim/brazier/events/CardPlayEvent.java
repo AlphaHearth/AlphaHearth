@@ -1,19 +1,18 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.TargetRef;
 import info.hearthsim.brazier.actions.CardPlayRef;
 import info.hearthsim.brazier.actions.PlayArg;
-import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.Keyword;
 import info.hearthsim.brazier.game.LabeledEntity;
 import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.PlayerProperty;
-import info.hearthsim.brazier.TargetRef;
-import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.cards.Card;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Optional;
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Event of playing a card. Three fields are included in such an event, which are the {@link PlayArg}

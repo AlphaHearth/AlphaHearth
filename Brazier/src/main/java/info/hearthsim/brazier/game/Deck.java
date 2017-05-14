@@ -2,16 +2,16 @@ package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.RandomProvider;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.cards.Card;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Deck implements PlayerProperty {
     private final Player owner;

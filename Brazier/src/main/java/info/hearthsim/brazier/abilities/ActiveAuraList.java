@@ -3,11 +3,10 @@ package info.hearthsim.brazier.abilities;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * List of {@link ActiveAura}, providing methods {@link #addAura(ActiveAura, boolean)} and {@link #updateAllAura()}

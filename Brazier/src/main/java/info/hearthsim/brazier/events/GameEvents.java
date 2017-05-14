@@ -1,16 +1,15 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.actions.Action;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.minions.Minion;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class GameEvents implements GameProperty {
     private final Game game;

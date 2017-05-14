@@ -1,13 +1,8 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 final class MouseEventForwarder implements MouseListener, MouseMotionListener, MouseWheelListener {
     private static final MouseEventForwarder INSTANCE = new MouseEventForwarder();

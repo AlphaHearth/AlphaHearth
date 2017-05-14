@@ -1,17 +1,16 @@
 package info.hearthsim.brazier.game.minions;
 
 import info.hearthsim.brazier.abilities.*;
+import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.game.FreezeManager;
 import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.Silencable;
-import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.game.weapons.AttackTool;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class MinionProperties implements Silencable {
     private final Minion minion;

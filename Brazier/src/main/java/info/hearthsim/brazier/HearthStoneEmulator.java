@@ -1,23 +1,21 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.PlayTargetRequest;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.ui.UiUtils;
 import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.cards.CardName;
 import info.hearthsim.brazier.game.minions.MinionName;
-import info.hearthsim.brazier.ui.GamePlayPanel;
 import info.hearthsim.brazier.game.weapons.WeaponName;
+import info.hearthsim.brazier.ui.GamePlayPanel;
+import info.hearthsim.brazier.ui.UiUtils;
 
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
 public class HearthStoneEmulator {
     private static final Random RNG = new Random();

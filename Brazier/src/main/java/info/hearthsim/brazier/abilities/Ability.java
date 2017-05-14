@@ -1,15 +1,14 @@
 package info.hearthsim.brazier.abilities;
 
+import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.parsing.NamedArg;
-import org.jtrim.utils.ExceptionHelper;
 
 // TODO Ability is now only used to add aura to characters or add spell power.
 // TODO Consider using Aura in Json files to replace this interface.

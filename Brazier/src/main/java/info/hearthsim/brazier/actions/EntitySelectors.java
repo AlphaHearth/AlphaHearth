@@ -1,23 +1,22 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.game.cards.CardProvider;
-import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.db.MinionDescr;
-import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.parsing.NamedArg;
+import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.cards.CardProvider;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.parsing.NamedArg;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Predefined {@link EntitySelector}s.

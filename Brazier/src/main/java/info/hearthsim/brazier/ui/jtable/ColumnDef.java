@@ -1,7 +1,8 @@
 package info.hearthsim.brazier.ui.jtable;
 
-import java.util.Comparator;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Comparator;
 
 public final class ColumnDef<RowData, ColumnData> {
     private final String caption;

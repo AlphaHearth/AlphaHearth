@@ -6,7 +6,6 @@ import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.game.minions.Minion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

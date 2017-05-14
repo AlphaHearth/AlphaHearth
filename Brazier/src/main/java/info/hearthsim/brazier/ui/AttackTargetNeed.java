@@ -1,16 +1,15 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.TargeterDef;
+import info.hearthsim.brazier.game.Character;
+import org.jtrim.event.ListenerRef;
+import org.jtrim.utils.ExceptionHelper;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.function.Consumer;
-import javax.swing.JComponent;
-
-import info.hearthsim.brazier.game.Character;
-import org.jtrim.event.ListenerRef;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class AttackTargetNeed {
     private final TargeterDef targeterDef;

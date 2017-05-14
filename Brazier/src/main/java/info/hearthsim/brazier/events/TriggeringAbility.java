@@ -1,17 +1,16 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.abilities.Ability;
+import org.jtrim.collections.CollectionsEx;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jtrim.collections.CollectionsEx;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * A triggering ability for a Hearthstone entity uses an underlying map of {@code SimpleEventType}

@@ -1,19 +1,20 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.Priorities;
 import info.hearthsim.brazier.abilities.*;
-import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.events.GameEvents;
-import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.abilities.Ability;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.game.minions.MinionBody;
 import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.events.*;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.game.minions.MinionBody;
 import info.hearthsim.brazier.game.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import info.hearthsim.brazier.util.UndoAction;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Predefined {@link TargetedAction}.

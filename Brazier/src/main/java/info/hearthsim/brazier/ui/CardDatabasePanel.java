@@ -1,31 +1,22 @@
 package info.hearthsim.brazier.ui;
 
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.HearthStoneDb;
-import info.hearthsim.brazier.ui.jtable.JTableBuilder;
 import info.hearthsim.brazier.game.Keywords;
 import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.ui.jtable.FormattedTableModel;
+import info.hearthsim.brazier.ui.jtable.JTableBuilder;
 import info.hearthsim.brazier.ui.jtable.JTableUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import org.jtrim.concurrent.ExecutorsEx;
-import org.jtrim.concurrent.GenericUpdateTaskExecutor;
-import org.jtrim.concurrent.SingleThreadedExecutor;
-import org.jtrim.concurrent.TaskExecutor;
-import org.jtrim.concurrent.UpdateTaskExecutor;
+import org.jtrim.concurrent.*;
 import org.jtrim.property.swing.SwingProperties;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @SuppressWarnings("serial")
 public class CardDatabasePanel extends javax.swing.JPanel {

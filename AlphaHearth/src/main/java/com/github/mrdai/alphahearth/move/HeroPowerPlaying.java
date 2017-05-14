@@ -2,8 +2,8 @@ package com.github.mrdai.alphahearth.move;
 
 import com.github.mrdai.alphahearth.Board;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

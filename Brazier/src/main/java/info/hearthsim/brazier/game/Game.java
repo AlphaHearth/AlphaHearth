@@ -1,20 +1,20 @@
 package info.hearthsim.brazier.game;
 
-import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.RandomProvider;
 import info.hearthsim.brazier.abilities.ActiveAura;
 import info.hearthsim.brazier.abilities.ActiveAuraList;
 import info.hearthsim.brazier.actions.AttackRequest;
-import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.events.GameEvents;
+import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.AttackTool;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
-import java.lang.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,8 +23,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * An instance of {@code Game} is essentially a hearthstone game between two players.

@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.game.Entity;
-import info.hearthsim.brazier.util.UndoAction;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
+import info.hearthsim.brazier.util.UndoAction;
 
 /**
  * Predefined {@link Ability}s for {@link Minion}s.

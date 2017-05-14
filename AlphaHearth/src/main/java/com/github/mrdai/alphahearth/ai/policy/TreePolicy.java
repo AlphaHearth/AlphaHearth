@@ -2,8 +2,6 @@ package com.github.mrdai.alphahearth.ai.policy;
 
 import com.github.mrdai.alphahearth.ai.Node;
 
-import java.util.List;
-
 /**
  * A {@code TreePolicy} is used to select or create a leaf node from the nodes already contained
  * within the search tree in the <em>Selection</em> and <em>Expansion</em> stage.

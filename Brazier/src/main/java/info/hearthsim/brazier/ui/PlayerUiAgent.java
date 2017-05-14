@@ -1,17 +1,17 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.actions.TargetNeed;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.game.Character;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class PlayerUiAgent {
     private final GamePlayUiAgent gameAgent;

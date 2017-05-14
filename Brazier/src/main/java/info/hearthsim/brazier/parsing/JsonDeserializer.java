@@ -1,27 +1,13 @@
 package info.hearthsim.brazier.parsing;
 
 import com.google.gson.JsonPrimitive;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.jtrim.collections.CollectionsEx;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class JsonDeserializer {
     private static final String CLASS_FIELD_NAME = "class";

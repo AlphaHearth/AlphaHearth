@@ -1,11 +1,11 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.game.GameProperty;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import info.hearthsim.brazier.game.GameProperty;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Actions in which the given actor alters the given {@code Game} in some way. Usually used

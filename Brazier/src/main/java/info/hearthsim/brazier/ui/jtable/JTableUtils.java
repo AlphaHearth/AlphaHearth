@@ -1,19 +1,17 @@
 package info.hearthsim.brazier.ui.jtable;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.jtrim.concurrent.Tasks;
+import org.jtrim.event.ListenerRef;
+import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Comparator;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.jtrim.concurrent.Tasks;
-import org.jtrim.event.ListenerRef;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class JTableUtils {
     public static final String DEFAULT_NULL_VALUE = "";

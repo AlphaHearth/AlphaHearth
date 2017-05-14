@@ -4,25 +4,18 @@ import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.Hero;
 import info.hearthsim.brazier.game.HeroPower;
 import info.hearthsim.brazier.game.ManaResource;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.weapons.AttackTool;
 import info.hearthsim.brazier.game.weapons.Weapon;
-import java.awt.Color;
+import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.Dialog.ModalityType;
-import java.awt.GridLayout;
-import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
-import org.jtrim.utils.ExceptionHelper;
 
 
 @SuppressWarnings("serial")

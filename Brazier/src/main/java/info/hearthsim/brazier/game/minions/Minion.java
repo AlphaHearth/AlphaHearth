@@ -1,21 +1,21 @@
 package info.hearthsim.brazier.game.minions;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
 import info.hearthsim.brazier.actions.CardRef;
-import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.events.EventAction;
-import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.events.GameEvents;
-import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.events.EventAction;
+import info.hearthsim.brazier.events.GameEvents;
+import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.weapons.AttackTool;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Minion implements Character<Minion>, DestroyableEntity, Silencable, CardRef {
     private final EntityId minionId;

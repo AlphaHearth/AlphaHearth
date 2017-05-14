@@ -1,18 +1,19 @@
 package info.hearthsim.brazier.ui.jtable;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Predicate;
-import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.jtrim.property.MutableProperty;
 import org.jtrim.property.PropertyFactory;
 import org.jtrim.property.PropertySource;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public final class FormattedTableModel<RowData> extends AbstractTableModel {
     private static final int DEFAULT_CHECKBOX_COLUMN_WIDTH = 25;

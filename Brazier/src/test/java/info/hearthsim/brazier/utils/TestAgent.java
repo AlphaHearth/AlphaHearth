@@ -1,31 +1,24 @@
 package info.hearthsim.brazier.utils;
 
-import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.GameAgent;
+import info.hearthsim.brazier.RandomProvider;
+import info.hearthsim.brazier.actions.PlayTargetRequest;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.parsing.TestDb;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.cards.CardName;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.Weapon;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-
+import info.hearthsim.brazier.parsing.TestDb;
 import org.jtrim.utils.ExceptionHelper;
 
-import static org.junit.Assert.*;
+import java.util.*;
+import java.util.function.Consumer;
+
 import static info.hearthsim.brazier.utils.TestUtils.*;
+import static org.junit.Assert.*;
 
 public class TestAgent {
     private final HearthStoneDb db;

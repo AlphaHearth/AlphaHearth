@@ -1,15 +1,15 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.game.Keyword;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.game.Keywords;
 import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.Keywords;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionName;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.Set;
 import java.util.function.Supplier;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class MinionParser {
     private final EventNotificationParser<Minion> eventNotificationParser;

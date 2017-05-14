@@ -1,13 +1,11 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
+import org.jtrim.utils.ExceptionHelper;
+
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * A {@code LayoutManager} ordering the children in rows of a fixed maximum

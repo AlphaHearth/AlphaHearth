@@ -1,11 +1,11 @@
 package info.hearthsim.brazier.abilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link List} of {@link Ability}, providing methods {@link #addAndActivateAbility(Ability)}

@@ -1,9 +1,6 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
+import java.awt.*;
 import java.util.function.Function;
 
 public final class ConstAspectRatioLayout implements LayoutManager {

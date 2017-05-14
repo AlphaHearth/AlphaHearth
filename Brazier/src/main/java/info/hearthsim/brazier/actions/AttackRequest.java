@@ -1,12 +1,11 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.Player;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.function.Predicate;
-
-import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.PlayerProperty;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Container class for a request of attack, which has fields {@code attacker} and {@code target},

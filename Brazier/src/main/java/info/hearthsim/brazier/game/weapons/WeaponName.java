@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.game.weapons;
 
 import info.hearthsim.brazier.game.EntityName;
-import java.util.Objects;
-
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Objects;
 
 public final class WeaponName implements EntityName {
     private final String name;

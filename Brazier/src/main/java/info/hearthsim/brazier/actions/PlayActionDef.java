@@ -4,9 +4,9 @@ import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.cards.PlayAction;
-import java.util.Collection;
-
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Collection;
 
 /**
  * Definition of a {@link PlayAction}, combined with its {@link TargetNeed} and {@link PlayActionRequirement}.

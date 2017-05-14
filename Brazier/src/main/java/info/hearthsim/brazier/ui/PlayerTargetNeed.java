@@ -1,20 +1,19 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.game.Hero;
-import info.hearthsim.brazier.game.PlayerId;
-import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.TargeterDef;
 import info.hearthsim.brazier.actions.TargetNeed;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.Hero;
+import info.hearthsim.brazier.game.PlayerId;
+import info.hearthsim.brazier.game.minions.Minion;
+import org.jtrim.event.ListenerRef;
+import org.jtrim.utils.ExceptionHelper;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.function.Consumer;
-import javax.swing.JComponent;
-
-import org.jtrim.event.ListenerRef;
-import org.jtrim.utils.ExceptionHelper;
 
 // TODO Refactor this bizarre framework
 public final class PlayerTargetNeed {

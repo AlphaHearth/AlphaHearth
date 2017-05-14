@@ -1,22 +1,22 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.TargetNeed;
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.Hero;
 import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.cards.CardName;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.TestDb;
 import info.hearthsim.brazier.ui.PlayerTargetNeed;
-import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.game.cards.CardName;
-
-import java.util.List;
-
 import info.hearthsim.brazier.utils.BrazierTest;
 import org.junit.Test;
 
+import java.util.List;
+
 import static info.hearthsim.brazier.utils.TestCards.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class TargetNeedsTest extends BrazierTest {
     private static boolean canTarget(Player player, CardDescr card, Character target) {

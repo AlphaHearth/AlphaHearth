@@ -1,26 +1,19 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.TargetRef;
+import info.hearthsim.brazier.actions.*;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionProvider;
 import info.hearthsim.brazier.parsing.NamedArg;
-import info.hearthsim.brazier.actions.ActionUtils;
-import info.hearthsim.brazier.actions.AttackRequest;
-import info.hearthsim.brazier.actions.CardRef;
-import info.hearthsim.brazier.actions.EntitySelector;
-import info.hearthsim.brazier.actions.TargetedAction;
-import info.hearthsim.brazier.actions.TargetlessAction;
-import info.hearthsim.brazier.game.cards.Card;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-
-import org.jtrim.utils.ExceptionHelper;
-
-import static info.hearthsim.brazier.events.EventFilters.validMisdirectTarget;
 
 public final class EventActions {
     public static final EventAction<PlayerProperty, CardPlayEvent> PREVENT_CARD_PLAY =

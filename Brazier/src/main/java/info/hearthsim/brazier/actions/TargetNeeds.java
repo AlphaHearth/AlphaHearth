@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.PlayerPredicate;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.parsing.NamedArg;
 

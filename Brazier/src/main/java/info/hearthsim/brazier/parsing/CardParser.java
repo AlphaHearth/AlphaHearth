@@ -2,30 +2,23 @@ package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.actions.*;
-import info.hearthsim.brazier.game.cards.CardProvider;
-import info.hearthsim.brazier.game.cards.CardRarity;
-import info.hearthsim.brazier.game.cards.CardType;
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.db.MinionDescr;
-import info.hearthsim.brazier.events.EventFilters;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.game.cards.CardName;
-import info.hearthsim.brazier.game.cards.PlayAction;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.events.EventFilters;
 import info.hearthsim.brazier.events.SimpleEventType;
 import info.hearthsim.brazier.events.TriggeringAbility;
-import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.*;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class CardParser implements EntityParser<CardDescr> {
     private final JsonDeserializer objectParser;

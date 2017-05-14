@@ -1,14 +1,13 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.game.Keyword;
 import info.hearthsim.brazier.db.WeaponDescr;
-import info.hearthsim.brazier.game.weapons.WeaponName;
+import info.hearthsim.brazier.game.Keyword;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.game.weapons.WeaponName;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Collections;
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class WeaponParser implements EntityParser<WeaponDescr> {
     private final JsonDeserializer objectParser;

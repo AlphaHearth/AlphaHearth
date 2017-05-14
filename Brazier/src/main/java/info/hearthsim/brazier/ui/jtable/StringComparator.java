@@ -1,9 +1,10 @@
 package info.hearthsim.brazier.ui.jtable;
 
+import org.jtrim.utils.ExceptionHelper;
+
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class StringComparator implements Comparator<String> {
     public static final StringComparator NULL_FIRST = new StringComparator(true);

@@ -1,14 +1,10 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.LayoutManager;
-import java.awt.Rectangle;
-import java.util.function.IntSupplier;
-import javax.swing.JComponent;
-import javax.swing.Scrollable;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.function.IntSupplier;
 
 public final class JHorizontallyScrollablePanel extends JComponent implements Scrollable {
     private static final long serialVersionUID = 1L;

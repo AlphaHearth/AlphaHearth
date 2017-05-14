@@ -1,8 +1,9 @@
 package info.hearthsim.brazier.ui.jtable;
 
-import java.util.function.Consumer;
-import javax.swing.table.TableColumn;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.table.TableColumn;
+import java.util.function.Consumer;
 
 public final class TableColumnConfig {
     private int minWidth;

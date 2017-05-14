@@ -1,13 +1,12 @@
 package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.game.minions.Minion;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Graveyard {
     private final List<Minion> deadMinions;

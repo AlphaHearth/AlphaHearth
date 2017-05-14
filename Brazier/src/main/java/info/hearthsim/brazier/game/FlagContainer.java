@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Container of flags, which can be used to registered any thing.

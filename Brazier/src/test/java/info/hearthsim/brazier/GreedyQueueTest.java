@@ -6,7 +6,7 @@ import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 public final class GreedyQueueTest extends BrazierTest {
     private int testExplosiveTrapWithAttack(boolean trapFirst, boolean attackFace, int roll) {

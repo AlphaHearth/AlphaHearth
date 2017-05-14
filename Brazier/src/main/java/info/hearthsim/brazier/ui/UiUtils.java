@@ -1,8 +1,9 @@
 package info.hearthsim.brazier.ui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics2D;
+import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
@@ -10,10 +11,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import org.jtrim.utils.ExceptionHelper;
 
 
 public final class UiUtils {

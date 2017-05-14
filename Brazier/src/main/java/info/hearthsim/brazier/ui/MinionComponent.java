@@ -3,9 +3,9 @@ package info.hearthsim.brazier.ui;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionBody;
 
-import java.awt.Color;
-import javax.swing.BorderFactory;
+import javax.swing.*;
 import javax.swing.border.Border;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class MinionComponent extends javax.swing.JPanel {

@@ -1,17 +1,17 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionName;
 import info.hearthsim.brazier.parsing.NamedArg;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Predefined {@link EntityFilter}s.

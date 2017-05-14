@@ -1,8 +1,9 @@
 package info.hearthsim.brazier.game;
 
-import java.util.List;
 import org.jtrim.collections.CollectionsEx;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.List;
 
 /**
  * The result of a game, giving out which player(s) died in the game.

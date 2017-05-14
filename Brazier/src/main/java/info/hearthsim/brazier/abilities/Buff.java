@@ -2,12 +2,11 @@ package info.hearthsim.brazier.abilities;
 
 import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Buffs that only last for one turn and disappear when the turn ends.

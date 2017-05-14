@@ -1,10 +1,10 @@
 package info.hearthsim.brazier.ui;
 
-import info.hearthsim.brazier.*;
+import info.hearthsim.brazier.GameAgent;
+import info.hearthsim.brazier.actions.GameAction;
+import info.hearthsim.brazier.actions.PlayTargetRequest;
 import info.hearthsim.brazier.game.EntityId;
 import info.hearthsim.brazier.game.Game;
-import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.actions.GameAction;
 import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.event.CopyOnTriggerListenerManager;

@@ -1,14 +1,14 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.actions.CardPlayRef;
+import info.hearthsim.brazier.game.Keyword;
 import info.hearthsim.brazier.game.LabeledEntity;
 import info.hearthsim.brazier.game.Player;
-import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.game.cards.Card;
-import java.util.Set;
-
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Set;
 
 /**
  * An event of playing a card with a specific mana cost by the specific player.

@@ -4,14 +4,9 @@ import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionName;
 import info.hearthsim.brazier.parsing.NamedArg;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.*;
 
 /**
  * Predefined {@link PlayActionRequirement}s.

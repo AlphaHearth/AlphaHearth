@@ -1,9 +1,9 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.game.Game;
-import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.Priorities;
 import info.hearthsim.brazier.actions.GameObjectAction;
+import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.util.UndoAction;
 
 import java.util.concurrent.atomic.AtomicReference;

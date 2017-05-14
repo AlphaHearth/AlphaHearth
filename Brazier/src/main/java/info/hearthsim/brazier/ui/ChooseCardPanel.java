@@ -1,10 +1,12 @@
 package info.hearthsim.brazier.ui;
 
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.db.CardDescr;
-import java.awt.Component;
-import java.awt.Dialog;
+import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -12,11 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
-import org.jtrim.utils.ExceptionHelper;
 
 @SuppressWarnings("serial")
 public class ChooseCardPanel extends javax.swing.JPanel {

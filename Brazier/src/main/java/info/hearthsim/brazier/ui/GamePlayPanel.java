@@ -1,15 +1,6 @@
 package info.hearthsim.brazier.ui;
 
 import info.hearthsim.brazier.db.CardDescr;
-import java.awt.GridLayout;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
 import info.hearthsim.brazier.db.HearthStoneDb;
 import info.hearthsim.brazier.game.Character;
 import info.hearthsim.brazier.game.Game;
@@ -18,6 +9,13 @@ import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.event.ListenerRef;
 import org.jtrim.event.ListenerRegistries;
 import org.jtrim.utils.ExceptionHelper;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 @SuppressWarnings("serial")
 public class GamePlayPanel extends javax.swing.JPanel {

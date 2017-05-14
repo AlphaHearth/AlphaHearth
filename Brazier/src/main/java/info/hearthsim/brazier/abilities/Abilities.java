@@ -1,12 +1,12 @@
 package info.hearthsim.brazier.abilities;
 
-import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.util.UndoAction;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.parsing.NamedArg;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.parsing.NamedArg;
+import info.hearthsim.brazier.util.UndoAction;
 import org.jtrim.utils.ExceptionHelper;
 
 /**
@@ -51,8 +51,8 @@ public final class Abilities {
 
     /**
      * Returns an {@code Ability} which adds a {@link ActiveAura} with the given {@link AuraFilter},
-     * {@link Aura} and a {@link AuraTargetProvider} which returns minions on the same board side as the aura source to
-     * the {@code Game} when activated.
+     * {@link Aura} and a {@link AuraTargetProvider} which returns minions on the same board side as the
+     * aura source to the {@code Game} when activated.
      */
     public static <Self extends Entity> Ability<Self> sameBoardAura(
         @NamedArg("filter") AuraFilter<? super Self, ? super Minion> filter,

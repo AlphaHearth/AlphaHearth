@@ -3,27 +3,26 @@ package info.hearthsim.brazier.game;
 import info.hearthsim.brazier.PlayerProperty;
 import info.hearthsim.brazier.abilities.AuraAwareBoolProperty;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.game.cards.Card;
-import info.hearthsim.brazier.db.CardDescr;
-import info.hearthsim.brazier.events.GameEvents;
-import info.hearthsim.brazier.events.SimpleEventType;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.actions.ActionUtils;
 import info.hearthsim.brazier.actions.PlayActionDef;
 import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
-import info.hearthsim.brazier.events.GameActionList;
-import info.hearthsim.brazier.game.cards.PlayAction;
-import info.hearthsim.brazier.events.CardPlayEvent;
+import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.db.MinionDescr;
 import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.events.CardPlayEvent;
+import info.hearthsim.brazier.events.GameActionList;
+import info.hearthsim.brazier.events.GameEvents;
+import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.cards.PlayAction;
+import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.weapons.Weapon;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Player implements Entity<Player>, PlayerProperty {
     public static final int MAX_MANA = 10;

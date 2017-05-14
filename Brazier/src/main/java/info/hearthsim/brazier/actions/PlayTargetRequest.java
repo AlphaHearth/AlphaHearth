@@ -1,8 +1,8 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.db.CardDescr;
 import info.hearthsim.brazier.game.EntityId;
 import info.hearthsim.brazier.game.PlayerId;
-import info.hearthsim.brazier.db.CardDescr;
 import org.jtrim.utils.ExceptionHelper;
 
 /**

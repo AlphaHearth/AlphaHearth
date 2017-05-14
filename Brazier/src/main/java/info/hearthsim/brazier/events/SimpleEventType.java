@@ -1,12 +1,13 @@
 package info.hearthsim.brazier.events;
 
-import info.hearthsim.brazier.game.GameProperty;
-import info.hearthsim.brazier.game.Secret;
 import info.hearthsim.brazier.actions.AttackRequest;
+import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.game.Player;
+import info.hearthsim.brazier.game.Secret;
 import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.game.Player;
 import info.hearthsim.brazier.game.weapons.Weapon;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;

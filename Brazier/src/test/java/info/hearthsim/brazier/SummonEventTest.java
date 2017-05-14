@@ -1,22 +1,16 @@
 package info.hearthsim.brazier;
 
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.Hand;
+import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.game.minions.MinionName;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.TestAgent;
 import org.jtrim.collections.CollectionsEx;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.*;
+import java.util.function.Consumer;
 
 import static info.hearthsim.brazier.utils.TestCards.*;
 import static org.junit.Assert.*;

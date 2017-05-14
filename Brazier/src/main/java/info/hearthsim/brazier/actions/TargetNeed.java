@@ -1,13 +1,12 @@
 package info.hearthsim.brazier.actions;
 
+import info.hearthsim.brazier.PlayerPredicate;
 import info.hearthsim.brazier.game.Hero;
 import info.hearthsim.brazier.game.PlayerId;
-import info.hearthsim.brazier.PlayerPredicate;
 import info.hearthsim.brazier.game.minions.Minion;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Objects;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The need of target for a specific card. Fields of this class include:

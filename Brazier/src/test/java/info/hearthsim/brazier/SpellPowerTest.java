@@ -6,7 +6,7 @@ import info.hearthsim.brazier.utils.TestAgent;
 import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public final class SpellPowerTest extends BrazierTest {
     @Test

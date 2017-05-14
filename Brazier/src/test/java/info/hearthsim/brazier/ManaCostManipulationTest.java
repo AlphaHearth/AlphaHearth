@@ -1,15 +1,14 @@
 package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.game.cards.Card;
-
-import java.util.List;
-
 import info.hearthsim.brazier.utils.BrazierTest;
 import info.hearthsim.brazier.utils.TestAgent;
 import info.hearthsim.brazier.utils.TestCards;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.List;
+
+import static org.junit.Assert.fail;
 
 public final class ManaCostManipulationTest extends BrazierTest {
     public static void expectManaCost(TestAgent script, String playerName, int... manaCosts) {

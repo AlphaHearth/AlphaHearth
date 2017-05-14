@@ -1,9 +1,9 @@
 package info.hearthsim.brazier;
 
-import java.util.Objects;
-
 import info.hearthsim.brazier.game.PlayerId;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Objects;
 
 /**
  * Definition of the targeter of a targeting event (pointing a targeted spell or attackable minion to a target),

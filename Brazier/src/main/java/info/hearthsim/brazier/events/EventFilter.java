@@ -1,11 +1,11 @@
 package info.hearthsim.brazier.events;
 
+import info.hearthsim.brazier.game.GameProperty;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import info.hearthsim.brazier.game.GameProperty;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Filter for an {@code EventAction}, which determines the {@code EventAction} should be triggered on a

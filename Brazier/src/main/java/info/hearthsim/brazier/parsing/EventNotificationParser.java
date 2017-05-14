@@ -1,18 +1,16 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.*;
-import info.hearthsim.brazier.events.*;
-import info.hearthsim.brazier.events.GameEventActions;
 import com.google.gson.JsonPrimitive;
-
-import java.util.Locale;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+import info.hearthsim.brazier.Priorities;
+import info.hearthsim.brazier.events.*;
 import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.game.GameProperty;
 import info.hearthsim.brazier.game.Secret;
 import org.jtrim.utils.ExceptionHelper;
+
+import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Parser for Event Notification, which will be triggered when certain event happens. Such

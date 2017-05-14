@@ -1,20 +1,20 @@
 package info.hearthsim.brazier.parsing;
 
-import info.hearthsim.brazier.game.Keyword;
-import info.hearthsim.brazier.db.MinionDescr;
-import info.hearthsim.brazier.game.Keywords;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.Keywords;
 import info.hearthsim.brazier.game.cards.CardName;
 import info.hearthsim.brazier.game.cards.CardType;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 public class CardParserTest {

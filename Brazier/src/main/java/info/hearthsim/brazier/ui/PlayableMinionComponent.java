@@ -2,7 +2,7 @@ package info.hearthsim.brazier.ui;
 
 import info.hearthsim.brazier.game.minions.Minion;
 
-import javax.swing.JButton;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class PlayableMinionComponent extends javax.swing.JPanel {

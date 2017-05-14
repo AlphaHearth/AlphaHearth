@@ -3,15 +3,16 @@ package info.hearthsim.brazier.game.weapons;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.AbilityList;
 import info.hearthsim.brazier.abilities.AuraAwareIntProperty;
-import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.db.WeaponDescr;
+import info.hearthsim.brazier.events.EventAction;
+import info.hearthsim.brazier.events.GameEventActions;
+import info.hearthsim.brazier.events.SimpleEventType;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.events.*;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class Weapon implements Entity<Weapon>, DestroyableEntity, DamageSource, LabeledEntity {
     private final EntityId weaponId;

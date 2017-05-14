@@ -7,7 +7,8 @@ import info.hearthsim.brazier.game.minions.Minion;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**

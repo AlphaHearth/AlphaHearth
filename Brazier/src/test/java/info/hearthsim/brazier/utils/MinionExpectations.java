@@ -2,12 +2,11 @@ package info.hearthsim.brazier.utils;
 
 import info.hearthsim.brazier.game.minions.Minion;
 import info.hearthsim.brazier.game.minions.MinionName;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import org.jtrim.utils.ExceptionHelper;
 
 import static org.junit.Assert.fail;
 

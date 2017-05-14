@@ -1,12 +1,11 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.game.Game;
 import info.hearthsim.brazier.parsing.NamedArg;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.function.Predicate;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Predefined {@link TargetedActionCondition}s.

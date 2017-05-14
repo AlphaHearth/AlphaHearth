@@ -1,16 +1,19 @@
 package info.hearthsim.brazier.actions;
 
-import info.hearthsim.brazier.db.HearthStoneEntityDatabase;
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.game.Character;
-import info.hearthsim.brazier.util.UndoAction;
-import info.hearthsim.brazier.events.GameEventActions;
-import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.RandomProvider;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.HpProperty;
-import info.hearthsim.brazier.game.cards.Card;
 import info.hearthsim.brazier.db.CardDescr;
+import info.hearthsim.brazier.db.HearthStoneEntityDatabase;
+import info.hearthsim.brazier.db.MinionDescr;
+import info.hearthsim.brazier.events.GameEventActions;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
+import info.hearthsim.brazier.game.cards.Card;
+import info.hearthsim.brazier.game.minions.Minion;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +24,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import info.hearthsim.brazier.*;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class ActionUtils {
 

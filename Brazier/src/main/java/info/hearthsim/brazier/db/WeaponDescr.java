@@ -1,18 +1,18 @@
 package info.hearthsim.brazier.db;
 
-import info.hearthsim.brazier.game.Keyword;
 import info.hearthsim.brazier.abilities.Ability;
 import info.hearthsim.brazier.abilities.LivingEntitiesAbilities;
 import info.hearthsim.brazier.events.EventAction;
 import info.hearthsim.brazier.events.TriggeringAbility;
+import info.hearthsim.brazier.game.Keyword;
+import info.hearthsim.brazier.game.weapons.Weapon;
+import info.hearthsim.brazier.game.weapons.WeaponName;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import info.hearthsim.brazier.game.weapons.Weapon;
-import info.hearthsim.brazier.game.weapons.WeaponName;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class WeaponDescr implements HearthStoneEntity {
     private final WeaponName id;

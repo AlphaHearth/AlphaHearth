@@ -19,8 +19,8 @@ public interface UndoAction <T> {
     public void undoUnsafe(T obj);
 
     public static <Root, Field> UndoAction<Root> of(Root root,
-                                                         Function<Root, Field> fieldGetter,
-                                                         Function<Field, UndoAction<Field>> fieldModifier) {
+                                                    Function<Root, Field> fieldGetter,
+                                                    Function<Field, UndoAction<Field>> fieldModifier) {
         Field field = fieldGetter.apply(root);
         UndoAction<Field> undoRef = fieldModifier.apply(field);
         return (r) -> undoRef.undo(fieldGetter.apply(r));

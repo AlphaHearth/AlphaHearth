@@ -2,14 +2,13 @@ package info.hearthsim.brazier.events;
 
 import info.hearthsim.brazier.game.Entity;
 import info.hearthsim.brazier.game.GameProperty;
+import info.hearthsim.brazier.util.UndoAction;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import info.hearthsim.brazier.util.UndoAction;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The definition of a event-based action, which will be triggered when certain game event happens.

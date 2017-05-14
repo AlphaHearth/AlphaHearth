@@ -1,11 +1,10 @@
 package info.hearthsim.brazier.parsing;
 
 import info.hearthsim.brazier.db.HearthStoneDb;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class TestDb {
     private static final AtomicReference<Throwable> LOAD_FAILURE = new AtomicReference<>(null);

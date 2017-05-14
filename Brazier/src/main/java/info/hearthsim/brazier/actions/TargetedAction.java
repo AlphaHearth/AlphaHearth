@@ -1,12 +1,11 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.game.Game;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Action with target. It is usually used as a functional interface with its sole un-implemented method

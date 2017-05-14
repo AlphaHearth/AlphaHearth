@@ -1,17 +1,17 @@
 package info.hearthsim.brazier.game;
 
 import info.hearthsim.brazier.PlayerProperty;
+import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.events.GameEvents;
 import info.hearthsim.brazier.game.minions.Minion;
-import info.hearthsim.brazier.actions.PlayArg;
 import info.hearthsim.brazier.game.minions.MinionBody;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import org.jtrim.utils.ExceptionHelper;
 
 public final class BoardSide implements PlayerProperty {
     private final Player owner;
@@ -171,7 +171,7 @@ public final class BoardSide implements PlayerProperty {
      */
     public Minion getMinion(int index) {
         if (index >= minionRefs.size() || index < 0)
-            throw new IllegalArgumentException("The given index " + index + " is invalid.");
+            return null;
         return minionRefs.get(index).minion;
     }
 

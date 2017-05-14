@@ -1,28 +1,20 @@
 package info.hearthsim.brazier.parsing;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
+import org.jtrim.collections.CollectionsEx;
+import org.jtrim.utils.ExceptionHelper;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import org.jtrim.collections.CollectionsEx;
-import org.jtrim.utils.ExceptionHelper;
 
 public final class CardFileUpdateUtils {
     private static boolean hasExt(Path path, String ext) {

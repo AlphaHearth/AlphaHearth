@@ -1,9 +1,10 @@
 package info.hearthsim.brazier.game;
 
+import org.jtrim.utils.ExceptionHelper;
+
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * {@code Keyword} include many different flags in Hearthstone, including class and race of a card.

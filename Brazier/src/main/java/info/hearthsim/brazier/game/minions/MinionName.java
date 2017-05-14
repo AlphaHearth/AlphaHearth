@@ -1,10 +1,9 @@
 package info.hearthsim.brazier.game.minions;
 
 import info.hearthsim.brazier.game.EntityName;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Objects;
-
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * The id of a minion, which is essentially the name of the minion.

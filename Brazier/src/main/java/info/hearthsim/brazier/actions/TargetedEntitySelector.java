@@ -1,14 +1,13 @@
 package info.hearthsim.brazier.actions;
 
 import info.hearthsim.brazier.game.Game;
+import info.hearthsim.brazier.game.GameProperty;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
-
-import info.hearthsim.brazier.game.GameProperty;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * Functional interface with sole un-implemented method {@link #select(Actor, Target)} which

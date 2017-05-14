@@ -2,13 +2,12 @@ package info.hearthsim.brazier;
 
 import info.hearthsim.brazier.actions.GameAction;
 import info.hearthsim.brazier.actions.PlayTargetRequest;
+import info.hearthsim.brazier.game.Character;
+import info.hearthsim.brazier.game.*;
 import info.hearthsim.brazier.game.cards.Card;
+import org.jtrim.utils.ExceptionHelper;
 
 import java.util.Optional;
-
-import info.hearthsim.brazier.game.*;
-import info.hearthsim.brazier.game.Character;
-import org.jtrim.utils.ExceptionHelper;
 
 /**
  * {@code GameAgent} acts as an agent of a given {@link Game},

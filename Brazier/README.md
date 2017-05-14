@@ -9,7 +9,6 @@ API and readability.
 
 More works are remained to be done in this module, which include:
 
-- [ ] Fixed all not-passing test cases, and apply Travis CI and Codecov
 - [ ] Replace `Keyword` with enums like `Race`, `HeroClass`, etc.
 - [ ] Rewrite every card as singleton object in Groovy DSL and delete the dynamic parsing framework.
 - [ ] Implement all new cards.

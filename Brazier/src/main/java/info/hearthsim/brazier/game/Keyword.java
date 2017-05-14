@@ -27,7 +27,7 @@ public final class Keyword {
         ExceptionHelper.checkNotNullArgument(name, "name");
 
         String normName = name.toLowerCase(Locale.ROOT);
-        return CACHE.computeIfAbsent(normName, (key) -> new Keyword(key));
+        return CACHE.computeIfAbsent(normName, Keyword::new);
     }
 
     public String getName() {

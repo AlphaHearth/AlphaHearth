@@ -27,8 +27,6 @@ jar.dependsOn configJar
 dependencies {
     compile group: 'org.jtrim', name: 'jtrim-gui', version: '1.7.3'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
-
-    testCompile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
 }
 
 Path cardDbDir = projectDir.toPath().resolve('cardDb')
@@ -47,7 +45,7 @@ test.systemProperties.put(CARD_DB_PROPERTY_NAME, cardDbDir.toString())
 def configJavaExec = { JavaExec task ->
     task.dependsOn 'classes'
 
-    task.main = mainClass;
+    task.main = mainClass
     task.classpath = project.sourceSets.main.runtimeClasspath
     task.standardInput = System.in
 
@@ -143,7 +141,7 @@ void createExe(Project project, Path baseOutputDir, boolean bundleJre) {
             '${jre-path}': bundleJre ? 'jre' : '',
             '${main-jar}': 'libs\\' + project.jar.archiveName,
             '${output-exe}': outputExe.toString()
-    ]);
+    ])
 
     project.exec {
         commandLine(launch4jExe.toString(), resolvedConfig.toString())

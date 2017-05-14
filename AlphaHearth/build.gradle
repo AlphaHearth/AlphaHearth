@@ -1,12 +1,6 @@
 version '0.1'
 
-apply plugin: 'java'
-
 sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     compile project(':Brazier')
@@ -21,5 +15,5 @@ task runAi(type: JavaExec) {
     dependsOn ':Brazier:createCardDbZip'
 
     main = "com.github.mrdai.alphahearth.AiGameAgent"
-    classpath = project.sourceSets.main.runtimeClasspath;
+    classpath = project.sourceSets.main.runtimeClasspath
 }

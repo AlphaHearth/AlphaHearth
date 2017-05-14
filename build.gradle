@@ -1,6 +1,16 @@
 apply plugin: 'base' // To add "clean" task to the root project.
 
+allprojects {
+    apply plugin: 'jacoco'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
     apply from: rootProject.file('common.gradle')
 }
 
@@ -15,4 +25,23 @@ task mergedJavadoc(type: Javadoc, description: 'Creates Javadoc from all the pro
     classpath.from {
         subprojects*.configurations*.compile*.copyRecursive({ !(it instanceof ProjectDependency) })*.resolve()
     }
+}
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
+        csv.enabled false
+    }
+}
+
+codeCoverageReport.dependsOn {
+    subprojects*.test
 }
